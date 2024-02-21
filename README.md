@@ -1,3 +1,13 @@
+# Liberu Accounting
+
+### Other active projects
+* https://github.com/liberu-automation/automation-laravel
+* https://github.com/liberu-cms/cms-laravel
+* https://github.com/liberu-crm/crm-laravel
+* https://github.com/liberu-ecommerce/ecommerce-laravel
+* https://github.com/liberu-maintenance/maintenance-laravel
+* https://github.com/liberu-real-estate/real-estate-laravel
+
 ### Description
 Welcome to Liberu Accounting, our cutting-edge open-source project that transforms the realm of accounting with the seamless integration of Laravel 11, PHP 8.3, Livewire 3, and Filament 3. Liberu Accounting is not just a financial tool; it's a dynamic and robust solution crafted to elevate the accounting experience for businesses and individuals alike.
 
