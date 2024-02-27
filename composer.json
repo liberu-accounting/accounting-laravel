@@ -11,8 +11,8 @@
         "php": "^8.2",
         "filament/filament": "^3.2",
         "guzzlehttp/guzzle": "^7.8",
-        "laravel/framework": "^11.0",
-        "laravel/sanctum": "^3.3",
+        "laravel/framework": "dev-master",
+        "laravel/sanctum": "dev-master",
         "laravel/tinker": "^2.9"
     },
     "require-dev": {
