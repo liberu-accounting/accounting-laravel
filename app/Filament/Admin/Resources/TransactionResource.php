@@ -15,6 +15,7 @@ use Filament\Forms\Components\DatePicker;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\BelongsToSelect;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Rules\DoubleEntryValidator;
 use App\Filament\Admin\Resources\TransactionResource\Pages;
 use App\Filament\Admin\Resources\TransactionResource\RelationManagers;
 
@@ -34,7 +35,8 @@ class TransactionResource extends Resource
                     ->label('Description'),
                 TextInput::make('amount')
                     ->numeric()
-                    ->label('Amount'),
+                    ->label('Amount')
+                    ->rules(['required', new DoubleEntryValidator()]),
                 BelongsToSelect::make('debit_account_id')
                     ->relationship('debitAccount', 'name')
                     ->label('Debit Account'),
