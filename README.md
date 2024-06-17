@@ -10,6 +10,7 @@
 [![Install](https://github.com/liberu-accounting/accounting-laravel/actions/workflows/install.yml/badge.svg)](https://github.com/liberu-accounting/accounting-laravel/actions/workflows/install.yml)
 [![Tests](https://github.com/liberu-accounting/accounting-laravel/actions/workflows/tests.yml/badge.svg)](https://github.com/liberu-accounting/accounting-laravel/actions/workflows/tests.yml)
 [![Docker](https://github.com/liberu-accounting/accounting-laravel/actions/workflows/main.yml/badge.svg)](https://github.com/liberu-accounting/accounting-laravel/actions/workflows/main.yml)
+[![codecov](https://codecov.io/gh/liberu-accounting/accounting-laravel/graph/badge.svg?token=K7TWB1QF1L)](https://codecov.io/gh/liberu-accounting/accounting-laravel)
 
 
 ## Our Projects
