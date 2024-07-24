@@ -16,6 +16,10 @@
 [![codecov](https://codecov.io/gh/liberu-accounting/accounting-laravel/graph/badge.svg?token=K7TWB1QF1L)](https://codecov.io/gh/liberu-accounting/accounting-laravel)
 
 
+
+## [Hosted application packages](https://liberu.co.uk/order/main/packages/applications/?group_id=3)
+
+
 ## Our Projects
 
 * https://github.com/liberu-accounting/accounting-laravel
