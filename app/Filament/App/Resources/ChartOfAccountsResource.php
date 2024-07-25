@@ -25,7 +25,13 @@ class ChartOfAccountsResource extends Resource
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-                // Add more form fields as needed
+                Forms\Components\TextInput::make('account_number')
+                    ->required()
+                    ->numeric(),
+                Forms\Components\TextInput::make('account_type')
+                    ->required(),
+                Forms\Components\TextInput::make('balance')
+                    ->numeric(),
             ]);
     }
 
@@ -34,7 +40,9 @@ class ChartOfAccountsResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name'),
-                // Add more table columns as needed
+                Tables\Columns\TextColumn::make('account_number'),
+                Tables\Columns\TextColumn::make('account_type'),
+                Tables\Columns\TextColumn::make('balance'),
             ])
             ->filters([
                 //
