@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Admin\Resources;
+namespace App\Filament\App\Resources;
 
 use Filament\Forms;
 use Filament\Tables;
@@ -13,8 +13,8 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Admin\Resources\CategoryResource\Pages;
-use App\Filament\Admin\Resources\CategoryResource\RelationManagers;
+use App\Filament\App\Resources\CategoryResource\Pages;
+use App\Filament\App\Resources\CategoryResource\RelationManagers;
 
 class CategoryResource extends Resource
 {

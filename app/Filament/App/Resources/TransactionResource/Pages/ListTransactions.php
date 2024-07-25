@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Admin\Resources\TransactionResource\Pages;
+namespace App\Filament\App\Resources\TransactionResource\Pages;
 
-use App\Filament\Admin\Resources\TransactionResource;
+use App\Filament\App\Resources\TransactionResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 

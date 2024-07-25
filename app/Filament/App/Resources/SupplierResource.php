@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Admin\Resources;
+namespace App\Filament\App\Resources;
 
 use Filament\Forms;
 use Filament\Tables;
@@ -13,8 +13,8 @@ use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\BelongsToSelect;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Admin\Resources\SupplierResource\Pages;
-use App\Filament\Admin\Resources\SupplierResource\RelationManagers;
+use App\Filament\App\Resources\SupplierResource\Pages;
+use App\Filament\App\Resources\SupplierResource\RelationManagers;
 
 class SupplierResource extends Resource
 {

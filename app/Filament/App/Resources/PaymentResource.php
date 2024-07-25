@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Admin\Resources;
+namespace App\Filament\App\Resources;
 
 use Filament\Forms;
 use Filament\Tables;
@@ -14,8 +14,8 @@ use Filament\Forms\Components\DatePicker;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\BelongsToSelect;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Admin\Resources\PaymentResource\Pages;
-use App\Filament\Admin\Resources\PaymentResource\RelationManagers;
+use App\Filament\App\Resources\PaymentResource\Pages;
+use App\Filament\App\Resources\PaymentResource\RelationManagers;
 
 class PaymentResource extends Resource
 {

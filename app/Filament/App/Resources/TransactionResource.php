@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Admin\Resources;
+namespace App\Filament\App\Resources;
 
 use Filament\Forms;
 use Filament\Tables;
@@ -16,8 +16,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\BelongsToSelect;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Rules\DoubleEntryValidator;
-use App\Filament\Admin\Resources\TransactionResource\Pages;
-use App\Filament\Admin\Resources\TransactionResource\RelationManagers;
+use App\Filament\App\Resources\TransactionResource\Pages;
+use App\Filament\App\Resources\TransactionResource\RelationManagers;
 
 class TransactionResource extends Resource
 {

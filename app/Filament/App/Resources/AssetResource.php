@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Admin\Resources;
+namespace App\Filament\App\Resources;
 
 use Filament\Forms;
 use Filament\Tables;
@@ -12,8 +12,8 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Admin\Resources\AssetResource\Pages;
-use App\Filament\Admin\Resources\AssetResource\RelationManagers;
+use App\Filament\App\Resources\AssetResource\Pages;
+use App\Filament\App\Resources\AssetResource\RelationManagers;
 
 class AssetResource extends Resource
 {

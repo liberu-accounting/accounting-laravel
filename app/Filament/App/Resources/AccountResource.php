@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Admin\Resources;
+namespace App\Filament\App\Resources;
 
 use Filament\Forms;
 use Filament\Tables;
@@ -15,8 +15,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\BelongsToSelect;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Filament\Admin\Resources\AccountResource\Pages;
-use App\Filament\Admin\Resources\AccountResource\RelationManagers;
+use App\Filament\App\Resources\AccountResource\Pages;
+use App\Filament\App\Resources\AccountResource\RelationManagers;
 use Faker\Provider\ar_EG\Text;
 use Filament\Tables\Columns\TextColumn;
 

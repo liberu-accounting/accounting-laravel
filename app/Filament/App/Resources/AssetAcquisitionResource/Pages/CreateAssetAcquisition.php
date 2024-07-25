@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Admin\Resources\AssetAcquisitionResource\Pages;
+namespace App\Filament\App\Resources\AssetAcquisitionResource\Pages;
 
-use App\Filament\Admin\Resources\AssetAcquisitionResource;
+use App\Filament\App\Resources\AssetAcquisitionResource;
 use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 
