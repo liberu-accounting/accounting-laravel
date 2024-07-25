@@ -10,9 +10,10 @@ class Category extends Model
     use HasFactory;
 
     protected $primaryKey='category_id';
-    
+
     protected $fillable=[
         'name',
+        'parent_id',
     ];
 
     public function accounts()
@@ -25,4 +26,13 @@ class Category extends Model
         return $this->belongsToMany(Transaction::class);
     }
 
+    public function parent()
+    {
+        return $this->belongsTo(Category::class, 'parent_id');
+    }
+
+    public function children()
+    {
+        return $this->hasMany(Category::class, 'parent_id');
+    }
 }
