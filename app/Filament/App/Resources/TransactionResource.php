@@ -56,44 +56,50 @@ class TransactionResource extends Resource
             ->columns([
                 TextColumn::make('transaction_date')
                     ->label('Date')
-                    ->searchable()
+                    ->date()
                     ->sortable(),
                 TextColumn::make('transaction_description')
                     ->label('Description')
                     ->searchable()
+                    ->limit(30),
+                TextColumn::make('amount')
+                    ->label('Amount')
+                    ->money('usd')
                     ->sortable(),
-                TextColumn::make('amount')->label('Amount')
-                    ->searchable()
-                    ->sortable(),
-                TextColumn::make('debit_account_id')
+                TextColumn::make('debitAccount.name')
                     ->label('Debit Account')
-                    ->searchable()
-                    ->sortable(),
-                TextColumn::make('credit_account_id')
-                    ->label('Credit Account')
-                    ->searchable()
-                    ->sortable(),
-                Tables\Columns\IconColumn::make('reconciled')
-                    ->boolean(),
-                TextColumn::make('discrepancy_notes')
-                    ->label('Discrepancy Notes')
                     ->searchable(),
+                TextColumn::make('creditAccount.name')
+                    ->label('Credit Account')
+                    ->searchable(),
+                IconColumn::make('reconciled')
+                    ->boolean()
+                    ->label('Reconciled')
+                    ->tooltip('Reconciliation Status'),
+                TextColumn::make('discrepancy_notes')
+                    ->label('Notes')
+                    ->searchable()
+                    ->limit(20),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('reconciled')
+                SelectFilter::make('reconciled')
                     ->options([
                         true => 'Reconciled',
                         false => 'Not Reconciled',
                     ]),
+                DateRangeFilter::make('transaction_date'),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                EditAction::make(),
+                ViewAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                    ExportBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->defaultSort('transaction_date', 'desc');
     }
 
     public static function getRelations(): array
