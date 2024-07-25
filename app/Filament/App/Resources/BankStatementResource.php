@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Filament\Admin\Resources;
+namespace App\Filament\App\Resources;
 
-use App\Filament\Admin\Resources\BankStatementResource\Pages;
+use App\Filament\App\Resources\BankStatementResource\Pages;
 use App\Models\BankStatement;
 use Filament\Forms;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 
 class BankStatementResource extends Resource
