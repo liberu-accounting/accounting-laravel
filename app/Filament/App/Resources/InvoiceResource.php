@@ -15,8 +15,8 @@ use Filament\Forms\Components\DatePicker;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\BelongsToSelect;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Admin\Resources\InvoiceResource\Pages;
-use App\Filament\Admin\Resources\InvoiceResource\RelationManagers;
+use App\Filament\App\Resources\InvoiceResource\Pages;
+use App\Filament\App\Resources\InvoiceResource\RelationManagers;
 
 class InvoiceResource extends Resource
 {
