@@ -43,9 +43,13 @@ class TransactionResource extends Resource
                 BelongsToSelect::make('credit_account_id')
                     ->relationship('creditAccount', 'name')
                     ->label('Credit Account'),
+                Forms\Components\Toggle::make('reconciled')
+                    ->label('Reconciled'),
+                Forms\Components\Textarea::make('discrepancy_notes')
+                    ->label('Discrepancy Notes'),
             ]);
     }
-
+    
     public static function table(Table $table): Table
     {
         return $table
@@ -69,9 +73,18 @@ class TransactionResource extends Resource
                     ->label('Credit Account')
                     ->searchable()
                     ->sortable(),
+                Tables\Columns\IconColumn::make('reconciled')
+                    ->boolean(),
+                TextColumn::make('discrepancy_notes')
+                    ->label('Discrepancy Notes')
+                    ->searchable(),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('reconciled')
+                    ->options([
+                        true => 'Reconciled',
+                        false => 'Not Reconciled',
+                    ]),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

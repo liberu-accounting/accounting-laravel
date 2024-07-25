@@ -17,7 +17,12 @@ class Transaction extends Model
         'amount',
         'debit_account_id',
         'credit_account_id',
-        // Add any other necessary fields for double-entry accounting here
+        'reconciled',
+        'discrepancy_notes',
+    ];
+    
+    protected $casts = [
+        'reconciled' => 'boolean',
     ];
 
     public function debitAccount()
