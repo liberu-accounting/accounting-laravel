@@ -37,6 +37,14 @@ class TransactionResource extends Resource
                     ->numeric()
                     ->label('Amount')
                     ->rules(['required', new DoubleEntryValidator()]),
+                BelongsToSelect::make('currency_id')
+                    ->relationship('currency', 'code')
+                    ->label('Currency')
+                    ->required(),
+                TextInput::make('exchange_rate')
+                    ->numeric()
+                    ->label('Exchange Rate')
+                    ->helperText('Leave empty for default currency'),
                 BelongsToSelect::make('debit_account_id')
                     ->relationship('debitAccount', 'name')
                     ->label('Debit Account'),
