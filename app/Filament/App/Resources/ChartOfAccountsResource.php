@@ -25,4 +25,41 @@ class ChartOfAccountsResource extends Resource
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-                Forms
+                // Add more form fields as needed
+            ]);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                Tables\Columns\TextColumn::make('name'),
+                // Add more table columns as needed
+            ])
+            ->filters([
+                //
+            ])
+            ->actions([
+                Tables\Actions\EditAction::make(),
+            ])
+            ->bulkActions([
+                Tables\Actions\DeleteBulkAction::make(),
+            ]);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => Pages\ListChartOfAccounts::route('/'),
+            'create' => Pages\CreateChartOfAccounts::route('/create'),
+            'edit' => Pages\EditChartOfAccounts::route('/{record}/edit'),
+        ];
+    }
+}
