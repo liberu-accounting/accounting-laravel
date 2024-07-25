@@ -1,13 +1,19 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+@extends('components.layouts.app')
 
-        <title>Laravel</title>
+@section('content')
+    <div class="min-h-screen flex flex-col">
+        @include('components.home-navbar')
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
+        <main class="flex-grow">
+            <div class="container mx-auto px-4 py-8">
+                <h1 class="text-4xl font-bold mb-4">Welcome to Our Application</h1>
+                <p class="text-xl">This is the home page of our application. Feel free to explore!</p>
+            </div>
+        </main>
+
+        @include('components.footer')
+    </div>
+@endsection
         <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
 
         <!-- Styles -->
