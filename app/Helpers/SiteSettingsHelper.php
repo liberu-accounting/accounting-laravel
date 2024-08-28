@@ -2,7 +2,7 @@
 
 namespace App\Helpers;
 
-use App\Facades\SiteSettings;
+use App\Models\SiteSettings;
 
 class SiteSettingsHelper
 {
