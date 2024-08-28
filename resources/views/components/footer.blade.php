@@ -3,9 +3,11 @@
         <div class="md:flex md:justify-between">
             <div class="mb-6 md:mb-0">
                 <a href="#" class="flex items-center">
-                    <img src="{{ asset('build/images/logo.png') }}" class="mr-3 h-8" alt="{{ config('app.name') }}" />
+                    <x-logo/>
                     <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
-                        {{ \App\Helpers\SiteSettingsHelper::get('name') }} </span>
+                        
+                        {{ \App\Helpers\SiteSettingsHelper::get()->name }}
+                    </span>
                 </a>
                
             </div>
@@ -14,17 +16,17 @@
                 <div></div>
                 <div>
                     <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Contact Details</h2>
-                    <span class="text-xs text-gray-600">{{ \App\Helpers\SiteSettingsHelper::get('address') }}</span> <br>
-                    <span class="text-xs text-gray-600">UK Non-geographic: {{ \App\Helpers\SiteSettingsHelper::get('phone_01') }}</span>  <br>
-                    <span class="text-xs text-gray-600">UK London: {{ \App\Helpers\SiteSettingsHelper::get('phone_02') }}</span>  <br>
-                    <span class="text-xs text-gray-600">UK Mobile: {{ \App\Helpers\SiteSettingsHelper::get('phone_03') }}</span>  <br>
+                    <span class="text-xs text-gray-600">Address : {{ \App\Helpers\SiteSettingsHelper::get()->address }}</span> <br>
+                    <span class="text-xs text-gray-600">UK Non-geographic: {{ \App\Helpers\SiteSettingsHelper::get()->phone_01 }}</span>  <br>
+                    <span class="text-xs text-gray-600">UK London: {{ \App\Helpers\SiteSettingsHelper::get()->phone_02 }}</span>  <br>
+                    <span class="text-xs text-gray-600">UK Mobile: {{ \App\Helpers\SiteSettingsHelper::get()->phone_03 }}</span>  <br>
                 </div>
             </div>
         </div>
         <hr class="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
         <div class="sm:flex sm:items-center sm:justify-between">
             <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400" title="{{config('app.version')}}">© {{now()->year}} <a href="#"
-                    class="hover:underline">{{ \App\Helpers\SiteSettingsHelper::get('name') }}</a>. All Rights
+                    class="hover:underline">{{ \App\Helpers\SiteSettingsHelper::get()->name }}</a>. All Rights
                 Reserved.
             </span>
             <div class="flex mt-4 space-x-6 sm:justify-center sm:mt-0">

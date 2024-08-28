@@ -21,13 +21,11 @@
     @endif
 
     <div class="min-h-screen bg-gray-100 flex flex-col">
-        @include('components.home-navbar')
-
+        <x-home-navbar />
         <main class="flex-grow">
             @yield('content')
         </main>
-
-        @include('components.footer')
+        <x-footer />
     </div>
 
     <!-- Scripts -->
