@@ -175,6 +175,8 @@ return [
         App\Providers\TeamServiceProvider::class,
         App\Providers\JetstreamServiceProvider::class,
         App\Providers\FortifyServiceProvider::class,
+
+        Intelrx\Sitesettings\SitesettingsProvider::class,
     ])->toArray(),
 
     /*
@@ -190,6 +192,7 @@ return [
 
     'aliases' => Facade::defaultAliases()->merge([
         // 'Example' => App\Facades\Example::class,
+        'SiteConfig' => Intelrx\Sitesettings\SiteConfig::class,
     ])->toArray(),
 
 ];

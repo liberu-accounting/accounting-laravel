@@ -16,7 +16,7 @@ class GeneralLedgerReportResource extends Resource
 {
     protected static ?string $model = GeneralLedgerReport::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-report';
+    // protected static ?string $navigationIcon = 'heroicon-o-document-report';
 
     public static function form(Form $form): Form
     {
