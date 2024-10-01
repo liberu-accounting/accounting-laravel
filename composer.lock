@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a7cf2dcb8d89c2b181ec8b5d68fbd673",
+    "content-hash": "aff28cf94c900acd21d5fdeaa53065e9",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -2338,16 +2338,16 @@
         },
         {
             "name": "intelrx/sitesettings",
-            "version": "1.0.0",
+            "version": "2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Raza9798/Site-Settings.git",
-                "reference": "268c7031057f955b1bc6aa5da3b959caad9c30f2"
+                "reference": "64c23056e410b52af75487d4a9c6f2935c1098ab"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Raza9798/Site-Settings/zipball/268c7031057f955b1bc6aa5da3b959caad9c30f2",
-                "reference": "268c7031057f955b1bc6aa5da3b959caad9c30f2",
+                "url": "https://api.github.com/repos/Raza9798/Site-Settings/zipball/64c23056e410b52af75487d4a9c6f2935c1098ab",
+                "reference": "64c23056e410b52af75487d4a9c6f2935c1098ab",
                 "shasum": ""
             },
             "require": {
@@ -2379,9 +2379,9 @@
             "description": "Application global properties",
             "support": {
                 "issues": "https://github.com/Raza9798/Site-Settings/issues",
-                "source": "https://github.com/Raza9798/Site-Settings/tree/1.0.0"
+                "source": "https://github.com/Raza9798/Site-Settings/tree/2.0.0"
             },
-            "time": "2024-08-29T20:56:05+00:00"
+            "time": "2024-09-30T20:53:46+00:00"
         },
         {
             "name": "joelbutcher/socialstream",
