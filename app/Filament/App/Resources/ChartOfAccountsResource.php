@@ -16,7 +16,7 @@ class ChartOfAccountsResource extends Resource
 {
     protected static ?string $model = Account::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    // protected static ?string $navigationIcon = 'heroicon-o-collection';
 
     public static function form(Form $form): Form
     {
