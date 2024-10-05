@@ -194,5 +194,4 @@ return [
         // 'Example' => App\Facades\Example::class,
         'SiteConfig' => Intelrx\Sitesettings\SiteConfig::class,
     ])->toArray(),
-
 ];
