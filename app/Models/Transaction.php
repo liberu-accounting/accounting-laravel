@@ -21,6 +21,7 @@ class Transaction extends Model
         'reconciled',
         'discrepancy_notes',
         'exchange_rate',
+        'purchase_order_id',
     ];
 
     protected $casts = [
@@ -46,6 +47,11 @@ class Transaction extends Model
     public function categories()
     {
         return $this->belongsToMany(Category::class);
+    }
+
+    public function purchaseOrder()
+    {
+        return $this->belongsTo(PurchaseOrder::class, 'purchase_order_id');
     }
 
     public function getAmountInDefaultCurrency()
