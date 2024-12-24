@@ -18,6 +18,8 @@ class Account extends Model
         'account_type',
         'balance',
         'currency_id',
+        'parent_id',
+        'industry_type'
     ];
 
     public function user()
@@ -28,6 +30,16 @@ class Account extends Model
     public function currency()
     {
          return $this->belongsTo(Currency::class);
+    }
+
+    public function parent()
+    {
+        return $this->belongsTo(Account::class, 'parent_id');
+    }
+
+    public function children()
+    {
+        return $this->hasMany(Account::class, 'parent_id');
     }
 
     public function transactions()
