@@ -6,6 +6,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Auth;
 use App\Notifications\ExpenseApprovalNotification;
 
@@ -51,6 +52,11 @@ class Expense extends Model
     public function costCenter(): BelongsTo
     {
         return $this->belongsTo(CostCenter::class);
+    }
+
+    public function categories(): BelongsToMany
+    {
+        return $this->belongsToMany(Category::class);
     }
 
     public function approve()
