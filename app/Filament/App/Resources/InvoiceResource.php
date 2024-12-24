@@ -33,7 +33,30 @@ class InvoiceResource extends Resource
                     ->label('Customer'),
                 DatePicker::make('invoice_date'),
                 TextInput::make('total_amount')
-                    ->numeric(),
+                    ->numeric()
+                    ->reactive()
+                    ->afterStateUpdated(function ($state, callable $set, $get) {
+                        if ($get('tax_rate_id')) {
+                            $taxRate = TaxRate::find($get('tax_rate_id'));
+                            $taxAmount = $state * ($taxRate->rate / 100);
+                            $set('tax_amount', $taxAmount);
+                        }
+                    }),
+                BelongsToSelect::make('tax_rate_id')
+                    ->relationship('taxRate', 'name')
+                    ->label('Tax Rate')
+                    ->reactive()
+                    ->afterStateUpdated(function ($state, callable $set, $get) {
+                        if ($state && $get('total_amount')) {
+                            $taxRate = TaxRate::find($state);
+                            $taxAmount = $get('total_amount') * ($taxRate->rate / 100);
+                            $set('tax_amount', $taxAmount);
+                        }
+                    }),
+                TextInput::make('tax_amount')
+                    ->numeric()
+                    ->disabled()
+                    ->label('Tax Amount'),
                 Select::make('payment_status')
                     ->options([
                         'pending' => 'Pending',
