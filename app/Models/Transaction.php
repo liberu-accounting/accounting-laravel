@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Observers\TransactionObserver;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Services\ExchangeRateService;
@@ -35,6 +36,9 @@ class Transaction extends Model
     protected static function boot()
     {
         parent::boot();
+
+        static::observe(TransactionObserver::class);
+
         
         static::creating(function ($transaction) {
             if (!$transaction->exchange_rate) {
@@ -77,6 +81,13 @@ class Transaction extends Model
         return $this->hasMany(InventoryTransaction::class);
     }
 
+
+    public function auditLogs()
+    {
+        return $this->morphMany(AuditLog::class, 'auditable');
+    }
+
+  
     public function getAmountInCurrency(Currency $targetCurrency)
     {
         if ($this->currency_id === $targetCurrency->currency_id) {
