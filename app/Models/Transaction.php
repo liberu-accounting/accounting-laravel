@@ -21,7 +21,7 @@ class Transaction extends Model
         'reconciled',
         'discrepancy_notes',
         'exchange_rate',
-        'purchase_order_id',
+        'transaction_type',
     ];
 
     protected $casts = [
@@ -49,9 +49,9 @@ class Transaction extends Model
         return $this->belongsToMany(Category::class);
     }
 
-    public function purchaseOrder()
+    public function inventoryTransactions()
     {
-        return $this->belongsTo(PurchaseOrder::class, 'purchase_order_id');
+        return $this->hasMany(InventoryTransaction::class);
     }
 
     public function getAmountInDefaultCurrency()
@@ -61,5 +61,16 @@ class Transaction extends Model
             return $this->amount;
         }
         return $this->amount * $this->exchange_rate;
+    }
+
+    public function updateInventory()
+    {
+        foreach ($this->inventoryTransactions as $inventoryTx) {
+            $quantity = $inventoryTx->quantity;
+            if ($this->transaction_type === 'sale') {
+                $quantity *= -1;
+            }
+            $inventoryTx->inventoryItem->updateQuantity($quantity);
+        }
     }
 }
