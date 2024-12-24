@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Observers\TransactionObserver;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -29,6 +30,12 @@ class Transaction extends Model
         'exchange_rate' => 'float',
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+        static::observe(TransactionObserver::class);
+    }
+
     public function currency()
     {
         return $this->belongsTo(Currency::class);
@@ -52,6 +59,11 @@ class Transaction extends Model
     public function inventoryTransactions()
     {
         return $this->hasMany(InventoryTransaction::class);
+    }
+
+    public function auditLogs()
+    {
+        return $this->morphMany(AuditLog::class, 'auditable');
     }
 
     public function getAmountInDefaultCurrency()
