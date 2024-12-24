@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Barryvdh\DomPDF\Facade\Pdf;
-use App\Services\ExchangeRateService;
+use Illuminate\Support\Facades\Auth;
 
 class Invoice extends Model
 {
@@ -15,6 +15,7 @@ class Invoice extends Model
 
     protected $fillable = [
         "customer_id",
+        "vendor_id",
         "invoice_number",
         "invoice_date",
         "due_date",
@@ -22,8 +23,12 @@ class Invoice extends Model
         "tax_amount",
         "tax_rate_id",
         "payment_status",
-        "notes",
-        "currency_id"
+        "approval_status",
+        "rejection_reason",
+        "approved_by",
+        "approved_at",
+        "document_path",
+        "notes"
     ];
 
     protected $casts = [
@@ -31,6 +36,7 @@ class Invoice extends Model
         'tax_amount' => 'decimal:2',
         'invoice_date' => 'date',
         'due_date' => 'date',
+        'approved_at' => 'datetime',
     ];
 
     public function customer()
@@ -38,9 +44,14 @@ class Invoice extends Model
         return $this->belongsTo(Customer::class);
     }
 
-    public function currency()
+    public function vendor()
     {
-        return $this->belongsTo(Currency::class, 'currency_id');
+        return $this->belongsTo(Vendor::class);
+    }
+
+    public function approver()
+    {
+        return $this->belongsTo(User::class, 'approved_by');
     }
 
     public function taxRate()
@@ -51,26 +62,6 @@ class Invoice extends Model
     public function timeEntries()
     {
         return $this->hasMany(TimeEntry::class, 'invoice_id');
-    }
-
-    public function getAmountInDefaultCurrency()
-    {
-        if (!$this->currency_id) {
-            return $this->total_amount;
-        }
-
-        $defaultCurrency = Currency::where('is_default', true)->first();
-        if ($this->currency_id === $defaultCurrency->currency_id) {
-            return $this->total_amount;
-        }
-
-        $exchangeRateService = app(ExchangeRateService::class);
-        $rate = $exchangeRateService->getExchangeRate(
-            $this->currency,
-            $defaultCurrency
-        );
-        
-        return $this->total_amount * $rate;
     }
 
     public function calculateTax()
@@ -114,27 +105,52 @@ class Invoice extends Model
         $data = [
             'invoice' => $this,
             'customer' => $this->customer,
+            'vendor' => $this->vendor,
             'tax_rate' => $this->taxRate,
-            'currency' => $this->currency,
         ];
         
         $pdf = PDF::loadView('invoices.template', $data);
         return $pdf->download('invoice_' . $this->invoice_number . '.pdf');
     }
 
+    public function approve()
+    {
+        $this->update([
+            'approval_status' => 'approved',
+            'approved_by' => Auth::id(),
+            'approved_at' => now(),
+        ]);
+
+        event(new InvoiceApproved($this));
+    }
+
+    public function reject($reason)
+    {
+        $this->update([
+            'approval_status' => 'rejected',
+            'rejection_reason' => $reason,
+            'approved_by' => Auth::id(),
+            'approved_at' => now(),
+        ]);
+
+        event(new InvoiceRejected($this));
+    }
+
+    public function isPending(): bool
+    {
+        return $this->approval_status === 'pending';
+    }
+
     protected static function boot()
     {
         parent::boot();
-        
-        static::observe(InvoiceObserver::class);
         
         static::creating(function ($invoice) {
             if (empty($invoice->invoice_number)) {
                 $invoice->invoice_number = 'INV-' . str_pad(static::max('invoice_id') + 1, 6, '0', STR_PAD_LEFT);
             }
-            
-            if (empty($invoice->currency_id)) {
-                $invoice->currency_id = Currency::where('is_default', true)->first()->currency_id;
+            if (empty($invoice->approval_status)) {
+                $invoice->approval_status = 'pending';
             }
         });
     }
