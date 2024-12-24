@@ -50,4 +50,10 @@ class GeneralLedgerService
             ];
         });
     }
+
+    public function getBudgetComparison($startDate, $endDate)
+    {
+        $budgetService = new BudgetService();
+        return $budgetService->getBudgetComparison($startDate, $endDate);
+    }
 }
