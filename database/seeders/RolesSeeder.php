@@ -13,12 +13,64 @@ class RolesSeeder extends Seeder
      */
     public function run(): void
     {
+        // Create roles
         $adminRole = Role::firstOrCreate(['name' => 'admin']);
-        $permissions = Permission::where('guard_name', 'web')->pluck('id')->toArray();
-        $adminRole->syncPermissions($permissions);
+        $accountantRole = Role::firstOrCreate(['name' => 'accountant']);
+        $employeeRole = Role::firstOrCreate(['name' => 'employee']);
 
-        $freeRole = Role::firstOrCreate(['name' => 'free']);
-        $freePermissions = Permission::where('guard_name', 'web')->pluck('id')->toArray();
-        $freeRole->syncPermissions($freePermissions);
+        // Define permissions for different areas
+        $permissions = [
+            // User management
+            'view_users',
+            'create_users',
+            'edit_users',
+            'delete_users',
+            
+            // Account management
+            'view_accounts',
+            'create_accounts',
+            'edit_accounts',
+            'delete_accounts',
+            
+            // Transaction management
+            'view_transactions',
+            'create_transactions',
+            'edit_transactions',
+            'delete_transactions',
+            
+            // Report management
+            'view_reports',
+            'create_reports',
+            'export_reports'
+        ];
+
+        // Create permissions
+        foreach ($permissions as $permission) {
+            Permission::firstOrCreate(['name' => $permission, 'guard_name' => 'web']);
+        }
+
+        // Assign permissions to roles
+        // Admin gets all permissions
+        $adminRole->syncPermissions(Permission::all());
+
+        // Accountant permissions
+        $accountantRole->syncPermissions([
+            'view_accounts',
+            'create_accounts',
+            'edit_accounts',
+            'view_transactions',
+            'create_transactions',
+            'edit_transactions',
+            'view_reports',
+            'create_reports',
+            'export_reports'
+        ]);
+
+        // Employee permissions
+        $employeeRole->syncPermissions([
+            'view_accounts',
+            'view_transactions',
+            'view_reports'
+        ]);
     }
 }

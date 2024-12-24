@@ -16,13 +16,17 @@ class TeamsPermission
             return redirect()->route('login')->with('error', 'You must be logged in to access this area.');
         }
 
-        // Allow staff and admin users to access without team restrictions
-        if ($user->hasRole(['staff', 'admin'])) {
+        // Check if user has any of the required roles
+        if (!$user->hasAnyRole(['admin', 'accountant', 'employee'])) {
+            return redirect()->route('home')->with('error', 'You do not have permission to access this area.');
+        }
+
+        // Allow admin users to access without team restrictions
+        if ($user->hasRole('admin')) {
             return $next($request);
         }
 
         if (!$user->currentTeam) {
-            // Redirect to a default route or show an error
             return redirect()->route('home')->with('error', 'You must be part of a team to access this area.');
         }
 
@@ -33,9 +37,30 @@ class TeamsPermission
                 ->with('error', 'You do not have permission to access this team.');
         }
 
-        // Check if the user has permission to access the current route
-        // You can implement your team-based permission logic here
+        // Check specific permissions based on the route
+        $routeName = $request->route()->getName();
+        if (!$this->checkRoutePermissions($user, $routeName)) {
+            return redirect()->back()->with('error', 'You do not have permission to perform this action.');
+        }
 
         return $next($request);
+    }
+
+    private function checkRoutePermissions($user, $routeName)
+    {
+        $permissionMap = [
+            'users.*' => 'manage_users',
+            'accounts.*' => 'manage_accounts',
+            'transactions.*' => 'manage_transactions',
+            'reports.*' => 'view_reports',
+        ];
+
+        foreach ($permissionMap as $route => $permission) {
+            if (str_is($route, $routeName) && !$user->can($permission)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
