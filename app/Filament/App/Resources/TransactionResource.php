@@ -7,6 +7,7 @@ use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use App\Models\Transaction;
+use App\Models\Currency;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
@@ -16,6 +17,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\BelongsToSelect;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Rules\DoubleEntryValidator;
+use App\Services\ExchangeRateService;
 use App\Filament\App\Resources\TransactionResource\Pages;
 use App\Filament\App\Resources\TransactionResource\RelationManagers;
 
@@ -30,27 +32,58 @@ class TransactionResource extends Resource
         return $form
             ->schema([
                 DatePicker::make('transaction_date')
-                    ->label('Date'),
+                    ->label('Date')
+                    ->required(),
                 Textarea::make('transaction_description')
-                    ->label('Description'),
+                    ->label('Description')
+                    ->required(),
                 TextInput::make('amount')
                     ->numeric()
                     ->label('Amount')
-                    ->rules(['required', new DoubleEntryValidator()]),
+                    ->required()
+                    ->rules(['required', new DoubleEntryValidator()])
+                    ->step('0.01'),
                 BelongsToSelect::make('currency_id')
                     ->relationship('currency', 'code')
                     ->label('Currency')
-                    ->required(),
+                    ->required()
+                    ->searchable()
+                    ->preload()
+                    ->reactive()
+                    ->afterStateUpdated(function ($state, callable $set) {
+                        if ($state) {
+                            $defaultCurrency = Currency::where('is_default', true)->first();
+                            if ($state !== $defaultCurrency->currency_id) {
+                                $exchangeRateService = app(ExchangeRateService::class);
+                                $rate = $exchangeRateService->getExchangeRate(
+                                    Currency::find($state),
+                                    $defaultCurrency
+                                );
+                                $set('exchange_rate', $rate);
+                            } else {
+                                $set('exchange_rate', 1);
+                            }
+                        }
+                    }),
                 TextInput::make('exchange_rate')
                     ->numeric()
                     ->label('Exchange Rate')
-                    ->helperText('Leave empty for default currency'),
+                    ->required()
+                    ->default(1)
+                    ->step('0.000001')
+                    ->helperText('Exchange rate to default currency'),
                 BelongsToSelect::make('debit_account_id')
-                    ->relationship('debitAccount', 'name')
-                    ->label('Debit Account'),
+                    ->relationship('debitAccount', 'account_name')
+                    ->label('Debit Account')
+                    ->required()
+                    ->searchable()
+                    ->preload(),
                 BelongsToSelect::make('credit_account_id')
-                    ->relationship('creditAccount', 'name')
-                    ->label('Credit Account'),
+                    ->relationship('creditAccount', 'account_name')
+                    ->label('Credit Account')
+                    ->required()
+                    ->searchable()
+                    ->preload(),
                 Forms\Components\Toggle::make('reconciled')
                     ->label('Reconciled'),
                 Forms\Components\Textarea::make('discrepancy_notes')

@@ -54,6 +54,31 @@ class TaxForm extends Model
 
         $this->total_payments = $invoices->sum('total_amount');
         $this->total_tax_withheld = $invoices->sum('tax_amount');
+        
+        // Calculate tax summaries by rate
+        $taxSummary = [];
+        foreach ($invoices as $invoice) {
+            if ($invoice->taxRate) {
+                $rateName = $invoice->taxRate->name;
+                if (!isset($taxSummary[$rateName])) {
+                    $taxSummary[$rateName] = [
+                        'rate' => $invoice->taxRate->rate,
+                        'amount' => 0
+                    ];
+                }
+                $taxSummary[$rateName]['amount'] += $invoice->tax_amount;
+            }
+        }
+        
+        $this->form_data = array_merge($this->form_data ?? [], [
+            'tax_summary' => $taxSummary
+        ]);
+        
         $this->save();
+    }
+
+    public function getTaxSummaryAttribute()
+    {
+        return $this->form_data['tax_summary'] ?? [];
     }
 }

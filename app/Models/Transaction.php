@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use App\Observers\TransactionObserver;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Services\ExchangeRateService;
 
 class Transaction extends Model
 {
@@ -26,8 +28,33 @@ class Transaction extends Model
 
     protected $casts = [
         'reconciled' => 'boolean',
-        'exchange_rate' => 'float',
+        'exchange_rate' => 'decimal:6',
+        'amount' => 'decimal:2',
+        'transaction_date' => 'date',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::observe(TransactionObserver::class);
+
+        
+        static::creating(function ($transaction) {
+            if (!$transaction->exchange_rate) {
+                $defaultCurrency = Currency::where('is_default', true)->first();
+                if ($transaction->currency_id !== $defaultCurrency->currency_id) {
+                    $exchangeRateService = app(ExchangeRateService::class);
+                    $transaction->exchange_rate = $exchangeRateService->getExchangeRate(
+                        $transaction->currency,
+                        $defaultCurrency
+                    );
+                } else {
+                    $transaction->exchange_rate = 1;
+                }
+            }
+        });
+    }
 
     public function currency()
     {
@@ -54,13 +81,29 @@ class Transaction extends Model
         return $this->hasMany(InventoryTransaction::class);
     }
 
+
+    public function auditLogs()
+    {
+        return $this->morphMany(AuditLog::class, 'auditable');
+    }
+
+  
+    public function getAmountInCurrency(Currency $targetCurrency)
+    {
+        if ($this->currency_id === $targetCurrency->currency_id) {
+            return $this->amount;
+        }
+
+        $exchangeRateService = app(ExchangeRateService::class);
+        $rate = $exchangeRateService->getExchangeRate($this->currency, $targetCurrency);
+        
+        return $this->amount * $rate;
+    }
+
     public function getAmountInDefaultCurrency()
     {
         $defaultCurrency = Currency::where('is_default', true)->first();
-        if ($this->currency_id === $defaultCurrency->id) {
-            return $this->amount;
-        }
-        return $this->amount * $this->exchange_rate;
+        return $this->getAmountInCurrency($defaultCurrency);
     }
 
     public function updateInventory()

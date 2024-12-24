@@ -18,13 +18,19 @@ class Expense extends Model
         'approval_status',
         'rejection_reason',
         'approved_by',
-        'approved_at'
+        'approved_at',
+        'project_id',
+        'cost_center_id',
+        'is_indirect',
+        'allocation_percentage'
     ];
 
     protected $casts = [
         'date' => 'date',
         'approved_at' => 'datetime',
-        'amount' => 'decimal:2'
+        'amount' => 'decimal:2',
+        'is_indirect' => 'boolean',
+        'allocation_percentage' => 'decimal:2'
     ];
 
     public function user(): BelongsTo
@@ -35,6 +41,16 @@ class Expense extends Model
     public function approver(): BelongsTo
     {
         return $this->belongsTo(User::class, 'approved_by');
+    }
+
+    public function project(): BelongsTo
+    {
+        return $this->belongsTo(Project::class);
+    }
+
+    public function costCenter(): BelongsTo
+    {
+        return $this->belongsTo(CostCenter::class);
     }
 
     public function approve()
@@ -63,5 +79,13 @@ class Expense extends Model
     public function isPending(): bool
     {
         return $this->approval_status === 'pending';
+    }
+
+    public function getAllocatedAmount()
+    {
+        if ($this->is_indirect) {
+            return $this->amount * ($this->allocation_percentage / 100);
+        }
+        return $this->amount;
     }
 }
