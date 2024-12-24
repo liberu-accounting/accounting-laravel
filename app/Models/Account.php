@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Services\ExchangeRateService;
 
 class Account extends Model
 {
@@ -18,38 +19,59 @@ class Account extends Model
         'account_type',
         'balance',
         'currency_id',
+        'parent_id',
+        'industry_type'
+    ];
+
+    protected $casts = [
+        'balance' => 'decimal:2',
     ];
 
     public function user()
     {
-         return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class);
     }
 
     public function currency()
     {
-         return $this->belongsTo(Currency::class);
+        return $this->belongsTo(Currency::class);
+    }
+
+    public function parent()
+    {
+        return $this->belongsTo(Account::class, 'parent_id');
+    }
+
+    public function children()
+    {
+        return $this->hasMany(Account::class, 'parent_id');
     }
 
     public function transactions()
     {
-         return $this->hasMany(Transaction::class);
+        return $this->hasMany(Transaction::class);
     }
 
     public function categories()
     {
-         return $this->belongsToMany(Category::class);
+        return $this->belongsToMany(Category::class);
+    }
+
+    public function getBalanceInCurrency(Currency $targetCurrency)
+    {
+        if ($this->currency_id === $targetCurrency->currency_id) {
+            return $this->balance;
+        }
+
+        $exchangeRateService = app(ExchangeRateService::class);
+        $rate = $exchangeRateService->getExchangeRate($this->currency, $targetCurrency);
+        
+        return $this->balance * $rate;
     }
 
     public function getBalanceInDefaultCurrency()
     {
         $defaultCurrency = Currency::where('is_default', true)->first();
-        if ($this->currency_id === $defaultCurrency->id) {
-            return $this->balance;
-        }
-        $exchangeRate = ExchangeRate::where('from_currency_id', $this->currency_id)
-            ->where('to_currency_id', $defaultCurrency->id)
-            ->latest('date')
-            ->first();
-        return $this->balance * $exchangeRate->rate;
+        return $this->getBalanceInCurrency($defaultCurrency);
     }
 }

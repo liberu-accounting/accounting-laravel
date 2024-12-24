@@ -4,56 +4,70 @@ namespace App\Services;
 
 use App\Models\Transaction;
 use App\Models\Account;
+use App\Models\Currency;
 use Illuminate\Support\Facades\DB;
 
 class GeneralLedgerService
 {
-    public function getAccountBalances($startDate, $endDate)
+    protected $exchangeRateService;
+    
+    public function __construct(ExchangeRateService $exchangeRateService)
     {
-        return Account::with(['debitTransactions' => function ($query) use ($startDate, $endDate) {
-            $query->whereBetween('transaction_date', [$startDate, $endDate]);
-        }, 'creditTransactions' => function ($query) use ($startDate, $endDate) {
+        $this->exchangeRateService = $exchangeRateService;
+    }
+
+    public function getAccountBalances($startDate, $endDate, Currency $displayCurrency = null)
+    {
+        if (!$displayCurrency) {
+            $displayCurrency = Currency::where('is_default', true)->first();
+        }
+
+        return Account::with(['transactions' => function ($query) use ($startDate, $endDate) {
             $query->whereBetween('transaction_date', [$startDate, $endDate]);
         }])
         ->get()
-        ->map(function ($account) {
-            $debitSum = $account->debitTransactions->sum('amount');
-            $creditSum = $account->creditTransactions->sum('amount');
-            $balance = $debitSum - $creditSum;
+        ->map(function ($account) use ($displayCurrency) {
+            $balance = $account->getBalanceInCurrency($displayCurrency);
             
             return [
-                'account_id' => $account->id,
-                'account_name' => $account->name,
+                'account_id' => $account->account_id,
+                'account_name' => $account->account_name,
                 'balance' => $balance,
+                'currency' => $displayCurrency->code,
             ];
         });
     }
 
-    public function getTrialBalance($date)
+    public function getTrialBalance($date, Currency $displayCurrency = null)
     {
-        return Account::with(['debitTransactions' => function ($query) use ($date) {
-            $query->where('transaction_date', '<=', $date);
-        }, 'creditTransactions' => function ($query) use ($date) {
+        if (!$displayCurrency) {
+            $displayCurrency = Currency::where('is_default', true)->first();
+        }
+
+        return Account::with(['transactions' => function ($query) use ($date) {
             $query->where('transaction_date', '<=', $date);
         }])
         ->get()
-        ->map(function ($account) {
-            $debitSum = $account->debitTransactions->sum('amount');
-            $creditSum = $account->creditTransactions->sum('amount');
-            $balance = $debitSum - $creditSum;
+        ->map(function ($account) use ($displayCurrency) {
+            $balance = $account->getBalanceInCurrency($displayCurrency);
             
             return [
-                'account_id' => $account->id,
-                'account_name' => $account->name,
+                'account_id' => $account->account_id,
+                'account_name' => $account->account_name,
                 'debit' => $balance > 0 ? $balance : 0,
                 'credit' => $balance < 0 ? abs($balance) : 0,
+                'currency' => $displayCurrency->code,
             ];
         });
     }
 
-    public function getBudgetComparison($startDate, $endDate)
+    public function getBudgetComparison($startDate, $endDate, Currency $displayCurrency = null)
     {
+        if (!$displayCurrency) {
+            $displayCurrency = Currency::where('is_default', true)->first();
+        }
+
         $budgetService = new BudgetService();
-        return $budgetService->getBudgetComparison($startDate, $endDate);
+        return $budgetService->getBudgetComparison($startDate, $endDate, $displayCurrency);
     }
 }
