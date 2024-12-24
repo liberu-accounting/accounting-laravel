@@ -35,6 +35,11 @@ class Invoice extends Model
         return $this->belongsTo(TaxRate::class);
     }
 
+    public function timeEntries()
+    {
+        return $this->hasMany(TimeEntry::class, 'invoice_id');
+    }
+
     public function calculateTax()
     {
         if (!$this->taxRate) {
@@ -49,5 +54,11 @@ class Invoice extends Model
     public function getTotalWithTax()
     {
         return $this->total_amount + $this->tax_amount;
+    }
+
+    public function calculateTotalFromTimeEntries()
+    {
+        $this->total_amount = $this->timeEntries->sum('total_amount');
+        return $this->total_amount;
     }
 }
