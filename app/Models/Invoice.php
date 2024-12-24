@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Barryvdh\DomPDF\Facade\Pdf;
-use App\Services\ExchangeRateService;
 
 class Invoice extends Model
 {
@@ -23,7 +23,11 @@ class Invoice extends Model
         "tax_rate_id",
         "payment_status",
         "notes",
-        "currency_id"
+        "is_recurring",
+        "recurrence_frequency",
+        "recurrence_start",
+        "recurrence_end",
+        "last_generated"
     ];
 
     protected $casts = [
@@ -31,16 +35,15 @@ class Invoice extends Model
         'tax_amount' => 'decimal:2',
         'invoice_date' => 'date',
         'due_date' => 'date',
+        'is_recurring' => 'boolean',
+        'recurrence_start' => 'date',
+        'recurrence_end' => 'date',
+        'last_generated' => 'date'
     ];
 
     public function customer()
     {
         return $this->belongsTo(Customer::class);
-    }
-
-    public function currency()
-    {
-        return $this->belongsTo(Currency::class, 'currency_id');
     }
 
     public function taxRate()
@@ -51,26 +54,6 @@ class Invoice extends Model
     public function timeEntries()
     {
         return $this->hasMany(TimeEntry::class, 'invoice_id');
-    }
-
-    public function getAmountInDefaultCurrency()
-    {
-        if (!$this->currency_id) {
-            return $this->total_amount;
-        }
-
-        $defaultCurrency = Currency::where('is_default', true)->first();
-        if ($this->currency_id === $defaultCurrency->currency_id) {
-            return $this->total_amount;
-        }
-
-        $exchangeRateService = app(ExchangeRateService::class);
-        $rate = $exchangeRateService->getExchangeRate(
-            $this->currency,
-            $defaultCurrency
-        );
-        
-        return $this->total_amount * $rate;
     }
 
     public function calculateTax()
@@ -115,26 +98,58 @@ class Invoice extends Model
             'invoice' => $this,
             'customer' => $this->customer,
             'tax_rate' => $this->taxRate,
-            'currency' => $this->currency,
         ];
         
         $pdf = PDF::loadView('invoices.template', $data);
         return $pdf->download('invoice_' . $this->invoice_number . '.pdf');
     }
 
+    public function generateRecurring()
+    {
+        if (!$this->is_recurring || !$this->shouldGenerateNew()) {
+            return;
+        }
+
+        $newInvoice = $this->replicate();
+        $newInvoice->invoice_date = $this->getNextDate();
+        $newInvoice->due_date = $this->getNextDate()->addDays(30);
+        $newInvoice->payment_status = 'pending';
+        $newInvoice->save();
+
+        $this->last_generated = now();
+        $this->save();
+    }
+
+    private function shouldGenerateNew(): bool 
+    {
+        if ($this->recurrence_end && $this->recurrence_end < now()) {
+            return false;
+        }
+
+        $lastDate = $this->last_generated ?? $this->recurrence_start;
+        return $this->getNextDate()->lte(now());
+    }
+
+    private function getNextDate(): Carbon
+    {
+        $lastDate = $this->last_generated ?? $this->recurrence_start;
+        
+        return match($this->recurrence_frequency) {
+            'daily' => $lastDate->addDay(),
+            'weekly' => $lastDate->addWeek(),
+            'monthly' => $lastDate->addMonth(),
+            'yearly' => $lastDate->addYear(),
+            default => $lastDate
+        };
+    }
+
     protected static function boot()
     {
         parent::boot();
         
-        static::observe(InvoiceObserver::class);
-        
         static::creating(function ($invoice) {
             if (empty($invoice->invoice_number)) {
                 $invoice->invoice_number = 'INV-' . str_pad(static::max('invoice_id') + 1, 6, '0', STR_PAD_LEFT);
-            }
-            
-            if (empty($invoice->currency_id)) {
-                $invoice->currency_id = Currency::where('is_default', true)->first()->currency_id;
             }
         });
     }

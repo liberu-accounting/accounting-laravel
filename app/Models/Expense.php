@@ -4,12 +4,11 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Auth;
 use App\Notifications\ExpenseApprovalNotification;
-use App\Services\ExchangeRateService;
 
 class Expense extends Model
 {
@@ -25,8 +24,11 @@ class Expense extends Model
         'cost_center_id',
         'is_indirect',
         'allocation_percentage',
-        'supplier_id'
-        'currency_id'
+        'is_recurring',
+        'recurrence_frequency',
+        'recurrence_start',
+        'recurrence_end',
+        'last_generated'
     ];
 
     protected $casts = [
@@ -34,7 +36,11 @@ class Expense extends Model
         'approved_at' => 'datetime',
         'amount' => 'decimal:2',
         'is_indirect' => 'boolean',
-        'allocation_percentage' => 'decimal:2'
+        'allocation_percentage' => 'decimal:2',
+        'is_recurring' => 'boolean',
+        'recurrence_start' => 'date',
+        'recurrence_end' => 'date',
+        'last_generated' => 'date'
     ];
 
     public function user(): BelongsTo
@@ -55,39 +61,6 @@ class Expense extends Model
     public function costCenter(): BelongsTo
     {
         return $this->belongsTo(CostCenter::class);
-    }
-
-    public function categories(): BelongsToMany
-    {
-        return $this->belongsToMany(Category::class);
-    }
-    public function supplier(): BelongsTo
-    {
-        return $this->belongsTo(Supplier::class, 'supplier_id', 'supplier_id');
-    }
-    public function currency(): BelongsTo
-    {
-        return $this->belongsTo(Currency::class, 'currency_id');
-    }
-
-    public function getAmountInDefaultCurrency()
-    {
-        if (!$this->currency_id) {
-            return $this->amount;
-        }
-
-        $defaultCurrency = Currency::where('is_default', true)->first();
-        if ($this->currency_id === $defaultCurrency->currency_id) {
-            return $this->amount;
-        }
-
-        $exchangeRateService = app(ExchangeRateService::class);
-        $rate = $exchangeRateService->getExchangeRate(
-            $this->currency,
-            $defaultCurrency
-        );
-        
-        return $this->amount * $rate;
     }
 
     public function approve()
@@ -120,21 +93,49 @@ class Expense extends Model
 
     public function getAllocatedAmount()
     {
-        $amount = $this->is_indirect ? 
-            $this->amount * ($this->allocation_percentage / 100) : 
-            $this->amount;
-
-        return $this->getAmountInDefaultCurrency($amount);
+        if ($this->is_indirect) {
+            return $this->amount * ($this->allocation_percentage / 100);
+        }
+        return $this->amount;
     }
 
-    protected static function boot()
+    public function generateRecurring()
     {
-        parent::boot();
+        if (!$this->is_recurring || !$this->shouldGenerateNew()) {
+            return;
+        }
+
+        $newExpense = $this->replicate();
+        $newExpense->date = $this->getNextDate();
+        $newExpense->approval_status = 'pending';
+        $newExpense->approved_by = null;
+        $newExpense->approved_at = null;
+        $newExpense->save();
+
+        $this->last_generated = now();
+        $this->save();
+    }
+
+    private function shouldGenerateNew(): bool
+    {
+        if ($this->recurrence_end && $this->recurrence_end < now()) {
+            return false;
+        }
+
+        $lastDate = $this->last_generated ?? $this->recurrence_start;
+        return $this->getNextDate()->lte(now());
+    }
+
+    private function getNextDate(): Carbon
+    {
+        $lastDate = $this->last_generated ?? $this->recurrence_start;
         
-        static::creating(function ($expense) {
-            if (empty($expense->currency_id)) {
-                $expense->currency_id = Currency::where('is_default', true)->first()->currency_id;
-            }
-        });
+        return match($this->recurrence_frequency) {
+            'daily' => $lastDate->addDay(),
+            'weekly' => $lastDate->addWeek(),
+            'monthly' => $lastDate->addMonth(),
+            'yearly' => $lastDate->addYear(),
+            default => $lastDate
+        };
     }
 }
