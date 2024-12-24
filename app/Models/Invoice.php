@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -23,6 +24,11 @@ class Invoice extends Model
         "tax_amount",
         "tax_rate_id",
         "payment_status",
+        "is_recurring",
+        "recurrence_frequency",
+        "recurrence_start",
+        "recurrence_end",
+        "last_generated"
         "approval_status",
         "rejection_reason",
         "approved_by",
@@ -36,6 +42,10 @@ class Invoice extends Model
         'tax_amount' => 'decimal:2',
         'invoice_date' => 'date',
         'due_date' => 'date',
+        'is_recurring' => 'boolean',
+        'recurrence_start' => 'date',
+        'recurrence_end' => 'date',
+        'last_generated' => 'date'
         'approved_at' => 'datetime',
     ];
 
@@ -53,7 +63,6 @@ class Invoice extends Model
     {
         return $this->belongsTo(User::class, 'approved_by');
     }
-
     public function taxRate()
     {
         return $this->belongsTo(TaxRate::class);
@@ -113,6 +122,43 @@ class Invoice extends Model
         return $pdf->download('invoice_' . $this->invoice_number . '.pdf');
     }
 
+    public function generateRecurring()
+    {
+        if (!$this->is_recurring || !$this->shouldGenerateNew()) {
+            return;
+        }
+
+        $newInvoice = $this->replicate();
+        $newInvoice->invoice_date = $this->getNextDate();
+        $newInvoice->due_date = $this->getNextDate()->addDays(30);
+        $newInvoice->payment_status = 'pending';
+        $newInvoice->save();
+
+        $this->last_generated = now();
+        $this->save();
+    }
+
+    private function shouldGenerateNew(): bool 
+    {
+        if ($this->recurrence_end && $this->recurrence_end < now()) {
+            return false;
+        }
+
+        $lastDate = $this->last_generated ?? $this->recurrence_start;
+        return $this->getNextDate()->lte(now());
+    }
+
+    private function getNextDate(): Carbon
+    {
+        $lastDate = $this->last_generated ?? $this->recurrence_start;
+        
+        return match($this->recurrence_frequency) {
+            'daily' => $lastDate->addDay(),
+            'weekly' => $lastDate->addWeek(),
+            'monthly' => $lastDate->addMonth(),
+            'yearly' => $lastDate->addYear(),
+            default => $lastDate
+        };
     public function approve()
     {
         $this->update([
