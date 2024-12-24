@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -14,15 +15,23 @@ class Invoice extends Model
     protected $fillable = [
         "customer_id",
         "invoice_date",
+        "due_date",
         "total_amount",
         "tax_amount",
         "tax_rate_id",
-        "payment_status"
+        "payment_status",
+        "late_fee_percentage",
+        "grace_period_days",
+        "late_fee_amount"
     ];
 
     protected $casts = [
         'total_amount' => 'decimal:2',
         'tax_amount' => 'decimal:2',
+        'late_fee_amount' => 'decimal:2',
+        'late_fee_percentage' => 'decimal:2',
+        'invoice_date' => 'datetime',
+        'due_date' => 'date',
     ];
 
     public function customer()
@@ -51,9 +60,43 @@ class Invoice extends Model
         return $taxAmount;
     }
 
+    public function calculateLateFee()
+    {
+        if ($this->payment_status === 'paid' || !$this->due_date) {
+            return 0;
+        }
+
+        $dueDate = Carbon::parse($this->due_date)->addDays($this->grace_period_days);
+        $today = Carbon::now();
+
+        if ($today->lte($dueDate)) {
+            return 0;
+        }
+
+        $lateFee = $this->total_amount * ($this->late_fee_percentage / 100);
+        $this->late_fee_amount = $lateFee;
+        $this->save();
+
+        return $lateFee;
+    }
+
+    public function isOverdue()
+    {
+        if (!$this->due_date || $this->payment_status === 'paid') {
+            return false;
+        }
+        
+        return Carbon::now()->gt(Carbon::parse($this->due_date)->addDays($this->grace_period_days));
+    }
+
     public function getTotalWithTax()
     {
         return $this->total_amount + $this->tax_amount;
+    }
+
+    public function getTotalWithTaxAndLateFees()
+    {
+        return $this->getTotalWithTax() + $this->late_fee_amount;
     }
 
     public function calculateTotalFromTimeEntries()

@@ -28,42 +28,67 @@ class InvoiceResource extends Resource
     {
         return $form
             ->schema([
-                BelongsToSelect::make('customer_id')
-                    ->relationship('customer', 'customer_name')
-                    ->label('Customer'),
-                DatePicker::make('invoice_date'),
-                TextInput::make('total_amount')
-                    ->numeric()
-                    ->reactive()
-                    ->afterStateUpdated(function ($state, callable $set, $get) {
-                        if ($get('tax_rate_id')) {
-                            $taxRate = TaxRate::find($get('tax_rate_id'));
-                            $taxAmount = $state * ($taxRate->rate / 100);
-                            $set('tax_amount', $taxAmount);
-                        }
-                    }),
-                BelongsToSelect::make('tax_rate_id')
-                    ->relationship('taxRate', 'name')
-                    ->label('Tax Rate')
-                    ->reactive()
-                    ->afterStateUpdated(function ($state, callable $set, $get) {
-                        if ($state && $get('total_amount')) {
-                            $taxRate = TaxRate::find($state);
-                            $taxAmount = $get('total_amount') * ($taxRate->rate / 100);
-                            $set('tax_amount', $taxAmount);
-                        }
-                    }),
-                TextInput::make('tax_amount')
-                    ->numeric()
-                    ->disabled()
-                    ->label('Tax Amount'),
-                Select::make('payment_status')
-                    ->options([
-                        'pending' => 'Pending',
-                        'paid' => 'Paid',
-                        'failed' => 'Failed',
-                    ])
-                    ->label('Payment Status'),
+                Grid::make(2)->schema([
+                    BelongsToSelect::make('customer_id')
+                        ->relationship('customer', 'customer_name')
+                        ->label('Customer')
+                        ->columnSpan(1),
+                    DatePicker::make('invoice_date')
+                        ->columnSpan(1),
+                    DatePicker::make('due_date')
+                        ->columnSpan(1),
+                    TextInput::make('total_amount')
+                        ->numeric()
+                        ->reactive()
+                        ->afterStateUpdated(function ($state, callable $set, $get) {
+                            if ($get('tax_rate_id')) {
+                                $taxRate = TaxRate::find($get('tax_rate_id'));
+                                $taxAmount = $state * ($taxRate->rate / 100);
+                                $set('tax_amount', $taxAmount);
+                            }
+                        })
+                        ->columnSpan(1),
+                    BelongsToSelect::make('tax_rate_id')
+                        ->relationship('taxRate', 'name')
+                        ->label('Tax Rate')
+                        ->reactive()
+                        ->afterStateUpdated(function ($state, callable $set, $get) {
+                            if ($state && $get('total_amount')) {
+                                $taxRate = TaxRate::find($state);
+                                $taxAmount = $get('total_amount') * ($taxRate->rate / 100);
+                                $set('tax_amount', $taxAmount);
+                            }
+                        })
+                        ->columnSpan(1),
+                    TextInput::make('tax_amount')
+                        ->numeric()
+                        ->disabled()
+                        ->label('Tax Amount')
+                        ->columnSpan(1),
+                    TextInput::make('late_fee_percentage')
+                        ->numeric()
+                        ->label('Late Fee (%)')
+                        ->default(0)
+                        ->columnSpan(1),
+                    TextInput::make('grace_period_days')
+                        ->numeric()
+                        ->label('Grace Period (Days)')
+                        ->default(0)
+                        ->columnSpan(1),
+                    TextInput::make('late_fee_amount')
+                        ->disabled()
+                        ->numeric()
+                        ->label('Late Fee Amount')
+                        ->columnSpan(1),
+                    Select::make('payment_status')
+                        ->options([
+                            'pending' => 'Pending',
+                            'paid' => 'Paid',
+                            'failed' => 'Failed',
+                        ])
+                        ->label('Payment Status')
+                        ->columnSpan(1),
+                ]),
             ]);
     }
 
