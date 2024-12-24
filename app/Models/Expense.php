@@ -22,7 +22,8 @@ class Expense extends Model
         'project_id',
         'cost_center_id',
         'is_indirect',
-        'allocation_percentage'
+        'allocation_percentage',
+        'supplier_id'
     ];
 
     protected $casts = [
@@ -51,6 +52,11 @@ class Expense extends Model
     public function costCenter(): BelongsTo
     {
         return $this->belongsTo(CostCenter::class);
+    }
+
+    public function supplier(): BelongsTo
+    {
+        return $this->belongsTo(Supplier::class, 'supplier_id', 'supplier_id');
     }
 
     public function approve()
