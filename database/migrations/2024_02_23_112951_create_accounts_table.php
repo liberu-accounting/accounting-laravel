@@ -18,6 +18,9 @@ return new class extends Migration
             $table->string('account_name')->unique();
             $table->string('account_type');
             $table->decimal('balance', 10, 2)->default(0);
+            $table->integer('parent_id')->nullable();
+            $table->foreign('parent_id')->references('account_id')->on('accounts')->onDelete('cascade');
+            $table->string('industry_type')->nullable();
             $table->timestamps();
         });
     }
