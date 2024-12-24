@@ -24,6 +24,7 @@ class Expense extends Model
         'cost_center_id',
         'is_indirect',
         'allocation_percentage',
+        'supplier_id'
         'currency_id'
     ];
 
@@ -55,6 +56,10 @@ class Expense extends Model
         return $this->belongsTo(CostCenter::class);
     }
 
+    public function supplier(): BelongsTo
+    {
+        return $this->belongsTo(Supplier::class, 'supplier_id', 'supplier_id');
+    }
     public function currency(): BelongsTo
     {
         return $this->belongsTo(Currency::class, 'currency_id');

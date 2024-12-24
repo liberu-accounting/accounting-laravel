@@ -1,11 +1,10 @@
-
-
 <?php
 
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ExpenseResource\Pages;
 use App\Models\Expense;
+use App\Models\Supplier;
 use Filament\Forms;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -23,6 +22,25 @@ class ExpenseResource extends Resource
     {
         return $form
             ->schema([
+                Forms\Components\Select::make('supplier_id')
+                    ->relationship('supplier', 'supplier_first_name', fn ($query) => $query->orderBy('supplier_first_name'))
+                    ->searchable()
+                    ->preload()
+                    ->label('Supplier')
+                    ->createOptionForm([
+                        Forms\Components\TextInput::make('supplier_first_name')
+                            ->required()
+                            ->label('First Name'),
+                        Forms\Components\TextInput::make('supplier_last_name')
+                            ->required()
+                            ->label('Last Name'),
+                        Forms\Components\TextInput::make('supplier_email')
+                            ->email()
+                            ->label('Email'),
+                        Forms\Components\TextInput::make('supplier_phone_number')
+                            ->tel()
+                            ->label('Phone Number'),
+                    ]),
                 Forms\Components\BelongsToSelect::make('currency_id')
                     ->relationship('currency', 'code')
                     ->required()
@@ -74,6 +92,10 @@ class ExpenseResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('supplier.supplier_first_name')
+                    ->label('Supplier')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('currency.code')
                     ->label('Currency')
                     ->sortable(),
