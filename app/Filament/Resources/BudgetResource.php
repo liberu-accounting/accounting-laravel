@@ -11,6 +11,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use App\Services\BudgetService;
 
 class BudgetResource extends Resource
 {
@@ -32,6 +33,11 @@ class BudgetResource extends Resource
                 Forms\Components\TextInput::make('planned_amount')
                     ->numeric()
                     ->required(),
+                Forms\Components\TextInput::make('forecast_amount')
+                    ->numeric()
+                    ->disabled(),
+                Forms\Components\Toggle::make('is_approved')
+                    ->label('Approved'),
                 Forms\Components\TextInput::make('description')
                     ->maxLength(255),
             ]);
@@ -48,6 +54,12 @@ class BudgetResource extends Resource
                     ->date(),
                 Tables\Columns\TextColumn::make('planned_amount')
                     ->money(),
+                Tables\Columns\TextColumn::make('forecast_amount')
+                    ->money(),
+                Tables\Columns\TextColumn::make('variance')
+                    ->money(),
+                Tables\Columns\IconColumn::make('is_approved')
+                    ->boolean(),
                 Tables\Columns\TextColumn::make('description'),
             ])
             ->filters([
@@ -56,6 +68,14 @@ class BudgetResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
+                Tables\Actions\Action::make('generate_forecast')
+                    ->action(function (Budget $record) {
+                        $budgetService = new BudgetService();
+                        $budgetService->generateForecast($record);
+                    })
+                    ->requiresConfirmation()
+                    ->color('success')
+                    ->icon('heroicon-o-calculator'),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
