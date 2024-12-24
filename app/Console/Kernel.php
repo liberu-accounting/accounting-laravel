@@ -36,9 +36,13 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
 {
+    protected $commands = [
+        Commands\SendPaymentReminders::class,
+    ];
+
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('invoices:calculate-late-fees')->daily();
+        $schedule->command('invoices:send-reminders')->daily();
     }
 
     protected function commands()
