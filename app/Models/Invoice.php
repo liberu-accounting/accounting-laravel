@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Services\ExchangeRateService;
 
 class Invoice extends Model
 {
@@ -21,7 +22,8 @@ class Invoice extends Model
         "tax_amount",
         "tax_rate_id",
         "payment_status",
-        "notes"
+        "notes",
+        "currency_id"
     ];
 
     protected $casts = [
@@ -36,6 +38,11 @@ class Invoice extends Model
         return $this->belongsTo(Customer::class);
     }
 
+    public function currency()
+    {
+        return $this->belongsTo(Currency::class, 'currency_id');
+    }
+
     public function taxRate()
     {
         return $this->belongsTo(TaxRate::class);
@@ -44,6 +51,26 @@ class Invoice extends Model
     public function timeEntries()
     {
         return $this->hasMany(TimeEntry::class, 'invoice_id');
+    }
+
+    public function getAmountInDefaultCurrency()
+    {
+        if (!$this->currency_id) {
+            return $this->total_amount;
+        }
+
+        $defaultCurrency = Currency::where('is_default', true)->first();
+        if ($this->currency_id === $defaultCurrency->currency_id) {
+            return $this->total_amount;
+        }
+
+        $exchangeRateService = app(ExchangeRateService::class);
+        $rate = $exchangeRateService->getExchangeRate(
+            $this->currency,
+            $defaultCurrency
+        );
+        
+        return $this->total_amount * $rate;
     }
 
     public function calculateTax()
@@ -88,6 +115,7 @@ class Invoice extends Model
             'invoice' => $this,
             'customer' => $this->customer,
             'tax_rate' => $this->taxRate,
+            'currency' => $this->currency,
         ];
         
         $pdf = PDF::loadView('invoices.template', $data);
@@ -101,6 +129,10 @@ class Invoice extends Model
         static::creating(function ($invoice) {
             if (empty($invoice->invoice_number)) {
                 $invoice->invoice_number = 'INV-' . str_pad(static::max('invoice_id') + 1, 6, '0', STR_PAD_LEFT);
+            }
+            
+            if (empty($invoice->currency_id)) {
+                $invoice->currency_id = Currency::where('is_default', true)->first()->currency_id;
             }
         });
     }

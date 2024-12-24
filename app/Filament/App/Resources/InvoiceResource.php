@@ -39,10 +39,31 @@ class InvoiceResource extends Resource
                 DatePicker::make('invoice_date')
                     ->required(),
                 DatePicker::make('due_date'),
+                BelongsToSelect::make('currency_id')
+                    ->relationship('currency', 'code')
+                    ->required()
+                    ->searchable()
+                    ->preload()
+                    ->default(fn () => Currency::where('is_default', true)->first()?->currency_id)
+                    ->reactive()
+                    ->afterStateUpdated(function ($state, callable $set, $get) {
+                        if ($state && $get('total_amount')) {
+                            $defaultCurrency = Currency::where('is_default', true)->first();
+                            if ($state !== $defaultCurrency->currency_id) {
+                                $exchangeRateService = app(ExchangeRateService::class);
+                                $rate = $exchangeRateService->getExchangeRate(
+                                    Currency::find($state),
+                                    $defaultCurrency
+                                );
+                                $set('total_amount', $get('total_amount') * $rate);
+                            }
+                        }
+                    }),
                 TextInput::make('total_amount')
                     ->numeric()
                     ->required()
                     ->reactive()
+                    ->prefix(fn ($get) => Currency::find($get('currency_id'))?->symbol ?? '$')
                     ->afterStateUpdated(function ($state, callable $set, $get) {
                         if ($get('tax_rate_id')) {
                             $taxRate = \App\Models\TaxRate::find($get('tax_rate_id'));
@@ -62,6 +83,7 @@ class InvoiceResource extends Resource
                     }),
                 TextInput::make('tax_amount')
                     ->numeric()
+                    ->prefix(fn ($get) => Currency::find($get('currency_id'))?->symbol ?? '$')
                     ->disabled(),
                 Select::make('payment_status')
                     ->options([
@@ -72,6 +94,35 @@ class InvoiceResource extends Resource
                     ->required(),
                 Textarea::make('notes')
                     ->rows(3),
+            ]);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                TextColumn::make('invoice_number')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('customer.customer_name')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('invoice_date')
+                    ->date()
+                    ->sortable(),
+                TextColumn::make('currency.code')
+                    ->label('Currency')
+                    ->sortable(),
+                TextColumn::make('total_amount')
+                    ->money(fn ($record) => $record->currency?->code ?? 'USD')
+                    ->sortable(),
+                TextColumn::make('payment_status')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'paid' => 'success',
+                        'failed' => 'danger',
+                        default => 'warning',
+                    }),
             ]);
     }
 
