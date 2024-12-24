@@ -82,6 +82,43 @@ class BankStatementResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('import')
+                    ->action(function (BankStatement $record, array $data) {
+                        $importService = new BankStatementImportService();
+                        
+                        if ($data['statement_file']) {
+                            $path = storage_path('app/' . $data['statement_file']);
+                            $extension = pathinfo($path, PATHINFO_EXTENSION);
+                            
+                            $transactions = match($extension) {
+                                'csv' => $importService->importFromCsv($path, $record),
+                                'ofx' => $importService->importFromOfx($path, $record),
+                                default => throw new \Exception('Unsupported file format')
+                            };
+                            
+                            Notification::make()
+                                ->title('Import Complete')
+                                ->body("Imported {$transactions->count()} transactions")
+                                ->success()
+                                ->send();
+                        }
+                    })
+                    ->form([
+                        FileUpload::make('statement_file')
+                            ->label('Import Statement')
+                            ->acceptedFileTypes(['.csv', '.ofx'])
+                            ->required()
+                    ])
+                    ->icon('heroicon-o-arrow-up-tray'),
+                Tables\Actions\Action::make('review_matches')
+                    ->action(function (BankStatement $record) {
+                        return view('bank-statements.review-matches', [
+                            'bankStatement' => $record,
+                            'reconciliation' => (new ReconciliationService())->reconcile($record)
+                        ]);
+                    })
+                    ->icon('heroicon-o-eye')
+                    ->visible(fn (BankStatement $record) => $record->transactions()->exists()),
                 Tables\Actions\Action::make('reconcile')
                     ->action(function (BankStatement $record) {
                         $reconciliationService = new ReconciliationService();
