@@ -1,11 +1,10 @@
-
-
 <?php
 
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ExpenseResource\Pages;
 use App\Models\Expense;
+use App\Models\Supplier;
 use Filament\Forms;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -23,10 +22,49 @@ class ExpenseResource extends Resource
     {
         return $form
             ->schema([
+                Forms\Components\Select::make('supplier_id')
+                    ->relationship('supplier', 'supplier_first_name', fn ($query) => $query->orderBy('supplier_first_name'))
+                    ->searchable()
+                    ->preload()
+                    ->label('Supplier')
+                    ->createOptionForm([
+                        Forms\Components\TextInput::make('supplier_first_name')
+                            ->required()
+                            ->label('First Name'),
+                        Forms\Components\TextInput::make('supplier_last_name')
+                            ->required()
+                            ->label('Last Name'),
+                        Forms\Components\TextInput::make('supplier_email')
+                            ->email()
+                            ->label('Email'),
+                        Forms\Components\TextInput::make('supplier_phone_number')
+                            ->tel()
+                            ->label('Phone Number'),
+                    ]),
+                Forms\Components\BelongsToSelect::make('currency_id')
+                    ->relationship('currency', 'code')
+                    ->required()
+                    ->searchable()
+                    ->preload()
+                    ->default(fn () => Currency::where('is_default', true)->first()?->currency_id)
+                    ->reactive()
+                    ->afterStateUpdated(function ($state, callable $set, $get) {
+                        if ($state && $get('amount')) {
+                            $defaultCurrency = Currency::where('is_default', true)->first();
+                            if ($state !== $defaultCurrency->currency_id) {
+                                $exchangeRateService = app(ExchangeRateService::class);
+                                $rate = $exchangeRateService->getExchangeRate(
+                                    Currency::find($state),
+                                    $defaultCurrency
+                                );
+                                $set('amount', $get('amount') * $rate);
+                            }
+                        }
+                    }),
                 Forms\Components\TextInput::make('amount')
                     ->required()
                     ->numeric()
-                    ->prefix('$')
+                    ->prefix(fn ($get) => Currency::find($get('currency_id'))?->symbol ?? '$')
                     ->minValue(0.01)
                     ->step(0.01),
                 Forms\Components\TextInput::make('description')
@@ -52,6 +90,41 @@ class ExpenseResource extends Resource
                     ->visible(fn (?Model $record) => $record?->approval_status === 'rejected')
                     ->maxLength(1000)
                     ->columnSpanFull(),
+            ]);
+    }
+
+    public static function table(Tables\Table $table): Tables\Table
+    {
+        return $table
+            ->columns([
+                Tables\Columns\TextColumn::make('supplier.supplier_first_name')
+                    ->label('Supplier')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('currency.code')
+                    ->label('Currency')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('amount')
+                    ->money(fn ($record) => $record->currency?->code ?? 'USD')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('description')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('date')
+                    ->date()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('user.name')
+                    ->label('Submitted By')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('approval_status')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'approved' => 'success',
+                        'rejected' => 'danger',
+                        default => 'warning',
+                    }),
+                Tables\Columns\TextColumn::make('approver.name')
+                    ->label('Approved By')
+                    ->visible(fn (Model $record): bool => $record->approved_by !== null),
             ]);
     }
 
