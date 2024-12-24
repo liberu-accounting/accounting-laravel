@@ -52,7 +52,21 @@ class Invoice extends Model
             return 0;
         }
 
-        $taxAmount = $this->total_amount * ($this->taxRate->rate / 100);
+        $baseAmount = $this->total_amount;
+        $previousTaxes = 0;
+        
+        if ($this->taxRate->is_compound) {
+            // Get all non-compound taxes first
+            $nonCompoundTaxes = TaxRate::where('is_active', true)
+                ->where('is_compound', false)
+                ->get();
+                
+            foreach ($nonCompoundTaxes as $tax) {
+                $previousTaxes += $tax->calculateTax($baseAmount);
+            }
+        }
+
+        $taxAmount = $this->taxRate->calculateTax($baseAmount, $previousTaxes);
         $this->tax_amount = $taxAmount;
         return $taxAmount;
     }

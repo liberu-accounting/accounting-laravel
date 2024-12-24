@@ -27,6 +27,19 @@ class TaxRate extends Model
         'is_active' => 'boolean'
     ];
 
+    public function calculateTax($amount, $previousTaxes = 0)
+    {
+        if (!$this->is_active) {
+            return 0;
+        }
+
+        $taxableAmount = $this->is_compound ? 
+            $amount + $previousTaxes : 
+            $amount;
+            
+        return $taxableAmount * ($this->rate / 100);
+    }
+
     public function invoices()
     {
         return $this->hasMany(Invoice::class);
