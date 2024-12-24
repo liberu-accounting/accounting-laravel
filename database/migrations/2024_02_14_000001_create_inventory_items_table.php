@@ -20,6 +20,8 @@ return new class extends Migration
             $table->integer('reorder_point')->default(0);
             $table->foreignId('account_id')->constrained('accounts');
             $table->foreignId('category_id')->nullable()->constrained('categories');
+            $table->enum('valuation_method', ['fifo', 'lifo', 'average'])->default('fifo');
+            $table->decimal('average_cost', 15, 2)->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
