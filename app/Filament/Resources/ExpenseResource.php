@@ -73,6 +73,11 @@ class ExpenseResource extends Resource
                 Forms\Components\DatePicker::make('date')
                     ->required()
                     ->maxDate(now()),
+                Forms\Components\Select::make('categories')
+                    ->multiple()
+                    ->relationship('categories', 'name')
+                    ->preload()
+                    ->required(),
                 Forms\Components\Select::make('approval_status')
                     ->options([
                         'pending' => 'Pending',
@@ -135,6 +140,10 @@ class ExpenseResource extends Resource
                 Tables\Columns\TextColumn::make('date')
                     ->date()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('categories.name')
+                    ->badge()
+                    ->separator(',')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Submitted By')
                     ->searchable(),
@@ -156,6 +165,10 @@ class ExpenseResource extends Resource
                         'approved' => 'Approved',
                         'rejected' => 'Rejected',
                     ]),
+                Tables\Filters\SelectFilter::make('categories')
+                    ->relationship('categories', 'name')
+                    ->multiple()
+                    ->preload(),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
