@@ -10,6 +10,9 @@ use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Select;
+use Filament\Tables\Actions\Action;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\App\Resources\AssetResource\Pages;
@@ -25,14 +28,30 @@ class AssetResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('asset_name'),
+                TextInput::make('asset_name')
+                    ->required(),
                 TextInput::make('asset_cost')
                     ->numeric()
+                    ->required()
                     ->step('0.01')
                     ->min('0'),
                 TextInput::make('useful_life_years')
                     ->numeric()
+                    ->required()
                     ->min('0'),
+                TextInput::make('salvage_value')
+                    ->numeric()
+                    ->required()
+                    ->step('0.01')
+                    ->min('0'),
+                Select::make('depreciation_method')
+                    ->options([
+                        'straight_line' => 'Straight Line',
+                        'reducing_balance' => 'Reducing Balance'
+                    ])
+                    ->required(),
+                DatePicker::make('acquisition_date')
+                    ->required()
             ]);
     }
 
@@ -44,10 +63,14 @@ class AssetResource extends Resource
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('asset_cost')
-                    ->searchable()
+                    ->money('USD')
                     ->sortable(),
                 TextColumn::make('useful_life_years')
-                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('depreciation_method')
+                    ->sortable(),
+                TextColumn::make('salvage_value')
+                    ->money('USD')
                     ->sortable(),
             ])
             ->filters([
@@ -55,6 +78,14 @@ class AssetResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Action::make('calculate_depreciation')
+                    ->action(fn (Asset $record) => $record->calculateDepreciation())
+                    ->button()
+                    ->label('Calculate Depreciation'),
+                Action::make('view_schedule')
+                    ->url(fn (Asset $record) => route('filament.app.resources.assets.depreciation-schedule', $record))
+                    ->button()
+                    ->label('View Schedule')
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
