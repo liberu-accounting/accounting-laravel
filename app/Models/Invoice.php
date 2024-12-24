@@ -98,6 +98,8 @@ class Invoice extends Model
     {
         parent::boot();
         
+        static::observe(InvoiceObserver::class);
+        
         static::creating(function ($invoice) {
             if (empty($invoice->invoice_number)) {
                 $invoice->invoice_number = 'INV-' . str_pad(static::max('invoice_id') + 1, 6, '0', STR_PAD_LEFT);
