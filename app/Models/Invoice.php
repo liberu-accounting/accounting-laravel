@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class Invoice extends Model
 {
@@ -14,23 +14,20 @@ class Invoice extends Model
 
     protected $fillable = [
         "customer_id",
+        "invoice_number",
         "invoice_date",
         "due_date",
         "total_amount",
         "tax_amount",
         "tax_rate_id",
         "payment_status",
-        "late_fee_percentage",
-        "grace_period_days",
-        "late_fee_amount"
+        "notes"
     ];
 
     protected $casts = [
         'total_amount' => 'decimal:2',
         'tax_amount' => 'decimal:2',
-        'late_fee_amount' => 'decimal:2',
-        'late_fee_percentage' => 'decimal:2',
-        'invoice_date' => 'datetime',
+        'invoice_date' => 'date',
         'due_date' => 'date',
     ];
 
@@ -60,48 +57,37 @@ class Invoice extends Model
         return $taxAmount;
     }
 
-    public function calculateLateFee()
-    {
-        if ($this->payment_status === 'paid' || !$this->due_date) {
-            return 0;
-        }
-
-        $dueDate = Carbon::parse($this->due_date)->addDays($this->grace_period_days);
-        $today = Carbon::now();
-
-        if ($today->lte($dueDate)) {
-            return 0;
-        }
-
-        $lateFee = $this->total_amount * ($this->late_fee_percentage / 100);
-        $this->late_fee_amount = $lateFee;
-        $this->save();
-
-        return $lateFee;
-    }
-
-    public function isOverdue()
-    {
-        if (!$this->due_date || $this->payment_status === 'paid') {
-            return false;
-        }
-        
-        return Carbon::now()->gt(Carbon::parse($this->due_date)->addDays($this->grace_period_days));
-    }
-
     public function getTotalWithTax()
     {
         return $this->total_amount + $this->tax_amount;
-    }
-
-    public function getTotalWithTaxAndLateFees()
-    {
-        return $this->getTotalWithTax() + $this->late_fee_amount;
     }
 
     public function calculateTotalFromTimeEntries()
     {
         $this->total_amount = $this->timeEntries->sum('total_amount');
         return $this->total_amount;
+    }
+
+    public function generatePDF()
+    {
+        $data = [
+            'invoice' => $this,
+            'customer' => $this->customer,
+            'tax_rate' => $this->taxRate,
+        ];
+        
+        $pdf = PDF::loadView('invoices.template', $data);
+        return $pdf->download('invoice_' . $this->invoice_number . '.pdf');
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+        
+        static::creating(function ($invoice) {
+            if (empty($invoice->invoice_number)) {
+                $invoice->invoice_number = 'INV-' . str_pad(static::max('invoice_id') + 1, 6, '0', STR_PAD_LEFT);
+            }
+        });
     }
 }
