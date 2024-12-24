@@ -1,5 +1,3 @@
-
-
 <?php
 
 namespace App\Filament\Resources;
@@ -43,10 +41,30 @@ class ExpenseResource extends Resource
                             ->tel()
                             ->label('Phone Number'),
                     ]),
+                Forms\Components\BelongsToSelect::make('currency_id')
+                    ->relationship('currency', 'code')
+                    ->required()
+                    ->searchable()
+                    ->preload()
+                    ->default(fn () => Currency::where('is_default', true)->first()?->currency_id)
+                    ->reactive()
+                    ->afterStateUpdated(function ($state, callable $set, $get) {
+                        if ($state && $get('amount')) {
+                            $defaultCurrency = Currency::where('is_default', true)->first();
+                            if ($state !== $defaultCurrency->currency_id) {
+                                $exchangeRateService = app(ExchangeRateService::class);
+                                $rate = $exchangeRateService->getExchangeRate(
+                                    Currency::find($state),
+                                    $defaultCurrency
+                                );
+                                $set('amount', $get('amount') * $rate);
+                            }
+                        }
+                    }),
                 Forms\Components\TextInput::make('amount')
                     ->required()
                     ->numeric()
-                    ->prefix('$')
+                    ->prefix(fn ($get) => Currency::find($get('currency_id'))?->symbol ?? '$')
                     ->minValue(0.01)
                     ->step(0.01),
                 Forms\Components\TextInput::make('description')
@@ -78,6 +96,37 @@ class ExpenseResource extends Resource
                     ->label('Supplier')
                     ->searchable()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('currency.code')
+                    ->label('Currency')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('amount')
+                    ->money(fn ($record) => $record->currency?->code ?? 'USD')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('description')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('date')
+                    ->date()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('user.name')
+                    ->label('Submitted By')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('approval_status')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'approved' => 'success',
+                        'rejected' => 'danger',
+                        default => 'warning',
+                    }),
+                Tables\Columns\TextColumn::make('approver.name')
+                    ->label('Approved By')
+                    ->visible(fn (Model $record): bool => $record->approved_by !== null),
+            ]);
+    }
+
+    public static function table(Tables\Table $table): Tables\Table
+    {
+        return $table
+            ->columns([
                 Tables\Columns\TextColumn::make('amount')
                     ->money('USD')
                     ->sortable(),
