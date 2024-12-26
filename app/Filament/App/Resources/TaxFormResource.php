@@ -9,6 +9,7 @@ use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Forms\Components\Select;
+use App\Filament\App\Resources\TaxFormResource\Pages;
 
 class TaxFormResource extends Resource
 {
