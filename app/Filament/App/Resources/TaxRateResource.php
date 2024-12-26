@@ -8,6 +8,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use App\Filament\App\Resources\TaxRateResource\Pages;
 
 class TaxRateResource extends Resource
 {
