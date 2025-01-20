@@ -2388,16 +2388,16 @@
         },
         {
             "name": "joelbutcher/socialstream",
-            "version": "v6.2.0",
+            "version": "v6.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/joelbutcher/socialstream.git",
-                "reference": "ae4dc3906f54fa792b296036d7b3dcea9a4d259b"
+                "reference": "89e7c3c66db5f406d96a51f68ece86b3b4bd21ea"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/joelbutcher/socialstream/zipball/ae4dc3906f54fa792b296036d7b3dcea9a4d259b",
-                "reference": "ae4dc3906f54fa792b296036d7b3dcea9a4d259b",
+                "url": "https://api.github.com/repos/joelbutcher/socialstream/zipball/89e7c3c66db5f406d96a51f68ece86b3b4bd21ea",
+                "reference": "89e7c3c66db5f406d96a51f68ece86b3b4bd21ea",
                 "shasum": ""
             },
             "require": {
@@ -2408,12 +2408,13 @@
                 "php": "^8.2"
             },
             "require-dev": {
-                "laravel/breeze": "^2.0",
+                "laravel/breeze": "^2.3",
                 "laravel/jetstream": "^5.0",
                 "laravel/sanctum": "^4.0",
                 "livewire/livewire": "^3.3.5",
                 "mockery/mockery": "^1.6",
                 "orchestra/testbench": "^9.0",
+                "orchestra/testbench-core": "^9.9.1",
                 "pestphp/pest": "^2.0",
                 "pestphp/pest-plugin-laravel": "^2.2",
                 "phpunit/phpunit": "^10.5"
@@ -2465,7 +2466,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-12-20T02:14:05+00:00"
+            "time": "2025-01-17T19:42:04+00:00"
         },
         {
             "name": "kirschbaum-development/eloquent-power-joins",
@@ -2685,16 +2686,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v11.37.0",
+            "version": "v11.38.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "6cb103d2024b087eae207654b3f4b26646119ba5"
+                "reference": "9d290aa90fcad44048bedca5219d2b872e98772a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/6cb103d2024b087eae207654b3f4b26646119ba5",
-                "reference": "6cb103d2024b087eae207654b3f4b26646119ba5",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/9d290aa90fcad44048bedca5219d2b872e98772a",
+                "reference": "9d290aa90fcad44048bedca5219d2b872e98772a",
                 "shasum": ""
             },
             "require": {
@@ -2895,7 +2896,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2025-01-02T20:10:21+00:00"
+            "time": "2025-01-15T00:06:46+00:00"
         },
         {
             "name": "laravel/jetstream",
@@ -3056,16 +3057,16 @@
         },
         {
             "name": "laravel/prompts",
-            "version": "v0.3.2",
+            "version": "v0.3.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/prompts.git",
-                "reference": "0e0535747c6b8d6d10adca8b68293cf4517abb0f"
+                "reference": "749395fcd5f8f7530fe1f00dfa84eb22c83d94ea"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/prompts/zipball/0e0535747c6b8d6d10adca8b68293cf4517abb0f",
-                "reference": "0e0535747c6b8d6d10adca8b68293cf4517abb0f",
+                "url": "https://api.github.com/repos/laravel/prompts/zipball/749395fcd5f8f7530fe1f00dfa84eb22c83d94ea",
+                "reference": "749395fcd5f8f7530fe1f00dfa84eb22c83d94ea",
                 "shasum": ""
             },
             "require": {
@@ -3109,9 +3110,9 @@
             "description": "Add beautiful and user-friendly forms to your command-line applications.",
             "support": {
                 "issues": "https://github.com/laravel/prompts/issues",
-                "source": "https://github.com/laravel/prompts/tree/v0.3.2"
+                "source": "https://github.com/laravel/prompts/tree/v0.3.3"
             },
-            "time": "2024-11-12T14:59:47+00:00"
+            "time": "2024-12-30T15:53:31+00:00"
         },
         {
             "name": "laravel/sanctum",
@@ -12974,5 +12975,5 @@
         "php": "^8.3"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.3.0"
 }
