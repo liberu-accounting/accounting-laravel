@@ -8,27 +8,25 @@ use App\Models\Supplier;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
-use Illuminate\Database\Eloquent\Builder;
-use Filament\Forms\Components\BelongsToSelect;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\App\Resources\SupplierResource\Pages;
-use App\Filament\App\Resources\SupplierResource\RelationManagers;
+use Filament\Forms\Components\Select;
 
 class SupplierResource extends Resource
 {
     protected static ?string $model = Supplier::class;
-
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-truck';
+    protected static ?int $navigationSort = 5;
+    protected static ?string $navigationGroup = 'Vendors';
+    protected static ?string $recordTitleAttribute = 'supplier_name';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                BelongsToSelect::make('payment_term_id')
+                Select::make('payment_term_id')
                     ->relationship('paymentTerm', 'payment_term_name')
-                    ->label('Payment Term'),
+                    ->searchable()
+                    ->preload()
+                    ->required(),
                 TextInput::make('supplier_first_name')
                     ->label('First Name'),
                 TextInput::make('supplier_last_name')

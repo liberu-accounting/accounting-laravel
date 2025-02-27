@@ -14,7 +14,6 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use App\Filament\App\Resources\ReminderSettingResource\Pages;
 
 class ReminderSettingResource extends Resource
 {
@@ -22,6 +21,12 @@ class ReminderSettingResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-bell';
     protected static ?string $navigationLabel = 'Reminder Settings';
     protected static ?string $navigationGroup = 'Settings';
+    protected static ?int $navigationSort = 1;
+    
+    public static function getNavigationGroup(): ?string
+    {
+        return static::$navigationGroup;
+    }
 
     public static function form(Form $form): Form
     {

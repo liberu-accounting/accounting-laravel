@@ -8,21 +8,17 @@ use App\Models\Asset;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
-use Filament\Tables\Actions\Action;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\App\Resources\AssetResource\Pages;
-use App\Filament\App\Resources\AssetResource\RelationManagers;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\DatePicker;
 
 class AssetResource extends Resource
 {
     protected static ?string $model = Asset::class;
-
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-cube';
+    protected static ?int $navigationSort = 4;
+    protected static ?string $navigationGroup = 'Assets';
+    protected static ?string $recordTitleAttribute = 'asset_name';
 
     public static function form(Form $form): Form
     {
