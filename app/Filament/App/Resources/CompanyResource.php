@@ -8,33 +8,40 @@ use App\Models\Company;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
+use Filament\Forms\Components\FileUpload;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\ImageColumn;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\App\Resources\CompanyResource\Pages;
-use App\Filament\App\Resources\CompanyResource\RelationManagers;
 
 class CompanyResource extends Resource
 {
     protected static ?string $model = Company::class;
-
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-building-office';
+    protected static ?int $navigationSort = 3;
+    protected static ?string $navigationGroup = 'Settings';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                TextInput::make('company_name'),
-                TextInput::make('company_address'),
-                TextInput::make('company_email'),
+                TextInput::make('company_name')
+                    ->required(),
+                TextInput::make('company_address')
+                    ->required(),
+                TextInput::make('company_email')
+                    ->email()
+                    ->required(),
                 TextInput::make('company_phone')
-                    ->numeric(),
-                TextInput::make('company_city'),
-                TextInput::make('company_tin'),
-                ImageColumn::make('company_logo')
-                    ->square(),
+                    ->tel()
+                    ->required(),
+                TextInput::make('company_city')
+                    ->required(),
+                TextInput::make('company_tin')
+                    ->required(),
+                FileUpload::make('company_logo')
+                    ->image()
+                    ->directory('company-logos')
+                    ->visibility('public'),
             ]);
     }
 
@@ -43,25 +50,24 @@ class CompanyResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('company_name')
-                ->searchable()
-                ->sortable(),
-            TextColumn::make('company_address')
-                ->searchable()
-                ->sortable(),
-            TextColumn::make('company_email')
-                ->searchable()
-                ->sortable(),
-            TextColumn::make('company_phone')
-                ->searchable()
-                ->sortable(),
-            TextColumn::make('company_city')
-                ->searchable()
-                ->sortable(),
-            TextColumn::make('company_tin')
-                ->searchable()
-                ->sortable(),
-            ImageColumn::make('company_logo'),
-                
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('company_address')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('company_email')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('company_phone')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('company_city')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('company_tin')
+                    ->searchable()
+                    ->sortable(),
+                ImageColumn::make('company_logo'),
             ])
             ->filters([
                 //
