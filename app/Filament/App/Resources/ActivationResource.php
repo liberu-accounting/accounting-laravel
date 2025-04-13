@@ -10,28 +10,27 @@ use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
-use Illuminate\Database\Eloquent\Builder;
-use Filament\Forms\Components\BelongsToSelect;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Filament\App\Resources\ActivationResource\Pages;
-use App\Filament\App\Resources\ActivationResource\RelationManagers;
+use Filament\Forms\Components\Select;
+use Filament\Tables\Columns\TextColumn\TextColumnSize;
 
 class ActivationResource extends Resource
 {
     protected static ?string $model = Activation::class;
-
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?int $navigationSort = 2;
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                BelongsToSelect::make('user_id')
+                Select::make('user_id')
                     ->relationship('user', 'email')
-                    ->preload(),
-                TextInput::make('token'),
-                TextInput::make('ip_address'),
+                    ->preload()
+                    ->searchable(),
+                TextInput::make('token')
+                    ->required(),
+                TextInput::make('ip_address')
+                    ->required(),
             ]);
     }
 
@@ -45,9 +44,10 @@ class ActivationResource extends Resource
                 TextColumn::make('ip_address')
                     ->searchable()
                     ->sortable(),
-                BelongsTo::make('user')
+                TextColumn::make('user.email')
                     ->label('User')
-                    ->relationship('user', 'email')
+                    ->searchable()
+                    ->sortable(),
             ])
             ->filters([
                 //
