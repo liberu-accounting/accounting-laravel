@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('suppliers', function (Blueprint $table) {
             $table->integer('supplier_id', true);
-            $table->integer('payment_term_id');
+            $table->unsignedBigInteger('payment_term_id');
             $table->string('supplier_first_name');
             $table->string('supplier_last_name');
             $table->string('supplier_email');
