@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('invoices', function (Blueprint $table) {
             $table->integer('invoice_id', true);
-            $table->bigInteger('customer_id');
+            $table->unsignedBigInteger('customer_id');
             $table->timestamp('invoice_date');
             $table->decimal('total_amount', 10, 2);
             $table->string('payment_status');
