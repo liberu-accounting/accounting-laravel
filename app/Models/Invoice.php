@@ -14,40 +14,40 @@ class Invoice extends Model
 
     protected $primaryKey = "invoice_id";
 
-    protected $fillable = [
-        "customer_id",
-        "vendor_id",
-        "invoice_number",
-        "invoice_date",
-        "due_date",
-        "total_amount",
-        "tax_amount",
-        "tax_rate_id",
-        "payment_status",
-        "is_recurring",
-        "recurrence_frequency",
-        "recurrence_start",
-        "recurrence_end",
-        "last_generated"
-        "approval_status",
-        "rejection_reason",
-        "approved_by",
-        "approved_at",
-        "document_path",
-        "notes"
-    ];
+   protected $fillable = [
+    "customer_id",
+    "vendor_id",
+    "invoice_number",
+    "invoice_date",
+    "due_date",
+    "total_amount",
+    "tax_amount",
+    "tax_rate_id",
+    "payment_status",
+    "is_recurring",
+    "recurrence_frequency",
+    "recurrence_start",
+    "recurrence_end",
+    "last_generated",
+    "approval_status",
+    "rejection_reason",
+    "approved_by",
+    "approved_at",
+    "document_path",
+    "notes",
+];
 
-    protected $casts = [
-        'total_amount' => 'decimal:2',
-        'tax_amount' => 'decimal:2',
-        'invoice_date' => 'date',
-        'due_date' => 'date',
-        'is_recurring' => 'boolean',
-        'recurrence_start' => 'date',
-        'recurrence_end' => 'date',
-        'last_generated' => 'date'
-        'approved_at' => 'datetime',
-    ];
+protected $casts = [
+    'total_amount' => 'decimal:2',
+    'tax_amount' => 'decimal:2',
+    'invoice_date' => 'date',
+    'due_date' => 'date',
+    'is_recurring' => 'boolean',
+    'recurrence_start' => 'date',
+    'recurrence_end' => 'date',
+    'last_generated' => 'date',
+    'approved_at' => 'datetime',
+];
 
     public function customer()
     {
@@ -159,6 +159,8 @@ class Invoice extends Model
             'yearly' => $lastDate->addYear(),
             default => $lastDate
         };
+
+    }
     public function approve()
     {
         $this->update([

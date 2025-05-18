@@ -1,7 +1,4 @@
-
-
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -19,11 +16,8 @@ class Budget extends Model
         'description',
         'forecast_amount',
         'forecast_method',
-        'is_approved'
-        'category'
-    ];
-
-    protected $casts = [
+        'is_approved',
+        'category',
         'start_date' => 'date',
         'end_date' => 'date',
         'planned_amount' => 'decimal:2',
@@ -45,6 +39,8 @@ class Budget extends Model
     {
         if ($this->planned_amount == 0) return 0;
         return ($this->forecast_amount - $this->planned_amount) / $this->planned_amount * 100;
+
+    }
 
     public function project(): BelongsTo
     {

@@ -1,7 +1,4 @@
-
-
 <?php
-
 namespace App\Console\Commands;
 
 use App\Models\Invoice;
@@ -18,7 +15,7 @@ class SendPaymentReminders extends Command
     public function handle()
     {
         $settings = ReminderSetting::first();
-        
+
         if (!$settings || !$settings->is_active) {
             $this->info('Reminder system is not active');
             return;
@@ -34,15 +31,15 @@ class SendPaymentReminders extends Command
 
         foreach ($overdueInvoices as $invoice) {
             if ($invoice->customer && $invoice->customer->email) {
-                if (!$invoice->last_reminder_sent_at || 
+                if (!$invoice->last_reminder_sent_at ||
                     Carbon::parse($invoice->last_reminder_sent_at)->addDays($settings->reminder_frequency_days)->isPast()) {
-                    
+
                     $invoice->customer->notify(new PaymentReminderNotification($invoice));
-                    
+
                     $invoice->reminders_sent++;
                     $invoice->last_reminder_sent_at = now();
                     $invoice->save();
-                    
+
                     $this->info("Reminder sent for Invoice #{$invoice->invoice_id}");
                 }
             }

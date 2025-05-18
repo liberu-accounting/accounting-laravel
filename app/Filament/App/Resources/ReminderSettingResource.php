@@ -81,8 +81,8 @@ class ReminderSettingResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ListRecords::route('/'),
-            'edit' => EditRecord::route('/{record}/edit'),
+            'index' => \App\Filament\App\Resources\ReminderSettingResource\Pages\ListReminderSettings::route('/'),
+            'edit' => \App\Filament\App\Resources\ReminderSettingResource\Pages\EditReminderSetting::route('/{record}/edit'),
         ];
     }
 }
