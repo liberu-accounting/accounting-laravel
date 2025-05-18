@@ -12,6 +12,7 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\ImageColumn;
+use App\Filament\App\Resources\CompanyResource\Pages;
 
 class CompanyResource extends Resource
 {
