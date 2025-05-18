@@ -9,6 +9,9 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Columns\TextColumn;
+use App\Filament\App\Resources\SupplierResource\Pages;
 
 class SupplierResource extends Resource
 {
