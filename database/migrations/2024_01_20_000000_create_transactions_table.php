@@ -21,8 +21,8 @@ return new class extends Migration
             $table->integer('credit_account_id'); 
             $table->timestamps();
 
-            $table->foreign('debit_account_id')->references('account_id')->on('accounts');
-            $table->foreign('credit_account_id')->references('account_id')->on('accounts');
+            $table->foreign('debit_account_id')->references('id')->on('accounts');
+            $table->foreign('credit_account_id')->references('id')->on('accounts');
             $table->foreign('customer_id')->references('customer_id')->on('customers');
         });
     }
