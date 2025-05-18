@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('accounts', function (Blueprint $table) {
-            $table->integer('account_id', true);
+            $table->integer('id', true);
             $table->foreignId('user_id')->constrained('users')->index()->name('users_id_foreign');
             $table->integer('account_number')->unique();
             $table->string('account_name')->unique();
