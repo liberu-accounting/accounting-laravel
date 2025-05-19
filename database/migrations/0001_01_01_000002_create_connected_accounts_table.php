@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('connected_accounts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id');
-            $table->string('provider');
-            $table->string('provider_id');
+            $table->string('provider', 100);
+            $table->string('provider_id', 100);
             $table->string('name')->nullable();
             $table->string('nickname')->nullable();
             $table->string('email')->nullable();
