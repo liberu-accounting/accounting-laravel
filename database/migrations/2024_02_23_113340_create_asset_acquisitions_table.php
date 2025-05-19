@@ -18,7 +18,8 @@ return new class extends Migration
             $table->decimal('acquisition_price', 10, 2);
             $table->timestamps();
 $table->foreignId('asset_id')->constrained()->onDelete('cascade');
-    }
+   });
+     }
 
     /**
      * Reverse the migrations.
