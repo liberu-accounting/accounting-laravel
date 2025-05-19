@@ -24,20 +24,9 @@ return new class extends Migration
         // Create the pivot table with matching column types
         Schema::create('customer_tax_rate', function (Blueprint $table) {
             // Use the same column type as in the customers table
-            $table->unsignedBigInteger('customer_id');
-            $table->unsignedBigInteger('tax_rate_id');
             
-            // Define foreign keys with matching column types
-            $table->foreign('customer_id')
-                  ->references('customer_id')
-                  ->on('customers')
-                  ->onDelete('cascade');
-                  
-            $table->foreign('tax_rate_id')
-                  ->references('tax_rate_id')
-                  ->on('tax_rates')
-                  ->onDelete('cascade');
-                  
+                  $table->foreignId('customer_id')->constrained()->onDelete('cascade');
+            $table->foreignId('tax_rate_id')->constrained()->onDelete('cascade');
             $table->primary(['customer_id', 'tax_rate_id']);
         });
     }
