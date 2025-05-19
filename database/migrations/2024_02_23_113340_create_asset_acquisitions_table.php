@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('asset_acquisitions', function (Blueprint $table) {
             $table->integer('asset_acquisition_id', true);
-            $table->integer('asset_id');
             $table->date('acquisition_date');
             $table->decimal('acquisition_price', 10, 2);
             $table->timestamps();
