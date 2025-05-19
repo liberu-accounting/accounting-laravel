@@ -17,9 +17,8 @@ return new class extends Migration
             $table->decimal('hourly_rate', 10, 2);
             $table->decimal('total_amount', 10, 2);
 
-$table->foreignId('customer_id')->constrained()->onDelete('cascade')
-    $table->foreignId('invoice_id')->constrained()->onDelete('cascade')
-
+$table->foreignId('customer_id')->constrained()->onDelete('cascade');
+    $table->foreignId('invoice_id')->constrained()->onDelete('cascade');
             
             $table->timestamps();
 
