@@ -11,7 +11,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('inventory_items', function (Blueprint $table) {
-            $table->id('inventory_item_id');
+            $table->id();
             $table->string('name');
             $table->string('sku')->unique();
             $table->text('description')->nullable();
