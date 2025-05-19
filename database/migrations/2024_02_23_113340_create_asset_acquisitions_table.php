@@ -18,7 +18,7 @@ return new class extends Migration
             $table->decimal('acquisition_price', 10, 2);
             $table->timestamps();
 
-            $table->foreign('asset_id')->references('asset_id')->on('assets');
+            $table->foreign('asset_id')->references('id')->on('assets');
         });
     }
 
