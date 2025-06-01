@@ -87,13 +87,6 @@
       0 => 'Filament\\Widgets\\WidgetsServiceProvider',
     ),
   ),
-  'intelrx/sitesettings' => 
-  array (
-    'providers' => 
-    array (
-      0 => 'Core\\Siteconfig\\SiteconfigServiceProvider',
-    ),
-  ),
   'joelbutcher/socialstream' => 
   array (
     'providers' => 

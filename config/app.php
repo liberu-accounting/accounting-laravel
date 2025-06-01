@@ -176,7 +176,6 @@ return [
         App\Providers\JetstreamServiceProvider::class,
         App\Providers\FortifyServiceProvider::class,
     App\Providers\SiteSettingsServiceProvider::class,
-    Raza9798\SiteConfig\SiteConfigServiceProvider::class,
     ])->toArray(),
 
     /*
@@ -192,6 +191,5 @@ return [
 
     'aliases' => Facade::defaultAliases()->merge([
         // 'Example' => App\Facades\Example::class,
-    'SiteSettings' => App\Facades\SiteSettings::class,
     ])->toArray(),
 ];
