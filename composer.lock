@@ -4,7 +4,11 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
+<<<<<<< HEAD
     "content-hash": "823de454f597d1e751e6bc8595733f5a",
+=======
+    "content-hash": "f9142ae8b5391a074831e86509cd0304",
+>>>>>>> 087cc7782cc8bd6814b5852b771b5cdfa393bb97
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -7503,21 +7507,21 @@
         },
         {
             "name": "stephenjude/filament-jetstream",
-            "version": "0.0.15",
+            "version": "0.0.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/stephenjude/filament-jetstream.git",
-                "reference": "3ba7bb5c59736dfae65ca00a9f6403bd5143dd20"
+                "reference": "40963cc838c6d6b7994a7e28381d76c16e6a297b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stephenjude/filament-jetstream/zipball/3ba7bb5c59736dfae65ca00a9f6403bd5143dd20",
-                "reference": "3ba7bb5c59736dfae65ca00a9f6403bd5143dd20",
+                "url": "https://api.github.com/repos/stephenjude/filament-jetstream/zipball/40963cc838c6d6b7994a7e28381d76c16e6a297b",
+                "reference": "40963cc838c6d6b7994a7e28381d76c16e6a297b",
                 "shasum": ""
             },
             "require": {
                 "filament/filament": "^3.0",
-                "illuminate/contracts": "^10.0|^11.0",
+                "illuminate/contracts": "^10.0|^11.0|^12.0",
                 "laravel/jetstream": "^4.2|^5.0",
                 "php": "^8.1",
                 "spatie/laravel-package-tools": "^1.15.0"
@@ -7575,7 +7579,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-11-27T12:02:15+00:00"
+            "time": "2025-03-05T17:36:49+00:00"
         },
         {
             "name": "symfony/clock",
@@ -10935,6 +10939,7 @@
         },
         {
             "name": "nunomaduro/collision",
+<<<<<<< HEAD
             "version": "v8.8.0",
             "source": {
                 "type": "git",
@@ -10949,6 +10954,22 @@
             },
             "require": {
                 "filp/whoops": "^2.18.0",
+=======
+            "version": "v8.7.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nunomaduro/collision.git",
+                "reference": "586cb8181a257a2152b6a855ca8d9598878a1a26"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nunomaduro/collision/zipball/586cb8181a257a2152b6a855ca8d9598878a1a26",
+                "reference": "586cb8181a257a2152b6a855ca8d9598878a1a26",
+                "shasum": ""
+            },
+            "require": {
+                "filp/whoops": "^2.17.0",
+>>>>>>> 087cc7782cc8bd6814b5852b771b5cdfa393bb97
                 "nunomaduro/termwind": "^2.3.0",
                 "php": "^8.2.0",
                 "symfony/console": "^7.2.5"
@@ -10958,16 +10979,27 @@
                 "phpunit/phpunit": "<11.5.15 || >=13.0.0"
             },
             "require-dev": {
+<<<<<<< HEAD
                 "brianium/paratest": "^7.8.3",
                 "larastan/larastan": "^3.2",
                 "laravel/framework": "^11.44.2 || ^12.6",
+=======
+                "larastan/larastan": "^2.10.0",
+                "laravel/framework": "^11.44.2",
+>>>>>>> 087cc7782cc8bd6814b5852b771b5cdfa393bb97
                 "laravel/pint": "^1.21.2",
                 "laravel/sail": "^1.41.0",
                 "laravel/sanctum": "^4.0.8",
                 "laravel/tinker": "^2.10.1",
+<<<<<<< HEAD
                 "orchestra/testbench-core": "^9.12.0 || ^10.1",
                 "pestphp/pest": "^3.8.0",
                 "sebastian/environment": "^7.2.0 || ^8.0"
+=======
+                "orchestra/testbench-core": "^9.12.0",
+                "pestphp/pest": "^3.7.4",
+                "sebastian/environment": "^6.1.0 || ^7.2.0"
+>>>>>>> 087cc7782cc8bd6814b5852b771b5cdfa393bb97
             },
             "type": "library",
             "extra": {
@@ -11030,7 +11062,11 @@
                     "type": "patreon"
                 }
             ],
+<<<<<<< HEAD
             "time": "2025-04-03T14:33:09+00:00"
+=======
+            "time": "2025-03-14T22:37:40+00:00"
+>>>>>>> 087cc7782cc8bd6814b5852b771b5cdfa393bb97
         },
         {
             "name": "phar-io/manifest",

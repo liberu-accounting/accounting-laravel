@@ -1,5 +1,3 @@
-
-
 <?php
 
 use Illuminate\Database\Migrations\Migration;
@@ -8,34 +6,36 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
     {
         Schema::create('tax_rates', function (Blueprint $table) {
-            $table->id('tax_rate_id');
+            $table->id();
             $table->string('name');
-            $table->decimal('rate', 5, 2);
+            $table->decimal('rate', 8, 2);
             $table->text('description')->nullable();
             $table->boolean('is_compound')->default(false);
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
 
+        // Create the pivot table with matching column types
         Schema::create('customer_tax_rate', function (Blueprint $table) {
-            $table->foreignId('customer_id')->constrained('customers', 'customer_id');
-            $table->foreignId('tax_rate_id')->constrained('tax_rates', 'tax_rate_id');
+            // Use the same column type as in the customers table
+            
+                  $table->foreignId('customer_id')->constrained()->onDelete('cascade');
+            $table->foreignId('tax_rate_id')->constrained()->onDelete('cascade');
             $table->primary(['customer_id', 'tax_rate_id']);
-        });
-
-        Schema::create('supplier_tax_rate', function (Blueprint $table) {
-            $table->foreignId('supplier_id')->constrained('suppliers', 'supplier_id');
-            $table->foreignId('tax_rate_id')->constrained('tax_rates', 'tax_rate_id');
-            $table->primary(['supplier_id', 'tax_rate_id']);
         });
     }
 
-    public function down()
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
     {
-        Schema::dropIfExists('supplier_tax_rate');
         Schema::dropIfExists('customer_tax_rate');
         Schema::dropIfExists('tax_rates');
     }

@@ -12,14 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('accounts', function (Blueprint $table) {
-            $table->integer('account_id', true);
+            $table->unsignedBigInteger('id', true);
             $table->foreignId('user_id')->constrained('users')->index()->name('users_id_foreign');
             $table->integer('account_number')->unique();
             $table->string('account_name')->unique();
             $table->string('account_type');
             $table->decimal('balance', 10, 2)->default(0);
-            $table->integer('parent_id')->nullable();
-            $table->foreign('parent_id')->references('account_id')->on('accounts')->onDelete('cascade');
+            $table->foreignId('parent_id')->references('id')->on('accounts')->onDelete('cascade');
             $table->string('industry_type')->nullable();
             $table->timestamps();
         });

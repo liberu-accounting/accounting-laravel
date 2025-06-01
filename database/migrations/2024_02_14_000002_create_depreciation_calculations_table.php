@@ -12,7 +12,7 @@ return new class extends Migration
     {
         Schema::create('depreciation_calculations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('asset_id')->constrained('assets', 'asset_id');
+            $table->foreignId('asset_id')->constrained('assets', 'id');
             $table->integer('year');
             $table->decimal('depreciation_amount', 15, 2);
             $table->decimal('accumulated_depreciation', 15, 2);

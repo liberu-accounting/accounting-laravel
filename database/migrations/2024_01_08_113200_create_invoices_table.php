@@ -11,12 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('assets', function (Blueprint $table) {
-            $table->integer('asset_id', true);
-            $table->string('asset_name');
-            $table->decimal('asset_cost', 10, 2);
-            $table->integer('useful_life_years');
+        Schema::create('invoices', function (Blueprint $table) {
+            $table->id();
+            $table->timestamp('invoice_date');
+            $table->decimal('total_amount', 10, 2);
+            $table->string('payment_status');
             $table->timestamps();
+
+    $table->foreignId('customer_id')->constrained()->onDelete('cascade');
         });
     }
 
@@ -25,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('assets');
+        Schema::dropIfExists('invoices');
     }
 };

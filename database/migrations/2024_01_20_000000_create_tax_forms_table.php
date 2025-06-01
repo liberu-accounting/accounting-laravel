@@ -13,7 +13,7 @@ return new class extends Migration
         Schema::create('tax_forms', function (Blueprint $table) {
             $table->id('tax_form_id');
             $table->string('form_type'); // e.g., '1099-MISC'
-            $table->foreignId('customer_id')->constrained('customers', 'customer_id');
+            $table->foreignId('customer_id')->constrained('customers', 'id');
             $table->year('tax_year');
             $table->decimal('total_payments', 12, 2);
             $table->decimal('total_tax_withheld', 12, 2);

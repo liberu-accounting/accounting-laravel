@@ -13,14 +13,12 @@ return new class extends Migration
     {
         Schema::create('asset_acquisitions', function (Blueprint $table) {
             $table->integer('asset_acquisition_id', true);
-            $table->integer('asset_id');
             $table->date('acquisition_date');
             $table->decimal('acquisition_price', 10, 2);
             $table->timestamps();
-
-            $table->foreign('asset_id')->references('asset_id')->on('assets');
-        });
-    }
+$table->foreignId('asset_id')->constrained()->onDelete('cascade');
+   });
+     }
 
     /**
      * Reverse the migrations.

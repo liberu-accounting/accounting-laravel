@@ -11,7 +11,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('purchase_orders', function (Blueprint $table) {
-            $table->id('purchase_order_id');
+            $table->unsignedBigInteger('purchase_order_id', true);
             $table->foreignId('supplier_id')->constrained('suppliers', 'supplier_id');
             $table->string('po_number')->unique();
             $table->date('order_date');
