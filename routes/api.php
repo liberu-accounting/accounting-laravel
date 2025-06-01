@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\TransactionController;
+use App\Http\Controllers\Api\PlaidController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -21,8 +22,17 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::apiResource('transactions', TransactionController::class);
-    
+
     Route::get('/exchange-rates', function () {
         return app(App\Services\ExchangeRateService::class)->getLatestRates();
     })->middleware('throttle:60,1');
+
+    // Plaid API Routes
+    Route::prefix('plaid')->group(function () {
+        Route::post('/create-link-token', [PlaidController::class, 'createLinkToken']);
+        Route::post('/store-connection', [PlaidController::class, 'storeConnection']);
+        Route::get('/connections', [PlaidController::class, 'listConnections']);
+        Route::post('/connections/{connection}/sync', [PlaidController::class, 'syncTransactions']);
+        Route::delete('/connections/{connection}', [PlaidController::class, 'removeConnection']);
+    });
 });
