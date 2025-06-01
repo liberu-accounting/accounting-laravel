@@ -3,14 +3,15 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class Customer extends Model
+class Customer extends Authenticatable
 {
     use HasFactory, Notifiable;
 
     protected $primaryKey = 'customer_id';
+    protected $guard = 'customer';
 
     protected $fillable = [
         'customer_name',
@@ -21,7 +22,13 @@ class Customer extends Model
         'customer_city',
         'credit_limit',
         'current_balance',
-        'credit_hold'
+        'credit_hold',
+        'password',
+    ];
+
+    protected $hidden = [
+        'password',
+        'remember_token',
     ];
 
     public function invoices()
