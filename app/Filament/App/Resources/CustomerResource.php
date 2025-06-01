@@ -41,22 +41,57 @@ class CustomerResource extends Resource
             ->columns([
                 TextColumn::make('customer_name')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->label('First Name'),
                 TextColumn::make('customer_last_name')
                     ->searchable()
-                    ->sortable(),
-                TextColumn::make('customer_address'),
+                    ->sortable()
+                    ->label('Last Name'),
                 TextColumn::make('customer_email')
                     ->searchable()
-                    ->sortable(),
-                TextColumn::make('customer_phone'),
-                TextColumn::make('customer_city'),
+                    ->sortable()
+                    ->label('Email'),
+                TextColumn::make('customer_phone')
+                    ->label('Phone'),
+                TextColumn::make('customer_city')
+                    ->searchable()
+                    ->label('City'),
+                TextColumn::make('current_balance')
+                    ->money('USD')
+                    ->sortable()
+                    ->label('Balance'),
+                TextColumn::make('credit_limit')
+                    ->money('USD')
+                    ->sortable()
+                    ->label('Credit Limit'),
+                Tables\Columns\IconColumn::make('credit_hold')
+                    ->boolean()
+                    ->label('On Hold'),
+                TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('updated_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('customer_city')
+                    ->label('City')
+                    ->options(fn () => \App\Models\Customer::distinct()->pluck('customer_city', 'customer_city')->toArray()),
+                Tables\Filters\TernaryFilter::make('credit_hold')
+                    ->label('Credit Status')
+                    ->placeholder('All Customers')
+                    ->trueLabel('On Credit Hold')
+                    ->falseLabel('Not On Hold'),
+                Tables\Filters\Filter::make('over_credit_limit')
+                    ->label('Over Credit Limit')
+                    ->query(fn ($query) => $query->whereRaw('current_balance >= credit_limit AND credit_limit > 0')),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
