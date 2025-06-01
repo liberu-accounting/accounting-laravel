@@ -91,7 +91,7 @@
   array (
     'providers' => 
     array (
-      0 => 'Intelrx\\Sitesettings\\SitesettingsProvider',
+      0 => 'Core\\Siteconfig\\SiteconfigServiceProvider',
     ),
   ),
   'joelbutcher/socialstream' => 
@@ -195,6 +195,13 @@
     'providers' => 
     array (
       0 => 'Termwind\\Laravel\\TermwindServiceProvider',
+    ),
+  ),
+  'raza9798/siteconfig' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Core\\Siteconfig\\SiteconfigServiceProvider',
     ),
   ),
   'ryangjchandler/blade-capture-directive' => 
