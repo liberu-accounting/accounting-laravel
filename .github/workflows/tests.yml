@@ -35,9 +35,10 @@ jobs:
       run: php artisan key:generate
       
     - name: Run database migrations
-      run: |
-        php artisan migrate:fresh --force --path=database/migrations --seed
-        php artisan db:seed --force
+      run: php artisan migrate:fresh --force
+
+    - name: Seed database
+      run: php artisan db:seed
       
     - name: Run tests
       run: vendor/bin/phpunit --coverage-clover=coverage.xml
