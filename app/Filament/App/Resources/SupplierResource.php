@@ -2,7 +2,7 @@
 
 namespace App\Filament\App\Resources;
 
-use Filament\Schemas\Schema;
+use Filament\Forms\Form;
 use Filament\Actions\EditAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -22,14 +22,14 @@ use App\Filament\App\Resources\SupplierResource\Pages;
 class SupplierResource extends Resource
 {
     protected static ?string $model = Supplier::class;
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-truck';
+    protected static ?string $navigationIcon = 'heroicon-o-truck';
     protected static ?int $navigationSort = 5;
-    protected static string | \UnitEnum | null $navigationGroup = 'Vendors';
+    protected static ?string $navigationGroup = 'Vendors';
     protected static ?string $recordTitleAttribute = 'supplier_name';
 
-    public static function form(Schema $schema): Schema
+    public static function form(Form $form): Form
     {
-        return $schema
+        return $form
             ->components([
                 Select::make('payment_term_id')
                     ->relationship('paymentTerm', 'payment_term_name')

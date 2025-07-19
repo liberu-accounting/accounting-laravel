@@ -6,35 +6,35 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
+    public function up()
     {
         Schema::create('tax_rates', function (Blueprint $table) {
-            $table->id();
+            $table->id('tax_rate_id');
             $table->string('name');
-            $table->decimal('rate', 8, 2);
-            $table->text('description')->nullable();
-            $table->boolean('is_compound')->default(false);
-            $table->boolean('is_active')->default(true);
+            $table->decimal('rate', 5, 2);
             $table->timestamps();
         });
 
-        // Create the pivot table with matching column types
+        Schema::dropIfExists('customer_tax_rate');
+        
         Schema::create('customer_tax_rate', function (Blueprint $table) {
-            // Use the same column type as in the customers table
-            
-                  $table->foreignId('customer_id')->constrained()->onDelete('cascade');
-            $table->foreignId('tax_rate_id')->constrained()->onDelete('cascade');
+            $table->unsignedBigInteger('customer_id');
+            $table->unsignedBigInteger('tax_rate_id');
             $table->primary(['customer_id', 'tax_rate_id']);
+            
+            $table->foreign('customer_id')
+                ->references('id')
+                ->on('customers')
+                ->onDelete('cascade');
+                
+            $table->foreign('tax_rate_id')
+                ->references('tax_rate_id')
+                ->on('tax_rates')
+                ->onDelete('cascade');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
+    public function down()
     {
         Schema::dropIfExists('customer_tax_rate');
         Schema::dropIfExists('tax_rates');

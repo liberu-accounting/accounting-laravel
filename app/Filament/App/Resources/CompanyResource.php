@@ -2,7 +2,7 @@
 
 namespace App\Filament\App\Resources;
 
-use Filament\Schemas\Schema;
+use Filament\Forms\Form;
 use Filament\Actions\EditAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -23,13 +23,13 @@ use App\Filament\App\Resources\CompanyResource\Pages;
 class CompanyResource extends Resource
 {
     protected static ?string $model = Company::class;
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-building-office';
+    protected static ?string $navigationIcon = 'heroicon-o-building-office';
     protected static ?int $navigationSort = 3;
-    protected static string | \UnitEnum | null $navigationGroup = 'Settings';
+    protected static ?string $navigationGroup = 'Settings';
 
-    public static function form(Schema $schema): Schema
+    public static function form(Form $form): Form
     {
-        return $schema
+        return $form
             ->components([
                 TextInput::make('company_name')
                     ->required(),

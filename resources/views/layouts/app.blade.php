@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ SiteConfig::get('name') }}</title>
+    <title>{{ App\Models\SiteConfig::get('name') }}</title>
 
     @if(config('googletagmanager.id'))
         @include('googletagmanager::head')
@@ -22,7 +22,7 @@
 
     <div class="min-h-screen bg-gray-100 flex flex-col">
         <x-home-navbar />
-        <main class="flex-grow">
+        <main class="grow">
             @yield('content')
         </main>
         <x-footer />

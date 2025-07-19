@@ -1,14 +1,15 @@
-import preset from './vendor/filament/support/tailwind.config.preset'
-
 export default {
-    presets: [preset],
-    content: [
-        './app/Filament/**/*.php',
-        './resources/views/**/*.blade.php',
-        './vendor/filament/**/*.blade.php',
-        'node_modules/preline/dist/*.js',
-    ],
-    plugins: [
-        require('preline/plugin'),
-    ],
+  content: [
+    "./resources/**/*.blade.php",
+    "./resources/**/*.js",
+    "./resources/**/*.vue",
+  ],
+  theme: {
+    extend: {},
+  },
+  plugins: [
+    require('@tailwindcss/forms'),
+    require('@tailwindcss/typography'),
+    require('preline/plugin')
+  ],
 }

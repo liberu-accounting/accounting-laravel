@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources;
 
-use Filament\Schemas\Schema;
+use Filament\Forms\Form;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Select;
@@ -25,12 +25,12 @@ class VendorResource extends Resource
 {
     protected static ?string $model = Vendor::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-building-office';
-    protected static string | \UnitEnum | null $navigationGroup = 'Finance';
+    protected static ?string $navigationIcon = 'heroicon-o-building-office';
+    protected static ?string $navigationGroup = 'Finance';
 
-    public static function form(Schema $schema): Schema
+    public static function form(Form $form): Form
     {
-        return $schema
+        return $form
             ->components([
                 TextInput::make('name')
                     ->required()

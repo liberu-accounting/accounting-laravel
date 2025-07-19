@@ -28,7 +28,7 @@ class SiteSettingsSeeder extends Seeder
         ];
 
         foreach ($data as $key => $value) {
-            SiteConfig::store($key, $value);
+            App\Models\SiteConfig::store($key, $value);
         }
     }
 }
