@@ -21,7 +21,10 @@ class RecreateCustomerTaxRateTable extends Migration
             $table->unsignedBigInteger('tax_rate_id');
             $table->timestamps();
 
-            $table->foreign('customer_id')->references('customer_id')->on('customers');
+            $table->foreign('customer_id')
+                ->references('id') 
+                ->on('customers')
+                ->onDelete('cascade');
             $table->foreign('tax_rate_id')->references('tax_rate_id')->on('tax_rates');
         });
     }
