@@ -2,7 +2,7 @@
 
 namespace App\Filament\App\Resources;
 
-use Filament\Schemas\Schema;
+use Filament\Forms\Form;
 use Filament\Actions\EditAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -23,12 +23,12 @@ use App\Filament\App\Resources\ActivationResource\Pages;
 class ActivationResource extends Resource
 {
     protected static ?string $model = Activation::class;
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?int $navigationSort = 2;
 
-    public static function form(Schema $schema): Schema
+    public static function form(Form $form): Form
     {
-        return $schema
+        return $form
             ->components([
                 Select::make('user_id')
                     ->relationship('user', 'email')

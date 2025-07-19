@@ -2,7 +2,7 @@
 
 namespace App\Filament\App\Resources;
 
-use Filament\Schemas\Schema;
+use Filament\Forms\Form;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
@@ -30,11 +30,11 @@ class CustomerResource extends Resource
 {
     protected static ?string $model = Customer::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    public static function form(Schema $schema): Schema
+    public static function form(Form $form): Form
     {
-        return $schema
+        return $form
             ->components([
                 TextInput::make('customer_name'),
                 TextInput::make('customer_last_name'),

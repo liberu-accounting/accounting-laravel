@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources;
 
-use Filament\Schemas\Schema;
+use Filament\Forms\Form;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
@@ -25,12 +25,12 @@ class PayrollResource extends Resource
 {
     protected static ?string $model = Payroll::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-currency-dollar';
-    protected static string | \UnitEnum | null $navigationGroup = 'HR';
+    protected static ?string $navigationIcon = 'heroicon-o-currency-dollar';
+    protected static ?string $navigationGroup = 'HR';
 
-    public static function form(Schema $schema): Schema
+    public static function form(Form $form): Form
     {
-        return $schema
+        return $form
             ->components([
                 Select::make('employee_id')
                     ->relationship('employee', 'name')

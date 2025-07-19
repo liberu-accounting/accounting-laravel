@@ -2,7 +2,7 @@
 
 namespace App\Filament\App\Resources;
 
-use Filament\Schemas\Schema;
+use Filament\Forms\Form;
 use App\Filament\App\Resources\ReminderSettingResource\Pages\ListReminderSettings;
 use App\Filament\App\Resources\ReminderSettingResource\Pages\EditReminderSetting;
 use App\Models\ReminderSetting;
@@ -20,9 +20,9 @@ use Filament\Forms\Components\Toggle;
 class ReminderSettingResource extends Resource
 {
     protected static ?string $model = ReminderSetting::class;
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-bell';
+    protected static ?string $navigationIcon = 'heroicon-o-bell';
     protected static ?string $navigationLabel = 'Reminder Settings';
-    protected static string | \UnitEnum | null $navigationGroup = 'Settings';
+    protected static ?string $navigationGroup = 'Settings';
     protected static ?int $navigationSort = 1;
     
     public static function getNavigationGroup(): ?string
@@ -30,9 +30,9 @@ class ReminderSettingResource extends Resource
         return static::$navigationGroup;
     }
 
-    public static function form(Schema $schema): Schema
+    public static function form(Form $form): Form
     {
-        return $schema
+        return $form
             ->components([
                 TextInput::make('days_before_reminder')
                     ->label('Days Before First Reminder')
