@@ -36,7 +36,7 @@ jobs:
       
     - name: Run database migrations
       run: |
-        php artisan migrate:fresh --force
+        php artisan migrate:fresh --force --path=database/migrations --seed
         php artisan db:seed --force
       
     - name: Run tests
