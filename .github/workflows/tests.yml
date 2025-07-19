@@ -36,9 +36,8 @@ jobs:
       
     - name: Run database migrations
       run: |
-        php artisan migrate:fresh --force --seed --path=database/migrations
-        php artisan migrate --force --path=database/migrations/tenant
-        php artisan migrate --force --path=database/migrations/2024_01_*
+        php artisan migrate:fresh --force
+        php artisan db:seed --force
       
     - name: Run tests
       run: vendor/bin/phpunit --coverage-clover=coverage.xml
