@@ -6,17 +6,6 @@
       'EloquentSerialize' => 'AnourValar\\EloquentSerialize\\Facades\\EloquentSerializeFacade',
     ),
   ),
-  'bezhansalleh/filament-shield' => 
-  array (
-    'aliases' => 
-    array (
-      'FilamentShield' => 'BezhanSalleh\\FilamentShield\\Facades\\FilamentShield',
-    ),
-    'providers' => 
-    array (
-      0 => 'BezhanSalleh\\FilamentShield\\FilamentShieldServiceProvider',
-    ),
-  ),
   'blade-ui-kit/blade-heroicons' => 
   array (
     'providers' => 
@@ -64,6 +53,13 @@
     'providers' => 
     array (
       0 => 'Filament\\Notifications\\NotificationsServiceProvider',
+    ),
+  ),
+  'filament/schemas' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Filament\\Schemas\\SchemasServiceProvider',
     ),
   ),
   'filament/support' => 
@@ -235,13 +231,6 @@
     'providers' => 
     array (
       0 => 'Spatie\\Menu\\Laravel\\MenuServiceProvider',
-    ),
-  ),
-  'spatie/laravel-permission' => 
-  array (
-    'providers' => 
-    array (
-      0 => 'Spatie\\Permission\\PermissionServiceProvider',
     ),
   ),
 );
