@@ -22,7 +22,7 @@
 
     <div class="min-h-screen bg-gray-100 flex flex-col">
         <x-home-navbar />
-        <main class="flex-grow">
+        <main class="grow">
             @yield('content')
         </main>
         <x-footer />
