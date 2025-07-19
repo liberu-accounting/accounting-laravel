@@ -12,11 +12,11 @@ use Illuminate\Support\Facades\Auth;
 
 class CreateTeam extends RegisterTenant
 {
-    protected string $view = 'filament.pages.create-team';
+    protected static string $view = 'filament.pages.create-team';
 
     public $name = '';
 
-    protected Width|string|null $maxWidth = '2xl';
+    protected ?string $maxWidth = '2xl';
 
     public function mount(): void
     {

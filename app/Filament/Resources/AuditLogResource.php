@@ -22,8 +22,8 @@ use Illuminate\Database\Eloquent\Builder;
 class AuditLogResource extends Resource
 {
     protected static ?string $model = AuditLog::class;
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-clipboard-document-list';
-    protected static string | \UnitEnum | null $navigationGroup = 'System';
+    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
+    protected static ?string $navigationGroup = 'System';
     
     public static function getEloquentQuery(): Builder
     {

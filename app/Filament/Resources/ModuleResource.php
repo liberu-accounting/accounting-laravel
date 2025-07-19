@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources;
 
-use Filament\Schemas\Schema;
+use Filament\Forms\Form;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
@@ -27,15 +27,15 @@ class ModuleResource extends Resource
 {
     protected static ?string $model = null;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-puzzle-piece';
+    protected static ?string $navigationIcon = 'heroicon-o-puzzle-piece';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'System';
+    protected static ?string $navigationGroup = 'System';
 
     protected static ?string $navigationLabel = 'Modules';
 
-    public static function form(Schema $schema): Schema
+    public static function form(Form $form): Form
     {
-        return $schema
+        return $form
             ->components([
                 TextInput::make('name')
                     ->required()
@@ -191,8 +191,8 @@ class ModuleResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ListModules::route('/'),
-            'view' => ViewModule::route('/{record}'),
+            'index' => \App\Filament\Admin\Resources\ModuleResource\Pages\ListModules::route('/'),
+            'view' => \App\Filament\Admin\Resources\ModuleResource\Pages\ViewModule::route('/{record}'),
         ];
     }
 }
