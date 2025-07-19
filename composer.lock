@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fddb40e2e347db0c3f8bc36c478d529e",
+    "content-hash": "f71f26af829f35f547e002ce62b9279a",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -9161,82 +9161,6 @@
                 }
             ],
             "time": "2024-10-20T05:08:20+00:00"
-        },
-        {
-            "name": "stephenjude/filament-jetstream",
-            "version": "0.0.16",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/stephenjude/filament-jetstream.git",
-                "reference": "40963cc838c6d6b7994a7e28381d76c16e6a297b"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/stephenjude/filament-jetstream/zipball/40963cc838c6d6b7994a7e28381d76c16e6a297b",
-                "reference": "40963cc838c6d6b7994a7e28381d76c16e6a297b",
-                "shasum": ""
-            },
-            "require": {
-                "filament/filament": "^3.0",
-                "illuminate/contracts": "^10.0|^11.0|^12.0",
-                "laravel/jetstream": "^4.2|^5.0",
-                "php": "^8.1",
-                "spatie/laravel-package-tools": "^1.15.0"
-            },
-            "require-dev": {
-                "larastan/larastan": "^2.9",
-                "laravel/pint": "^1.0",
-                "nunomaduro/collision": "^7.9|^8.0",
-                "orchestra/testbench": "^8.14|^9.0",
-                "pestphp/pest": "^2.0",
-                "pestphp/pest-plugin-arch": "^2.0",
-                "pestphp/pest-plugin-laravel": "^2.0",
-                "phpstan/extension-installer": "^1.1",
-                "phpstan/phpstan-deprecation-rules": "^1.0",
-                "phpstan/phpstan-phpunit": "^1.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "FilamentJetstream\\FilamentJetstream\\FilamentJetstreamServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "FilamentJetstream\\FilamentJetstream\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "stephenjude",
-                    "email": "stephenjudesuccess@gmail.com",
-                    "role": "Developer"
-                }
-            ],
-            "description": "Supercharge your Filament Admin Panel with Laravel Jetstream.",
-            "homepage": "https://github.com/stephenjude/filament-jetstream",
-            "keywords": [
-                "filament-jetstream",
-                "laravel",
-                "stephenjude"
-            ],
-            "support": {
-                "issues": "https://github.com/stephenjude/filament-jetstream/issues",
-                "source": "https://github.com/stephenjude/filament-jetstream"
-            },
-            "funding": [
-                {
-                    "url": "https://github.com/stephenjude",
-                    "type": "github"
-                }
-            ],
-            "time": "2025-03-05T17:36:49+00:00"
         },
         {
             "name": "symfony/clock",

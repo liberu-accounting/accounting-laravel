@@ -244,11 +244,4 @@
       0 => 'Spatie\\Permission\\PermissionServiceProvider',
     ),
   ),
-  'stephenjude/filament-jetstream' => 
-  array (
-    'providers' => 
-    array (
-      0 => 'FilamentJetstream\\FilamentJetstream\\FilamentJetstreamServiceProvider',
-    ),
-  ),
 );
