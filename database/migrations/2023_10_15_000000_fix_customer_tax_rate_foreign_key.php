@@ -3,38 +3,45 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\DB;
 
-class FixCustomerTaxRateForeignKey extends Migration
+return new class extends Migration
 {
     public function up()
     {
-        Schema::table('customer_tax_rate', function (Blueprint $table) {
-            $table->dropForeign(['customer_id']);
-        });
+        if (Schema::hasTable('customer_tax_rate')) {
+            Schema::table('customer_tax_rate', function (Blueprint $table) {
+                // First check if the foreign key exists
+                $foreignKeys = Schema::getConnection()
+                    ->getDoctrineSchemaManager()
+                    ->listTableForeignKeys('customer_tax_rate');
+                
+                $foreignKeyExists = collect($foreignKeys)
+                    ->contains(function ($foreignKey) {
+                        return $foreignKey->getName() === 'customer_tax_rate_customer_id_foreign';
+                    });
 
-        $customersColumnType = DB::getSchemaBuilder()->getColumnType('customers', 'customer_id');
-
-        Schema::table('customer_tax_rate', function (Blueprint $table) {
-            $table->dropColumn('customer_id');
-        });
-
-        Schema::table('customer_tax_rate', function (Blueprint $table) use ($customersColumnType) {
-            if ($customersColumnType === 'bigint') {
-                $table->unsignedBigInteger('customer_id')->first();
-            } elseif ($customersColumnType === 'integer') {
-                $table->unsignedInteger('customer_id')->first();
-            } else {
-                $table->unsignedBigInteger('customer_id')->first();
-            }
-            $table->foreign('customer_id')->references('customer_id')->on('customers');
-        });
+                if ($foreignKeyExists) {
+                    $table->dropForeign(['customer_id']);
+                }
+                
+                // Add the new foreign key constraint
+                $table->foreign('customer_id')
+                    ->references('id')
+                    ->on('customers')
+                    ->onDelete('cascade');
+            });
+        }
     }
 
     public function down()
     {
-        Schema::table('customer_tax_rate', function (Blueprint $table) {
-            $table->dropForeign(['customer_id']);
-        });
+        if (Schema::hasTable('customer_tax_rate')) {
+            Schema::table('customer_tax_rate', function (Blueprint $table) {
+                $table->dropForeign(['customer_id']);
+                $table->foreign('customer_id')
+                    ->references('id')
+                    ->on('customers');
+            });
+        }
     }
-}
+};
