@@ -12,7 +12,7 @@ class DepreciationSchedulePage extends Page
 {
     protected static string $resource = AssetResource::class;
 
-    protected static string $view = 'filament.app.resources.asset-resource.pages.depreciation-schedule-page';
+    protected string $view = 'filament.app.resources.asset-resource.pages.depreciation-schedule-page';
 
     public Asset $record;
 
