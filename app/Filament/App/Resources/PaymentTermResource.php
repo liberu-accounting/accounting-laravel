@@ -2,9 +2,15 @@
 
 namespace App\Filament\App\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\App\Resources\PaymentTermResource\Pages\ListPaymentTerms;
+use App\Filament\App\Resources\PaymentTermResource\Pages\CreatePaymentTerm;
+use App\Filament\App\Resources\PaymentTermResource\Pages\EditPaymentTerm;
 use Filament\Forms;
 use Filament\Tables;
-use Filament\Forms\Form;
 use Filament\Tables\Table;
 use App\Models\PaymentTerm;
 use Filament\Resources\Resource;
@@ -20,12 +26,12 @@ class PaymentTermResource extends Resource
 {
     protected static ?string $model = PaymentTerm::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('payment_term_name')
                     ->label('Name'),
                 Textarea::make('payment_term_description')
@@ -55,12 +61,12 @@ class PaymentTermResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -75,9 +81,9 @@ class PaymentTermResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPaymentTerms::route('/'),
-            'create' => Pages\CreatePaymentTerm::route('/create'),
-            'edit' => Pages\EditPaymentTerm::route('/{record}/edit'),
+            'index' => ListPaymentTerms::route('/'),
+            'create' => CreatePaymentTerm::route('/create'),
+            'edit' => EditPaymentTerm::route('/{record}/edit'),
         ];
     }
 }

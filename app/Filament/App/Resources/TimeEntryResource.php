@@ -2,10 +2,21 @@
 
 namespace App\Filament\App\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\App\Resources\TimeEntryResource\Pages\ListTimeEntries;
+use App\Filament\App\Resources\TimeEntryResource\Pages\CreateTimeEntry;
+use App\Filament\App\Resources\TimeEntryResource\Pages\EditTimeEntry;
 use App\Filament\App\Resources\TimeEntryResource\Pages;
 use App\Models\TimeEntry;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -14,32 +25,32 @@ class TimeEntryResource extends Resource
 {
     protected static ?string $model = TimeEntry::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-clock';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-clock';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\BelongsToSelect::make('customer_id')
+        return $schema
+            ->components([
+                Select::make('customer_id')
                     ->relationship('customer', 'customer_name')
                     ->required(),
-                Forms\Components\BelongsToSelect::make('invoice_id')
+                Select::make('invoice_id')
                     ->relationship('invoice', 'invoice_id')
                     ->nullable(),
-                Forms\Components\DateTimePicker::make('start_time')
+                DateTimePicker::make('start_time')
                     ->required(),
-                Forms\Components\DateTimePicker::make('end_time')
+                DateTimePicker::make('end_time')
                     ->required(),
-                Forms\Components\TextInput::make('description')
+                TextInput::make('description')
                     ->required(),
-                Forms\Components\TextInput::make('hourly_rate')
+                TextInput::make('hourly_rate')
                     ->numeric()
                     ->required()
                     ->reactive()
                     ->afterStateUpdated(fn ($state, callable $set, TimeEntry $record) => 
                         $set('total_amount', $record->calculateTotalAmount())
                     ),
-                Forms\Components\TextInput::make('total_amount')
+                TextInput::make('total_amount')
                     ->numeric()
                     ->disabled(),
             ]);
@@ -49,24 +60,24 @@ class TimeEntryResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('customer.customer_name'),
-                Tables\Columns\TextColumn::make('start_time'),
-                Tables\Columns\TextColumn::make('end_time'),
-                Tables\Columns\TextColumn::make('description'),
-                Tables\Columns\TextColumn::make('hourly_rate'),
-                Tables\Columns\TextColumn::make('total_amount'),
-                Tables\Columns\TextColumn::make('invoice_id'),
+                TextColumn::make('customer.customer_name'),
+                TextColumn::make('start_time'),
+                TextColumn::make('end_time'),
+                TextColumn::make('description'),
+                TextColumn::make('hourly_rate'),
+                TextColumn::make('total_amount'),
+                TextColumn::make('invoice_id'),
             ])
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+            ->recordActions([
+                EditAction::make(),
+                DeleteAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -74,9 +85,9 @@ class TimeEntryResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListTimeEntries::route('/'),
-            'create' => Pages\CreateTimeEntry::route('/create'),
-            'edit' => Pages\EditTimeEntry::route('/{record}/edit'),
+            'index' => ListTimeEntries::route('/'),
+            'create' => CreateTimeEntry::route('/create'),
+            'edit' => EditTimeEntry::route('/{record}/edit'),
         ];
     }
 }

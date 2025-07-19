@@ -2,10 +2,18 @@
 
 namespace App\Filament\App\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Actions\EditAction;
+use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\App\Resources\AssetResource\Pages\ListAssets;
+use App\Filament\App\Resources\AssetResource\Pages\CreateAsset;
+use App\Filament\App\Resources\AssetResource\Pages\EditAsset;
+use App\Filament\App\Resources\AssetResource\Pages\DepreciationSchedulePage;
 use Filament\Forms;
 use Filament\Tables;
 use App\Models\Asset;
-use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Select;
@@ -13,21 +21,20 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Actions\Action;
 use App\Filament\App\Resources\AssetResource\Pages;
 
 class AssetResource extends Resource
 {
     protected static ?string $model = Asset::class;
-    protected static ?string $navigationIcon = 'heroicon-o-cube';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-cube';
     protected static ?int $navigationSort = 4;
-    protected static ?string $navigationGroup = 'Assets';
+    protected static string | \UnitEnum | null $navigationGroup = 'Assets';
     protected static ?string $recordTitleAttribute = 'asset_name';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('asset_name')
                     ->required(),
                 TextInput::make('asset_cost')
@@ -76,8 +83,8 @@ class AssetResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
                 Action::make('calculate_depreciation')
                     ->action(fn (Asset $record) => $record->calculateDepreciation())
                     ->button()
@@ -87,9 +94,9 @@ class AssetResource extends Resource
                     ->button()
                     ->label('View Schedule')
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -104,10 +111,10 @@ class AssetResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListAssets::route('/'),
-            'create' => Pages\CreateAsset::route('/create'),
-            'edit' => Pages\EditAsset::route('/{record}/edit'),
-            'depreciation-schedule' => Pages\DepreciationSchedulePage::route('/{record}/depreciation-schedule'),
+            'index' => ListAssets::route('/'),
+            'create' => CreateAsset::route('/create'),
+            'edit' => EditAsset::route('/{record}/edit'),
+            'depreciation-schedule' => DepreciationSchedulePage::route('/{record}/depreciation-schedule'),
         ];
     }
 }

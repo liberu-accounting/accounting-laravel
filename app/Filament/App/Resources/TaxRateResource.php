@@ -2,11 +2,24 @@
 
 namespace App\Filament\App\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Toggle;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Filters\TernaryFilter;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\App\Resources\TaxRateResource\Pages\ListTaxRates;
+use App\Filament\App\Resources\TaxRateResource\Pages\CreateTaxRate;
+use App\Filament\App\Resources\TaxRateResource\Pages\EditTaxRate;
 use App\Models\TaxRate;
 use Filament\Forms;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Forms\Form;
 use Filament\Tables\Table;
 use App\Filament\App\Resources\TaxRateResource\Pages;
 
@@ -14,26 +27,26 @@ class TaxRateResource extends Resource
 {
     protected static ?string $model = TaxRate::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-calculator';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-calculator';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('name')
+        return $schema
+            ->components([
+                TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('rate')
+                TextInput::make('rate')
                     ->required()
                     ->numeric()
                     ->step(0.01)
                     ->suffix('%'),
-                Forms\Components\Textarea::make('description')
+                Textarea::make('description')
                     ->maxLength(65535),
-                Forms\Components\Toggle::make('is_compound')
+                Toggle::make('is_compound')
                     ->label('Compound Tax')
                     ->helperText('Apply this tax after other taxes'),
-                Forms\Components\Toggle::make('is_active')
+                Toggle::make('is_active')
                     ->label('Active')
                     ->default(true),
             ]);
@@ -43,29 +56,29 @@ class TaxRateResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('rate')
+                TextColumn::make('rate')
                     ->suffix('%')
                     ->sortable(),
-                Tables\Columns\IconColumn::make('is_active')
+                IconColumn::make('is_active')
                     ->boolean(),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                Tables\Filters\TernaryFilter::make('is_active')
+                TernaryFilter::make('is_active')
                     ->label('Active'),
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+            ->recordActions([
+                EditAction::make(),
+                DeleteAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -73,9 +86,9 @@ class TaxRateResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListTaxRates::route('/'),
-            'create' => Pages\CreateTaxRate::route('/create'),
-            'edit' => Pages\EditTaxRate::route('/{record}/edit'),
+            'index' => ListTaxRates::route('/'),
+            'create' => CreateTaxRate::route('/create'),
+            'edit' => EditTaxRate::route('/{record}/edit'),
         ];
     }
 }

@@ -2,11 +2,24 @@
 
 namespace App\Filament\App\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use App\Filament\App\Resources\BankStatementResource\Pages\CreateBankStatement;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Filters\Filter;
+use Filament\Actions\EditAction;
+use Filament\Actions\Action;
+use Exception;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\App\Resources\BankStatementResource\Pages\ListBankStatements;
+use App\Filament\App\Resources\BankStatementResource\Pages\EditBankStatement;
 use App\Filament\App\Resources\BankStatementResource\Pages;
 use App\Models\BankStatement;
 use App\Services\ReconciliationService;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Filament\Tables;
@@ -17,30 +30,30 @@ class BankStatementResource extends Resource
 {
     protected static ?string $model = BankStatement::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document-text';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\DatePicker::make('statement_date')
+        return $schema
+            ->components([
+                DatePicker::make('statement_date')
                     ->required(),
-                Forms\Components\Select::make('account_id')
+                Select::make('account_id')
                     ->relationship('account', 'name')
                     ->required(),
-                Forms\Components\TextInput::make('total_credits')
+                TextInput::make('total_credits')
                     ->required()
                     ->numeric(),
-                Forms\Components\TextInput::make('total_debits')
+                TextInput::make('total_debits')
                     ->required()
                     ->numeric(),
-                Forms\Components\TextInput::make('ending_balance')
+                TextInput::make('ending_balance')
                     ->required()
                     ->numeric(),
                 FileUpload::make('statement_file')
                     ->label('Import Bank Statement')
                     ->acceptedFileTypes(['text/csv', 'application/vnd.ms-excel'])
-                    ->visible(fn ($livewire) => $livewire instanceof Pages\CreateBankStatement)
+                    ->visible(fn ($livewire) => $livewire instanceof CreateBankStatement)
                     ->helperText('Upload a CSV file with your bank statement data'),
             ]);
     }
@@ -49,24 +62,24 @@ class BankStatementResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('statement_date')
+                TextColumn::make('statement_date')
                     ->date(),
-                Tables\Columns\TextColumn::make('account.name'),
-                Tables\Columns\TextColumn::make('total_credits')
+                TextColumn::make('account.name'),
+                TextColumn::make('total_credits')
                     ->money('USD'),
-                Tables\Columns\TextColumn::make('total_debits')
+                TextColumn::make('total_debits')
                     ->money('USD'),
-                Tables\Columns\TextColumn::make('ending_balance')
+                TextColumn::make('ending_balance')
                     ->money('USD'),
-                Tables\Columns\IconColumn::make('reconciled')
+                IconColumn::make('reconciled')
                     ->boolean()
                     ->label('Reconciled'),
             ])
             ->filters([
-                Tables\Filters\Filter::make('date')
-                    ->form([
-                        Forms\Components\DatePicker::make('from'),
-                        Forms\Components\DatePicker::make('until'),
+                Filter::make('date')
+                    ->schema([
+                        DatePicker::make('from'),
+                        DatePicker::make('until'),
                     ])
                     ->query(function ($query, array $data) {
                         return $query
@@ -80,9 +93,9 @@ class BankStatementResource extends Resource
                             );
                     })
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\Action::make('import')
+            ->recordActions([
+                EditAction::make(),
+                Action::make('import')
                     ->action(function (BankStatement $record, array $data) {
                         $importService = new BankStatementImportService();
                         
@@ -93,7 +106,7 @@ class BankStatementResource extends Resource
                             $transactions = match($extension) {
                                 'csv' => $importService->importFromCsv($path, $record),
                                 'ofx' => $importService->importFromOfx($path, $record),
-                                default => throw new \Exception('Unsupported file format')
+                                default => throw new Exception('Unsupported file format')
                             };
                             
                             Notification::make()
@@ -103,14 +116,14 @@ class BankStatementResource extends Resource
                                 ->send();
                         }
                     })
-                    ->form([
+                    ->schema([
                         FileUpload::make('statement_file')
                             ->label('Import Statement')
                             ->acceptedFileTypes(['.csv', '.ofx'])
                             ->required()
                     ])
                     ->icon('heroicon-o-arrow-up-tray'),
-                Tables\Actions\Action::make('review_matches')
+                Action::make('review_matches')
                     ->action(function (BankStatement $record) {
                         return view('bank-statements.review-matches', [
                             'bankStatement' => $record,
@@ -119,7 +132,7 @@ class BankStatementResource extends Resource
                     })
                     ->icon('heroicon-o-eye')
                     ->visible(fn (BankStatement $record) => $record->transactions()->exists()),
-                Tables\Actions\Action::make('reconcile')
+                Action::make('reconcile')
                     ->action(function (BankStatement $record) {
                         $reconciliationService = new ReconciliationService();
                         $result = $reconciliationService->reconcile($record);
@@ -139,8 +152,8 @@ class BankStatementResource extends Resource
                     ->color('success')
                     ->requiresConfirmation(),
             ])
-            ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                DeleteBulkAction::make(),
             ]);
     }
 
@@ -154,9 +167,9 @@ class BankStatementResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListBankStatements::route('/'),
-            'create' => Pages\CreateBankStatement::route('/create'),
-            'edit' => Pages\EditBankStatement::route('/{record}/edit'),
+            'index' => ListBankStatements::route('/'),
+            'create' => CreateBankStatement::route('/create'),
+            'edit' => EditBankStatement::route('/{record}/edit'),
         ];
     }
 }

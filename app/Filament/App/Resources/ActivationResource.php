@@ -2,9 +2,15 @@
 
 namespace App\Filament\App\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\App\Resources\ActivationResource\Pages\ListActivations;
+use App\Filament\App\Resources\ActivationResource\Pages\CreateActivation;
+use App\Filament\App\Resources\ActivationResource\Pages\EditActivation;
 use Filament\Forms;
 use Filament\Tables;
-use Filament\Forms\Form;
 use App\Models\Activation;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
@@ -17,13 +23,13 @@ use App\Filament\App\Resources\ActivationResource\Pages;
 class ActivationResource extends Resource
 {
     protected static ?string $model = Activation::class;
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?int $navigationSort = 2;
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Select::make('user_id')
                     ->relationship('user', 'email')
                     ->preload()
@@ -53,12 +59,12 @@ class ActivationResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -73,9 +79,9 @@ class ActivationResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListActivations::route('/'),
-            'create' => Pages\CreateActivation::route('/create'),
-            'edit' => Pages\EditActivation::route('/{record}/edit'),
+            'index' => ListActivations::route('/'),
+            'create' => CreateActivation::route('/create'),
+            'edit' => EditActivation::route('/{record}/edit'),
         ];
     }
 }

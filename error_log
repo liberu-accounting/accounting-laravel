@@ -8,3 +8,10 @@ Stack trace:
 #0 /home/liberu/projects/accounting-laravel/artisan(20): require_once()
 #1 {main}
   thrown in /home/liberu/projects/accounting-laravel/bootstrap/app.php on line 14
+[19-Jul-2025 17:58:15 UTC] PHP Fatal error:  Type of App\Filament\Resources\AuditLogResource::$navigationGroup must be ?string (as in class Filament\Resources\Resource) in /home/liberu/projects/accounting-laravel/app/Filament/Resources/AuditLogResource.php on line 22
+[19-Jul-2025 17:58:28 UTC] PHP Fatal error:  Type of App\Filament\Resources\AuditLogResource::$navigationGroup must be ?string (as in class Filament\Resources\Resource) in /home/liberu/projects/accounting-laravel/app/Filament/Resources/AuditLogResource.php on line 22
+[19-Jul-2025 17:58:34 UTC] PHP Fatal error:  Type of App\Filament\Resources\AuditLogResource::$navigationGroup must be ?string (as in class Filament\Resources\Resource) in /home/liberu/projects/accounting-laravel/app/Filament/Resources/AuditLogResource.php on line 22
+[19-Jul-2025 17:58:41 UTC] PHP Fatal error:  Type of App\Filament\Resources\AuditLogResource::$navigationGroup must be ?string (as in class Filament\Resources\Resource) in /home/liberu/projects/accounting-laravel/app/Filament/Resources/AuditLogResource.php on line 22
+[19-Jul-2025 17:58:50 UTC] PHP Fatal error:  Type of App\Filament\Resources\AuditLogResource::$navigationGroup must be ?string (as in class Filament\Resources\Resource) in /home/liberu/projects/accounting-laravel/app/Filament/Resources/AuditLogResource.php on line 22
+[19-Jul-2025 17:59:09 UTC] PHP Fatal error:  Type of App\Filament\Resources\AuditLogResource::$navigationGroup must be ?string (as in class Filament\Resources\Resource) in /home/liberu/projects/accounting-laravel/app/Filament/Resources/AuditLogResource.php on line 22
+[19-Jul-2025 17:59:16 UTC] PHP Fatal error:  Type of App\Filament\Resources\AuditLogResource::$navigationGroup must be ?string (as in class Filament\Resources\Resource) in /home/liberu/projects/accounting-laravel/app/Filament/Resources/AuditLogResource.php on line 22

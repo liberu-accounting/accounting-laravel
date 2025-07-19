@@ -2,9 +2,15 @@
 
 namespace App\Filament\App\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\App\Resources\AssetAcquisitionResource\Pages\ListAssetAcquisitions;
+use App\Filament\App\Resources\AssetAcquisitionResource\Pages\CreateAssetAcquisition;
+use App\Filament\App\Resources\AssetAcquisitionResource\Pages\EditAssetAcquisition;
 use Filament\Forms;
 use Filament\Tables;
-use Filament\Forms\Form;
 use Filament\Tables\Table;
 use App\Models\AssetAcquisition;
 use Filament\Resources\Resource;
@@ -19,12 +25,12 @@ class AssetAcquisitionResource extends Resource
 {
     protected static ?string $model = AssetAcquisition::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('acquisition_date')
                     ->numeric(),
                 TextInput::make('acquisition_price')
@@ -52,12 +58,12 @@ class AssetAcquisitionResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -72,9 +78,9 @@ class AssetAcquisitionResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListAssetAcquisitions::route('/'),
-            'create' => Pages\CreateAssetAcquisition::route('/create'),
-            'edit' => Pages\EditAssetAcquisition::route('/{record}/edit'),
+            'index' => ListAssetAcquisitions::route('/'),
+            'create' => CreateAssetAcquisition::route('/create'),
+            'edit' => EditAssetAcquisition::route('/{record}/edit'),
         ];
     }
 }

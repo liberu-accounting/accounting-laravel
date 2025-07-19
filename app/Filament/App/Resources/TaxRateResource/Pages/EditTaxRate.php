@@ -2,6 +2,7 @@
 
 namespace App\Filament\App\Resources\TaxRateResource\Pages;
 
+use Filament\Actions\DeleteAction;
 use App\Filament\App\Resources\TaxRateResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
@@ -13,7 +14,7 @@ class EditTaxRate extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            DeleteAction::make(),
         ];
     }
 }

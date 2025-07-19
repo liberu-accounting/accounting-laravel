@@ -2,6 +2,12 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\Filter;
+use Filament\Forms\Components\DatePicker;
+use App\Filament\Resources\AuditLogResource\Pages\ListAuditLogs;
+use App\Filament\Resources\AuditLogResource\Pages\ViewAuditLog;
 use App\Filament\Resources\AuditLogResource\Pages;
 use App\Models\AuditLog;
 use App\Models\Invoice;
@@ -16,8 +22,8 @@ use Illuminate\Database\Eloquent\Builder;
 class AuditLogResource extends Resource
 {
     protected static ?string $model = AuditLog::class;
-    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
-    protected static ?string $navigationGroup = 'System';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-clipboard-document-list';
+    protected static string | \UnitEnum | null $navigationGroup = 'System';
     
     public static function getEloquentQuery(): Builder
     {
@@ -28,45 +34,45 @@ class AuditLogResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('user.name')
+                TextColumn::make('user.name')
                     ->label('User')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('event')
+                TextColumn::make('event')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'created' => 'success',
                         'updated' => 'warning',
                         'deleted' => 'danger',
                     }),
-                Tables\Columns\TextColumn::make('auditable_type')
+                TextColumn::make('auditable_type')
                     ->label('Record Type')
                     ->formatStateUsing(fn (string $state) => class_basename($state)),
-                Tables\Columns\TextColumn::make('ip_address')
+                TextColumn::make('ip_address')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('user_agent')
+                TextColumn::make('user_agent')
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('event')
+                SelectFilter::make('event')
                     ->options([
                         'created' => 'Created',
                         'updated' => 'Updated',
                         'deleted' => 'Deleted',
                     ]),
-                Tables\Filters\SelectFilter::make('auditable_type')
+                SelectFilter::make('auditable_type')
                     ->options([
                         Invoice::class => 'Invoice',
                         Transaction::class => 'Transaction',
                     ])
                     ->label('Record Type'),
-                Tables\Filters\Filter::make('created_at')
-                    ->form([
-                        Forms\Components\DatePicker::make('from'),
-                        Forms\Components\DatePicker::make('until'),
+                Filter::make('created_at')
+                    ->schema([
+                        DatePicker::make('from'),
+                        DatePicker::make('until'),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         return $query
@@ -86,8 +92,8 @@ class AuditLogResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListAuditLogs::route('/'),
-            'view' => Pages\ViewAuditLog::route('/{record}'),
+            'index' => ListAuditLogs::route('/'),
+            'view' => ViewAuditLog::route('/{record}'),
         ];
     }
 }

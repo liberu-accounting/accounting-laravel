@@ -2,6 +2,20 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Toggle;
+use Filament\Tables\Table;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Actions\ViewAction;
+use Filament\Actions\Action;
+use App\Filament\Resources\ExpenseResource\Pages\ListExpenses;
+use App\Filament\Resources\ExpenseResource\Pages\CreateExpense;
+use App\Filament\Resources\ExpenseResource\Pages\EditExpense;
 use App\Filament\Resources\ExpenseResource\Pages;
 use App\Models\Expense;
 use Filament\Forms;
@@ -14,26 +28,26 @@ class ExpenseResource extends Resource
 {
     protected static ?string $model = Expense::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-currency-dollar';
-    protected static ?string $navigationGroup = 'Finance';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-currency-dollar';
+    protected static string | \UnitEnum | null $navigationGroup = 'Finance';
 
-    public static function form(Forms\Form $form): Forms\Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('amount')
+        return $schema
+            ->components([
+                TextInput::make('amount')
                     ->required()
                     ->numeric()
                     ->prefix('$')
                     ->minValue(0.01)
                     ->step(0.01),
-                Forms\Components\TextInput::make('description')
+                TextInput::make('description')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\DatePicker::make('date')
+                DatePicker::make('date')
                     ->required()
                     ->maxDate(now()),
-                Forms\Components\Select::make('approval_status')
+                Select::make('approval_status')
                     ->options([
                         'pending' => 'Pending',
                         'approved' => 'Approved',
@@ -41,14 +55,14 @@ class ExpenseResource extends Resource
                     ])
                     ->disabled()
                     ->dehydrated(false),
-                Forms\Components\Textarea::make('rejection_reason')
+                Textarea::make('rejection_reason')
                     ->visible(fn (?Model $record) => $record?->approval_status === 'rejected')
                     ->maxLength(1000)
                     ->columnSpanFull(),
-                Forms\Components\Toggle::make('is_recurring')
+                Toggle::make('is_recurring')
                     ->label('Recurring Expense')
                     ->reactive(),
-                Forms\Components\Select::make('recurrence_frequency')
+                Select::make('recurrence_frequency')
                     ->options([
                         'daily' => 'Daily',
                         'weekly' => 'Weekly',
@@ -57,62 +71,62 @@ class ExpenseResource extends Resource
                     ])
                     ->visible(fn ($get) => $get('is_recurring'))
                     ->required(fn ($get) => $get('is_recurring')),
-                Forms\Components\DatePicker::make('recurrence_start')
+                DatePicker::make('recurrence_start')
                     ->label('Start Date')
                     ->visible(fn ($get) => $get('is_recurring'))
                     ->required(fn ($get) => $get('is_recurring')),
-                Forms\Components\DatePicker::make('recurrence_end')
+                DatePicker::make('recurrence_end')
                     ->label('End Date')
                     ->visible(fn ($get) => $get('is_recurring'))
                     ->minDate(fn ($get) => $get('recurrence_start')),
             ]);
     }
 
-    public static function table(Tables\Table $table): Tables\Table
+    public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('amount')
+                TextColumn::make('amount')
                     ->money('USD')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('description')
+                TextColumn::make('description')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('date')
+                TextColumn::make('date')
                     ->date()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('user.name')
+                TextColumn::make('user.name')
                     ->label('Submitted By')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('approval_status')
+                TextColumn::make('approval_status')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'approved' => 'success',
                         'rejected' => 'danger',
                         default => 'warning',
                     }),
-                Tables\Columns\TextColumn::make('approver.name')
+                TextColumn::make('approver.name')
                     ->label('Approved By')
                     ->visible(fn (Model $record): bool => $record->approved_by !== null),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('approval_status')
+                SelectFilter::make('approval_status')
                     ->options([
                         'pending' => 'Pending',
                         'approved' => 'Approved',
                         'rejected' => 'Rejected',
                     ]),
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\Action::make('approve')
+            ->recordActions([
+                ViewAction::make(),
+                Action::make('approve')
                     ->action(fn (Expense $record) => $record->approve())
                     ->requiresConfirmation()
                     ->visible(fn (Expense $record) => $record->isPending())
                     ->color('success')
                     ->icon('heroicon-o-check'),
-                Tables\Actions\Action::make('reject')
-                    ->form([
-                        Forms\Components\Textarea::make('reason')
+                Action::make('reject')
+                    ->schema([
+                        Textarea::make('reason')
                             ->required()
                             ->maxLength(1000)
                             ->label('Rejection Reason'),
@@ -133,9 +147,9 @@ class ExpenseResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListExpenses::route('/'),
-            'create' => Pages\CreateExpense::route('/create'),
-            'edit' => Pages\EditExpense::route('/{record}/edit'),
+            'index' => ListExpenses::route('/'),
+            'create' => CreateExpense::route('/create'),
+            'edit' => EditExpense::route('/{record}/edit'),
         ];
     }
 

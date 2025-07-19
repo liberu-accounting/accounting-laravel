@@ -2,11 +2,22 @@
 
 namespace App\Filament\App\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\IndentedTextColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\App\Resources\ChartOfAccountsResource\Pages\ListChartOfAccounts;
+use App\Filament\App\Resources\ChartOfAccountsResource\Pages\CreateChartOfAccounts;
+use App\Filament\App\Resources\ChartOfAccountsResource\Pages\EditChartOfAccounts;
 use App\Filament\App\Resources\ChartOfAccountsResource\Pages;
 use App\Models\Account;
 use App\Models\AccountTemplate;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Filament\Tables;
@@ -16,25 +27,25 @@ class ChartOfAccountsResource extends Resource
 {
     protected static ?string $model = Account::class;
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\Select::make('template_id')
+        return $schema
+            ->components([
+                Select::make('template_id')
                     ->label('Industry Template')
                     ->options(AccountTemplate::pluck('name', 'id'))
                     ->reactive()
                     ->visible(fn ($get) => !$get('parent_id')),
                 
-                Forms\Components\TextInput::make('account_name')
+                TextInput::make('account_name')
                     ->required()
                     ->maxLength(255),
                     
-                Forms\Components\TextInput::make('account_number')
+                TextInput::make('account_number')
                     ->required()
                     ->numeric(),
                     
-                Forms\Components\Select::make('account_type')
+                Select::make('account_type')
                     ->required()
                     ->options([
                         'asset' => 'Asset',
@@ -44,13 +55,13 @@ class ChartOfAccountsResource extends Resource
                         'expense' => 'Expense'
                     ]),
                     
-                Forms\Components\Select::make('parent_id')
+                Select::make('parent_id')
                     ->label('Parent Account')
                     ->options(fn () => Account::whereNull('parent_id')
                         ->pluck('account_name', 'account_id'))
                     ->searchable(),
                     
-                Forms\Components\TextInput::make('balance')
+                TextInput::make('balance')
                     ->numeric()
                     ->disabled(fn ($get) => $get('parent_id')),
             ]);
@@ -60,17 +71,17 @@ class ChartOfAccountsResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('account_number')
+                TextColumn::make('account_number')
                     ->sortable(),
-                Tables\Columns\IndentedTextColumn::make('account_name')
+                IndentedTextColumn::make('account_name')
                     ->indentedFromField('parent_id'),
-                Tables\Columns\TextColumn::make('account_type'),
-                Tables\Columns\TextColumn::make('balance')
+                TextColumn::make('account_type'),
+                TextColumn::make('balance')
                     ->money(),
             ])
             ->defaultSort('account_number')
             ->filters([
-                Tables\Filters\SelectFilter::make('account_type')
+                SelectFilter::make('account_type')
                     ->options([
                         'asset' => 'Asset',
                         'liability' => 'Liability',
@@ -79,21 +90,21 @@ class ChartOfAccountsResource extends Resource
                         'expense' => 'Expense'
                     ]),
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+            ->recordActions([
+                EditAction::make(),
+                DeleteAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                DeleteBulkAction::make(),
             ]);
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListChartOfAccounts::route('/'),
-            'create' => Pages\CreateChartOfAccounts::route('/create'),
-            'edit' => Pages\EditChartOfAccounts::route('/{record}/edit'),
+            'index' => ListChartOfAccounts::route('/'),
+            'create' => CreateChartOfAccounts::route('/create'),
+            'edit' => EditChartOfAccounts::route('/{record}/edit'),
         ];
     }
 }

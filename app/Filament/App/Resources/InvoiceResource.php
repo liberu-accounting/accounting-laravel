@@ -2,10 +2,16 @@
 
 namespace App\Filament\App\Resources;
 
+use Filament\Schemas\Schema;
+use App\Models\TaxRate;
+use Filament\Actions\EditAction;
+use Filament\Actions\Action;
+use App\Filament\App\Resources\InvoiceResource\Pages\ListInvoices;
+use App\Filament\App\Resources\InvoiceResource\Pages\CreateInvoice;
+use App\Filament\App\Resources\InvoiceResource\Pages\EditInvoice;
 use Filament\Forms;
 use Filament\Tables;
 use App\Models\Invoice;
-use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Select;
@@ -14,21 +20,19 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Textarea;
 use Illuminate\Database\Eloquent\Builder;
-use Filament\Forms\Components\BelongsToSelect;
-use Filament\Tables\Actions\Action;
 use App\Filament\App\Resources\InvoiceResource\Pages;
 
 class InvoiceResource extends Resource
 {
     protected static ?string $model = Invoice::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document-text';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                BelongsToSelect::make('customer_id')
+        return $schema
+            ->components([
+                Select::make('customer_id')
                     ->relationship('customer', 'customer_name')
                     ->required()
                     ->searchable(),
@@ -45,17 +49,17 @@ class InvoiceResource extends Resource
                     ->reactive()
                     ->afterStateUpdated(function ($state, callable $set, $get) {
                         if ($get('tax_rate_id')) {
-                            $taxRate = \App\Models\TaxRate::find($get('tax_rate_id'));
+                            $taxRate = TaxRate::find($get('tax_rate_id'));
                             $taxAmount = $state * ($taxRate->rate / 100);
                             $set('tax_amount', $taxAmount);
                         }
                     }),
-                BelongsToSelect::make('tax_rate_id')
+                Select::make('tax_rate_id')
                     ->relationship('taxRate', 'name')
                     ->reactive()
                     ->afterStateUpdated(function ($state, callable $set, $get) {
                         if ($state && $get('total_amount')) {
-                            $taxRate = \App\Models\TaxRate::find($state);
+                            $taxRate = TaxRate::find($state);
                             $taxAmount = $get('total_amount') * ($taxRate->rate / 100);
                             $set('tax_amount', $taxAmount);
                         }
@@ -119,8 +123,8 @@ class InvoiceResource extends Resource
                         default => 'warning',
                     }),
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
                 Action::make('download')
                     ->icon('heroicon-o-document-download')
                     ->action(fn (Invoice $record) => response()->streamDownload(
@@ -138,9 +142,9 @@ class InvoiceResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListInvoices::route('/'),
-            'create' => Pages\CreateInvoice::route('/create'),
-            'edit' => Pages\EditInvoice::route('/{record}/edit'),
+            'index' => ListInvoices::route('/'),
+            'create' => CreateInvoice::route('/create'),
+            'edit' => EditInvoice::route('/{record}/edit'),
         ];
     }
 }

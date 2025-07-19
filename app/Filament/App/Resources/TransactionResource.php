@@ -2,9 +2,14 @@
 
 namespace App\Filament\App\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
+use App\Filament\App\Resources\TransactionResource\Pages\ListTransactions;
+use App\Filament\App\Resources\TransactionResource\Pages\CreateTransaction;
+use App\Filament\App\Resources\TransactionResource\Pages\EditTransaction;
 use Filament\Forms;
 use Filament\Tables;
-use Filament\Forms\Form;
 use Filament\Tables\Table;
 use App\Models\Transaction;
 use App\Models\Currency;
@@ -14,7 +19,6 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
 use Illuminate\Database\Eloquent\Builder;
-use Filament\Forms\Components\BelongsToSelect;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Rules\DoubleEntryValidator;
 use App\Services\ExchangeRateService;
@@ -25,12 +29,12 @@ class TransactionResource extends Resource
 {
     protected static ?string $model = Transaction::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 DatePicker::make('transaction_date')
                     ->label('Date')
                     ->required(),
@@ -43,7 +47,7 @@ class TransactionResource extends Resource
                     ->required()
                     ->rules(['required', new DoubleEntryValidator()])
                     ->step('0.01'),
-                BelongsToSelect::make('currency_id')
+                Select::make('currency_id')
                     ->relationship('currency', 'code')
                     ->label('Currency')
                     ->required()
@@ -72,21 +76,21 @@ class TransactionResource extends Resource
                     ->default(1)
                     ->step('0.000001')
                     ->helperText('Exchange rate to default currency'),
-                BelongsToSelect::make('debit_account_id')
+                Select::make('debit_account_id')
                     ->relationship('debitAccount', 'account_name')
                     ->label('Debit Account')
                     ->required()
                     ->searchable()
                     ->preload(),
-                BelongsToSelect::make('credit_account_id')
+                Select::make('credit_account_id')
                     ->relationship('creditAccount', 'account_name')
                     ->label('Credit Account')
                     ->required()
                     ->searchable()
                     ->preload(),
-                Forms\Components\Toggle::make('reconciled')
+                Toggle::make('reconciled')
                     ->label('Reconciled'),
-                Forms\Components\Textarea::make('discrepancy_notes')
+                Textarea::make('discrepancy_notes')
                     ->label('Discrepancy Notes'),
             ]);
     }
@@ -130,11 +134,11 @@ class TransactionResource extends Resource
                     ]),
                 DateRangeFilter::make('transaction_date'),
             ])
-            ->actions([
+            ->recordActions([
                 EditAction::make(),
                 ViewAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                     ExportBulkAction::make(),
@@ -153,9 +157,9 @@ class TransactionResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListTransactions::route('/'),
-            'create' => Pages\CreateTransaction::route('/create'),
-            'edit' => Pages\EditTransaction::route('/{record}/edit'),
+            'index' => ListTransactions::route('/'),
+            'create' => CreateTransaction::route('/create'),
+            'edit' => EditTransaction::route('/{record}/edit'),
         ];
     }
 }

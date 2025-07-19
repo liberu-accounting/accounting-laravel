@@ -2,12 +2,25 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\Action;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\Resources\BudgetResource\Pages\ListBudgets;
+use App\Filament\Resources\BudgetResource\Pages\CreateBudget;
+use App\Filament\Resources\BudgetResource\Pages\EditBudget;
 use App\Filament\Resources\BudgetResource\Pages;
 use App\Models\Budget;
 use Filament\Forms;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Forms\Form;
 use Filament\Tables\Table;
 use App\Services\BudgetService;
 
@@ -15,28 +28,28 @@ class BudgetResource extends Resource
 {
     protected static ?string $model = Budget::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-calculator';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-calculator';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\Select::make('account_id')
+        return $schema
+            ->components([
+                Select::make('account_id')
                     ->relationship('account', 'name')
                     ->required(),
-                Forms\Components\DatePicker::make('start_date')
+                DatePicker::make('start_date')
                     ->required(),
-                Forms\Components\DatePicker::make('end_date')
+                DatePicker::make('end_date')
                     ->required(),
-                Forms\Components\TextInput::make('planned_amount')
+                TextInput::make('planned_amount')
                     ->numeric()
                     ->required(),
-                Forms\Components\TextInput::make('forecast_amount')
+                TextInput::make('forecast_amount')
                     ->numeric()
                     ->disabled(),
-                Forms\Components\Toggle::make('is_approved')
+                Toggle::make('is_approved')
                     ->label('Approved'),
-                Forms\Components\TextInput::make('description')
+                TextInput::make('description')
                     ->maxLength(255),
             ]);
     }
@@ -45,28 +58,28 @@ class BudgetResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('account.name'),
-                Tables\Columns\TextColumn::make('start_date')
+                TextColumn::make('account.name'),
+                TextColumn::make('start_date')
                     ->date(),
-                Tables\Columns\TextColumn::make('end_date')
+                TextColumn::make('end_date')
                     ->date(),
-                Tables\Columns\TextColumn::make('planned_amount')
+                TextColumn::make('planned_amount')
                     ->money(),
-                Tables\Columns\TextColumn::make('forecast_amount')
+                TextColumn::make('forecast_amount')
                     ->money(),
-                Tables\Columns\TextColumn::make('variance')
+                TextColumn::make('variance')
                     ->money(),
-                Tables\Columns\IconColumn::make('is_approved')
+                IconColumn::make('is_approved')
                     ->boolean(),
-                Tables\Columns\TextColumn::make('description'),
+                TextColumn::make('description'),
             ])
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
-                Tables\Actions\Action::make('generate_forecast')
+            ->recordActions([
+                EditAction::make(),
+                DeleteAction::make(),
+                Action::make('generate_forecast')
                     ->action(function (Budget $record) {
                         $budgetService = new BudgetService();
                         $budgetService->generateForecast($record);
@@ -75,17 +88,17 @@ class BudgetResource extends Resource
                     ->color('success')
                     ->icon('heroicon-o-calculator'),
             ])
-            ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                DeleteBulkAction::make(),
             ]);
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListBudgets::route('/'),
-            'create' => Pages\CreateBudget::route('/create'),
-            'edit' => Pages\EditBudget::route('/{record}/edit'),
+            'index' => ListBudgets::route('/'),
+            'create' => CreateBudget::route('/create'),
+            'edit' => EditBudget::route('/{record}/edit'),
         ];
     }
 }

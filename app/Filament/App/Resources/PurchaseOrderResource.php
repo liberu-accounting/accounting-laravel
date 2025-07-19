@@ -2,10 +2,25 @@
 
 namespace App\Filament\App\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Textarea;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\BadgeColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\App\Resources\PurchaseOrderResource\Pages\ListPurchaseOrders;
+use App\Filament\App\Resources\PurchaseOrderResource\Pages\CreatePurchaseOrder;
+use App\Filament\App\Resources\PurchaseOrderResource\Pages\EditPurchaseOrder;
 use App\Filament\App\Resources\PurchaseOrderResource\Pages;
 use App\Models\PurchaseOrder;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -14,23 +29,23 @@ class PurchaseOrderResource extends Resource
 {
     protected static ?string $model = PurchaseOrder::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-shopping-cart';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\Select::make('supplier_id')
+        return $schema
+            ->components([
+                Select::make('supplier_id')
                     ->relationship('supplier', 'supplier_first_name')
                     ->required(),
-                Forms\Components\TextInput::make('po_number')
+                TextInput::make('po_number')
                     ->default(fn () => PurchaseOrder::generatePoNumber())
                     ->disabled()
                     ->required(),
-                Forms\Components\DatePicker::make('order_date')
+                DatePicker::make('order_date')
                     ->required(),
-                Forms\Components\DatePicker::make('expected_delivery_date'),
-                Forms\Components\Select::make('status')
+                DatePicker::make('expected_delivery_date'),
+                Select::make('status')
                     ->options([
                         'draft' => 'Draft',
                         'sent' => 'Sent',
@@ -38,20 +53,20 @@ class PurchaseOrderResource extends Resource
                         'cancelled' => 'Cancelled',
                     ])
                     ->required(),
-                Forms\Components\Repeater::make('items')
+                Repeater::make('items')
                     ->relationship()
                     ->schema([
-                        Forms\Components\TextInput::make('description')
+                        TextInput::make('description')
                             ->required(),
-                        Forms\Components\TextInput::make('quantity')
+                        TextInput::make('quantity')
                             ->numeric()
                             ->required(),
-                        Forms\Components\TextInput::make('unit_price')
+                        TextInput::make('unit_price')
                             ->numeric()
                             ->required(),
                     ])
                     ->columns(3),
-                Forms\Components\Textarea::make('notes'),
+                Textarea::make('notes'),
             ]);
     }
 
@@ -59,15 +74,15 @@ class PurchaseOrderResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('po_number')
+                TextColumn::make('po_number')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('supplier.supplier_first_name')
+                TextColumn::make('supplier.supplier_first_name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('order_date')
+                TextColumn::make('order_date')
                     ->date(),
-                Tables\Columns\TextColumn::make('total_amount')
+                TextColumn::make('total_amount')
                     ->money(),
-                Tables\Columns\BadgeColumn::make('status')
+                BadgeColumn::make('status')
                     ->colors([
                         'warning' => 'draft',
                         'primary' => 'sent',
@@ -76,15 +91,15 @@ class PurchaseOrderResource extends Resource
                     ]),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('status'),
+                SelectFilter::make('status'),
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+            ->recordActions([
+                EditAction::make(),
+                DeleteAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -92,9 +107,9 @@ class PurchaseOrderResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPurchaseOrders::route('/'),
-            'create' => Pages\CreatePurchaseOrder::route('/create'),
-            'edit' => Pages\EditPurchaseOrder::route('/{record}/edit'),
+            'index' => ListPurchaseOrders::route('/'),
+            'create' => CreatePurchaseOrder::route('/create'),
+            'edit' => EditPurchaseOrder::route('/{record}/edit'),
         ];
     }
 }

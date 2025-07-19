@@ -2,6 +2,19 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Select;
+use Filament\Tables\Table;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\BadgeColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use App\Filament\Resources\VendorResource\Pages\ListVendors;
+use App\Filament\Resources\VendorResource\Pages\CreateVendor;
+use App\Filament\Resources\VendorResource\Pages\EditVendor;
 use App\Filament\Resources\VendorResource\Pages;
 use App\Models\Vendor;
 use Filament\Forms;
@@ -12,30 +25,30 @@ class VendorResource extends Resource
 {
     protected static ?string $model = Vendor::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-building-office';
-    protected static ?string $navigationGroup = 'Finance';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-building-office';
+    protected static string | \UnitEnum | null $navigationGroup = 'Finance';
 
-    public static function form(Forms\Form $form): Forms\Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('name')
+        return $schema
+            ->components([
+                TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('email')
+                TextInput::make('email')
                     ->email()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('phone')
+                TextInput::make('phone')
                     ->tel()
                     ->maxLength(20),
-                Forms\Components\Textarea::make('address')
+                Textarea::make('address')
                     ->maxLength(1000),
-                Forms\Components\TextInput::make('tax_id')
+                TextInput::make('tax_id')
                     ->maxLength(50),
-                Forms\Components\TextInput::make('payment_terms')
+                TextInput::make('payment_terms')
                     ->numeric()
                     ->default(30),
-                Forms\Components\Select::make('status')
+                Select::make('status')
                     ->options([
                         'active' => 'Active',
                         'inactive' => 'Inactive',
@@ -44,40 +57,40 @@ class VendorResource extends Resource
             ]);
     }
 
-    public static function table(Tables\Table $table): Tables\Table
+    public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('email')
+                TextColumn::make('email')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('phone'),
-                Tables\Columns\BadgeColumn::make('status')
+                TextColumn::make('phone'),
+                BadgeColumn::make('status')
                     ->colors([
                         'success' => 'active',
                         'danger' => 'inactive',
                     ]),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('status')
+                SelectFilter::make('status')
                     ->options([
                         'active' => 'Active',
                         'inactive' => 'Inactive',
                     ]),
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+            ->recordActions([
+                EditAction::make(),
+                DeleteAction::make(),
             ]);
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListVendors::route('/'),
-            'create' => Pages\CreateVendor::route('/create'),
-            'edit' => Pages\EditVendor::route('/{record}/edit'),
+            'index' => ListVendors::route('/'),
+            'create' => CreateVendor::route('/create'),
+            'edit' => EditVendor::route('/{record}/edit'),
         ];
     }
 }

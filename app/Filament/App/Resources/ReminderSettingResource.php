@@ -2,10 +2,12 @@
 
 namespace App\Filament\App\Resources;
 
+use Filament\Schemas\Schema;
+use App\Filament\App\Resources\ReminderSettingResource\Pages\ListReminderSettings;
+use App\Filament\App\Resources\ReminderSettingResource\Pages\EditReminderSetting;
 use App\Models\ReminderSetting;
 use Filament\Forms;
 use Filament\Resources\Resource;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables;
@@ -18,9 +20,9 @@ use Filament\Forms\Components\Toggle;
 class ReminderSettingResource extends Resource
 {
     protected static ?string $model = ReminderSetting::class;
-    protected static ?string $navigationIcon = 'heroicon-o-bell';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-bell';
     protected static ?string $navigationLabel = 'Reminder Settings';
-    protected static ?string $navigationGroup = 'Settings';
+    protected static string | \UnitEnum | null $navigationGroup = 'Settings';
     protected static ?int $navigationSort = 1;
     
     public static function getNavigationGroup(): ?string
@@ -28,10 +30,10 @@ class ReminderSettingResource extends Resource
         return static::$navigationGroup;
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('days_before_reminder')
                     ->label('Days Before First Reminder')
                     ->numeric()
@@ -81,8 +83,8 @@ class ReminderSettingResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => \App\Filament\App\Resources\ReminderSettingResource\Pages\ListReminderSettings::route('/'),
-            'edit' => \App\Filament\App\Resources\ReminderSettingResource\Pages\EditReminderSetting::route('/{record}/edit'),
+            'index' => ListReminderSettings::route('/'),
+            'edit' => EditReminderSetting::route('/{record}/edit'),
         ];
     }
 }

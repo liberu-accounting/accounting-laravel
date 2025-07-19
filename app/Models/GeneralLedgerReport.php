@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use PDF;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -45,7 +46,7 @@ class GeneralLedgerReport extends Model
     public function generatePdf()
     {
         // Implementation for PDF generation
-        $pdf = \PDF::loadView('reports.general-ledger', [
+        $pdf = PDF::loadView('reports.general-ledger', [
             'report' => $this
         ]);
         

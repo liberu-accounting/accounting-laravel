@@ -2,10 +2,16 @@
 
 namespace App\Filament\App\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\App\Resources\SupplierResource\Pages\ListSuppliers;
+use App\Filament\App\Resources\SupplierResource\Pages\CreateSupplier;
+use App\Filament\App\Resources\SupplierResource\Pages\EditSupplier;
 use Filament\Forms;
 use Filament\Tables;
 use App\Models\Supplier;
-use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Select;
@@ -16,15 +22,15 @@ use App\Filament\App\Resources\SupplierResource\Pages;
 class SupplierResource extends Resource
 {
     protected static ?string $model = Supplier::class;
-    protected static ?string $navigationIcon = 'heroicon-o-truck';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-truck';
     protected static ?int $navigationSort = 5;
-    protected static ?string $navigationGroup = 'Vendors';
+    protected static string | \UnitEnum | null $navigationGroup = 'Vendors';
     protected static ?string $recordTitleAttribute = 'supplier_name';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Select::make('payment_term_id')
                     ->relationship('paymentTerm', 'payment_term_name')
                     ->searchable()
@@ -90,12 +96,12 @@ class SupplierResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -110,9 +116,9 @@ class SupplierResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListSuppliers::route('/'),
-            'create' => Pages\CreateSupplier::route('/create'),
-            'edit' => Pages\EditSupplier::route('/{record}/edit'),
+            'index' => ListSuppliers::route('/'),
+            'create' => CreateSupplier::route('/create'),
+            'edit' => EditSupplier::route('/{record}/edit'),
         ];
     }
 }

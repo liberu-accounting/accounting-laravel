@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ModuleResource\Pages;
 
+use Filament\Actions\Action;
 use App\Filament\Resources\ModuleResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
@@ -13,7 +14,7 @@ class ListModules extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\Action::make('refresh')
+            Action::make('refresh')
                 ->label('Refresh Modules')
                 ->icon('heroicon-o-arrow-path')
                 ->action(function () {
