@@ -1,11 +1,15 @@
-module.exports = {
+export default {
   content: [
     "./resources/**/*.blade.php",
     "./resources/**/*.js",
     "./resources/**/*.vue",
-    "./node_modules/preline/dist/*.js"
   ],
+  theme: {
+    extend: {},
+  },
   plugins: [
-    // require('preline/plugin')
-  ]
+    require('@tailwindcss/forms'),
+    require('@tailwindcss/typography'),
+    require('preline/plugin')
+  ],
 }
