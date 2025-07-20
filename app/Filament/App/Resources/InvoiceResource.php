@@ -2,7 +2,7 @@
 
 namespace App\Filament\App\Resources;
 
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use App\Models\TaxRate;
 use Filament\Actions\EditAction;
 use Filament\Actions\Action;
@@ -26,11 +26,11 @@ class InvoiceResource extends Resource
 {
     protected static ?string $model = Invoice::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document-text';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->components([
                 Select::make('customer_id')
                     ->relationship('customer', 'customer_name')
