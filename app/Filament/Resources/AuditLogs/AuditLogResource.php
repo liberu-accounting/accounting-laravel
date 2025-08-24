@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Resources\AuditLogs;
 
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\Filter;
 use Filament\Forms\Components\DatePicker;
-use App\Filament\Resources\AuditLogResource\Pages\ListAuditLogs;
-use App\Filament\Resources\AuditLogResource\Pages\ViewAuditLog;
+use App\Filament\Resources\AuditLogs\Pages\ListAuditLogs;
+use App\Filament\Resources\AuditLogs\Pages\ViewAuditLog;
 use App\Filament\Resources\AuditLogResource\Pages;
 use App\Models\AuditLog;
 use App\Models\Invoice;

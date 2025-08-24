@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\App\Resources;
+namespace App\Filament\App\Resources\PaymentTerms;
 
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use App\Filament\App\Resources\PaymentTermResource\Pages\ListPaymentTerms;
-use App\Filament\App\Resources\PaymentTermResource\Pages\CreatePaymentTerm;
-use App\Filament\App\Resources\PaymentTermResource\Pages\EditPaymentTerm;
+use App\Filament\App\Resources\PaymentTerms\Pages\ListPaymentTerms;
+use App\Filament\App\Resources\PaymentTerms\Pages\CreatePaymentTerm;
+use App\Filament\App\Resources\PaymentTerms\Pages\EditPaymentTerm;
 use Filament\Forms;
 use Filament\Tables;
 use Filament\Tables\Table;

@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Filament\App\Resources;
+namespace App\Filament\App\Resources\BankStatements;
 
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use App\Filament\App\Resources\BankStatementResource\Pages\CreateBankStatement;
+use App\Filament\App\Resources\BankStatements\Pages\CreateBankStatement;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Filters\Filter;
@@ -14,8 +14,8 @@ use Filament\Actions\EditAction;
 use Filament\Actions\Action;
 use Exception;
 use Filament\Actions\DeleteBulkAction;
-use App\Filament\App\Resources\BankStatementResource\Pages\ListBankStatements;
-use App\Filament\App\Resources\BankStatementResource\Pages\EditBankStatement;
+use App\Filament\App\Resources\BankStatements\Pages\ListBankStatements;
+use App\Filament\App\Resources\BankStatements\Pages\EditBankStatement;
 use App\Filament\App\Resources\BankStatementResource\Pages;
 use App\Models\BankStatement;
 use App\Services\ReconciliationService;

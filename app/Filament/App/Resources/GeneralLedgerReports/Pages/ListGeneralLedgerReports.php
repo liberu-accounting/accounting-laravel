@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Filament\App\Resources\GeneralLedgerReportResource\Pages;
+namespace App\Filament\App\Resources\GeneralLedgerReports\Pages;
 
 use Filament\Actions\CreateAction;
-use App\Filament\App\Resources\GeneralLedgerReportResource;
+use App\Filament\App\Resources\GeneralLedgerReports\GeneralLedgerReportResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 

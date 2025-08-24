@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Filament\App\Resources\TaxFormResource\Pages;
+namespace App\Filament\App\Resources\TaxForms\Pages;
 
 use Filament\Actions\DeleteAction;
-use App\Filament\App\Resources\TaxFormResource;
+use App\Filament\App\Resources\TaxForms\TaxFormResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 

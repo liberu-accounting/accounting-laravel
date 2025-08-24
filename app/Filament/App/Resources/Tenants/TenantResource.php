@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\App\Resources;
+namespace App\Filament\App\Resources\Tenants;
 
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use App\Filament\App\Resources\TenantResource\Pages\ListTenants;
-use App\Filament\App\Resources\TenantResource\Pages\CreateTenant;
-use App\Filament\App\Resources\TenantResource\Pages\EditTenant;
+use App\Filament\App\Resources\Tenants\Pages\ListTenants;
+use App\Filament\App\Resources\Tenants\Pages\CreateTenant;
+use App\Filament\App\Resources\Tenants\Pages\EditTenant;
 use App\Filament\App\Resources\TenantResource\Pages;
 use App\Filament\App\Resources\TenantResource\RelationManagers;
 use App\Models\Tenant;

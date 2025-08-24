@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\App\Resources;
+namespace App\Filament\App\Resources\Accounts;
 
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use App\Filament\App\Resources\AccountResource\Pages\ListAccounts;
-use App\Filament\App\Resources\AccountResource\Pages\CreateAccount;
-use App\Filament\App\Resources\AccountResource\Pages\EditAccount;
+use App\Filament\App\Resources\Accounts\Pages\ListAccounts;
+use App\Filament\App\Resources\Accounts\Pages\CreateAccount;
+use App\Filament\App\Resources\Accounts\Pages\EditAccount;
 use Filament\Forms;
 use Filament\Tables;
 use App\Models\Account;

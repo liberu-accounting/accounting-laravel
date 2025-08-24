@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Filament\App\Resources\BankStatementResource\Pages;
+namespace App\Filament\App\Resources\BankStatements\Pages;
 
 use Filament\Actions\CreateAction;
-use App\Filament\App\Resources\BankStatementResource;
+use App\Filament\App\Resources\BankStatements\BankStatementResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 

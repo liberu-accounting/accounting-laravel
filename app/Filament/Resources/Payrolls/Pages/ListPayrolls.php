@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Filament\Resources\PayrollResource\Pages;
+namespace App\Filament\Resources\Payrolls\Pages;
 
 use Filament\Actions\CreateAction;
-use App\Filament\Resources\PayrollResource;
+use App\Filament\Resources\Payrolls\PayrollResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 

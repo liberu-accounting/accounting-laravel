@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Filament\App\Resources\ReminderSettingResource\Pages;
+namespace App\Filament\App\Resources\ReminderSettings\Pages;
 
 use Filament\Actions\DeleteAction;
-use App\Filament\App\Resources\ReminderSettingResource;
+use App\Filament\App\Resources\ReminderSettings\ReminderSettingResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 

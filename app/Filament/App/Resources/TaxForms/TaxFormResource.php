@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\App\Resources;
+namespace App\Filament\App\Resources\TaxForms;
 
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\TextInput;
@@ -8,9 +8,9 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Actions\EditAction;
 use Filament\Actions\Action;
-use App\Filament\App\Resources\TaxFormResource\Pages\ListTaxForms;
-use App\Filament\App\Resources\TaxFormResource\Pages\CreateTaxForm;
-use App\Filament\App\Resources\TaxFormResource\Pages\EditTaxForm;
+use App\Filament\App\Resources\TaxForms\Pages\ListTaxForms;
+use App\Filament\App\Resources\TaxForms\Pages\CreateTaxForm;
+use App\Filament\App\Resources\TaxForms\Pages\EditTaxForm;
 use App\Models\TaxForm;
 use Filament\Forms;
 use Filament\Resources\Resource;

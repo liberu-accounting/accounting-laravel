@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Filament\Resources\BudgetResource\Pages;
+namespace App\Filament\Resources\Budgets\Pages;
 
 use Filament\Actions\DeleteAction;
-use App\Filament\Resources\BudgetResource;
+use App\Filament\Resources\Budgets\BudgetResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 

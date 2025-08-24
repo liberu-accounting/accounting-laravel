@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\App\Resources;
+namespace App\Filament\App\Resources\TimeEntries;
 
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\Select;
@@ -11,9 +11,9 @@ use Filament\Actions\EditAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use App\Filament\App\Resources\TimeEntryResource\Pages\ListTimeEntries;
-use App\Filament\App\Resources\TimeEntryResource\Pages\CreateTimeEntry;
-use App\Filament\App\Resources\TimeEntryResource\Pages\EditTimeEntry;
+use App\Filament\App\Resources\TimeEntries\Pages\ListTimeEntries;
+use App\Filament\App\Resources\TimeEntries\Pages\CreateTimeEntry;
+use App\Filament\App\Resources\TimeEntries\Pages\EditTimeEntry;
 use App\Filament\App\Resources\TimeEntryResource\Pages;
 use App\Models\TimeEntry;
 use Filament\Forms;

@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Filament\App\Resources;
+namespace App\Filament\App\Resources\Categories;
 
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use App\Filament\App\Resources\CategoryResource\Pages\ListCategories;
-use App\Filament\App\Resources\CategoryResource\Pages\CreateCategory;
-use App\Filament\App\Resources\CategoryResource\Pages\EditCategory;
+use App\Filament\App\Resources\Categories\Pages\ListCategories;
+use App\Filament\App\Resources\Categories\Pages\CreateCategory;
+use App\Filament\App\Resources\Categories\Pages\EditCategory;
 use Filament\Forms;
 use Filament\Tables;
 use App\Models\Category;

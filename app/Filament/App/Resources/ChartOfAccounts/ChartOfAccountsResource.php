@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\App\Resources;
+namespace App\Filament\App\Resources\ChartOfAccounts;
 
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\Select;
@@ -11,9 +11,9 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Actions\EditAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
-use App\Filament\App\Resources\ChartOfAccountsResource\Pages\ListChartOfAccounts;
-use App\Filament\App\Resources\ChartOfAccountsResource\Pages\CreateChartOfAccounts;
-use App\Filament\App\Resources\ChartOfAccountsResource\Pages\EditChartOfAccounts;
+use App\Filament\App\Resources\ChartOfAccounts\Pages\ListChartOfAccounts;
+use App\Filament\App\Resources\ChartOfAccounts\Pages\CreateChartOfAccounts;
+use App\Filament\App\Resources\ChartOfAccounts\Pages\EditChartOfAccounts;
 use App\Filament\App\Resources\ChartOfAccountsResource\Pages;
 use App\Models\Account;
 use App\Models\AccountTemplate;

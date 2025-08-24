@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\App\Resources\GeneralLedgerReportResource\Pages;
+namespace App\Filament\App\Resources\GeneralLedgerReports\Pages;
 
-use App\Filament\App\Resources\GeneralLedgerReportResource;
+use App\Filament\App\Resources\GeneralLedgerReports\GeneralLedgerReportResource;
 use Filament\Resources\Pages\EditRecord;
 
 class EditGeneralLedgerReport extends EditRecord

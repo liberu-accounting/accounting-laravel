@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\App\Resources;
+namespace App\Filament\App\Resources\GeneralLedgerReports;
 
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\DatePicker;
@@ -16,10 +16,10 @@ use Filament\Actions\ViewAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteBulkAction;
-use App\Filament\App\Resources\GeneralLedgerReportResource\Pages\ListGeneralLedgerReports;
-use App\Filament\App\Resources\GeneralLedgerReportResource\Pages\CreateGeneralLedgerReport;
-use App\Filament\App\Resources\GeneralLedgerReportResource\Pages\ViewGeneralLedgerReport;
-use App\Filament\App\Resources\GeneralLedgerReportResource\Pages\EditGeneralLedgerReport;
+use App\Filament\App\Resources\GeneralLedgerReports\Pages\ListGeneralLedgerReports;
+use App\Filament\App\Resources\GeneralLedgerReports\Pages\CreateGeneralLedgerReport;
+use App\Filament\App\Resources\GeneralLedgerReports\Pages\ViewGeneralLedgerReport;
+use App\Filament\App\Resources\GeneralLedgerReports\Pages\EditGeneralLedgerReport;
 use App\Filament\App\Resources\GeneralLedgerReportResource\Pages;
 use App\Models\GeneralLedgerReport;
 use Filament\Forms;

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources\BudgetResource\Pages;
+namespace App\Filament\Resources\Budgets\Pages;
 
-use App\Filament\Resources\BudgetResource;
+use App\Filament\Resources\Budgets\BudgetResource;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateBudget extends CreateRecord

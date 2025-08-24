@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\App\Resources;
+namespace App\Filament\App\Resources\PurchaseOrders;
 
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\Select;
@@ -15,9 +15,9 @@ use Filament\Actions\EditAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use App\Filament\App\Resources\PurchaseOrderResource\Pages\ListPurchaseOrders;
-use App\Filament\App\Resources\PurchaseOrderResource\Pages\CreatePurchaseOrder;
-use App\Filament\App\Resources\PurchaseOrderResource\Pages\EditPurchaseOrder;
+use App\Filament\App\Resources\PurchaseOrders\Pages\ListPurchaseOrders;
+use App\Filament\App\Resources\PurchaseOrders\Pages\CreatePurchaseOrder;
+use App\Filament\App\Resources\PurchaseOrders\Pages\EditPurchaseOrder;
 use App\Filament\App\Resources\PurchaseOrderResource\Pages;
 use App\Models\PurchaseOrder;
 use Filament\Forms;

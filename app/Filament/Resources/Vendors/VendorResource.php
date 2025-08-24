@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Resources\Vendors;
 
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\TextInput;
@@ -12,9 +12,9 @@ use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Actions\EditAction;
 use Filament\Actions\DeleteAction;
-use App\Filament\Resources\VendorResource\Pages\ListVendors;
-use App\Filament\Resources\VendorResource\Pages\CreateVendor;
-use App\Filament\Resources\VendorResource\Pages\EditVendor;
+use App\Filament\Resources\Vendors\Pages\ListVendors;
+use App\Filament\Resources\Vendors\Pages\CreateVendor;
+use App\Filament\Resources\Vendors\Pages\EditVendor;
 use App\Filament\Resources\VendorResource\Pages;
 use App\Models\Vendor;
 use Filament\Forms;

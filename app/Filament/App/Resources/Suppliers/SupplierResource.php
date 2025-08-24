@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\App\Resources;
+namespace App\Filament\App\Resources\Suppliers;
 
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use App\Filament\App\Resources\SupplierResource\Pages\ListSuppliers;
-use App\Filament\App\Resources\SupplierResource\Pages\CreateSupplier;
-use App\Filament\App\Resources\SupplierResource\Pages\EditSupplier;
+use App\Filament\App\Resources\Suppliers\Pages\ListSuppliers;
+use App\Filament\App\Resources\Suppliers\Pages\CreateSupplier;
+use App\Filament\App\Resources\Suppliers\Pages\EditSupplier;
 use Filament\Forms;
 use Filament\Tables;
 use App\Models\Supplier;

@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\App\Resources;
+namespace App\Filament\App\Resources\Invoices;
 
 use Filament\Schemas\Schema;
 use App\Models\TaxRate;
 use Filament\Actions\EditAction;
 use Filament\Actions\Action;
-use App\Filament\App\Resources\InvoiceResource\Pages\ListInvoices;
-use App\Filament\App\Resources\InvoiceResource\Pages\CreateInvoice;
-use App\Filament\App\Resources\InvoiceResource\Pages\EditInvoice;
+use App\Filament\App\Resources\Invoices\Pages\ListInvoices;
+use App\Filament\App\Resources\Invoices\Pages\CreateInvoice;
+use App\Filament\App\Resources\Invoices\Pages\EditInvoice;
 use Filament\Forms;
 use Filament\Tables;
 use App\Models\Invoice;

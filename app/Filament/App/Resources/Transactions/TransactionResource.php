@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Filament\App\Resources;
+namespace App\Filament\App\Resources\Transactions;
 
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
-use App\Filament\App\Resources\TransactionResource\Pages\ListTransactions;
-use App\Filament\App\Resources\TransactionResource\Pages\CreateTransaction;
-use App\Filament\App\Resources\TransactionResource\Pages\EditTransaction;
+use App\Filament\App\Resources\Transactions\Pages\ListTransactions;
+use App\Filament\App\Resources\Transactions\Pages\CreateTransaction;
+use App\Filament\App\Resources\Transactions\Pages\EditTransaction;
 use Filament\Forms;
 use Filament\Tables;
 use Filament\Tables\Table;

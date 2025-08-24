@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Filament\App\Resources;
+namespace App\Filament\App\Resources\Payments;
 
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\Select;
 use Filament\Actions\EditAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use App\Filament\App\Resources\PaymentResource\Pages\ListPayments;
-use App\Filament\App\Resources\PaymentResource\Pages\CreatePayment;
-use App\Filament\App\Resources\PaymentResource\Pages\EditPayment;
+use App\Filament\App\Resources\Payments\Pages\ListPayments;
+use App\Filament\App\Resources\Payments\Pages\CreatePayment;
+use App\Filament\App\Resources\Payments\Pages\EditPayment;
 use Filament\Forms;
 use Filament\Tables;
 use App\Models\Payment;

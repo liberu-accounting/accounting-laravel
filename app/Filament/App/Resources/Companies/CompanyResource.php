@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\App\Resources;
+namespace App\Filament\App\Resources\Companies;
 
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use App\Filament\App\Resources\CompanyResource\Pages\ListCompanies;
-use App\Filament\App\Resources\CompanyResource\Pages\CreateCompany;
-use App\Filament\App\Resources\CompanyResource\Pages\EditCompany;
+use App\Filament\App\Resources\Companies\Pages\ListCompanies;
+use App\Filament\App\Resources\Companies\Pages\CreateCompany;
+use App\Filament\App\Resources\Companies\Pages\EditCompany;
 use Filament\Forms;
 use Filament\Tables;
 use App\Models\Company;

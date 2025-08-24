@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources\AuditLogResource\Pages;
+namespace App\Filament\Resources\AuditLogs\Pages;
 
-use App\Filament\Resources\AuditLogResource;
+use App\Filament\Resources\AuditLogs\AuditLogResource;
 use Filament\Resources\Pages\ViewRecord;
 
 class ViewAuditLog extends ViewRecord

@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Filament\App\Resources;
+namespace App\Filament\App\Resources\Assets;
 
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use App\Filament\App\Resources\AssetResource\Pages\ListAssets;
-use App\Filament\App\Resources\AssetResource\Pages\CreateAsset;
-use App\Filament\App\Resources\AssetResource\Pages\EditAsset;
-use App\Filament\App\Resources\AssetResource\Pages\DepreciationSchedulePage;
+use App\Filament\App\Resources\Assets\Pages\ListAssets;
+use App\Filament\App\Resources\Assets\Pages\CreateAsset;
+use App\Filament\App\Resources\Assets\Pages\EditAsset;
+use App\Filament\App\Resources\Assets\Pages\DepreciationSchedulePage;
 use Filament\Forms;
 use Filament\Tables;
 use App\Models\Asset;

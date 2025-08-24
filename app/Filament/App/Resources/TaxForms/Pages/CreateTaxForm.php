@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\App\Resources\TaxFormResource\Pages;
+namespace App\Filament\App\Resources\TaxForms\Pages;
 
-use App\Filament\App\Resources\TaxFormResource;
+use App\Filament\App\Resources\TaxForms\TaxFormResource;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateTaxForm extends CreateRecord

@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Filament\App\Resources\TimeEntryResource\Pages;
+namespace App\Filament\App\Resources\TimeEntries\Pages;
 
 use Filament\Actions\CreateAction;
-use App\Filament\App\Resources\TimeEntryResource;
+use App\Filament\App\Resources\TimeEntries\TimeEntryResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 

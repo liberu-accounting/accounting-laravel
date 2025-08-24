@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\App\Resources\ReminderSettingResource\Pages;
+namespace App\Filament\App\Resources\ReminderSettings\Pages;
 
-use App\Filament\App\Resources\ReminderSettingResource;
+use App\Filament\App\Resources\ReminderSettings\ReminderSettingResource;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateReminderSetting extends CreateRecord

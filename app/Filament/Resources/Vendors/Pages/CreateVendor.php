@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources\VendorResource\Pages;
+namespace App\Filament\Resources\Vendors\Pages;
 
-use App\Filament\Resources\VendorResource;
+use App\Filament\Resources\Vendors\VendorResource;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateVendor extends CreateRecord

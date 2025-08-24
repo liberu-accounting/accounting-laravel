@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Resources\Budgets;
 
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\Select;
@@ -13,9 +13,9 @@ use Filament\Actions\EditAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteBulkAction;
-use App\Filament\Resources\BudgetResource\Pages\ListBudgets;
-use App\Filament\Resources\BudgetResource\Pages\CreateBudget;
-use App\Filament\Resources\BudgetResource\Pages\EditBudget;
+use App\Filament\Resources\Budgets\Pages\ListBudgets;
+use App\Filament\Resources\Budgets\Pages\CreateBudget;
+use App\Filament\Resources\Budgets\Pages\EditBudget;
 use App\Filament\Resources\BudgetResource\Pages;
 use App\Models\Budget;
 use Filament\Forms;

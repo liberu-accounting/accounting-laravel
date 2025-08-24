@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\App\Resources;
+namespace App\Filament\App\Resources\Activations;
 
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use App\Filament\App\Resources\ActivationResource\Pages\ListActivations;
-use App\Filament\App\Resources\ActivationResource\Pages\CreateActivation;
-use App\Filament\App\Resources\ActivationResource\Pages\EditActivation;
+use App\Filament\App\Resources\Activations\Pages\ListActivations;
+use App\Filament\App\Resources\Activations\Pages\CreateActivation;
+use App\Filament\App\Resources\Activations\Pages\EditActivation;
 use Filament\Forms;
 use Filament\Tables;
 use App\Models\Activation;

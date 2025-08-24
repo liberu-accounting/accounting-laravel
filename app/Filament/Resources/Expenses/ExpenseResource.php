@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Resources\Expenses;
 
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\TextInput;
@@ -13,9 +13,9 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Actions\ViewAction;
 use Filament\Actions\Action;
-use App\Filament\Resources\ExpenseResource\Pages\ListExpenses;
-use App\Filament\Resources\ExpenseResource\Pages\CreateExpense;
-use App\Filament\Resources\ExpenseResource\Pages\EditExpense;
+use App\Filament\Resources\Expenses\Pages\ListExpenses;
+use App\Filament\Resources\Expenses\Pages\CreateExpense;
+use App\Filament\Resources\Expenses\Pages\EditExpense;
 use App\Filament\Resources\ExpenseResource\Pages;
 use App\Models\Expense;
 use Filament\Forms;

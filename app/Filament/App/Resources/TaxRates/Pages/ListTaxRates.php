@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Filament\App\Resources\TaxRateResource\Pages;
+namespace App\Filament\App\Resources\TaxRates\Pages;
 
 use Filament\Actions\CreateAction;
-use App\Filament\App\Resources\TaxRateResource;
+use App\Filament\App\Resources\TaxRates\TaxRateResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 

@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\App\Resources;
+namespace App\Filament\App\Resources\AssetAcquisitions;
 
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use App\Filament\App\Resources\AssetAcquisitionResource\Pages\ListAssetAcquisitions;
-use App\Filament\App\Resources\AssetAcquisitionResource\Pages\CreateAssetAcquisition;
-use App\Filament\App\Resources\AssetAcquisitionResource\Pages\EditAssetAcquisition;
+use App\Filament\App\Resources\AssetAcquisitions\Pages\ListAssetAcquisitions;
+use App\Filament\App\Resources\AssetAcquisitions\Pages\CreateAssetAcquisition;
+use App\Filament\App\Resources\AssetAcquisitions\Pages\EditAssetAcquisition;
 use Filament\Forms;
 use Filament\Tables;
 use Filament\Tables\Table;

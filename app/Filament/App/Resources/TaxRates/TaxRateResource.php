@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\App\Resources;
+namespace App\Filament\App\Resources\TaxRates;
 
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\TextInput;
@@ -13,9 +13,9 @@ use Filament\Actions\EditAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use App\Filament\App\Resources\TaxRateResource\Pages\ListTaxRates;
-use App\Filament\App\Resources\TaxRateResource\Pages\CreateTaxRate;
-use App\Filament\App\Resources\TaxRateResource\Pages\EditTaxRate;
+use App\Filament\App\Resources\TaxRates\Pages\ListTaxRates;
+use App\Filament\App\Resources\TaxRates\Pages\CreateTaxRate;
+use App\Filament\App\Resources\TaxRates\Pages\EditTaxRate;
 use App\Models\TaxRate;
 use Filament\Forms;
 use Filament\Resources\Resource;

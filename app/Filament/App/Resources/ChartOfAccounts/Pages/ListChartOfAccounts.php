@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Filament\App\Resources\ChartOfAccountsResource\Pages;
+namespace App\Filament\App\Resources\ChartOfAccounts\Pages;
 
 use Filament\Actions\CreateAction;
-use App\Filament\App\Resources\ChartOfAccountsResource;
+use App\Filament\App\Resources\ChartOfAccounts\ChartOfAccountsResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 

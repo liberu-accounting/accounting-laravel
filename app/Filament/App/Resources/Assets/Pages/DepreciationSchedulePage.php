@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Filament\App\Resources\AssetResource\Pages;
+namespace App\Filament\App\Resources\Assets\Pages;
 
 use Filament\Actions\Action;
-use App\Filament\App\Resources\AssetResource;
+use App\Filament\App\Resources\Assets\AssetResource;
 use App\Models\Asset;
 use Filament\Resources\Pages\Page;
 use Filament\Actions;

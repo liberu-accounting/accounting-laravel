@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Filament\App\Resources\PaymentTermResource\Pages;
+namespace App\Filament\App\Resources\PaymentTerms\Pages;
 
 use Filament\Actions\CreateAction;
-use App\Filament\App\Resources\PaymentTermResource;
+use App\Filament\App\Resources\PaymentTerms\PaymentTermResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Resources\Payrolls;
 
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\Select;
@@ -11,9 +11,9 @@ use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Actions\EditAction;
 use Filament\Actions\DeleteAction;
-use App\Filament\Resources\PayrollResource\Pages\ListPayrolls;
-use App\Filament\Resources\PayrollResource\Pages\CreatePayroll;
-use App\Filament\Resources\PayrollResource\Pages\EditPayroll;
+use App\Filament\Resources\Payrolls\Pages\ListPayrolls;
+use App\Filament\Resources\Payrolls\Pages\CreatePayroll;
+use App\Filament\Resources\Payrolls\Pages\EditPayroll;
 use App\Filament\Resources\PayrollResource\Pages;
 use App\Models\Payroll;
 use Filament\Forms;

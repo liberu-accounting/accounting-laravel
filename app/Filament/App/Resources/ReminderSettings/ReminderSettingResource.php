@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Filament\App\Resources;
+namespace App\Filament\App\Resources\ReminderSettings;
 
 use Filament\Schemas\Schema;
-use App\Filament\App\Resources\ReminderSettingResource\Pages\ListReminderSettings;
-use App\Filament\App\Resources\ReminderSettingResource\Pages\EditReminderSetting;
+use App\Filament\App\Resources\ReminderSettings\Pages\ListReminderSettings;
+use App\Filament\App\Resources\ReminderSettings\Pages\EditReminderSetting;
 use App\Models\ReminderSetting;
 use Filament\Forms;
 use Filament\Resources\Resource;
