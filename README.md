@@ -17,7 +17,7 @@
 
 
 
-## [Hosted application packages](https://liberu.co.uk/order/main/packages/applications/?group_id=3)
+# [Managed web hosting for our application packages](https://liberu.co.uk)
 
 
 ## Our Projects
