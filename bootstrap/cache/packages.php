@@ -6,6 +6,13 @@
       'EloquentSerialize' => 'AnourValar\\EloquentSerialize\\Facades\\EloquentSerializeFacade',
     ),
   ),
+  'bezhansalleh/filament-plugin-essentials' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'BezhanSalleh\\PluginEssentials\\PluginEssentialsServiceProvider',
+    ),
+  ),
   'bezhansalleh/filament-shield' => 
   array (
     'aliases' => 
@@ -209,6 +216,13 @@
     'providers' => 
     array (
       0 => 'Termwind\\Laravel\\TermwindServiceProvider',
+    ),
+  ),
+  'phiki/phiki' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Phiki\\Adapters\\Laravel\\PhikiServiceProvider',
     ),
   ),
   'raza9798/siteconfig' => 
