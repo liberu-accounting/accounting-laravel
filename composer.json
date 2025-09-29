@@ -11,6 +11,7 @@
         "php": "^8.3",
         "bezhansalleh/filament-shield": "~4.0",
         "filament/filament": "^4.0",
+        "filament/spatie-laravel-settings-plugin": "^4.0",
         "guzzlehttp/guzzle": "^7.8",
         "joelbutcher/socialstream": "^6.0",
         "laravel/framework": "^12",
@@ -21,7 +22,6 @@
         "livewire/livewire": "^3.5",
         "nunomaduro/collision": "^8.6",
         "phpunit/phpunit": "^12.0",
-        "raza9798/siteconfig": "^3.2",
         "spatie/laravel-menu": "^4.2",
         "spiral/roadrunner-cli": "^2.6.0",
         "spiral/roadrunner-http": "^3.3.0"

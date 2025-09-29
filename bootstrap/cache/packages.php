@@ -80,6 +80,13 @@
       0 => 'Filament\\Schemas\\SchemasServiceProvider',
     ),
   ),
+  'filament/spatie-laravel-settings-plugin' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Filament\\SpatieLaravelSettingsPluginServiceProvider',
+    ),
+  ),
   'filament/support' => 
   array (
     'providers' => 
@@ -225,13 +232,6 @@
       0 => 'Phiki\\Adapters\\Laravel\\PhikiServiceProvider',
     ),
   ),
-  'raza9798/siteconfig' => 
-  array (
-    'providers' => 
-    array (
-      0 => 'Core\\Siteconfig\\SiteconfigServiceProvider',
-    ),
-  ),
   'ryangjchandler/blade-capture-directive' => 
   array (
     'aliases' => 
@@ -270,6 +270,13 @@
     'providers' => 
     array (
       0 => 'Spatie\\Permission\\PermissionServiceProvider',
+    ),
+  ),
+  'spatie/laravel-settings' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Spatie\\LaravelSettings\\LaravelSettingsServiceProvider',
     ),
   ),
 );
