@@ -11,7 +11,7 @@ return new class extends Migration
     public function up(): void
     {
         // Migrate data from old site_settings table to new settings table
-        $oldSettings = DB::table('site_settings')->first();
+        $oldSettings = DB::table('settings')->first();
 
         if ($oldSettings) {
             $settingsData = [
