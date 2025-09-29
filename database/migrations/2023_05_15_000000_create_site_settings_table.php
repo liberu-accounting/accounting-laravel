@@ -16,6 +16,7 @@ return new class extends Migration
                 $table->id();
                 $table->string('name')->nullable();
                 $table->string('group')->nullable();
+                $table->string('payload')->nullable();
                 $table->integer('locked')->nullable();
                 $table->timestamps();
             });
