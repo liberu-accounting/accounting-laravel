@@ -15,18 +15,8 @@ return new class extends Migration
             Schema::create('settings', function (Blueprint $table) {
                 $table->id();
                 $table->string('name')->nullable();
-                $table->string('currency')->nullable();
-                $table->string('default_language')->nullable();
-                $table->string('address')->nullable();
-                $table->string('country')->nullable();
-                $table->string('email')->nullable();
-                $table->string('phone_01')->nullable();
-                $table->string('phone_02')->nullable();
-                $table->string('phone_03')->nullable();
-                $table->string('facebook')->nullable();
-                $table->string('twitter')->nullable();
-                $table->string('github')->nullable();
-                $table->string('youtube')->nullable();
+                $table->string('group')->nullable();
+                $table->int('locked')->nullable();
                 $table->timestamps();
             });
         }
