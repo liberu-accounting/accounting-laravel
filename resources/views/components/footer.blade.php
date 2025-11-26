@@ -6,7 +6,7 @@
                     <x-logo/>
                     <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
                         
-                        {{ App\Models\SiteConfig::get('name') }}
+                        {{ app(\App\Settings\GeneralSettings::class)->site_name }}
                     </span>
                 </a>
                
@@ -16,21 +16,20 @@
                 <div></div>
                 <div>
                     <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Contact Details</h2>
-                    <span class="text-xs text-gray-600">Address : {{ App\Models\SiteConfig::get('address') }}</span> <br>
-                    <span class="text-xs text-gray-600">UK Non-geographic: {{ App\Models\SiteConfig::get('phone_01') }}</span>  <br>
-                    <span class="text-xs text-gray-600">UK London: {{ App\Models\SiteConfig::get('phone_02') }}</span>  <br>
-                    <span class="text-xs text-gray-600">UK Mobile: {{ App\Models\SiteConfig::get('phone_03') }}</span>  <br>
+                    <span class="text-xs text-gray-600">Address : {{ app(\App\Settings\GeneralSettings::class)->site_address }}</span> <br>
+                    <span class="text-xs text-gray-600">UK Non-geographic: {{ app(\App\Settings\GeneralSettings::class)->site_phone }}</span>  <br>
+                    <span class="text-xs text-gray-600">UK London: </span>  <br>
+                    <span class="text-xs text-gray-600">UK Mobile: </span>  <br>
                 </div>
             </div>
         </div>
         <hr class="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
         <div class="sm:flex sm:items-center sm:justify-between">
-            <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400" title="{{config('app.version')}}">© {{now()->year}} <a href="#"
-                    class="hover:underline">{{ App\Models\SiteConfig::get('name') }}</a>. All Rights
-                Reserved.
+            <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400" title="{{config('app.version')}}">
+                {{ app(\App\Settings\GeneralSettings::class)->footer_copyright }}
             </span>
             <div class="flex mt-4 space-x-6 sm:justify-center sm:mt-0">
-                <a href="{{ App\Models\SiteConfig::get('facebook') }}"
+                <a href="{{ app(\App\Settings\GeneralSettings::class)->facebook_url }}"
                     class="text-gray-500 hover:text-gray-900 dark:hover:text-white">
                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path fill-rule="evenodd"
@@ -39,14 +38,14 @@
                     </svg>
                 </a>
 
-                <a href="{{ App\Models\SiteConfig::get('twitter') }}"
+                <a href="{{ app(\App\Settings\GeneralSettings::class)->twitter_url }}"
                     class="text-gray-500 hover:text-gray-900 dark:hover:text-white">
                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path
                             d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" />
                     </svg>
                 </a>
-                <a href="{{ App\Models\SiteConfig::get('github') }}"
+                <a href="{{ app(\App\Settings\GeneralSettings::class)->github_url }}"
                     class="text-gray-500 hover:text-gray-900 dark:hover:text-white">
                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path fill-rule="evenodd"
@@ -54,7 +53,7 @@
                             clip-rule="evenodd" />
                     </svg>
                 </a>
-                <a href="{{ App\Models\SiteConfig::get('youtube') }}"
+                <a href="{{ app(\App\Settings\GeneralSettings::class)->youtube_url }}"
                     class="text-gray-500 hover:text-gray-900 dark:hover:text-white">
                     <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24"
                         height="24" fill="currentColor" viewBox="0 0 24 24">

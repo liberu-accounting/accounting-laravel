@@ -7,9 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Auth;
 use App\Notifications\ExpenseApprovalNotification;
+use App\Traits\IsTenantModel;
 
 class Expense extends Model
 {
+
+    use IsTenantModel;
+
     protected $fillable = [
         'amount',
         'description',

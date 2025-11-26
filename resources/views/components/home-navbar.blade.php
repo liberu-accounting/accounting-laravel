@@ -15,7 +15,7 @@
         <a href="/" class="flex items-center space-x-3 rtl:space-x-reverse">
             <x-logo/>
             <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
-                {{ App\Models\SiteConfig::get('name') }}
+                {{ app(\App\Settings\GeneralSettings::class)->site_name }}
             </span>
         </a>
 
