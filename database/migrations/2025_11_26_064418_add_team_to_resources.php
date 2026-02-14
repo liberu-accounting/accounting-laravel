@@ -7,8 +7,8 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     protected $tables = [
-        'expenses'
-
+        'expenses',
+        'bank_statements'
     ];
     /**
      * Run the migrations.
