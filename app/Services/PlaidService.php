@@ -119,6 +119,7 @@ class PlaidService
     public function syncTransactions(BankConnection $connection): array
     {
         try {
+            // Note: plaid_access_token is automatically decrypted by Laravel's encrypted cast
             $payload = [
                 'client_id' => $this->clientId,
                 'secret' => $this->secret,
@@ -158,6 +159,8 @@ class PlaidService
 
     /**
      * Get account information
+     * 
+     * @param string $accessToken The access token (should already be decrypted if from model)
      */
     public function getAccounts(string $accessToken): array
     {
@@ -183,6 +186,8 @@ class PlaidService
 
     /**
      * Remove a Plaid item (disconnect bank)
+     * 
+     * @param string $accessToken The access token (should already be decrypted if from model)
      */
     public function removeItem(string $accessToken): bool
     {

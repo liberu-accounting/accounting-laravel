@@ -9,8 +9,8 @@ return new class extends Migration
     public function up()
     {
         Schema::table('bank_connections', function (Blueprint $table) {
-            // Add user_id for multi-tenancy support
-            $table->foreignId('user_id')->nullable()->after('id')->constrained()->onDelete('cascade');
+            // Add user_id for multi-tenancy support (required field)
+            $table->foreignId('user_id')->after('id')->constrained()->onDelete('cascade');
             
             // Plaid-specific fields
             $table->string('plaid_access_token')->nullable()->after('credentials');
