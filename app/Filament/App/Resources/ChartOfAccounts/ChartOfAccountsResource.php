@@ -5,8 +5,11 @@ namespace App\Filament\App\Resources\ChartOfAccounts;
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Toggle;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\IndentedTextColumn;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Actions\EditAction;
 use Filament\Actions\DeleteAction;
@@ -37,33 +40,80 @@ class ChartOfAccountsResource extends Resource
                     ->reactive()
                     ->visible(fn ($get) => !$get('parent_id')),
                 
-                TextInput::make('account_name')
-                    ->required()
-                    ->maxLength(255),
-                    
                 TextInput::make('account_number')
                     ->required()
-                    ->numeric(),
+                    ->numeric()
+                    ->unique(ignoreRecord: true)
+                    ->label('Account Number'),
+                
+                TextInput::make('account_name')
+                    ->required()
+                    ->maxLength(255)
+                    ->label('Account Name'),
+                
+                Textarea::make('description')
+                    ->maxLength(500)
+                    ->rows(2)
+                    ->label('Description'),
                     
                 Select::make('account_type')
                     ->required()
+                    ->reactive()
                     ->options([
                         'asset' => 'Asset',
                         'liability' => 'Liability',
                         'equity' => 'Equity',
                         'revenue' => 'Revenue',
                         'expense' => 'Expense'
-                    ]),
+                    ])
+                    ->label('Account Type'),
+                
+                Select::make('normal_balance')
+                    ->required()
+                    ->options([
+                        'debit' => 'Debit',
+                        'credit' => 'Credit',
+                    ])
+                    ->default(fn ($get) => 
+                        in_array($get('account_type'), ['asset', 'expense']) ? 'debit' : 'credit'
+                    )
+                    ->label('Normal Balance'),
                     
                 Select::make('parent_id')
                     ->label('Parent Account')
                     ->options(fn () => Account::whereNull('parent_id')
-                        ->pluck('account_name', 'account_id'))
+                        ->orderBy('account_number')
+                        ->get()
+                        ->mapWithKeys(function ($account) {
+                            return [$account->id => $account->account_number . ' - ' . $account->account_name];
+                        }))
                     ->searchable(),
+                
+                TextInput::make('opening_balance')
+                    ->numeric()
+                    ->default(0)
+                    ->step('0.01')
+                    ->prefix('$')
+                    ->label('Opening Balance')
+                    ->helperText('Initial balance for this account'),
                     
                 TextInput::make('balance')
                     ->numeric()
-                    ->disabled(fn ($get) => $get('parent_id')),
+                    ->disabled()
+                    ->dehydrated(false)
+                    ->default(0)
+                    ->prefix('$')
+                    ->label('Current Balance')
+                    ->helperText('Updated automatically by posted journal entries'),
+                
+                Toggle::make('is_active')
+                    ->default(true)
+                    ->label('Active'),
+                
+                Toggle::make('allow_manual_entry')
+                    ->default(true)
+                    ->label('Allow Manual Journal Entries')
+                    ->helperText('Uncheck for system-controlled accounts'),
             ]);
     }
 
@@ -72,12 +122,33 @@ class ChartOfAccountsResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('account_number')
-                    ->sortable(),
+                    ->sortable()
+                    ->searchable()
+                    ->label('Number'),
                 IndentedTextColumn::make('account_name')
-                    ->indentedFromField('parent_id'),
-                TextColumn::make('account_type'),
+                    ->indentedFromField('parent_id')
+                    ->searchable()
+                    ->label('Account Name'),
+                TextColumn::make('account_type')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'asset' => 'success',
+                        'liability' => 'danger',
+                        'equity' => 'info',
+                        'revenue' => 'warning',
+                        'expense' => 'gray',
+                        default => 'gray',
+                    })
+                    ->label('Type'),
+                TextColumn::make('normal_balance')
+                    ->badge()
+                    ->label('Normal Balance'),
                 TextColumn::make('balance')
-                    ->money(),
+                    ->money('usd')
+                    ->label('Current Balance'),
+                IconColumn::make('is_active')
+                    ->boolean()
+                    ->label('Active'),
             ])
             ->defaultSort('account_number')
             ->filters([
@@ -88,6 +159,12 @@ class ChartOfAccountsResource extends Resource
                         'equity' => 'Equity',
                         'revenue' => 'Revenue',
                         'expense' => 'Expense'
+                    ]),
+                SelectFilter::make('is_active')
+                    ->label('Status')
+                    ->options([
+                        1 => 'Active',
+                        0 => 'Inactive',
                     ]),
             ])
             ->recordActions([

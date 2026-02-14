@@ -29,10 +29,27 @@
 
 A modular, open-source accounting platform built with Laravel 11 and PHP 8.3. Designed for extensibility, real-time reports, and a clean developer experience using Livewire and Filament.
 
-Highlights
+## Highlights
+- **Double-Entry Accounting**: Complete implementation following GAAP principles with automatic balance updates
+- **Journal Entries**: Multi-line journal entries with post/reverse capabilities
+- **Chart of Accounts**: Hierarchical account structure with configurable account types
 - Modular architecture: ledger, invoices, payroll, inventory, fixed assets, and more.
 - Modern stack: Laravel 11, PHP 8.3, Livewire 3, Filament 3.
 - Suitable for businesses and developers who need a customizable accounting core.
+
+## Key Features
+
+### Double-Entry Accounting System
+This application includes a complete double-entry accounting system with:
+- Journal entries with unlimited debit/credit lines
+- Automatic balance calculation and updates
+- Post/reverse functionality for transactions
+- Comprehensive validation ensuring debits equal credits
+- Support for different entry types (general, adjusting, closing, reversing)
+- Account hierarchy with parent-child relationships
+- Opening balance support
+
+📖 **[Read the Full Double-Entry Accounting Documentation](docs/DOUBLE_ENTRY_ACCOUNTING.md)**
 
 ## Quick start
 ### Prerequisites

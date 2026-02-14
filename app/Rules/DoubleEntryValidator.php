@@ -3,28 +3,45 @@
 namespace App\Rules;
 
 use Illuminate\Contracts\Validation\Rule;
-use Illuminate\Support\Facades\DB;
-use App\Models\Transaction;
 
 class DoubleEntryValidator implements Rule
 {
+    protected $lines;
+
+    public function __construct($lines = null)
+    {
+        $this->lines = $lines;
+    }
+
     public function passes($attribute, $value)
     {
-        $debitSum = request()->input('debit_account_id') ? Transaction::where('debit_account_id', request()->input('debit_account_id'))->sum('amount') : 0;
-        $creditSum = request()->input('credit_account_id') ? Transaction::where('credit_account_id', request()->input('credit_account_id'))->sum('amount') : 0;
+        // If validating journal entry lines
+        if ($this->lines !== null) {
+            $totalDebits = 0;
+            $totalCredits = 0;
 
-        // Adding current transaction amount to the respective sum based on the attribute being validated
-        if ($attribute === 'debit_account_id') {
-            $debitSum += $value;
-        } else if ($attribute === 'credit_account_id') {
-            $creditSum += $value;
+            foreach ($this->lines as $line) {
+                $debit = is_array($line) ? ($line['debit_amount'] ?? 0) : ($line->debit_amount ?? 0);
+                $credit = is_array($line) ? ($line['credit_amount'] ?? 0) : ($line->credit_amount ?? 0);
+                
+                $totalDebits += floatval($debit);
+                $totalCredits += floatval($credit);
+            }
+
+            // Use bccomp for precise decimal comparison
+            return bccomp($totalDebits, $totalCredits, 2) === 0;
         }
 
-        return $debitSum == $creditSum;
+        // Legacy validation for simple transactions (backwards compatibility)
+        // This validates that a single transaction has equal debit and credit
+        $debitAmount = request()->input('debit_amount', 0);
+        $creditAmount = request()->input('credit_amount', 0);
+        
+        return bccomp($debitAmount, $creditAmount, 2) === 0;
     }
 
     public function message()
     {
-        return 'The transaction does not adhere to double-entry accounting principles.';
+        return 'Total debits must equal total credits. This transaction does not adhere to double-entry accounting principles.';
     }
 }
