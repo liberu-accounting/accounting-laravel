@@ -12,14 +12,28 @@ class BankConnection extends Model
     use HasFactory;
 
     protected $fillable = [
+        'user_id',
         'bank_id',
+        'institution_name',
         'credentials',
-        'status'
+        'plaid_access_token',
+        'plaid_item_id',
+        'plaid_institution_id',
+        'plaid_cursor',
+        'status',
+        'last_synced_at',
     ];
 
     protected $casts = [
-        'credentials' => 'encrypted'
+        'credentials' => 'encrypted',
+        'plaid_access_token' => 'encrypted',
+        'last_synced_at' => 'datetime',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     public function transactions()
     {
