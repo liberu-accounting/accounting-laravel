@@ -16,6 +16,7 @@ class Transaction extends Model
     protected $fillable = [
         'transaction_date',
         'transaction_description',
+        'description',
         'amount',
         'currency_id',
         'debit_account_id',
@@ -24,6 +25,11 @@ class Transaction extends Model
         'discrepancy_notes',
         'exchange_rate',
         'transaction_type',
+        'type',
+        'external_id',
+        'bank_connection_id',
+        'category',
+        'status',
     ];
 
     protected $casts = [
@@ -81,6 +87,10 @@ class Transaction extends Model
         return $this->hasMany(InventoryTransaction::class);
     }
 
+    public function bankConnection()
+    {
+        return $this->belongsTo(BankConnection::class);
+    }
 
     public function auditLogs()
     {
