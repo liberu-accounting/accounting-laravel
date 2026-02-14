@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\IsTenantModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class BankStatement extends Model
 {
     use HasFactory;
+    use IsTenantModel;
 
     protected $fillable = [
         'statement_date',
@@ -15,6 +17,7 @@ class BankStatement extends Model
         'total_credits',
         'total_debits',
         'ending_balance',
+        'team_id',
     ];
 
     public function account()
