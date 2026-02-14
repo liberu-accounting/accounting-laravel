@@ -82,7 +82,11 @@ class ChartOfAccountsResource extends Resource
                 Select::make('parent_id')
                     ->label('Parent Account')
                     ->options(fn () => Account::whereNull('parent_id')
-                        ->pluck('account_name', 'id'))
+                        ->orderBy('account_number')
+                        ->get()
+                        ->mapWithKeys(function ($account) {
+                            return [$account->id => $account->account_number . ' - ' . $account->account_name];
+                        }))
                     ->searchable(),
                 
                 TextInput::make('opening_balance')

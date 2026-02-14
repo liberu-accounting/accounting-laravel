@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('journal_entries', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            // Auto-generated entry number in format: JE-YYYY-NNNNNN (e.g., JE-2024-000001)
             $table->string('entry_number')->unique();
             $table->date('entry_date');
             $table->string('reference_number')->nullable();
