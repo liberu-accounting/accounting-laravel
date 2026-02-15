@@ -11,9 +11,14 @@ The Plaid integration allows users to securely connect their bank accounts and a
 - **Secure Bank Connection**: Connect to 12,000+ financial institutions via Plaid
 - **Multi-tenancy Support**: Each user can manage their own bank connections
 - **Transaction Sync**: Automatically import and categorize transactions
+- **Real-time Balance Tracking**: Monitor account balances in real-time
+- **Webhook Support**: Automatic updates via Plaid webhooks
+- **Async Processing**: Background job processing for transaction synchronization
 - **Incremental Sync**: Efficient cursor-based synchronization
 - **Bank Management**: List, sync, and disconnect bank accounts
 - **Encrypted Storage**: All sensitive data (access tokens, credentials) are encrypted at rest
+- **Scheduled Sync**: Automated periodic transaction updates
+- **Connection Health Monitoring**: Automatic status updates for connection issues
 
 ## Setup
 
@@ -21,7 +26,8 @@ The Plaid integration allows users to securely connect their bank accounts and a
 
 1. Sign up for a Plaid account at [https://plaid.com](https://plaid.com)
 2. Get your `client_id` and `secret` from the Plaid Dashboard
-3. Choose your environment:
+3. Get your `webhook_verification_key` from the Plaid Dashboard
+4. Choose your environment:
    - `sandbox` - For testing with fake credentials
    - `development` - For testing with real bank credentials (limited volume)
    - `production` - For live production use
@@ -34,9 +40,18 @@ Add the following to your `.env` file:
 PLAID_CLIENT_ID=your_client_id_here
 PLAID_SECRET=your_secret_here
 PLAID_ENV=sandbox
+PLAID_WEBHOOK_URL=https://your-domain.com/api/webhooks/plaid
+PLAID_WEBHOOK_VERIFICATION_KEY=your_webhook_verification_key
 ```
 
-### 3. Run Migrations
+### 3. Configure Webhooks in Plaid Dashboard
+
+1. Go to the Plaid Dashboard
+2. Navigate to the Webhooks section
+3. Add your webhook URL: `https://your-domain.com/api/webhooks/plaid`
+4. Copy the webhook verification key to your `.env` file
+
+### 4. Run Migrations
 
 Execute the migrations to add Plaid-specific fields to your database:
 
@@ -47,6 +62,32 @@ php artisan migrate
 This will add:
 - `user_id`, `plaid_access_token`, `plaid_item_id`, `plaid_institution_id`, `plaid_cursor`, `institution_name`, and `last_synced_at` to `bank_connections` table
 - `external_id`, `bank_connection_id`, `description`, `category`, `type`, and `status` to `transactions` table
+- New `bank_account_balances` table for tracking account balances
+
+### 5. Configure Queue Workers
+
+The integration uses Laravel queues for async processing:
+
+```bash
+# Set queue connection
+QUEUE_CONNECTION=database  # or redis, sqs, etc.
+
+# Run queue worker
+php artisan queue:work
+```
+
+### 6. Schedule Automated Sync (Optional)
+
+Add to `app/Console/Kernel.php`:
+
+```php
+protected function schedule(Schedule $schedule)
+{
+    // Sync all active bank connections every 4 hours
+    $schedule->command('plaid:sync-transactions --all')
+             ->everyFourHours();
+}
+```
 
 ## API Endpoints
 
@@ -57,6 +98,8 @@ All endpoints require authentication via Laravel Sanctum.
 **Endpoint:** `POST /api/plaid/create-link-token`
 
 Creates a link token for initializing Plaid Link in your frontend.
+
+**Rate Limit:** 60 requests/minute
 
 **Request:**
 ```json
@@ -79,6 +122,8 @@ Creates a link token for initializing Plaid Link in your frontend.
 **Endpoint:** `POST /api/plaid/store-connection`
 
 Exchanges a public token from Plaid Link for an access token and stores the bank connection.
+
+**Rate Limit:** 60 requests/minute
 
 **Request:**
 ```json
@@ -115,6 +160,8 @@ Exchanges a public token from Plaid Link for an access token and stores the bank
 
 Lists all bank connections for the authenticated user.
 
+**Rate Limit:** 60 requests/minute
+
 **Response:**
 ```json
 {
@@ -139,6 +186,8 @@ Lists all bank connections for the authenticated user.
 
 Syncs transactions from Plaid for a specific bank connection.
 
+**Rate Limit:** 10 requests/minute
+
 **Response:**
 ```json
 {
@@ -154,11 +203,49 @@ Syncs transactions from Plaid for a specific bank connection.
 }
 ```
 
+### Get Account Balances (NEW)
+
+**Endpoint:** `GET /api/plaid/connections/{connection}/balances`
+
+Retrieves real-time account balances for all accounts in a connection.
+
+**Rate Limit:** 30 requests/minute
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Balances synced successfully",
+  "accounts": [
+    {
+      "id": 1,
+      "account_name": "Checking Account",
+      "account_type": "depository",
+      "account_subtype": "checking",
+      "current_balance": 1250.50,
+      "available_balance": 1200.00,
+      "currency": "USD"
+    },
+    {
+      "id": 2,
+      "account_name": "Credit Card",
+      "account_type": "credit",
+      "account_subtype": "credit card",
+      "current_balance": -350.75,
+      "available_balance": 4649.25,
+      "currency": "USD"
+    }
+  ]
+}
+```
+
 ### Remove Bank Connection
 
 **Endpoint:** `DELETE /api/plaid/connections/{connection}`
 
 Disconnects a bank and removes it from Plaid.
+
+**Rate Limit:** 60 requests/minute
 
 **Response:**
 ```json
@@ -167,6 +254,69 @@ Disconnects a bank and removes it from Plaid.
   "message": "Bank connection removed successfully"
 }
 ```
+
+## Webhooks (NEW)
+
+The integration now supports Plaid webhooks for automatic updates.
+
+### Webhook Endpoint
+
+**Endpoint:** `POST /api/webhooks/plaid` (Public, no authentication required)
+
+All webhooks are verified using HMAC-SHA256 signature validation.
+
+### Supported Webhook Types
+
+#### TRANSACTIONS Webhooks
+
+- `SYNC_UPDATES_AVAILABLE`: New transactions available → Dispatches sync job
+- `INITIAL_UPDATE`: Initial sync complete → Dispatches sync job
+- `HISTORICAL_UPDATE`: Historical sync complete → Dispatches sync job
+- `DEFAULT_UPDATE`: Legacy update notification → Dispatches sync job
+- `TRANSACTIONS_REMOVED`: Transactions removed from Plaid
+
+#### ITEM Webhooks
+
+- `ERROR`: Connection error detected
+  - `ITEM_LOGIN_REQUIRED` → Sets status to `requires_reauth`
+  - `ITEM_LOCKED` → Sets status to `locked`
+- `PENDING_EXPIRATION`: Connection will expire soon
+- `USER_PERMISSION_REVOKED`: User revoked access → Sets status to `revoked`
+- `WEBHOOK_UPDATE_ACKNOWLEDGED`: Webhook update confirmed
+
+### Webhook Security
+
+All webhooks are verified using HMAC-SHA256:
+
+```php
+$signature = base64_encode(
+    hash_hmac('sha256', $requestBody, $webhookVerificationKey, true)
+);
+
+if (!hash_equals($signature, $providedSignature)) {
+    // Reject webhook
+}
+```
+
+## Console Commands (NEW)
+
+### Sync Transactions Command
+
+Manually trigger transaction synchronization:
+
+```bash
+# Sync all active connections
+php artisan plaid:sync-transactions --all
+
+# Sync a specific connection
+php artisan plaid:sync-transactions --connection=123
+```
+
+This command:
+- Finds active bank connections
+- Dispatches async sync jobs
+- Shows progress bar for batch operations
+- Skips inactive connections
 
 ## Frontend Integration
 
@@ -227,6 +377,21 @@ Disconnects a bank and removes it from Plaid.
 
 ## Transaction Processing
 
+### Async Job Processing (NEW)
+
+Transaction synchronization is now handled asynchronously:
+
+1. **Webhook Received**: Plaid sends webhook notification
+2. **Job Dispatched**: `SyncPlaidTransactionsJob` is queued
+3. **Background Processing**: Job processes transactions without blocking
+4. **Automatic Retry**: Failed jobs retry up to 3 times with exponential backoff
+5. **Status Updates**: Connection status updated on errors
+
+**Job Configuration:**
+- Max attempts: 3
+- Retry backoff: 60 seconds
+- Timeout: 300 seconds (5 minutes)
+
 ### Automatic Categorization
 
 Transactions are automatically categorized based on Plaid's category data. The system uses the most specific category from Plaid's category hierarchy.
@@ -238,16 +403,59 @@ Transactions are automatically categorized based on Plaid's category data. The s
 
 ### Transaction Type
 
-- `credit` - Money coming into the account
-- `debit` - Money leaving the account
+- `credit` - Money coming into the account (negative amount in Plaid)
+- `debit` - Money leaving the account (positive amount in Plaid)
+
+### Connection Status (NEW)
+
+Bank connections can have the following statuses:
+
+- `active` - Connection is working normally
+- `requires_reauth` - User needs to re-authenticate (login required)
+- `locked` - Account is locked at the institution
+- `revoked` - User revoked permissions
+- `disconnected` - Connection was manually removed
+
+## Error Handling (NEW)
+
+### Improved Error Handling
+
+The integration now includes comprehensive error handling:
+
+1. **Timeout Configuration**:
+   - Request timeout: 15 seconds
+   - Connection timeout: 5 seconds
+
+2. **Retry Logic**:
+   - Automatic retry on 5xx errors and network issues
+   - No retry on 4xx client errors
+   - Exponential backoff between retries
+
+3. **Specific Error Handling**:
+   - `ITEM_LOGIN_REQUIRED`: Updates connection to `requires_reauth`
+   - `INVALID_CREDENTIALS`: Updates connection to `requires_reauth`
+   - `ITEM_LOCKED`: Updates connection to `locked`
+   - Rate limit errors: Proper retry with backoff
+
+4. **Logging**:
+   - All errors logged with context
+   - Sensitive data excluded from logs
+   - Error codes and messages preserved
 
 ## Security Considerations
 
 1. **Encryption**: All Plaid access tokens and credentials are encrypted at rest using Laravel's encryption
-2. **Authentication**: All endpoints require user authentication
+2. **Authentication**: All endpoints require user authentication via Sanctum
 3. **Authorization**: Users can only access their own bank connections
-4. **HTTPS**: Always use HTTPS in production
-5. **Environment**: Use sandbox environment for development, production only for live data
+4. **Webhook Verification**: All webhooks verified with HMAC-SHA256 signatures
+5. **Rate Limiting**: API endpoints protected with rate limiting
+   - Sync endpoint: 10 requests/minute
+   - Balance endpoint: 30 requests/minute
+   - Other endpoints: 60 requests/minute
+6. **HTTPS**: Always use HTTPS in production
+7. **Environment**: Use sandbox environment for development, production only for live data
+8. **Token Security**: Access tokens only decrypted when needed for API calls
+9. **Error Handling**: Sensitive data excluded from error messages and logs
 
 ## Testing
 
@@ -259,10 +467,24 @@ php artisan test --filter Plaid
 
 # Run feature tests only
 php artisan test tests/Feature/Api/PlaidControllerTest.php
+php artisan test tests/Feature/Api/PlaidWebhookControllerTest.php
+php artisan test tests/Feature/Api/PlaidBalanceTest.php
 
 # Run unit tests only
 php artisan test tests/Unit/Services/PlaidServiceTest.php
 ```
+
+### Test Coverage
+
+The test suite includes:
+- ✅ Webhook signature verification
+- ✅ Balance synchronization
+- ✅ Transaction sync with retries
+- ✅ Error handling scenarios
+- ✅ Connection status updates
+- ✅ Authorization checks
+- ✅ Rate limiting
+- ✅ HTTP mocking for Plaid API
 
 ## Troubleshooting
 
@@ -281,6 +503,100 @@ php artisan test tests/Unit/Services/PlaidServiceTest.php
    - Ensure connection status is 'active'
    - Check that the access token is valid
    - Review Plaid API error responses in logs
+   - Verify queue workers are running for async processing
+
+4. **Webhook not working**
+   - Verify webhook URL is publicly accessible (use ngrok for local testing)
+   - Check webhook verification key is correctly configured
+   - Review webhook signature verification in logs
+   - Ensure webhook URL is configured in Plaid dashboard
+
+5. **Balance not updating**
+   - Verify connection supports balance endpoint
+   - Check if account type supports real-time balances
+   - Ensure access token has proper permissions
+
+6. **Queue jobs not processing**
+   - Verify `QUEUE_CONNECTION` is configured
+   - Check queue workers are running: `php artisan queue:work`
+   - Review failed jobs table: `php artisan queue:failed`
+   - Check job logs for errors
+
+### Debugging Tips
+
+1. **Enable verbose logging**:
+   ```env
+   LOG_LEVEL=debug
+   ```
+
+2. **Monitor queue jobs**:
+   ```bash
+   php artisan queue:listen --verbose
+   ```
+
+3. **Check failed jobs**:
+   ```bash
+   php artisan queue:failed
+   php artisan queue:retry {job-id}
+   ```
+
+4. **Test webhooks locally**:
+   ```bash
+   # Use ngrok to expose local server
+   ngrok http 8000
+   # Update PLAID_WEBHOOK_URL with ngrok URL
+   ```
+
+## Performance Optimization
+
+### Best Practices
+
+1. **Use Webhooks**: Enable webhooks for real-time updates instead of polling
+2. **Queue Processing**: Always use async jobs for transaction syncing
+3. **Cursor-based Sync**: The integration uses efficient cursor-based pagination
+4. **Connection Pooling**: Use persistent connections for database and Redis
+5. **Batch Processing**: Sync jobs process multiple transactions efficiently
+6. **Rate Limiting**: Respect Plaid's rate limits with built-in throttling
+
+### Monitoring
+
+Monitor these metrics for optimal performance:
+
+- Queue job processing time
+- Failed job rate
+- Webhook response time
+- API request success rate
+- Connection status distribution
+
+## What's New in This Version
+
+### Version 2.0 Improvements
+
+✨ **New Features:**
+- Real-time account balance tracking
+- Webhook support for automatic updates
+- Async job processing for transactions
+- Console command for scheduled syncing
+- Connection health monitoring
+- Comprehensive error handling
+
+🔒 **Security Enhancements:**
+- HMAC-SHA256 webhook signature verification
+- Rate limiting on all API endpoints
+- Improved error handling without exposing sensitive data
+- Request timeout configuration
+
+⚡ **Performance Improvements:**
+- Background job processing
+- Automatic retry with exponential backoff
+- Optimized database queries
+- Cursor-based incremental sync
+
+📚 **Better Testing:**
+- Webhook controller tests
+- Balance synchronization tests
+- Improved unit test coverage
+- Mock HTTP responses for reliable testing
 
 ## Support
 
