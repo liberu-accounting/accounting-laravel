@@ -243,4 +243,101 @@ class PlaidServiceTest extends TestCase
         $this->expectException(\Exception::class);
         $this->service->exchangePublicToken('invalid-token');
     }
+
+    public function test_get_balances_returns_account_balances()
+    {
+        Http::fake([
+            'sandbox.plaid.com/accounts/balance/get' => Http::response([
+                'accounts' => [
+                    [
+                        'account_id' => 'acc_123',
+                        'name' => 'Checking',
+                        'balances' => [
+                            'current' => 1250.50,
+                            'available' => 1200.00,
+                        ],
+                    ],
+                ],
+            ], 200),
+        ]);
+
+        $result = $this->service->getBalances('access-test-token');
+
+        $this->assertArrayHasKey('accounts', $result);
+        $this->assertCount(1, $result['accounts']);
+        $this->assertEquals('Checking', $result['accounts'][0]['name']);
+        $this->assertEquals(1250.50, $result['accounts'][0]['balances']['current']);
+    }
+
+    public function test_get_balances_with_account_ids_filter()
+    {
+        Http::fake([
+            'sandbox.plaid.com/accounts/balance/get' => Http::response([
+                'accounts' => [
+                    [
+                        'account_id' => 'acc_123',
+                        'name' => 'Checking',
+                    ],
+                ],
+            ], 200),
+        ]);
+
+        $this->service->getBalances('access-test-token', ['acc_123', 'acc_456']);
+
+        Http::assertSent(function ($request) {
+            return isset($request['options']['account_ids'])
+                && $request['options']['account_ids'] === ['acc_123', 'acc_456'];
+        });
+    }
+
+    public function test_verify_webhook_signature_with_valid_signature()
+    {
+        Config::set('services.plaid.webhook_verification_key', 'test_secret_key');
+        
+        $bodyJson = '{"webhook_type":"TRANSACTIONS","webhook_code":"SYNC_UPDATES_AVAILABLE"}';
+        $signature = base64_encode(hash_hmac('sha256', $bodyJson, 'test_secret_key', true));
+        
+        $result = $this->service->verifyWebhookSignature($bodyJson, [
+            'Plaid-Verification' => $signature,
+        ]);
+
+        $this->assertTrue($result);
+    }
+
+    public function test_verify_webhook_signature_with_invalid_signature()
+    {
+        Config::set('services.plaid.webhook_verification_key', 'test_secret_key');
+        
+        $bodyJson = '{"webhook_type":"TRANSACTIONS"}';
+        
+        $result = $this->service->verifyWebhookSignature($bodyJson, [
+            'Plaid-Verification' => 'invalid_signature',
+        ]);
+
+        $this->assertFalse($result);
+    }
+
+    public function test_verify_webhook_signature_without_verification_key()
+    {
+        Config::set('services.plaid.webhook_verification_key', null);
+        
+        $bodyJson = '{"webhook_type":"TRANSACTIONS"}';
+        
+        $result = $this->service->verifyWebhookSignature($bodyJson, [
+            'Plaid-Verification' => 'some_signature',
+        ]);
+
+        $this->assertFalse($result);
+    }
+
+    public function test_verify_webhook_signature_without_header()
+    {
+        Config::set('services.plaid.webhook_verification_key', 'test_secret_key');
+        
+        $bodyJson = '{"webhook_type":"TRANSACTIONS"}';
+        
+        $result = $this->service->verifyWebhookSignature($bodyJson, []);
+
+        $this->assertFalse($result);
+    }
 }

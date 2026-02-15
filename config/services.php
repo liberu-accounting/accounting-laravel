@@ -35,6 +35,8 @@ return [
         'client_id' => env('PLAID_CLIENT_ID'),
         'secret' => env('PLAID_SECRET'),
         'environment' => env('PLAID_ENV', 'sandbox'), // sandbox, development, production
+        'webhook_url' => env('PLAID_WEBHOOK_URL'),
+        'webhook_verification_key' => env('PLAID_WEBHOOK_VERIFICATION_KEY'),
     ],
 
 ];
