@@ -39,5 +39,8 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 });
 
+// Plaid OAuth redirect endpoint (public endpoint, no auth required)
+Route::get('/plaid/oauth-redirect', [PlaidController::class, 'handleOAuthRedirect']);
+
 // Plaid Webhook (public endpoint, no auth required)
 Route::post('/webhooks/plaid', [PlaidWebhookController::class, 'handle']);

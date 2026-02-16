@@ -61,24 +61,42 @@ class PlaidService
 
     /**
      * Create a link token for Plaid Link initialization
+     * 
+     * @param int $userId User ID for Plaid identification
+     * @param string|null $language Language code (default: 'en')
+     * @param string|null $accessToken Existing access token for update mode (re-authentication)
+     * @return array Link token data including token and expiration
      */
-    public function createLinkToken(int $userId, ?string $language = 'en'): array
+    public function createLinkToken(int $userId, ?string $language = 'en', ?string $accessToken = null): array
     {
         try {
+            $payload = [
+                'client_id' => $this->clientId,
+                'secret' => $this->secret,
+                'user' => [
+                    'client_user_id' => (string) $userId,
+                ],
+                'client_name' => config('app.name'),
+                'products' => ['transactions'],
+                'country_codes' => ['US', 'CA', 'GB'],
+                'language' => $language,
+            ];
+
+            // Add OAuth redirect URI if configured
+            $oauthRedirectUri = config('services.plaid.oauth_redirect_uri');
+            if ($oauthRedirectUri) {
+                $payload['redirect_uri'] = $oauthRedirectUri;
+            }
+
+            // If access token is provided, this is update mode for re-authentication
+            if ($accessToken) {
+                $payload['access_token'] = $accessToken;
+            }
+
             $response = Http::timeout(15)
                 ->connectTimeout(5)
                 ->retry(3, 100)
-                ->post("{$this->baseUrl}/link/token/create", [
-                    'client_id' => $this->clientId,
-                    'secret' => $this->secret,
-                    'user' => [
-                        'client_user_id' => (string) $userId,
-                    ],
-                    'client_name' => config('app.name'),
-                    'products' => ['transactions'],
-                    'country_codes' => ['US', 'CA', 'GB'],
-                    'language' => $language,
-                ]);
+                ->post("{$this->baseUrl}/link/token/create", $payload);
 
             if ($response->successful()) {
                 return $response->json();
@@ -88,6 +106,7 @@ class PlaidService
         } catch (Exception $e) {
             Log::error('Plaid link token creation failed', [
                 'user_id' => $userId,
+                'update_mode' => $accessToken !== null,
                 'error' => $e->getMessage(),
             ]);
             throw $e;

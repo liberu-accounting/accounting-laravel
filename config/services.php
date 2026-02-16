@@ -37,6 +37,7 @@ return [
         'environment' => env('PLAID_ENV', 'sandbox'), // sandbox, development, production
         'webhook_url' => env('PLAID_WEBHOOK_URL'),
         'webhook_verification_key' => env('PLAID_WEBHOOK_VERIFICATION_KEY'),
+        'oauth_redirect_uri' => env('PLAID_OAUTH_REDIRECT_URI'),
     ],
 
 ];
