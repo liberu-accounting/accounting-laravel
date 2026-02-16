@@ -43,9 +43,19 @@ class BillPayment extends Model
         parent::boot();
         
         static::created(function ($payment) {
-            // Update bill's amount paid
+            // Recalculate bill's payment status
             if ($payment->bill) {
-                $payment->bill->recordPayment([]);
+                $bill = $payment->bill;
+                $bill->amount_paid = $bill->payments()->sum('amount');
+                
+                if ($bill->amount_paid >= $bill->total_amount) {
+                    $bill->payment_status = 'paid';
+                    $bill->status = 'paid';
+                } elseif ($bill->amount_paid > 0) {
+                    $bill->payment_status = 'partial';
+                }
+                
+                $bill->save();
             }
         });
 

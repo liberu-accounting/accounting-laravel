@@ -78,11 +78,6 @@ protected $casts = [
         return $this->hasMany(CreditMemo::class, 'invoice_id');
     }
 
-    public function estimate()
-    {
-        return $this->hasOne(Estimate::class, 'invoice_id');
-    }
-
     public function calculateTax()
     {
         if (!$this->taxRate) {
