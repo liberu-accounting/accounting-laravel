@@ -26,14 +26,33 @@ class PlaidController extends Controller
 
     /**
      * Create a link token for Plaid Link initialization
+     * Supports both initial connection and update mode for re-authentication
      */
     public function createLinkToken(Request $request): JsonResponse
     {
         try {
             $user = $request->user();
             $language = $request->input('language', 'en');
+            $connectionId = $request->input('connection_id');
 
-            $tokenData = $this->plaidService->createLinkToken($user->id, $language);
+            $accessToken = null;
+
+            // If connection_id is provided, this is update mode for re-authentication
+            if ($connectionId) {
+                $connection = BankConnection::find($connectionId);
+
+                // Verify ownership
+                if (!$connection || $connection->user_id !== $user->id) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Connection not found or unauthorized',
+                    ], 404);
+                }
+
+                $accessToken = $connection->plaid_access_token;
+            }
+
+            $tokenData = $this->plaidService->createLinkToken($user->id, $language, $accessToken);
 
             return response()->json([
                 'success' => true,
@@ -426,5 +445,44 @@ class PlaidController extends Controller
 
         // Use the most specific category (last one in the array)
         return strtolower(end($categories));
+    }
+
+    /**
+     * Handle OAuth redirect from Plaid Link
+     * This endpoint receives the OAuth state after user authentication at their bank
+     */
+    public function handleOAuthRedirect(Request $request): JsonResponse
+    {
+        try {
+            $oauthStateId = $request->input('oauth_state_id');
+
+            if (!$oauthStateId) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Missing OAuth state ID',
+                ], 400);
+            }
+
+            // Log the OAuth redirect for debugging
+            Log::info('Plaid OAuth redirect received', [
+                'oauth_state_id' => $oauthStateId,
+            ]);
+
+            // Return success - the frontend will handle completing the Link flow
+            return response()->json([
+                'success' => true,
+                'message' => 'OAuth redirect received successfully',
+                'oauth_state_id' => $oauthStateId,
+            ]);
+        } catch (Exception $e) {
+            Log::error('Failed to handle Plaid OAuth redirect', [
+                'error' => $e->getMessage(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to handle OAuth redirect',
+            ], 500);
+        }
     }
 }

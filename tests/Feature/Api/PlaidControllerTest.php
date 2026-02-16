@@ -297,4 +297,109 @@ class PlaidControllerTest extends TestCase
         $response = $this->getJson('/api/plaid/connections');
         $response->assertStatus(401);
     }
+
+    public function test_create_link_token_includes_oauth_redirect_uri_when_configured()
+    {
+        config(['services.plaid.oauth_redirect_uri' => 'https://example.com/api/plaid/oauth-redirect']);
+
+        Http::fake([
+            'sandbox.plaid.com/link/token/create' => Http::response([
+                'link_token' => 'link-sandbox-oauth-token',
+                'expiration' => '2026-02-15T00:00:00Z',
+            ], 200),
+        ]);
+
+        $response = $this->actingAs($this->user)
+            ->postJson('/api/plaid/create-link-token', [
+                'language' => 'en',
+            ]);
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'success' => true,
+            ]);
+
+        // Verify the HTTP request included redirect_uri
+        Http::assertSent(function ($request) {
+            $data = json_decode($request->body(), true);
+            return isset($data['redirect_uri']) && 
+                   $data['redirect_uri'] === 'https://example.com/api/plaid/oauth-redirect';
+        });
+    }
+
+    public function test_create_link_token_supports_update_mode_for_reauthentication()
+    {
+        $connection = BankConnection::factory()->create([
+            'user_id' => $this->user->id,
+            'plaid_access_token' => encrypt('access-test-token'),
+            'status' => 'requires_reauth',
+        ]);
+
+        Http::fake([
+            'sandbox.plaid.com/link/token/create' => Http::response([
+                'link_token' => 'link-sandbox-update-token',
+                'expiration' => '2026-02-15T00:00:00Z',
+            ], 200),
+        ]);
+
+        $response = $this->actingAs($this->user)
+            ->postJson('/api/plaid/create-link-token', [
+                'language' => 'en',
+                'connection_id' => $connection->id,
+            ]);
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'success' => true,
+            ]);
+
+        // Verify the HTTP request included access_token for update mode
+        Http::assertSent(function ($request) {
+            $data = json_decode($request->body(), true);
+            return isset($data['access_token']) && 
+                   $data['access_token'] === 'access-test-token';
+        });
+    }
+
+    public function test_create_link_token_update_mode_rejects_unauthorized_connection()
+    {
+        $otherUser = User::factory()->create();
+        $connection = BankConnection::factory()->create([
+            'user_id' => $otherUser->id,
+        ]);
+
+        $response = $this->actingAs($this->user)
+            ->postJson('/api/plaid/create-link-token', [
+                'connection_id' => $connection->id,
+            ]);
+
+        $response->assertStatus(404)
+            ->assertJson([
+                'success' => false,
+                'message' => 'Connection not found or unauthorized',
+            ]);
+    }
+
+    public function test_oauth_redirect_endpoint_handles_valid_state()
+    {
+        $response = $this->getJson('/api/plaid/oauth-redirect?oauth_state_id=test-oauth-state-123');
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'success' => true,
+                'message' => 'OAuth redirect received successfully',
+                'oauth_state_id' => 'test-oauth-state-123',
+            ]);
+    }
+
+    public function test_oauth_redirect_endpoint_requires_state_id()
+    {
+        $response = $this->getJson('/api/plaid/oauth-redirect');
+
+        $response->assertStatus(400)
+            ->assertJson([
+                'success' => false,
+                'message' => 'Missing OAuth state ID',
+            ]);
+    }
 }
