@@ -79,9 +79,20 @@ return [
     |--------------------------------------------------------------------------
     | Corporation Tax Configuration
     |--------------------------------------------------------------------------
+    |
+    | UK Corporation Tax rates and thresholds (can be updated annually)
+    |
     */
     'corporation_tax' => [
         'enabled' => env('HMRC_CT_ENABLED', false),
+        'rates' => [
+            // As of April 2024
+            'small_profits_rate' => 0.19,          // For profits £50,000 or less
+            'main_rate' => 0.25,                   // For profits over £250,000
+            'small_profits_threshold' => 50000,     // Lower threshold
+            'marginal_relief_threshold' => 250000,  // Upper threshold
+            'marginal_relief_fraction' => 3 / 200,  // Fraction for marginal relief calculation
+        ],
     ],
 
     /*
@@ -100,26 +111,6 @@ return [
     |--------------------------------------------------------------------------
     */
     'timeout' => env('HMRC_TIMEOUT', 30),
-
-    /*
-    |--------------------------------------------------------------------------
-    | Corporation Tax Rates and Thresholds
-    |--------------------------------------------------------------------------
-    |
-    | UK Corporation Tax rates and thresholds (can be updated annually)
-    |
-    */
-    'corporation_tax' => [
-        'enabled' => env('HMRC_CT_ENABLED', false),
-        'rates' => [
-            // As of April 2024
-            'small_profits_rate' => 0.19,          // For profits £50,000 or less
-            'main_rate' => 0.25,                   // For profits over £250,000
-            'small_profits_threshold' => 50000,     // Lower threshold
-            'marginal_relief_threshold' => 250000,  // Upper threshold
-            'marginal_relief_fraction' => 3 / 200,  // Fraction for marginal relief calculation
-        ],
-    ],
 
     /*
     |--------------------------------------------------------------------------
