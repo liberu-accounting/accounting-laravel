@@ -155,7 +155,13 @@ class HmrcPayeSubmission extends Model
      */
     public function isLate(): bool
     {
-        // RTI submissions should be on or before payment date
-        return $this->created_at->isAfter($this->payment_date);
+        // RTI submissions should be submitted on or before payment date
+        // Check if actual submission to HMRC was late
+        if ($this->hmrcSubmission && $this->hmrcSubmission->submitted_at) {
+            return $this->hmrcSubmission->submitted_at->isAfter($this->payment_date);
+        }
+        
+        // If not yet submitted, check if payment date has passed
+        return now()->isAfter($this->payment_date);
     }
 }
