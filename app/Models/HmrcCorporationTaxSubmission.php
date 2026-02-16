@@ -28,6 +28,8 @@ class HmrcCorporationTaxSubmission extends Model
     ];
 
     protected $casts = [
+        'accounting_period_start' => 'date',
+        'accounting_period_end' => 'date',
         'turnover' => 'decimal:2',
         'total_profits' => 'decimal:2',
         'taxable_profits' => 'decimal:2',
@@ -102,19 +104,21 @@ class HmrcCorporationTaxSubmission extends Model
      */
     private function getTaxRate(): float
     {
-        // UK Corporation Tax rates (as of 2024)
-        // £50,000 or less: 19% (small profits rate)
-        // £50,001 to £250,000: marginal relief applies
-        // Over £250,000: 25% (main rate)
+        $rates = config('hmrc.corporation_tax.rates');
         
-        if ($this->taxable_profits <= 50000) {
-            return 0.19;
-        } elseif ($this->taxable_profits > 250000) {
-            return 0.25;
+        $smallProfitsThreshold = $rates['small_profits_threshold'];
+        $marginalReliefThreshold = $rates['marginal_relief_threshold'];
+        $smallProfitsRate = $rates['small_profits_rate'];
+        $mainRate = $rates['main_rate'];
+        
+        if ($this->taxable_profits <= $smallProfitsThreshold) {
+            return $smallProfitsRate;
+        } elseif ($this->taxable_profits > $marginalReliefThreshold) {
+            return $mainRate;
         }
         
-        // Marginal relief band
-        return 0.25;
+        // Marginal relief band - use main rate
+        return $mainRate;
     }
 
     /**
@@ -122,14 +126,18 @@ class HmrcCorporationTaxSubmission extends Model
      */
     private function calculateMarginalRelief(): float
     {
-        if ($this->taxable_profits <= 50000 || $this->taxable_profits > 250000) {
+        $rates = config('hmrc.corporation_tax.rates');
+        
+        $smallProfitsThreshold = $rates['small_profits_threshold'];
+        $marginalReliefThreshold = $rates['marginal_relief_threshold'];
+        $fraction = $rates['marginal_relief_fraction'];
+        
+        if ($this->taxable_profits <= $smallProfitsThreshold || $this->taxable_profits > $marginalReliefThreshold) {
             return 0;
         }
         
         // Marginal relief formula
-        $fraction = 3 / 200;
-        $upperLimit = 250000;
-        $relief = ($upperLimit - $this->taxable_profits) * $fraction;
+        $relief = ($marginalReliefThreshold - $this->taxable_profits) * $fraction;
         
         return max(0, $relief);
     }

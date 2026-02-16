@@ -27,6 +27,8 @@ class HmrcSubmission extends Model
     protected $casts = [
         'submission_data' => 'array',
         'response_data' => 'array',
+        'tax_period_from' => 'date',
+        'tax_period_to' => 'date',
         'submitted_at' => 'datetime',
         'accepted_at' => 'datetime',
     ];

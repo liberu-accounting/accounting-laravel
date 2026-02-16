@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('company_id')->constrained()->onDelete('cascade');
             $table->foreignId('hmrc_submission_id')->nullable()->constrained('hmrc_submissions')->onDelete('set null');
-            $table->string('accounting_period_start', 10)->comment('Accounting period start YYYY-MM-DD');
-            $table->string('accounting_period_end', 10)->comment('Accounting period end YYYY-MM-DD');
+            $table->date('accounting_period_start')->comment('Accounting period start');
+            $table->date('accounting_period_end')->comment('Accounting period end');
             $table->decimal('turnover', 15, 2)->default(0);
             $table->decimal('total_profits', 15, 2)->default(0);
             $table->decimal('taxable_profits', 15, 2)->default(0);

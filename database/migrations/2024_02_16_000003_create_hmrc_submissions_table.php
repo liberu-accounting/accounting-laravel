@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('company_id')->constrained()->onDelete('cascade');
             $table->string('submission_type')->comment('Type: vat_return, paye_rti, corporation_tax');
-            $table->string('tax_period_from', 10)->comment('Tax period start date YYYY-MM-DD');
-            $table->string('tax_period_to', 10)->comment('Tax period end date YYYY-MM-DD');
+            $table->date('tax_period_from')->comment('Tax period start date');
+            $table->date('tax_period_to')->comment('Tax period end date');
             $table->string('status')->default('draft')->comment('Status: draft, pending, submitted, accepted, rejected');
             $table->string('hmrc_reference')->nullable()->comment('HMRC submission reference/receipt ID');
             $table->text('submission_data')->nullable()->comment('JSON data submitted to HMRC');

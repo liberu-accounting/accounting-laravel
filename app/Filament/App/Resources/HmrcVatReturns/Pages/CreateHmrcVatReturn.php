@@ -12,7 +12,13 @@ class CreateHmrcVatReturn extends CreateRecord
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         // Ensure company_id is set
-        $data['company_id'] = auth()->user()->currentTeam->company_id ?? 1;
+        $companyId = auth()->user()->currentTeam->company_id ?? null;
+        
+        if (!$companyId) {
+            throw new \Exception('No company associated with current user/team');
+        }
+        
+        $data['company_id'] = $companyId;
         
         return $data;
     }

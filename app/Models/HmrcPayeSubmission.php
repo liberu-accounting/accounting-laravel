@@ -110,7 +110,24 @@ class HmrcPayeSubmission extends Model
     private function getTaxYearEnd(): int
     {
         // Tax year format: "2023-24" -> returns 2024
-        return (int) substr($this->tax_year, -2) + 2000;
+        // Parse both parts to handle century changes
+        [$startYear, $endYearSuffix] = explode('-', $this->tax_year);
+        
+        $startYearInt = (int) $startYear;
+        $endYearSuffixInt = (int) $endYearSuffix;
+        
+        // Determine the century based on the start year
+        $century = (int) floor($startYearInt / 100) * 100;
+        
+        // End year is start year + 1, unless crossing century
+        $endYear = $century + $endYearSuffixInt;
+        
+        // If end year suffix is less than start year suffix, we've crossed a century
+        if ($endYearSuffixInt < ($startYearInt % 100)) {
+            $endYear += 100;
+        }
+        
+        return $endYear;
     }
 
     /**

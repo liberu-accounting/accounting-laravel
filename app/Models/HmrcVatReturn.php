@@ -81,10 +81,14 @@ class HmrcVatReturn extends Model
             ->whereBetween('invoice_date', [$this->period_from, $this->period_to])
             ->sum('subtotal_amount');
 
-        // Box 7: Total purchases excluding VAT
+        // Box 7: Total purchases excluding VAT (amount should be ex-VAT)
         $totalPurchases = Expense::where('company_id', $this->company_id)
             ->whereBetween('expense_date', [$this->period_from, $this->period_to])
-            ->sum('amount');
+            ->get()
+            ->sum(function ($expense) {
+                // If tax_amount exists, subtract it to get amount ex-VAT
+                return $expense->amount - ($expense->tax_amount ?? 0);
+            });
 
         $this->vat_due_sales = $salesVat;
         $this->vat_reclaimed = $purchasesVat;

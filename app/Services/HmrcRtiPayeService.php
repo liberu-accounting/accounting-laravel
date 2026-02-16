@@ -156,8 +156,10 @@ class HmrcRtiPayeService
     private function buildFpsXml(HmrcPayeSubmission $payeSubmission): string
     {
         $company = $payeSubmission->company;
+        $schemaVersion = config('hmrc.rti.schema_version', '16-17');
+        $namespace = config('hmrc.rti.namespace_base') . "/FullPaymentSubmission/{$schemaVersion}";
         
-        $xml = new \SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><IRenvelope xmlns="http://www.govtalk.gov.uk/taxation/PAYE/RTI/FullPaymentSubmission/16-17"></IRenvelope>');
+        $xml = new \SimpleXMLElement("<?xml version=\"1.0\" encoding=\"UTF-8\"?><IRenvelope xmlns=\"{$namespace}\"></IRenvelope>");
         
         // Header
         $header = $xml->addChild('Header');
@@ -212,8 +214,10 @@ class HmrcRtiPayeService
      */
     private function buildEpsXml(array $epsData): string
     {
-        // Simplified EPS XML structure
-        $xml = new \SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><IRenvelope xmlns="http://www.govtalk.gov.uk/taxation/PAYE/RTI/EmployerPaymentSummary/16-17"></IRenvelope>');
+        $schemaVersion = config('hmrc.rti.schema_version', '16-17');
+        $namespace = config('hmrc.rti.namespace_base') . "/EmployerPaymentSummary/{$schemaVersion}";
+        
+        $xml = new \SimpleXMLElement("<?xml version=\"1.0\" encoding=\"UTF-8\"?><IRenvelope xmlns=\"{$namespace}\"></IRenvelope>");
         
         // Build EPS structure similar to FPS
         // This is a simplified version - actual implementation would be more detailed
@@ -226,8 +230,10 @@ class HmrcRtiPayeService
      */
     private function buildEyuXml(array $eyuData): string
     {
-        // Simplified EYU XML structure
-        $xml = new \SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><IRenvelope xmlns="http://www.govtalk.gov.uk/taxation/PAYE/RTI/EarlierYearUpdate/16-17"></IRenvelope>');
+        $schemaVersion = config('hmrc.rti.schema_version', '16-17');
+        $namespace = config('hmrc.rti.namespace_base') . "/EarlierYearUpdate/{$schemaVersion}";
+        
+        $xml = new \SimpleXMLElement("<?xml version=\"1.0\" encoding=\"UTF-8\"?><IRenvelope xmlns=\"{$namespace}\"></IRenvelope>");
         
         // Build EYU structure
         // This is a simplified version - actual implementation would be more detailed
