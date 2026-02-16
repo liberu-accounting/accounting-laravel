@@ -30,22 +30,55 @@ class PlaidService
     }
 
     /**
+     * Handle Plaid API errors and determine if they're retryable
+     */
+    protected function handlePlaidError(array $errorData, string $context): void
+    {
+        $errorCode = $errorData['error_code'] ?? 'UNKNOWN_ERROR';
+        $errorMessage = $errorData['error_message'] ?? 'Unknown error occurred';
+        $errorType = $errorData['error_type'] ?? 'UNKNOWN';
+
+        Log::error("Plaid API error in {$context}", [
+            'error_code' => $errorCode,
+            'error_type' => $errorType,
+            'error_message' => $errorMessage,
+        ]);
+
+        // Determine if error requires user action
+        $userActionRequired = in_array($errorCode, [
+            'ITEM_LOGIN_REQUIRED',
+            'INVALID_CREDENTIALS',
+            'INVALID_MFA',
+            'ITEM_LOCKED',
+        ]);
+
+        if ($userActionRequired) {
+            throw new Exception("User action required: {$errorMessage} (Code: {$errorCode})");
+        }
+
+        throw new Exception("Plaid API error: {$errorMessage} (Code: {$errorCode})");
+    }
+
+    /**
      * Create a link token for Plaid Link initialization
      */
     public function createLinkToken(int $userId, ?string $language = 'en'): array
     {
         try {
-            $response = Http::post("{$this->baseUrl}/link/token/create", [
-                'client_id' => $this->clientId,
-                'secret' => $this->secret,
-                'user' => [
-                    'client_user_id' => (string) $userId,
-                ],
-                'client_name' => config('app.name'),
-                'products' => ['transactions'],
-                'country_codes' => ['US', 'CA', 'GB'],
-                'language' => $language,
-            ]);
+            $response = Http::timeout(15)
+                ->connectTimeout(5)
+                ->retry(3, 100)
+                ->post("{$this->baseUrl}/link/token/create", [
+                    'client_id' => $this->clientId,
+                    'secret' => $this->secret,
+                    'user' => [
+                        'client_user_id' => (string) $userId,
+                    ],
+                    'client_name' => config('app.name'),
+                    'products' => ['transactions'],
+                    'country_codes' => ['US', 'CA', 'GB'],
+                    'language' => $language,
+                ]);
 
             if ($response->successful()) {
                 return $response->json();
@@ -131,7 +164,15 @@ class PlaidService
                 $payload['cursor'] = $connection->plaid_cursor;
             }
 
-            $response = Http::post("{$this->baseUrl}/transactions/sync", $payload);
+            $response = Http::timeout(30)
+                ->connectTimeout(10)
+                ->retry(2, 200, function ($exception, $request) {
+                    // Only retry on 5xx errors or network issues, not 4xx
+                    return $exception instanceof \Illuminate\Http\Client\ConnectionException ||
+                           ($exception instanceof \Illuminate\Http\Client\RequestException && 
+                            $exception->response->status() >= 500);
+                })
+                ->post("{$this->baseUrl}/transactions/sync", $payload);
 
             if ($response->successful()) {
                 $data = $response->json();
@@ -145,6 +186,11 @@ class PlaidService
                 }
 
                 return $data;
+            }
+
+            // Handle specific Plaid errors
+            if ($response->status() === 400 && isset($response->json()['error_code'])) {
+                $this->handlePlaidError($response->json(), 'syncTransactions');
             }
 
             throw new Exception('Failed to sync transactions: ' . $response->body());
@@ -185,6 +231,43 @@ class PlaidService
     }
 
     /**
+     * Get account balances with real-time balance information
+     * 
+     * @param string $accessToken The access token (should already be decrypted if from model)
+     * @param array|null $accountIds Optional array of specific account IDs to get balances for
+     */
+    public function getBalances(string $accessToken, ?array $accountIds = null): array
+    {
+        try {
+            $payload = [
+                'client_id' => $this->clientId,
+                'secret' => $this->secret,
+                'access_token' => $accessToken,
+            ];
+
+            // Optionally filter to specific accounts
+            if ($accountIds !== null && !empty($accountIds)) {
+                $payload['options'] = [
+                    'account_ids' => $accountIds,
+                ];
+            }
+
+            $response = Http::post("{$this->baseUrl}/accounts/balance/get", $payload);
+
+            if ($response->successful()) {
+                return $response->json();
+            }
+
+            throw new Exception('Failed to get balances: ' . $response->body());
+        } catch (Exception $e) {
+            Log::error('Plaid get balances failed', [
+                'error' => $e->getMessage(),
+            ]);
+            throw $e;
+        }
+    }
+
+    /**
      * Remove a Plaid item (disconnect bank)
      * 
      * @param string $accessToken The access token (should already be decrypted if from model)
@@ -213,12 +296,34 @@ class PlaidService
 
     /**
      * Verify webhook signature
+     * 
+     * @param string $bodyJson The raw JSON body of the webhook request
+     * @param array $headers The headers from the webhook request
+     * @return bool True if signature is valid, false otherwise
      */
     public function verifyWebhookSignature(string $bodyJson, array $headers): bool
     {
-        // Plaid webhook verification logic
-        // This would use HMAC verification with the webhook verification key
-        // For now, returning true as this requires additional configuration
-        return true;
+        $verificationKey = config('services.plaid.webhook_verification_key');
+        
+        // If no verification key is configured, log warning and reject
+        if (empty($verificationKey)) {
+            Log::warning('Plaid webhook verification key not configured - rejecting webhook');
+            return false;
+        }
+        
+        // Get signature from headers (Plaid sends it as 'Plaid-Verification' header)
+        $signature = $headers['plaid-verification'] ?? $headers['Plaid-Verification'] ?? null;
+        
+        if (empty($signature)) {
+            Log::warning('Plaid webhook signature missing from headers');
+            return false;
+        }
+        
+        // Compute HMAC-SHA256 signature
+        $computedSignature = hash_hmac('sha256', $bodyJson, $verificationKey, true);
+        $computedSignatureBase64 = base64_encode($computedSignature);
+        
+        // Use hash_equals for timing-safe comparison
+        return hash_equals($computedSignatureBase64, $signature);
     }
 }

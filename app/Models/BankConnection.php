@@ -44,4 +44,9 @@ class BankConnection extends Model
     {
         return $this->hasMany(BankFeedTransaction::class);
     }
+
+    public function balances()
+    {
+        return $this->hasMany(BankAccountBalance::class);
+    }
 }

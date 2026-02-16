@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\TransactionController;
 use App\Http\Controllers\Api\PlaidController;
+use App\Http\Controllers\Api\PlaidWebhookController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -28,11 +29,15 @@ Route::middleware('auth:sanctum')->group(function () {
     })->middleware('throttle:60,1');
 
     // Plaid API Routes
-    Route::prefix('plaid')->group(function () {
+    Route::prefix('plaid')->middleware('throttle:60,1')->group(function () {
         Route::post('/create-link-token', [PlaidController::class, 'createLinkToken']);
         Route::post('/store-connection', [PlaidController::class, 'storeConnection']);
         Route::get('/connections', [PlaidController::class, 'listConnections']);
-        Route::post('/connections/{connection}/sync', [PlaidController::class, 'syncTransactions']);
+        Route::post('/connections/{connection}/sync', [PlaidController::class, 'syncTransactions'])->middleware('throttle:10,1');
+        Route::get('/connections/{connection}/balances', [PlaidController::class, 'getBalances'])->middleware('throttle:30,1');
         Route::delete('/connections/{connection}', [PlaidController::class, 'removeConnection']);
     });
 });
+
+// Plaid Webhook (public endpoint, no auth required)
+Route::post('/webhooks/plaid', [PlaidWebhookController::class, 'handle']);
