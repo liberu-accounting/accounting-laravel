@@ -18,10 +18,17 @@ class Employee extends Model
         'position',
         'hire_date',
         'tax_id',
+        'national_insurance_number',
+        'starter_declaration',
+        'p45_issue_date',
+        'has_student_loan',
+        'student_loan_plan',
     ];
 
     protected $casts = [
         'hire_date' => 'date',
+        'p45_issue_date' => 'date',
+        'has_student_loan' => 'boolean',
     ];
 
     public function payrolls(): HasMany
