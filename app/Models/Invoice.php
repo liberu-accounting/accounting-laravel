@@ -73,6 +73,11 @@ protected $casts = [
         return $this->hasMany(TimeEntry::class, 'invoice_id');
     }
 
+    public function creditMemos()
+    {
+        return $this->hasMany(CreditMemo::class, 'invoice_id');
+    }
+
     public function calculateTax()
     {
         if (!$this->taxRate) {

@@ -36,6 +36,16 @@ class Customer extends Authenticatable
         return $this->hasMany(Invoice::class, 'customer_id');
     }
 
+    public function estimates()
+    {
+        return $this->hasMany(Estimate::class, 'customer_id', 'customer_id');
+    }
+
+    public function creditMemos()
+    {
+        return $this->hasMany(CreditMemo::class, 'customer_id', 'customer_id');
+    }
+
     public function isOverCreditLimit(): bool
     {
         return $this->credit_limit > 0 && $this->current_balance >= $this->credit_limit;

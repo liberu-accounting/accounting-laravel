@@ -42,6 +42,11 @@ class PurchaseOrder extends Model
         return $this->hasMany(Transaction::class, 'purchase_order_id');
     }
 
+    public function bills()
+    {
+        return $this->hasMany(Bill::class, 'purchase_order_id', 'purchase_order_id');
+    }
+
     public static function generatePoNumber()
     {
         $prefix = 'PO';

@@ -23,4 +23,9 @@ class Vendor extends Model
     {
         return $this->hasMany(Invoice::class);
     }
+
+    public function bills()
+    {
+        return $this->hasMany(Bill::class, 'vendor_id', 'vendor_id');
+    }
 }
