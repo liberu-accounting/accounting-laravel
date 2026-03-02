@@ -48,4 +48,12 @@ return [
         'webhook_secret' => env('REVOLUT_WEBHOOK_SECRET'),
     ],
 
+    'wise' => [
+        'client_id' => env('WISE_CLIENT_ID'),
+        'client_secret' => env('WISE_CLIENT_SECRET'),
+        'environment' => env('WISE_ENV', 'sandbox'), // sandbox, production
+        'redirect_uri' => env('WISE_REDIRECT_URI'),
+        'webhook_public_key' => env('WISE_WEBHOOK_PUBLIC_KEY'),
+    ],
+
 ];
