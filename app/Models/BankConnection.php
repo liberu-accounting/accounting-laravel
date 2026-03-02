@@ -23,6 +23,9 @@ class BankConnection extends Model
         'revolut_access_token',
         'revolut_refresh_token',
         'revolut_token_expires_at',
+        'wise_access_token',
+        'wise_refresh_token',
+        'wise_token_expires_at',
         'status',
         'last_synced_at',
     ];
@@ -33,6 +36,9 @@ class BankConnection extends Model
         'revolut_access_token' => 'encrypted',
         'revolut_refresh_token' => 'encrypted',
         'revolut_token_expires_at' => 'datetime',
+        'wise_access_token' => 'encrypted',
+        'wise_refresh_token' => 'encrypted',
+        'wise_token_expires_at' => 'datetime',
         'last_synced_at' => 'datetime',
     ];
 

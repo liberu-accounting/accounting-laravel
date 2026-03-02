@@ -5,6 +5,8 @@ use App\Http\Controllers\Api\PlaidController;
 use App\Http\Controllers\Api\PlaidWebhookController;
 use App\Http\Controllers\Api\RevolutController;
 use App\Http\Controllers\Api\RevolutWebhookController;
+use App\Http\Controllers\Api\WiseController;
+use App\Http\Controllers\Api\WiseWebhookController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -49,6 +51,16 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/connections/{connection}/sync', [RevolutController::class, 'syncTransactions'])->middleware('throttle:10,1');
         Route::delete('/connections/{connection}', [RevolutController::class, 'removeConnection']);
     });
+
+    // Wise API Routes
+    Route::prefix('wise')->middleware('throttle:60,1')->group(function () {
+        Route::get('/authorize', [WiseController::class, 'redirectToWise']);
+        Route::post('/callback', [WiseController::class, 'handleCallback']);
+        Route::get('/connections', [WiseController::class, 'listConnections']);
+        Route::get('/connections/{connection}/accounts', [WiseController::class, 'getAccounts'])->middleware('throttle:30,1');
+        Route::post('/connections/{connection}/sync', [WiseController::class, 'syncTransactions'])->middleware('throttle:10,1');
+        Route::delete('/connections/{connection}', [WiseController::class, 'removeConnection']);
+    });
 });
 
 // Plaid OAuth redirect endpoint (public endpoint, no auth required)
@@ -59,3 +71,6 @@ Route::post('/webhooks/plaid', [PlaidWebhookController::class, 'handle']);
 
 // Revolut Webhook (public endpoint, no auth required)
 Route::post('/webhooks/revolut', [RevolutWebhookController::class, 'handle']);
+
+// Wise Webhook (public endpoint, no auth required)
+Route::post('/webhooks/wise', [WiseWebhookController::class, 'handle']);
