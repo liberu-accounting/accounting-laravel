@@ -332,6 +332,116 @@ class RevolutController extends Controller
     }
 
     /**
+     * Send a single payment via Revolut Business
+     */
+    public function sendPayment(Request $request, BankConnection $connection): JsonResponse
+    {
+        $request->validate([
+            'account_id' => 'required|string',
+            'receiver' => 'required|array',
+            'receiver.counterparty_id' => 'required_without:receiver.account_id|string|nullable',
+            'receiver.account_id' => 'required_without:receiver.counterparty_id|string|nullable',
+            'amount' => 'required|numeric|min:0.01',
+            'currency' => 'required|string|size:3',
+            'reference' => 'required|string|max:255',
+        ]);
+
+        try {
+            if ($connection->user_id !== $request->user()->id) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthorized',
+                ], 403);
+            }
+
+            if ($connection->status !== 'active') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Connection is not active',
+                ], 400);
+            }
+
+            $paymentData = $request->only(['account_id', 'receiver', 'amount', 'currency', 'reference']);
+
+            $result = $this->revolutService->sendPayment($connection, $paymentData);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Payment sent successfully',
+                'payment' => $result,
+            ], 201);
+        } catch (Exception $e) {
+            Log::error('Failed to send Revolut payment', [
+                'connection_id' => $connection->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to send payment: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Send bulk payments via Revolut Business
+     */
+    public function sendBulkPayment(Request $request, BankConnection $connection): JsonResponse
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'schedule_for' => 'nullable|date_format:Y-m-d',
+            'payments' => 'required|array|min:1',
+            'payments.*.account_id' => 'required|string',
+            'payments.*.receiver' => 'required|array',
+            'payments.*.receiver.counterparty_id' => 'required_without:payments.*.receiver.account_id|string|nullable',
+            'payments.*.receiver.account_id' => 'required_without:payments.*.receiver.counterparty_id|string|nullable',
+            'payments.*.amount' => 'required|numeric|min:0.01',
+            'payments.*.currency' => 'required|string|size:3',
+            'payments.*.reference' => 'required|string|max:255',
+        ]);
+
+        try {
+            if ($connection->user_id !== $request->user()->id) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthorized',
+                ], 403);
+            }
+
+            if ($connection->status !== 'active') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Connection is not active',
+                ], 400);
+            }
+
+            $result = $this->revolutService->sendBulkPayment(
+                $connection,
+                $request->input('title'),
+                $request->input('payments'),
+                $request->input('schedule_for'),
+            );
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Bulk payment submitted successfully',
+                'payment_draft' => $result,
+            ], 201);
+        } catch (Exception $e) {
+            Log::error('Failed to send Revolut bulk payment', [
+                'connection_id' => $connection->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to send bulk payment: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
      * Process a Revolut transaction and store in the database
      */
     protected function processRevolutTransaction(array $revolutTransaction, BankConnection $connection): void

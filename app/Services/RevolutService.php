@@ -236,6 +236,79 @@ class RevolutService
     }
 
     /**
+     * Send a single payment via Revolut Business
+     *
+     * @param BankConnection $connection
+     * @param array $paymentData Must include: account_id, receiver (counterparty_id + account_id), amount, currency, reference
+     * @return array The created payment/transaction data from Revolut
+     */
+    public function sendPayment(BankConnection $connection, array $paymentData): array
+    {
+        try {
+            $accessToken = $this->getValidAccessToken($connection);
+
+            $response = Http::timeout(30)
+                ->connectTimeout(10)
+                ->withToken($accessToken)
+                ->post("{$this->baseUrl}/pay", $paymentData);
+
+            if ($response->successful()) {
+                return $response->json();
+            }
+
+            throw new Exception('Failed to send payment: ' . $response->body());
+        } catch (Exception $e) {
+            Log::error('Revolut send payment failed', [
+                'connection_id' => $connection->id,
+                'error' => $e->getMessage(),
+            ]);
+            throw $e;
+        }
+    }
+
+    /**
+     * Send bulk payments via Revolut Business payment drafts
+     *
+     * @param BankConnection $connection
+     * @param string $title Title for the bulk payment batch
+     * @param array $payments Array of payment objects (same shape as single payment)
+     * @param string|null $scheduleFor Date string in Y-m-d format to schedule payments (e.g. '2024-01-01'), null for immediate
+     * @return array The created payment draft data from Revolut
+     */
+    public function sendBulkPayment(BankConnection $connection, string $title, array $payments, ?string $scheduleFor = null): array
+    {
+        try {
+            $accessToken = $this->getValidAccessToken($connection);
+
+            $payload = [
+                'title' => $title,
+                'payments' => $payments,
+            ];
+
+            if ($scheduleFor !== null) {
+                $payload['schedule_for'] = $scheduleFor;
+            }
+
+            $response = Http::timeout(30)
+                ->connectTimeout(10)
+                ->withToken($accessToken)
+                ->post("{$this->baseUrl}/payment-drafts", $payload);
+
+            if ($response->successful()) {
+                return $response->json();
+            }
+
+            throw new Exception('Failed to send bulk payment: ' . $response->body());
+        } catch (Exception $e) {
+            Log::error('Revolut send bulk payment failed', [
+                'connection_id' => $connection->id,
+                'error' => $e->getMessage(),
+            ]);
+            throw $e;
+        }
+    }
+
+    /**
      * Verify the webhook signature from Revolut
      *
      * @param string $bodyJson The raw JSON body of the webhook request

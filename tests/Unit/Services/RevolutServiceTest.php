@@ -335,6 +335,171 @@ class RevolutServiceTest extends TestCase
         $this->assertTrue($result);
     }
 
+    public function test_send_payment_returns_payment_data()
+    {
+        Http::fake([
+            'sandbox-b2b.revolut.com/api/1.0/pay' => Http::response([
+                'id' => 'pay_001',
+                'state' => 'pending',
+                'created_at' => '2026-01-15T10:00:00Z',
+            ], 200),
+        ]);
+
+        $connection = BankConnection::factory()->create([
+            'bank_id' => 'revolut',
+            'revolut_access_token' => encrypt('valid_token'),
+            'revolut_token_expires_at' => now()->addHour(),
+        ]);
+
+        $paymentData = [
+            'account_id' => 'acc_001',
+            'receiver' => [
+                'counterparty_id' => 'cp_001',
+                'account_id' => 'cp_acc_001',
+            ],
+            'amount' => 250.00,
+            'currency' => 'GBP',
+            'reference' => 'Invoice #42',
+        ];
+
+        $result = $this->service->sendPayment($connection, $paymentData);
+
+        $this->assertEquals('pay_001', $result['id']);
+        $this->assertEquals('pending', $result['state']);
+
+        Http::assertSent(function ($request) use ($paymentData) {
+            return str_contains($request->url(), '/pay')
+                && $request['account_id'] === $paymentData['account_id']
+                && $request['amount'] === $paymentData['amount']
+                && $request['currency'] === $paymentData['currency']
+                && $request->hasHeader('Authorization', 'Bearer valid_token');
+        });
+    }
+
+    public function test_send_payment_throws_on_failure()
+    {
+        Http::fake([
+            'sandbox-b2b.revolut.com/api/1.0/pay' => Http::response([
+                'message' => 'Insufficient funds',
+            ], 422),
+        ]);
+
+        $connection = BankConnection::factory()->create([
+            'bank_id' => 'revolut',
+            'revolut_access_token' => encrypt('valid_token'),
+            'revolut_token_expires_at' => now()->addHour(),
+        ]);
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Failed to send payment');
+
+        $this->service->sendPayment($connection, [
+            'account_id' => 'acc_001',
+            'receiver' => ['counterparty_id' => 'cp_001'],
+            'amount' => 999999.00,
+            'currency' => 'GBP',
+            'reference' => 'Big payment',
+        ]);
+    }
+
+    public function test_send_bulk_payment_returns_draft_data()
+    {
+        Http::fake([
+            'sandbox-b2b.revolut.com/api/1.0/payment-drafts' => Http::response([
+                'id' => 'draft_001',
+                'status' => 'CREATED',
+                'title' => 'Batch January Suppliers',
+            ], 200),
+        ]);
+
+        $connection = BankConnection::factory()->create([
+            'bank_id' => 'revolut',
+            'revolut_access_token' => encrypt('valid_token'),
+            'revolut_token_expires_at' => now()->addHour(),
+        ]);
+
+        $payments = [
+            [
+                'account_id' => 'acc_001',
+                'receiver' => ['counterparty_id' => 'cp_001', 'account_id' => 'cp_acc_001'],
+                'amount' => 100.00,
+                'currency' => 'GBP',
+                'reference' => 'Supplier A',
+            ],
+            [
+                'account_id' => 'acc_001',
+                'receiver' => ['counterparty_id' => 'cp_002', 'account_id' => 'cp_acc_002'],
+                'amount' => 200.00,
+                'currency' => 'GBP',
+                'reference' => 'Supplier B',
+            ],
+        ];
+
+        $result = $this->service->sendBulkPayment($connection, 'Batch January Suppliers', $payments, '2026-01-31');
+
+        $this->assertEquals('draft_001', $result['id']);
+        $this->assertEquals('CREATED', $result['status']);
+
+        Http::assertSent(function ($request) use ($payments) {
+            return str_contains($request->url(), '/payment-drafts')
+                && $request['title'] === 'Batch January Suppliers'
+                && $request['schedule_for'] === '2026-01-31'
+                && count($request['payments']) === count($payments)
+                && $request->hasHeader('Authorization', 'Bearer valid_token');
+        });
+    }
+
+    public function test_send_bulk_payment_without_schedule_date()
+    {
+        Http::fake([
+            'sandbox-b2b.revolut.com/api/1.0/payment-drafts' => Http::response([
+                'id' => 'draft_002',
+                'status' => 'CREATED',
+            ], 200),
+        ]);
+
+        $connection = BankConnection::factory()->create([
+            'bank_id' => 'revolut',
+            'revolut_access_token' => encrypt('valid_token'),
+            'revolut_token_expires_at' => now()->addHour(),
+        ]);
+
+        $this->service->sendBulkPayment($connection, 'Immediate batch', [
+            [
+                'account_id' => 'acc_001',
+                'receiver' => ['counterparty_id' => 'cp_001'],
+                'amount' => 50.00,
+                'currency' => 'EUR',
+                'reference' => 'Payment now',
+            ],
+        ]);
+
+        Http::assertSent(function ($request) {
+            return str_contains($request->url(), '/payment-drafts')
+                && !isset($request['schedule_for']);
+        });
+    }
+
+    public function test_send_bulk_payment_throws_on_failure()
+    {
+        Http::fake([
+            'sandbox-b2b.revolut.com/api/1.0/payment-drafts' => Http::response([
+                'message' => 'Bad request',
+            ], 400),
+        ]);
+
+        $connection = BankConnection::factory()->create([
+            'bank_id' => 'revolut',
+            'revolut_access_token' => encrypt('valid_token'),
+            'revolut_token_expires_at' => now()->addHour(),
+        ]);
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Failed to send bulk payment');
+
+        $this->service->sendBulkPayment($connection, 'Bad batch', []);
+    }
+
     public function test_verify_webhook_signature_with_invalid_signature()
     {
         $bodyJson = '{"event":"TransactionCreated"}';
