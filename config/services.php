@@ -40,4 +40,12 @@ return [
         'oauth_redirect_uri' => env('PLAID_OAUTH_REDIRECT_URI'),
     ],
 
+    'revolut' => [
+        'client_id' => env('REVOLUT_CLIENT_ID'),
+        'client_secret' => env('REVOLUT_CLIENT_SECRET'),
+        'environment' => env('REVOLUT_ENV', 'sandbox'), // sandbox, production
+        'redirect_uri' => env('REVOLUT_REDIRECT_URI'),
+        'webhook_secret' => env('REVOLUT_WEBHOOK_SECRET'),
+    ],
+
 ];
