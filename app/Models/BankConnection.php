@@ -20,6 +20,9 @@ class BankConnection extends Model
         'plaid_item_id',
         'plaid_institution_id',
         'plaid_cursor',
+        'revolut_access_token',
+        'revolut_refresh_token',
+        'revolut_token_expires_at',
         'status',
         'last_synced_at',
     ];
@@ -27,6 +30,9 @@ class BankConnection extends Model
     protected $casts = [
         'credentials' => 'encrypted',
         'plaid_access_token' => 'encrypted',
+        'revolut_access_token' => 'encrypted',
+        'revolut_refresh_token' => 'encrypted',
+        'revolut_token_expires_at' => 'datetime',
         'last_synced_at' => 'datetime',
     ];
 
