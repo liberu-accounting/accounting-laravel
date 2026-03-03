@@ -32,7 +32,7 @@ class BankConnectionResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-building-library';
     
-    protected static ?string $navigationGroup = 'Banking';
+    protected static string | \UnitEnum | null $navigationGroup = 'Banking';
     
     protected static ?int $navigationSort = 1;
 

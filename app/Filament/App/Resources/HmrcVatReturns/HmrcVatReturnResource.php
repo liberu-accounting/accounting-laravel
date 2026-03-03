@@ -24,7 +24,7 @@ class HmrcVatReturnResource extends Resource
 
     protected static ?string $navigationLabel = 'VAT Returns';
 
-    protected static ?string $navigationGroup = 'HMRC Submissions';
+    protected static string | \UnitEnum | null $navigationGroup = 'HMRC Submissions';
 
     public static function form(Form $form): Form
     {
