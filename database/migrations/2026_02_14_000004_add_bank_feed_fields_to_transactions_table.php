@@ -9,17 +9,24 @@ return new class extends Migration
     public function up()
     {
         Schema::table('transactions', function (Blueprint $table) {
-            // Add fields for bank feed integration
-            $table->string('external_id')->nullable()->unique()->after('transaction_id');
-            $table->foreignId('bank_connection_id')->nullable()->after('external_id')->constrained()->onDelete('set null');
-            $table->string('description')->nullable()->after('transaction_description');
-            $table->string('category')->nullable()->after('description');
-            $table->string('type')->nullable()->after('transaction_type'); // credit/debit
-            $table->string('status')->default('posted')->after('type'); // pending/posted
-            
-            // Indexes for performance
-            $table->index('bank_connection_id');
-            $table->index('status');
+            // Add fields for bank feed integration (skip if already present from create migration)
+            if (!Schema::hasColumn('transactions', 'external_id')) {
+                $table->string('external_id')->nullable()->unique()->after('transaction_id');
+            }
+            if (!Schema::hasColumn('transactions', 'bank_connection_id')) {
+                $table->foreignId('bank_connection_id')->nullable()->after('external_id')->constrained()->onDelete('set null');
+                $table->index('bank_connection_id');
+            }
+            if (!Schema::hasColumn('transactions', 'description')) {
+                $table->string('description')->nullable()->after('transaction_description');
+            }
+            if (!Schema::hasColumn('transactions', 'category')) {
+                $table->string('category')->nullable()->after('description');
+            }
+            if (!Schema::hasColumn('transactions', 'status')) {
+                $table->string('status')->default('posted')->after('type'); // pending/posted
+                $table->index('status');
+            }
         });
     }
 

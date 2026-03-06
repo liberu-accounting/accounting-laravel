@@ -17,24 +17,18 @@ class ModuleSystemTest extends TestCase
         parent::setUp();
         $this->moduleManager = app(ModuleManager::class);
     }
-
-    /** @test */
-    public function it_can_list_all_modules()
+    public function test_can_list_all_modules()
     {
         $modules = $this->moduleManager->all();
         $this->assertNotEmpty($modules);
     }
-
-    /** @test */
-    public function it_can_get_module_by_name()
+    public function test_can_get_module_by_name()
     {
         $module = $this->moduleManager->get('BlogModule');
         $this->assertNotNull($module);
         $this->assertEquals('BlogModule', $module->getName());
     }
-
-    /** @test */
-    public function it_can_enable_and_disable_modules()
+    public function test_can_enable_and_disable_modules()
     {
         $moduleName = 'BlogModule';
         
@@ -52,9 +46,7 @@ class ModuleSystemTest extends TestCase
         $module = $this->moduleManager->get($moduleName);
         $this->assertFalse($module->isEnabled());
     }
-
-    /** @test */
-    public function it_can_get_module_info()
+    public function test_can_get_module_info()
     {
         $info = $this->moduleManager->getModuleInfo('BlogModule');
         
@@ -63,9 +55,7 @@ class ModuleSystemTest extends TestCase
         $this->assertArrayHasKey('description', $info);
         $this->assertEquals('BlogModule', $info['name']);
     }
-
-    /** @test */
-    public function it_can_install_and_uninstall_modules()
+    public function test_can_install_and_uninstall_modules()
     {
         $moduleName = 'BlogModule';
         
@@ -83,9 +73,7 @@ class ModuleSystemTest extends TestCase
         $module = $this->moduleManager->get($moduleName);
         $this->assertFalse($module->isEnabled());
     }
-
-    /** @test */
-    public function it_returns_false_for_non_existent_modules()
+    public function test_returns_false_for_non_existent_modules()
     {
         $result = $this->moduleManager->enable('NonExistentModule');
         $this->assertFalse($result);

@@ -45,8 +45,6 @@ class JournalEntryTest extends TestCase
             'allow_manual_entry' => true,
         ]);
     }
-
-    /** @test */
     public function journal_entry_can_be_created_with_balanced_lines()
     {
         $journalEntry = JournalEntry::create([
@@ -90,8 +88,6 @@ class JournalEntryTest extends TestCase
             'credit_amount' => 500.00,
         ]);
     }
-
-    /** @test */
     public function posting_journal_entry_updates_account_balances()
     {
         $cashAccount = Account::where('account_number', 1010)->first();
@@ -127,8 +123,6 @@ class JournalEntryTest extends TestCase
         $this->assertEquals($initialCashBalance + 250.00, $cashAccount->balance);
         $this->assertEquals($initialRevenueBalance + 250.00, $revenueAccount->balance);
     }
-
-    /** @test */
     public function journal_entry_has_auto_generated_entry_number()
     {
         $journalEntry = JournalEntry::create([
@@ -140,8 +134,6 @@ class JournalEntryTest extends TestCase
         $this->assertNotNull($journalEntry->entry_number);
         $this->assertStringStartsWith('JE-', $journalEntry->entry_number);
     }
-
-    /** @test */
     public function journal_entry_supports_multiple_entry_types()
     {
         $types = ['general', 'adjusting', 'closing', 'reversing'];
@@ -156,8 +148,6 @@ class JournalEntryTest extends TestCase
             $this->assertEquals($type, $entry->entry_type);
         }
     }
-
-    /** @test */
     public function journal_entry_lines_can_have_descriptions()
     {
         $journalEntry = JournalEntry::create([

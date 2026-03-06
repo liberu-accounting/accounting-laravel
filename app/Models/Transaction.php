@@ -49,7 +49,7 @@ class Transaction extends Model
         static::creating(function ($transaction) {
             if (!$transaction->exchange_rate) {
                 $defaultCurrency = Currency::where('is_default', true)->first();
-                if ($transaction->currency_id !== $defaultCurrency->currency_id) {
+                if ($defaultCurrency && $transaction->currency_id && $transaction->currency_id !== $defaultCurrency->currency_id) {
                     $exchangeRateService = app(ExchangeRateService::class);
                     $transaction->exchange_rate = $exchangeRateService->getExchangeRate(
                         $transaction->currency,

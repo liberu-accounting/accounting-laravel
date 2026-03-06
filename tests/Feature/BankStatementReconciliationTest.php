@@ -38,8 +38,6 @@ class BankStatementReconciliationTest extends TestCase
             'allow_manual_entry' => true,
         ]);
     }
-
-    /** @test */
     public function bank_statement_can_be_created_with_balances()
     {
         $statement = BankStatement::create([
@@ -58,8 +56,6 @@ class BankStatementReconciliationTest extends TestCase
             'ending_balance' => 5500.00,
         ]);
     }
-
-    /** @test */
     public function bank_statement_has_account_relationship()
     {
         $statement = BankStatement::create([
@@ -73,8 +69,6 @@ class BankStatementReconciliationTest extends TestCase
         $this->assertInstanceOf(Account::class, $statement->account);
         $this->assertEquals($this->account->id, $statement->account_id);
     }
-
-    /** @test */
     public function reconciliation_service_can_match_transactions()
     {
         $statement = BankStatement::create([
@@ -124,8 +118,6 @@ class BankStatementReconciliationTest extends TestCase
         $this->assertArrayHasKey('discrepancies', $result);
         $this->assertArrayHasKey('balance_discrepancy', $result);
     }
-
-    /** @test */
     public function reconciliation_marks_matched_transactions_as_reconciled()
     {
         $statement = BankStatement::create([
@@ -175,8 +167,6 @@ class BankStatementReconciliationTest extends TestCase
         // This test validates the reconciliation logic exists
         $this->assertNotNull($transaction->reconciled);
     }
-
-    /** @test */
     public function bank_statement_tracks_reconciliation_status()
     {
         $statement = BankStatement::create([
@@ -195,8 +185,6 @@ class BankStatementReconciliationTest extends TestCase
 
         $this->assertTrue($statement->reconciled);
     }
-
-    /** @test */
     public function bank_statement_can_have_multiple_transactions()
     {
         $statement = BankStatement::create([
