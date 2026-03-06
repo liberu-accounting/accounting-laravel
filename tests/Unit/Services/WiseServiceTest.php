@@ -123,8 +123,8 @@ class WiseServiceTest extends TestCase
     {
         $connection = BankConnection::factory()->create([
             'bank_id' => 'wise',
-            'wise_access_token' => encrypt('valid_access_token'),
-            'wise_refresh_token' => encrypt('refresh_token'),
+            'wise_access_token' => 'valid_access_token',
+            'wise_refresh_token' => 'refresh_token',
             'wise_token_expires_at' => now()->addHour(),
         ]);
 
@@ -145,8 +145,8 @@ class WiseServiceTest extends TestCase
 
         $connection = BankConnection::factory()->create([
             'bank_id' => 'wise',
-            'wise_access_token' => encrypt('expired_access_token'),
-            'wise_refresh_token' => encrypt('old_refresh_token'),
+            'wise_access_token' => 'expired_access_token',
+            'wise_refresh_token' => 'old_refresh_token',
             'wise_token_expires_at' => now()->subMinute(),
         ]);
 
@@ -162,7 +162,7 @@ class WiseServiceTest extends TestCase
     {
         $connection = BankConnection::factory()->create([
             'bank_id' => 'wise',
-            'wise_access_token' => encrypt('expired_token'),
+            'wise_access_token' => 'expired_token',
             'wise_refresh_token' => null,
             'wise_token_expires_at' => now()->subMinute(),
         ]);
@@ -197,7 +197,7 @@ class WiseServiceTest extends TestCase
 
         $connection = BankConnection::factory()->create([
             'bank_id' => 'wise',
-            'wise_access_token' => encrypt('valid_token'),
+            'wise_access_token' => 'valid_token',
             'wise_token_expires_at' => now()->addHour(),
         ]);
 
@@ -224,7 +224,7 @@ class WiseServiceTest extends TestCase
 
         $connection = BankConnection::factory()->create([
             'bank_id' => 'wise',
-            'wise_access_token' => encrypt('invalid_token'),
+            'wise_access_token' => 'invalid_token',
             'wise_token_expires_at' => now()->addHour(),
         ]);
 
@@ -259,7 +259,7 @@ class WiseServiceTest extends TestCase
 
         $connection = BankConnection::factory()->create([
             'bank_id' => 'wise',
-            'wise_access_token' => encrypt('valid_token'),
+            'wise_access_token' => 'valid_token',
             'wise_token_expires_at' => now()->addHour(),
         ]);
 
@@ -281,7 +281,7 @@ class WiseServiceTest extends TestCase
 
         $connection = BankConnection::factory()->create([
             'bank_id' => 'wise',
-            'wise_access_token' => encrypt('invalid_token'),
+            'wise_access_token' => 'invalid_token',
             'wise_token_expires_at' => now()->addHour(),
         ]);
 
@@ -306,7 +306,7 @@ class WiseServiceTest extends TestCase
 
         $connection = BankConnection::factory()->create([
             'bank_id' => 'wise',
-            'wise_access_token' => encrypt('valid_token'),
+            'wise_access_token' => 'valid_token',
             'wise_token_expires_at' => now()->addHour(),
         ]);
 
@@ -331,7 +331,7 @@ class WiseServiceTest extends TestCase
 
         $connection = BankConnection::factory()->create([
             'bank_id' => 'wise',
-            'wise_access_token' => encrypt('valid_token'),
+            'wise_access_token' => 'valid_token',
             'wise_token_expires_at' => now()->addHour(),
         ]);
 
@@ -350,7 +350,7 @@ class WiseServiceTest extends TestCase
 
         $connection = BankConnection::factory()->create([
             'bank_id' => 'wise',
-            'wise_access_token' => encrypt('valid_token'),
+            'wise_access_token' => 'valid_token',
             'wise_token_expires_at' => now()->addHour(),
             'last_synced_at' => null,
         ]);
@@ -372,7 +372,7 @@ class WiseServiceTest extends TestCase
 
         $connection = BankConnection::factory()->create([
             'bank_id' => 'wise',
-            'wise_access_token' => encrypt('valid_token'),
+            'wise_access_token' => 'valid_token',
             'wise_token_expires_at' => now()->addHour(),
         ]);
 

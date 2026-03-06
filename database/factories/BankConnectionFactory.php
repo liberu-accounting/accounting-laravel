@@ -23,7 +23,7 @@ class BankConnectionFactory extends Factory
                 'US Bank',
                 'Capital One',
             ]),
-            'plaid_access_token' => encrypt('access-sandbox-' . $this->faker->uuid()),
+            'plaid_access_token' => 'access-sandbox-' . $this->faker->uuid(),
             'plaid_item_id' => 'item-' . $this->faker->uuid(),
             'plaid_institution_id' => 'ins_' . $this->faker->randomNumber(5),
             'plaid_cursor' => null,

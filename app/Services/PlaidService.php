@@ -17,9 +17,9 @@ class PlaidService
 
     public function __construct()
     {
-        $this->clientId = config('services.plaid.client_id');
-        $this->secret = config('services.plaid.secret');
-        $this->environment = config('services.plaid.environment', 'sandbox');
+        $this->clientId = config('services.plaid.client_id') ?? '';
+        $this->secret = config('services.plaid.secret') ?? '';
+        $this->environment = config('services.plaid.environment', 'sandbox') ?? 'sandbox';
         
         // Set base URL based on environment
         $this->baseUrl = match($this->environment) {

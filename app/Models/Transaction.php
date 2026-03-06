@@ -19,10 +19,14 @@ class Transaction extends Model
         'description',
         'amount',
         'currency_id',
+        'account_id',
         'debit_account_id',
         'credit_account_id',
+        'bank_statement_id',
         'reconciled',
         'discrepancy_notes',
+        'reconciled_at',
+        'reconciled_by_user_id',
         'exchange_rate',
         'transaction_type',
         'type',
@@ -30,6 +34,7 @@ class Transaction extends Model
         'bank_connection_id',
         'category',
         'status',
+        'user_id',
     ];
 
     protected $casts = [

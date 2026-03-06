@@ -50,7 +50,7 @@ class HmrcVatReturn extends Model
      */
     public function company(): BelongsTo
     {
-        return $this->belongsTo(Company::class);
+        return $this->belongsTo(Company::class, 'company_id', 'company_id');
     }
 
     /**

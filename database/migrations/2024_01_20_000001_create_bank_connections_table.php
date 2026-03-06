@@ -12,9 +12,12 @@ return new class extends Migration
     {
         Schema::create('bank_connections', function (Blueprint $table) {
             $table->id();
-            $table->string('bank_id');
-            $table->text('credentials');
-            $table->string('status');
+            $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade');
+            $table->string('bank_id')->nullable();
+            $table->string('institution_name')->nullable();
+            $table->text('credentials')->nullable();
+            $table->string('status')->default('active');
+            $table->timestamp('last_synced_at')->nullable();
             $table->timestamps();
         });
     }

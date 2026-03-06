@@ -88,7 +88,7 @@ class PlaidServiceTest extends TestCase
     public function test_sync_transactions_without_cursor()
     {
         $connection = BankConnection::factory()->create([
-            'plaid_access_token' => encrypt('access-test-token'),
+            'plaid_access_token' => 'access-test-token',
             'plaid_cursor' => null,
         ]);
 
@@ -121,7 +121,7 @@ class PlaidServiceTest extends TestCase
     public function test_sync_transactions_with_existing_cursor()
     {
         $connection = BankConnection::factory()->create([
-            'plaid_access_token' => encrypt('access-test-token'),
+            'plaid_access_token' => 'access-test-token',
             'plaid_cursor' => 'existing_cursor',
         ]);
 

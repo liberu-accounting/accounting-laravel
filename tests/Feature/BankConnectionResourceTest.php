@@ -22,7 +22,7 @@ class BankConnectionResourceTest extends TestCase
         $this->user = User::factory()->create();
         $this->actingAs($this->user);
     }
-    public function bank_connection_can_be_created()
+    public function test_bank_connection_can_be_created()
     {
         $connection = BankConnection::create([
             'user_id' => $this->user->id,
@@ -39,7 +39,7 @@ class BankConnectionResourceTest extends TestCase
             'status' => 'active',
         ]);
     }
-    public function bank_connection_has_user_relationship()
+    public function test_bank_connection_has_user_relationship()
     {
         $connection = BankConnection::factory()->create([
             'user_id' => $this->user->id,
@@ -48,7 +48,7 @@ class BankConnectionResourceTest extends TestCase
         $this->assertInstanceOf(User::class, $connection->user);
         $this->assertEquals($this->user->id, $connection->user_id);
     }
-    public function bank_connection_credentials_are_encrypted()
+    public function test_bank_connection_credentials_are_encrypted()
     {
         $connection = BankConnection::factory()->create([
             'user_id' => $this->user->id,
@@ -62,7 +62,7 @@ class BankConnectionResourceTest extends TestCase
         // Check that credentials are decrypted when accessed through the model
         $this->assertEquals(['password' => 'secret123'], $connection->credentials);
     }
-    public function bank_connection_plaid_access_token_is_encrypted()
+    public function test_bank_connection_plaid_access_token_is_encrypted()
     {
         $connection = BankConnection::factory()->create([
             'user_id' => $this->user->id,
@@ -76,7 +76,7 @@ class BankConnectionResourceTest extends TestCase
         // Check that token is decrypted when accessed through the model
         $this->assertEquals('access-sandbox-token-123', $connection->plaid_access_token);
     }
-    public function bank_connection_has_transactions_relationship()
+    public function test_bank_connection_has_transactions_relationship()
     {
         $connection = BankConnection::factory()->create([
             'user_id' => $this->user->id,
@@ -84,7 +84,7 @@ class BankConnectionResourceTest extends TestCase
 
         $this->assertInstanceOf(\Illuminate\Database\Eloquent\Collection::class, $connection->transactions);
     }
-    public function bank_connection_can_track_plaid_sync_status()
+    public function test_bank_connection_can_track_plaid_sync_status()
     {
         $connection = BankConnection::factory()->create([
             'user_id' => $this->user->id,
@@ -105,7 +105,7 @@ class BankConnectionResourceTest extends TestCase
         $this->assertNotNull($connection->plaid_cursor);
         $this->assertNotNull($connection->last_synced_at);
     }
-    public function bank_connection_supports_different_statuses()
+    public function test_bank_connection_supports_different_statuses()
     {
         $statuses = ['active', 'inactive', 'error', 'pending'];
 
@@ -118,7 +118,7 @@ class BankConnectionResourceTest extends TestCase
             $this->assertEquals($status, $connection->status);
         }
     }
-    public function bank_connection_can_store_plaid_metadata()
+    public function test_bank_connection_can_store_plaid_metadata()
     {
         $connection = BankConnection::factory()->create([
             'user_id' => $this->user->id,
@@ -132,7 +132,7 @@ class BankConnectionResourceTest extends TestCase
         $this->assertEquals('ins_109508', $connection->plaid_institution_id);
         $this->assertEquals('Chase Bank', $connection->institution_name);
     }
-    public function bank_connection_can_be_disconnected()
+    public function test_bank_connection_can_be_disconnected()
     {
         $connection = BankConnection::factory()->create([
             'user_id' => $this->user->id,

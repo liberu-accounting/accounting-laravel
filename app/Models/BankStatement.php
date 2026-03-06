@@ -17,7 +17,16 @@ class BankStatement extends Model
         'total_credits',
         'total_debits',
         'ending_balance',
+        'reconciled',
         'team_id',
+    ];
+
+    protected $casts = [
+        'statement_date' => 'date',
+        'total_credits' => 'decimal:2',
+        'total_debits' => 'decimal:2',
+        'ending_balance' => 'decimal:2',
+        'reconciled' => 'boolean',
     ];
 
     public function account()

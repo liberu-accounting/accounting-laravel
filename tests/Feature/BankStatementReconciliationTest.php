@@ -38,7 +38,7 @@ class BankStatementReconciliationTest extends TestCase
             'allow_manual_entry' => true,
         ]);
     }
-    public function bank_statement_can_be_created_with_balances()
+    public function test_bank_statement_can_be_created_with_balances()
     {
         $statement = BankStatement::create([
             'statement_date' => Carbon::now(),
@@ -56,7 +56,7 @@ class BankStatementReconciliationTest extends TestCase
             'ending_balance' => 5500.00,
         ]);
     }
-    public function bank_statement_has_account_relationship()
+    public function test_bank_statement_has_account_relationship()
     {
         $statement = BankStatement::create([
             'statement_date' => Carbon::now(),
@@ -69,7 +69,7 @@ class BankStatementReconciliationTest extends TestCase
         $this->assertInstanceOf(Account::class, $statement->account);
         $this->assertEquals($this->account->id, $statement->account_id);
     }
-    public function reconciliation_service_can_match_transactions()
+    public function test_reconciliation_service_can_match_transactions()
     {
         $statement = BankStatement::create([
             'statement_date' => Carbon::now(),
@@ -118,7 +118,7 @@ class BankStatementReconciliationTest extends TestCase
         $this->assertArrayHasKey('discrepancies', $result);
         $this->assertArrayHasKey('balance_discrepancy', $result);
     }
-    public function reconciliation_marks_matched_transactions_as_reconciled()
+    public function test_reconciliation_marks_matched_transactions_as_reconciled()
     {
         $statement = BankStatement::create([
             'statement_date' => Carbon::now(),
@@ -167,7 +167,7 @@ class BankStatementReconciliationTest extends TestCase
         // This test validates the reconciliation logic exists
         $this->assertNotNull($transaction->reconciled);
     }
-    public function bank_statement_tracks_reconciliation_status()
+    public function test_bank_statement_tracks_reconciliation_status()
     {
         $statement = BankStatement::create([
             'statement_date' => Carbon::now(),
@@ -185,7 +185,7 @@ class BankStatementReconciliationTest extends TestCase
 
         $this->assertTrue($statement->reconciled);
     }
-    public function bank_statement_can_have_multiple_transactions()
+    public function test_bank_statement_can_have_multiple_transactions()
     {
         $statement = BankStatement::create([
             'statement_date' => Carbon::now(),

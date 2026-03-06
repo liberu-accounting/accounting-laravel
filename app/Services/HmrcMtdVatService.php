@@ -52,7 +52,7 @@ class HmrcMtdVatService
     {
         $company = $vatReturn->company;
         
-        if (!$company->hmrc_vat_number) {
+        if (!$company || !$company->hmrc_vat_number) {
             throw new \Exception('Company does not have a VAT registration number');
         }
 

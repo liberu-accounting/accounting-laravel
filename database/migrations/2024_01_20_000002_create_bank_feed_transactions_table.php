@@ -12,8 +12,8 @@ return new class extends Migration
     {
         Schema::create('bank_feed_transactions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('transaction_id')->constrained();
-            $table->foreignId('bank_connection_id')->constrained();
+            $table->foreignId('transaction_id')->constrained('transactions', 'transaction_id')->onDelete('cascade');
+            $table->foreignId('bank_connection_id')->constrained()->onDelete('cascade');
             $table->json('raw_data');
             $table->timestamps();
         });

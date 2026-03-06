@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('hmrc_vat_returns', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('company_id')->constrained()->onDelete('cascade');
+            $table->foreignId('company_id')->constrained('companies', 'company_id')->onDelete('cascade');
             $table->foreignId('hmrc_submission_id')->nullable()->constrained('hmrc_submissions')->onDelete('set null');
             $table->string('period_key')->comment('HMRC VAT period key');
             $table->date('period_from');
