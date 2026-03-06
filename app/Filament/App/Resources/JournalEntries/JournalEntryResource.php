@@ -36,7 +36,7 @@ class JournalEntryResource extends Resource
 
     protected static ?string $navigationLabel = 'Journal Entries';
 
-    protected static ?string $navigationGroup = 'Accounting';
+    protected static string | \UnitEnum | null $navigationGroup = 'Accounting';
 
     public static function form(Schema $schema): Schema
     {
