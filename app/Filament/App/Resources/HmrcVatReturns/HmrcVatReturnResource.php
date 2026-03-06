@@ -8,8 +8,8 @@ use App\Filament\App\Resources\HmrcVatReturns\Pages\EditHmrcVatReturn;
 use App\Models\HmrcVatReturn;
 use App\Services\HmrcMtdVatService;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
+use Filament\Resources\resource;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Forms\Components\Section;
@@ -20,16 +20,16 @@ class HmrcVatReturnResource extends Resource
 {
     protected static ?string $model = HmrcVatReturn::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-document-text';
 
     protected static ?string $navigationLabel = 'VAT Returns';
 
     protected static string | \UnitEnum | null $navigationGroup = 'HMRC Submissions';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Section::make('Period Information')
                     ->schema([
                         Forms\Components\TextInput::make('period_key')

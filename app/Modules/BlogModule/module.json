@@ -1,0 +1,7 @@
+{
+    "name": "BlogModule",
+    "version": "1.0.0",
+    "description": "Blog module for content management",
+    "dependencies": [],
+    "config": {}
+}

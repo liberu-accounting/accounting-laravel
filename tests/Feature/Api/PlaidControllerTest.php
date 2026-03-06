@@ -156,7 +156,7 @@ class PlaidControllerTest extends TestCase
     {
         $connection = BankConnection::factory()->create([
             'user_id' => $this->user->id,
-            'plaid_access_token' => encrypt('access-test-token'),
+            'plaid_access_token' => 'access-test-token',
             'status' => 'active',
         ]);
 
@@ -247,7 +247,7 @@ class PlaidControllerTest extends TestCase
     {
         $connection = BankConnection::factory()->create([
             'user_id' => $this->user->id,
-            'plaid_access_token' => encrypt('access-test-token'),
+            'plaid_access_token' => 'access-test-token',
             'status' => 'active',
         ]);
 
@@ -331,7 +331,7 @@ class PlaidControllerTest extends TestCase
     {
         $connection = BankConnection::factory()->create([
             'user_id' => $this->user->id,
-            'plaid_access_token' => encrypt('access-test-token'),
+            'plaid_access_token' => 'access-test-token',
             'status' => 'requires_reauth',
         ]);
 

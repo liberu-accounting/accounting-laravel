@@ -123,8 +123,8 @@ class RevolutServiceTest extends TestCase
     {
         $connection = BankConnection::factory()->create([
             'bank_id' => 'revolut',
-            'revolut_access_token' => encrypt('valid_access_token'),
-            'revolut_refresh_token' => encrypt('refresh_token'),
+            'revolut_access_token' => 'valid_access_token',
+            'revolut_refresh_token' => 'refresh_token',
             'revolut_token_expires_at' => now()->addHour(),
         ]);
 
@@ -145,8 +145,8 @@ class RevolutServiceTest extends TestCase
 
         $connection = BankConnection::factory()->create([
             'bank_id' => 'revolut',
-            'revolut_access_token' => encrypt('expired_access_token'),
-            'revolut_refresh_token' => encrypt('old_refresh_token'),
+            'revolut_access_token' => 'expired_access_token',
+            'revolut_refresh_token' => 'old_refresh_token',
             'revolut_token_expires_at' => now()->subMinute(),
         ]);
 
@@ -162,7 +162,7 @@ class RevolutServiceTest extends TestCase
     {
         $connection = BankConnection::factory()->create([
             'bank_id' => 'revolut',
-            'revolut_access_token' => encrypt('expired_token'),
+            'revolut_access_token' => 'expired_token',
             'revolut_refresh_token' => null,
             'revolut_token_expires_at' => now()->subMinute(),
         ]);
@@ -190,7 +190,7 @@ class RevolutServiceTest extends TestCase
 
         $connection = BankConnection::factory()->create([
             'bank_id' => 'revolut',
-            'revolut_access_token' => encrypt('valid_token'),
+            'revolut_access_token' => 'valid_token',
             'revolut_token_expires_at' => now()->addHour(),
         ]);
 
@@ -218,7 +218,7 @@ class RevolutServiceTest extends TestCase
 
         $connection = BankConnection::factory()->create([
             'bank_id' => 'revolut',
-            'revolut_access_token' => encrypt('invalid_token'),
+            'revolut_access_token' => 'invalid_token',
             'revolut_token_expires_at' => now()->addHour(),
         ]);
 
@@ -248,7 +248,7 @@ class RevolutServiceTest extends TestCase
 
         $connection = BankConnection::factory()->create([
             'bank_id' => 'revolut',
-            'revolut_access_token' => encrypt('valid_token'),
+            'revolut_access_token' => 'valid_token',
             'revolut_token_expires_at' => now()->addHour(),
         ]);
 
@@ -273,7 +273,7 @@ class RevolutServiceTest extends TestCase
 
         $connection = BankConnection::factory()->create([
             'bank_id' => 'revolut',
-            'revolut_access_token' => encrypt('valid_token'),
+            'revolut_access_token' => 'valid_token',
             'revolut_token_expires_at' => now()->addHour(),
         ]);
 
@@ -292,7 +292,7 @@ class RevolutServiceTest extends TestCase
 
         $connection = BankConnection::factory()->create([
             'bank_id' => 'revolut',
-            'revolut_access_token' => encrypt('valid_token'),
+            'revolut_access_token' => 'valid_token',
             'revolut_token_expires_at' => now()->addHour(),
             'last_synced_at' => null,
         ]);
@@ -314,7 +314,7 @@ class RevolutServiceTest extends TestCase
 
         $connection = BankConnection::factory()->create([
             'bank_id' => 'revolut',
-            'revolut_access_token' => encrypt('valid_token'),
+            'revolut_access_token' => 'valid_token',
             'revolut_token_expires_at' => now()->addHour(),
         ]);
 
@@ -347,7 +347,7 @@ class RevolutServiceTest extends TestCase
 
         $connection = BankConnection::factory()->create([
             'bank_id' => 'revolut',
-            'revolut_access_token' => encrypt('valid_token'),
+            'revolut_access_token' => 'valid_token',
             'revolut_token_expires_at' => now()->addHour(),
         ]);
 
@@ -386,7 +386,7 @@ class RevolutServiceTest extends TestCase
 
         $connection = BankConnection::factory()->create([
             'bank_id' => 'revolut',
-            'revolut_access_token' => encrypt('valid_token'),
+            'revolut_access_token' => 'valid_token',
             'revolut_token_expires_at' => now()->addHour(),
         ]);
 
@@ -414,7 +414,7 @@ class RevolutServiceTest extends TestCase
 
         $connection = BankConnection::factory()->create([
             'bank_id' => 'revolut',
-            'revolut_access_token' => encrypt('valid_token'),
+            'revolut_access_token' => 'valid_token',
             'revolut_token_expires_at' => now()->addHour(),
         ]);
 
@@ -460,7 +460,7 @@ class RevolutServiceTest extends TestCase
 
         $connection = BankConnection::factory()->create([
             'bank_id' => 'revolut',
-            'revolut_access_token' => encrypt('valid_token'),
+            'revolut_access_token' => 'valid_token',
             'revolut_token_expires_at' => now()->addHour(),
         ]);
 
@@ -490,7 +490,7 @@ class RevolutServiceTest extends TestCase
 
         $connection = BankConnection::factory()->create([
             'bank_id' => 'revolut',
-            'revolut_access_token' => encrypt('valid_token'),
+            'revolut_access_token' => 'valid_token',
             'revolut_token_expires_at' => now()->addHour(),
         ]);
 

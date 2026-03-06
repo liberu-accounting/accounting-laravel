@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('hmrc_submissions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('company_id')->constrained()->onDelete('cascade');
+            $table->foreignId('company_id')->constrained('companies', 'company_id')->onDelete('cascade');
             $table->string('submission_type')->comment('Type: vat_return, paye_rti, corporation_tax');
             $table->date('tax_period_from')->comment('Tax period start date');
             $table->date('tax_period_to')->comment('Tax period end date');

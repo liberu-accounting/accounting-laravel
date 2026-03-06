@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('hmrc_paye_submissions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('company_id')->constrained()->onDelete('cascade');
+            $table->foreignId('company_id')->constrained('companies', 'company_id')->onDelete('cascade');
             $table->foreignId('hmrc_submission_id')->nullable()->constrained('hmrc_submissions')->onDelete('set null');
             $table->string('tax_year', 9)->comment('Tax year format: 2023-24');
             $table->integer('tax_month')->comment('Tax month 1-12');

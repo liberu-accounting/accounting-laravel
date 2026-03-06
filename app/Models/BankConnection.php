@@ -1,5 +1,3 @@
-
-
 <?php
 
 namespace App\Models;
@@ -31,7 +29,7 @@ class BankConnection extends Model
     ];
 
     protected $casts = [
-        'credentials' => 'encrypted',
+        'credentials' => 'encrypted:array',
         'plaid_access_token' => 'encrypted',
         'revolut_access_token' => 'encrypted',
         'revolut_refresh_token' => 'encrypted',

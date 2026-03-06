@@ -7,8 +7,7 @@ use App\Rules\DoubleEntryValidator;
 
 class DoubleEntryValidatorTest extends TestCase
 {
-    /** @test */
-    public function it_validates_balanced_journal_entry_lines()
+    public function test_validates_balanced_journal_entry_lines()
     {
         $lines = [
             ['debit_amount' => 500.00, 'credit_amount' => 0.00],
@@ -20,9 +19,7 @@ class DoubleEntryValidatorTest extends TestCase
         
         $this->assertTrue($validator->passes('lines', $lines));
     }
-
-    /** @test */
-    public function it_rejects_unbalanced_journal_entry_lines()
+    public function test_rejects_unbalanced_journal_entry_lines()
     {
         $lines = [
             ['debit_amount' => 500.00, 'credit_amount' => 0.00],
@@ -33,9 +30,7 @@ class DoubleEntryValidatorTest extends TestCase
         
         $this->assertFalse($validator->passes('lines', $lines));
     }
-
-    /** @test */
-    public function it_validates_with_decimal_precision()
+    public function test_validates_with_decimal_precision()
     {
         $lines = [
             ['debit_amount' => 100.33, 'credit_amount' => 0.00],
@@ -47,9 +42,7 @@ class DoubleEntryValidatorTest extends TestCase
         
         $this->assertTrue($validator->passes('lines', $lines));
     }
-
-    /** @test */
-    public function it_handles_objects_with_properties()
+    public function test_handles_objects_with_properties()
     {
         $line1 = (object)['debit_amount' => 100.00, 'credit_amount' => 0.00];
         $line2 = (object)['debit_amount' => 0.00, 'credit_amount' => 100.00];
@@ -60,9 +53,7 @@ class DoubleEntryValidatorTest extends TestCase
         
         $this->assertTrue($validator->passes('lines', $lines));
     }
-
-    /** @test */
-    public function it_validates_empty_lines_as_balanced()
+    public function test_validates_empty_lines_as_balanced()
     {
         $lines = [];
 
@@ -70,9 +61,7 @@ class DoubleEntryValidatorTest extends TestCase
         
         $this->assertTrue($validator->passes('lines', $lines));
     }
-
-    /** @test */
-    public function it_provides_meaningful_error_message()
+    public function test_provides_meaningful_error_message()
     {
         $validator = new DoubleEntryValidator([]);
         

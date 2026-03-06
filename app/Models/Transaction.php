@@ -19,10 +19,14 @@ class Transaction extends Model
         'description',
         'amount',
         'currency_id',
+        'account_id',
         'debit_account_id',
         'credit_account_id',
+        'bank_statement_id',
         'reconciled',
         'discrepancy_notes',
+        'reconciled_at',
+        'reconciled_by_user_id',
         'exchange_rate',
         'transaction_type',
         'type',
@@ -30,6 +34,7 @@ class Transaction extends Model
         'bank_connection_id',
         'category',
         'status',
+        'user_id',
     ];
 
     protected $casts = [
@@ -49,7 +54,7 @@ class Transaction extends Model
         static::creating(function ($transaction) {
             if (!$transaction->exchange_rate) {
                 $defaultCurrency = Currency::where('is_default', true)->first();
-                if ($transaction->currency_id !== $defaultCurrency->currency_id) {
+                if ($defaultCurrency && $transaction->currency_id && $transaction->currency_id !== $defaultCurrency->currency_id) {
                     $exchangeRateService = app(ExchangeRateService::class);
                     $transaction->exchange_rate = $exchangeRateService->getExchangeRate(
                         $transaction->currency,

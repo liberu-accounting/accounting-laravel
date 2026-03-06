@@ -9,23 +9,41 @@ return new class extends Migration
     public function up()
     {
         Schema::table('bank_connections', function (Blueprint $table) {
-            // Add user_id for multi-tenancy support (required field)
-            $table->foreignId('user_id')->after('id')->constrained()->onDelete('cascade');
+            // Add user_id for multi-tenancy support (only if not already present)
+            if (!Schema::hasColumn('bank_connections', 'user_id')) {
+                $table->foreignId('user_id')->after('id')->constrained()->onDelete('cascade');
+                $table->index('user_id');
+            }
             
             // Plaid-specific fields
-            $table->string('plaid_access_token')->nullable()->after('credentials');
-            $table->string('plaid_item_id')->nullable()->after('plaid_access_token');
-            $table->string('plaid_institution_id')->nullable()->after('plaid_item_id');
-            $table->string('plaid_cursor')->nullable()->after('plaid_institution_id');
+            if (!Schema::hasColumn('bank_connections', 'plaid_access_token')) {
+                $table->string('plaid_access_token')->nullable()->after('credentials');
+            }
+            if (!Schema::hasColumn('bank_connections', 'plaid_item_id')) {
+                $table->string('plaid_item_id')->nullable()->after('plaid_access_token');
+                $table->index('plaid_item_id');
+            }
+            if (!Schema::hasColumn('bank_connections', 'plaid_institution_id')) {
+                $table->string('plaid_institution_id')->nullable()->after('plaid_item_id');
+            }
+            if (!Schema::hasColumn('bank_connections', 'plaid_cursor')) {
+                $table->string('plaid_cursor')->nullable()->after('plaid_institution_id');
+            }
             
             // Additional metadata
-            $table->string('institution_name')->nullable()->after('bank_id');
-            $table->timestamp('last_synced_at')->nullable()->after('status');
+            if (!Schema::hasColumn('bank_connections', 'institution_name')) {
+                $table->string('institution_name')->nullable()->after('bank_id');
+            }
+            if (!Schema::hasColumn('bank_connections', 'last_synced_at')) {
+                $table->timestamp('last_synced_at')->nullable()->after('status');
+            }
             
-            // Indexes for performance
-            $table->index('user_id');
-            $table->index('plaid_item_id');
-            $table->index('status');
+            // Index on status (only if not already indexed)
+            try {
+                $table->index('status');
+            } catch (\Exception $e) {
+                // Index may already exist
+            }
         });
     }
 

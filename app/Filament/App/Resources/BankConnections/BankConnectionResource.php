@@ -30,7 +30,7 @@ class BankConnectionResource extends Resource
 {
     protected static ?string $model = BankConnection::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-building-library';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-building-library';
     
     protected static string | \UnitEnum | null $navigationGroup = 'Banking';
     

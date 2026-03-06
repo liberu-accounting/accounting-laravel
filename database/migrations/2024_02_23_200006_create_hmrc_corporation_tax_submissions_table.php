@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('hmrc_corporation_tax_submissions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('company_id')->constrained()->onDelete('cascade');
+            $table->foreignId('company_id')->constrained('companies', 'company_id')->onDelete('cascade');
             $table->foreignId('hmrc_submission_id')->nullable()->constrained('hmrc_submissions')->onDelete('set null');
             $table->date('accounting_period_start')->comment('Accounting period start');
             $table->date('accounting_period_end')->comment('Accounting period end');
