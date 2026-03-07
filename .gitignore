@@ -27,3 +27,5 @@ Homestead.json
 .phpunit.result.cache
 rr
 .rr.yaml
+public/js/filament/
+public/css/filament/
