@@ -333,6 +333,11 @@ class PlaidService
         // Get signature from headers (Plaid sends it as 'Plaid-Verification' header)
         $signature = $headers['plaid-verification'] ?? $headers['Plaid-Verification'] ?? null;
         
+        // Headers from $request->headers->all() return arrays; extract the first value
+        if (is_array($signature)) {
+            $signature = $signature[0] ?? null;
+        }
+        
         if (empty($signature)) {
             Log::warning('Plaid webhook signature missing from headers');
             return false;
