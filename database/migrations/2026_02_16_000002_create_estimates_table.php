@@ -17,7 +17,7 @@ return new class extends Migration
             $table->decimal('subtotal_amount', 15, 2)->default(0);
             $table->decimal('tax_amount', 15, 2)->default(0);
             $table->decimal('total_amount', 15, 2);
-            $table->foreignId('tax_rate_id')->nullable()->constrained('tax_rates')->nullOnDelete();
+            $table->foreignId('tax_rate_id')->nullable()->constrained('tax_rates', 'tax_rate_id')->nullOnDelete();
             $table->string('status')->default('draft'); // draft, sent, viewed, accepted, declined, expired
             $table->foreignId('invoice_id')->nullable()->constrained('invoices')->nullOnDelete();
             $table->timestamp('sent_at')->nullable();
@@ -45,7 +45,7 @@ return new class extends Migration
             $table->decimal('unit_price', 15, 2);
             $table->decimal('amount', 15, 2);
             $table->decimal('tax_amount', 15, 2)->default(0);
-            $table->foreignId('tax_rate_id')->nullable()->constrained('tax_rates')->nullOnDelete();
+            $table->foreignId('tax_rate_id')->nullable()->constrained('tax_rates', 'tax_rate_id')->nullOnDelete();
             $table->timestamps();
             
             $table->index('estimate_id');

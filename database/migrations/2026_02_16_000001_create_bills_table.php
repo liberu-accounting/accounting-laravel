@@ -18,7 +18,7 @@ return new class extends Migration
             $table->decimal('tax_amount', 15, 2)->default(0);
             $table->decimal('total_amount', 15, 2);
             $table->decimal('amount_paid', 15, 2)->default(0);
-            $table->foreignId('tax_rate_id')->nullable()->constrained('tax_rates')->nullOnDelete();
+            $table->foreignId('tax_rate_id')->nullable()->constrained('tax_rates', 'tax_rate_id')->nullOnDelete();
             $table->string('status')->default('draft'); // draft, open, paid, void, overdue
             $table->string('payment_status')->default('unpaid'); // unpaid, partial, paid
             $table->foreignId('purchase_order_id')->nullable()->constrained('purchase_orders', 'purchase_order_id')->nullOnDelete();
@@ -48,7 +48,7 @@ return new class extends Migration
             $table->decimal('unit_price', 15, 2);
             $table->decimal('amount', 15, 2);
             $table->decimal('tax_amount', 15, 2)->default(0);
-            $table->foreignId('tax_rate_id')->nullable()->constrained('tax_rates')->nullOnDelete();
+            $table->foreignId('tax_rate_id')->nullable()->constrained('tax_rates', 'tax_rate_id')->nullOnDelete();
             $table->timestamps();
             
             $table->index('bill_id');
