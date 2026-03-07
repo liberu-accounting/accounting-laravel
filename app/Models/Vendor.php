@@ -9,6 +9,8 @@ class Vendor extends Model
 {
     use HasFactory;
 
+    protected $primaryKey = 'vendor_id';
+
     protected $fillable = [
         'name',
         'email',
@@ -31,6 +33,6 @@ class Vendor extends Model
 
     public function vendorCredits()
     {
-        return $this->hasMany(VendorCredit::class, 'vendor_id', 'id');
+        return $this->hasMany(VendorCredit::class, 'vendor_id', 'vendor_id');
     }
 }
