@@ -76,7 +76,7 @@ class VendorCreditResource extends Resource
                             
                         Select::make('tax_rate_id')
                             ->relationship('taxRate', 'name')
-                            ->reactive()
+                            ->live()
                             ->afterStateUpdated(function ($state, callable $set, $get) {
                                 if ($state && $get('subtotal_amount')) {
                                     $taxRate = TaxRate::find($state);
@@ -103,11 +103,11 @@ class VendorCreditResource extends Resource
                                     ->numeric()
                                     ->default(1)
                                     ->required()
-                                    ->reactive(),
+                                    ->live(),
                                 TextInput::make('unit_price')
                                     ->numeric()
                                     ->required()
-                                    ->reactive(),
+                                    ->live(),
                             ])
                             ->columns(5)
                             ->defaultItems(1)

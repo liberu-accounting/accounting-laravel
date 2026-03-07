@@ -46,7 +46,7 @@ class InvoiceResource extends Resource
                 TextInput::make('total_amount')
                     ->numeric()
                     ->required()
-                    ->reactive()
+                    ->live()
                     ->afterStateUpdated(function ($state, callable $set, $get) {
                         if ($get('tax_rate_id')) {
                             $taxRate = TaxRate::find($get('tax_rate_id'));
@@ -56,7 +56,7 @@ class InvoiceResource extends Resource
                     }),
                 Select::make('tax_rate_id')
                     ->relationship('taxRate', 'name')
-                    ->reactive()
+                    ->live()
                     ->afterStateUpdated(function ($state, callable $set, $get) {
                         if ($state && $get('total_amount')) {
                             $taxRate = TaxRate::find($state);
@@ -78,7 +78,7 @@ class InvoiceResource extends Resource
                     ->rows(3),
                 Toggle::make('is_recurring')
                     ->label('Recurring Invoice')
-                    ->reactive(),
+                    ->live(),
                 Select::make('recurrence_frequency')
                     ->options([
                         'daily' => 'Daily',

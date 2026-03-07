@@ -19,8 +19,8 @@ class WiseService
 
     public function __construct()
     {
-        $this->clientId = config('services.wise.client_id');
-        $this->clientSecret = config('services.wise.client_secret');
+        $this->clientId = config('services.wise.client_id') ?? '';
+        $this->clientSecret = config('services.wise.client_secret') ?? '';
         $this->environment = config('services.wise.environment', 'sandbox');
 
         $this->baseUrl = $this->environment === 'production'

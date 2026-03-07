@@ -119,11 +119,11 @@ class RefundReceiptResource extends Resource
                                     ->numeric()
                                     ->default(1)
                                     ->required()
-                                    ->reactive(),
+                                    ->live(),
                                 TextInput::make('unit_price')
                                     ->numeric()
                                     ->required()
-                                    ->reactive(),
+                                    ->live(),
                             ])
                             ->columns(5)
                             ->defaultItems(1)

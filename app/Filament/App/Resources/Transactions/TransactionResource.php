@@ -57,7 +57,7 @@ class TransactionResource extends Resource
                     ->required()
                     ->searchable()
                     ->preload()
-                    ->reactive()
+                    ->live()
                     ->afterStateUpdated(function ($state, callable $set) {
                         if ($state) {
                             $defaultCurrency = Currency::where('is_default', true)->first();

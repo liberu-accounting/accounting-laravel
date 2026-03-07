@@ -106,7 +106,7 @@ class JournalEntryResource extends Resource
                                             ->default(0)
                                             ->step('0.01')
                                             ->prefix('$')
-                                            ->reactive()
+                                            ->live()
                                             ->afterStateUpdated(fn ($state, callable $set) => 
                                                 $state > 0 ? $set('credit_amount', 0) : null
                                             )
@@ -117,7 +117,7 @@ class JournalEntryResource extends Resource
                                             ->default(0)
                                             ->step('0.01')
                                             ->prefix('$')
-                                            ->reactive()
+                                            ->live()
                                             ->afterStateUpdated(fn ($state, callable $set) => 
                                                 $state > 0 ? $set('debit_amount', 0) : null
                                             )

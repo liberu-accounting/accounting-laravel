@@ -65,7 +65,7 @@ class DelayedChargeResource extends Resource
                             ->numeric()
                             ->default(1)
                             ->required()
-                            ->reactive()
+                            ->live()
                             ->afterStateUpdated(function ($state, callable $set, $get) {
                                 $unitPrice = $get('unit_price') ?? 0;
                                 $set('amount', $state * $unitPrice);
@@ -75,7 +75,7 @@ class DelayedChargeResource extends Resource
                             ->numeric()
                             ->required()
                             ->prefix('$')
-                            ->reactive()
+                            ->live()
                             ->afterStateUpdated(function ($state, callable $set, $get) {
                                 $quantity = $get('quantity') ?? 1;
                                 $set('amount', $quantity * $state);

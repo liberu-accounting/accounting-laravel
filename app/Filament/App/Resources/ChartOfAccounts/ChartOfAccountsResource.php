@@ -37,7 +37,7 @@ class ChartOfAccountsResource extends Resource
                 Select::make('template_id')
                     ->label('Industry Template')
                     ->options(AccountTemplate::pluck('name', 'id'))
-                    ->reactive()
+                    ->live()
                     ->visible(fn ($get) => !$get('parent_id')),
                 
                 TextInput::make('account_number')
@@ -58,7 +58,7 @@ class ChartOfAccountsResource extends Resource
                     
                 Select::make('account_type')
                     ->required()
-                    ->reactive()
+                    ->live()
                     ->options([
                         'asset' => 'Asset',
                         'liability' => 'Liability',

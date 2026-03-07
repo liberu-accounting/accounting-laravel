@@ -19,8 +19,8 @@ class RevolutService
 
     public function __construct()
     {
-        $this->clientId = config('services.revolut.client_id');
-        $this->clientSecret = config('services.revolut.client_secret');
+        $this->clientId = config('services.revolut.client_id') ?? '';
+        $this->clientSecret = config('services.revolut.client_secret') ?? '';
         $this->environment = config('services.revolut.environment', 'sandbox');
 
         $this->baseUrl = $this->environment === 'production'
