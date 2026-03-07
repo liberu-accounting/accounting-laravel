@@ -28,7 +28,7 @@ return new class extends Migration
 
             $table->foreign('customer_id')->references('id')->on('customers')->onDelete('cascade');
             $table->foreign('account_id')->references('id')->on('accounts')->onDelete('set null');
-            $table->foreign('invoice_id')->references('invoice_id')->on('invoices')->onDelete('set null');
+            $table->foreign('invoice_id')->references('id')->on('invoices')->onDelete('set null');
             
             $table->index('customer_id');
             $table->index('charge_date');
