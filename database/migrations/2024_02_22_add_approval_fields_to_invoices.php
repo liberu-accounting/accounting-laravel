@@ -11,7 +11,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('invoices', function (Blueprint $table) {
-            $table->foreignId('vendor_id')->nullable()->constrained();
+            $table->foreignId('vendor_id')->nullable()->constrained('vendors', 'vendor_id');
             $table->enum('approval_status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->text('rejection_reason')->nullable();
             $table->foreignId('approved_by')->nullable()->constrained('users');
