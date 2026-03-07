@@ -28,7 +28,7 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->foreign('customer_id')->references('customer_id')->on('customers')->onDelete('cascade');
+            $table->foreign('customer_id')->references('id')->on('customers')->onDelete('cascade');
             $table->foreign('tax_rate_id')->references('tax_rate_id')->on('tax_rates')->onDelete('set null');
             $table->foreign('deposit_to_account_id')->references('account_id')->on('accounts')->onDelete('set null');
             
