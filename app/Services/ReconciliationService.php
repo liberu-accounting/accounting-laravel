@@ -58,8 +58,8 @@ class ReconciliationService
         }
     
         return [
-            'matched_transactions' => $matchedTransactions,
-            'unmatched_transactions' => $unmatchedTransactions,
+            'matched_transactions' => $matchedTransactions->count(),
+            'unmatched_transactions' => $unmatchedTransactions->count(),
             'discrepancies' => $discrepancies,
             'total_credits' => $totalCredits,
             'total_debits' => $totalDebits,

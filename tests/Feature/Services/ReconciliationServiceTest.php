@@ -26,12 +26,14 @@ class ReconciliationServiceTest extends TestCase
 
         Transaction::factory()->count(3)->create([
             'account_id' => $account->id,
+            'bank_statement_id' => $bankStatement->id,
             'transaction_date' => now(),
             'amount' => 300,
         ]);
 
         Transaction::factory()->count(2)->create([
             'account_id' => $account->id,
+            'bank_statement_id' => $bankStatement->id,
             'transaction_date' => now(),
             'amount' => -200,
         ]);
@@ -41,6 +43,6 @@ class ReconciliationServiceTest extends TestCase
 
         $this->assertEquals(5, $result['matched_transactions']);
         $this->assertEquals(0, $result['unmatched_transactions']);
-        $this->assertEquals(0, $result['discrepancy']);
+        $this->assertEquals(0, $result['balance_discrepancy']);
     }
 }
