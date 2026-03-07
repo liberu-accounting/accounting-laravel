@@ -18,7 +18,7 @@ return new class extends Migration
             $table->decimal('tax_amount', 15, 2)->default(0);
             $table->decimal('total_amount', 15, 2);
             $table->decimal('amount_applied', 15, 2)->default(0);
-            $table->foreignId('tax_rate_id')->nullable()->constrained('tax_rates')->nullOnDelete();
+            $table->foreignId('tax_rate_id')->nullable()->constrained('tax_rates', 'tax_rate_id')->nullOnDelete();
             $table->string('status')->default('draft'); // draft, open, applied, void
             $table->string('reason')->nullable(); // product_return, billing_error, discount, other
             $table->text('notes')->nullable();
@@ -40,7 +40,7 @@ return new class extends Migration
             $table->decimal('unit_price', 15, 2);
             $table->decimal('amount', 15, 2);
             $table->decimal('tax_amount', 15, 2)->default(0);
-            $table->foreignId('tax_rate_id')->nullable()->constrained('tax_rates')->nullOnDelete();
+            $table->foreignId('tax_rate_id')->nullable()->constrained('tax_rates', 'tax_rate_id')->nullOnDelete();
             $table->timestamps();
             
             $table->index('credit_memo_id');
