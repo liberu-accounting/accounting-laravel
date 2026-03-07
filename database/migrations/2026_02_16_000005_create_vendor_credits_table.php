@@ -48,7 +48,7 @@ return new class extends Migration
             $table->decimal('amount', 15, 2);
 
             $table->foreign('vendor_credit_id')->references('vendor_credit_id')->on('vendor_credits')->onDelete('cascade');
-            $table->foreign('account_id')->references('account_id')->on('accounts')->onDelete('set null');
+            $table->foreign('account_id')->references('id')->on('accounts')->onDelete('set null');
             
             $table->index('vendor_credit_id');
         });
