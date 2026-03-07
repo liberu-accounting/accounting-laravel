@@ -44,7 +44,7 @@ class GeneralLedgerReportResource extends Resource
                 Select::make('report_type')
                     ->options(GeneralLedgerReport::REPORT_TYPES)
                     ->required()
-                    ->reactive(),
+                    ->live(),
                 TextInput::make('template_name')
                     ->required(fn ($get) => $get('is_template'))
                     ->visible(fn ($get) => $get('is_template')),

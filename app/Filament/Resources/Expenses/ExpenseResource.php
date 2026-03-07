@@ -61,7 +61,7 @@ class ExpenseResource extends Resource
                     ->columnSpanFull(),
                 Toggle::make('is_recurring')
                     ->label('Recurring Expense')
-                    ->reactive(),
+                    ->live(),
                 Select::make('recurrence_frequency')
                     ->options([
                         'daily' => 'Daily',

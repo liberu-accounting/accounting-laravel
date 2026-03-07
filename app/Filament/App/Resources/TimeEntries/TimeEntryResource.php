@@ -46,7 +46,7 @@ class TimeEntryResource extends Resource
                 TextInput::make('hourly_rate')
                     ->numeric()
                     ->required()
-                    ->reactive()
+                    ->live()
                     ->afterStateUpdated(fn ($state, callable $set, TimeEntry $record) => 
                         $set('total_amount', $record->calculateTotalAmount())
                     ),

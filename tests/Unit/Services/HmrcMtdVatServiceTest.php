@@ -21,7 +21,7 @@ class HmrcMtdVatServiceTest extends TestCase
     {
         parent::setUp();
         
-        $this->authService = $this->createMock(HmrcAuthService::class);
+        $this->authService = $this->createStub(HmrcAuthService::class);
         $this->authService->method('getAccessToken')->willReturn('test-token');
         
         $this->service = new HmrcMtdVatService($this->authService);
