@@ -5,17 +5,70 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-  deployment:
   workflow_dispatch:
 
 env:
   DB_DATABASE: liberu
-  DB_USERNAME: liberu
-  DB_PASSWORD: secret
+  DB_USERNAME: root
+  DB_PASSWORD: root
+
+permissions:
+  contents: read
 
 jobs:
+  laravel-tests:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: liberu
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, pdo, pdo_mysql, bcmath, opcache, zip, gd, intl
+          coverage: none
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Copy environment file
+        run: cp .env.testing .env
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: Generate application key
+        run: php artisan key:generate
+
+      - name: Run database migrations
+        run: php artisan migrate:fresh --force
+
+      - name: Run tests
+        run: vendor/bin/phpunit --no-coverage
+
   docker:
     if: github.event_name == 'push'
+    needs: laravel-tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -32,6 +85,11 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: liberu/accounting
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=raw,value=latest,enable={{is_default_branch}}
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
