@@ -30,10 +30,10 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->foreign('customer_id')->references('customer_id')->on('customers')->onDelete('cascade');
+            $table->foreign('customer_id')->references('id')->on('customers')->onDelete('cascade');
             $table->foreign('sales_receipt_id')->references('sales_receipt_id')->on('sales_receipts')->onDelete('set null');
-            $table->foreign('invoice_id')->references('invoice_id')->on('invoices')->onDelete('set null');
-            $table->foreign('refund_from_account_id')->references('account_id')->on('accounts')->onDelete('set null');
+            $table->foreign('invoice_id')->references('id')->on('invoices')->onDelete('set null');
+            $table->foreign('refund_from_account_id')->references('id')->on('accounts')->onDelete('set null');
             
             $table->index('customer_id');
             $table->index('refund_date');
@@ -50,7 +50,7 @@ return new class extends Migration
             $table->decimal('amount', 15, 2);
 
             $table->foreign('refund_receipt_id')->references('refund_receipt_id')->on('refund_receipts')->onDelete('cascade');
-            $table->foreign('account_id')->references('account_id')->on('accounts')->onDelete('set null');
+            $table->foreign('account_id')->references('id')->on('accounts')->onDelete('set null');
             
             $table->index('refund_receipt_id');
         });

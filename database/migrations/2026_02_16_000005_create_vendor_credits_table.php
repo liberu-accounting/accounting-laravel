@@ -29,7 +29,7 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->foreign('vendor_id')->references('id')->on('vendors')->onDelete('cascade');
+            $table->foreign('vendor_id')->references('vendor_id')->on('vendors')->onDelete('cascade');
             $table->foreign('bill_id')->references('bill_id')->on('bills')->onDelete('set null');
             $table->foreign('tax_rate_id')->references('tax_rate_id')->on('tax_rates')->onDelete('set null');
             
@@ -48,7 +48,7 @@ return new class extends Migration
             $table->decimal('amount', 15, 2);
 
             $table->foreign('vendor_credit_id')->references('vendor_credit_id')->on('vendor_credits')->onDelete('cascade');
-            $table->foreign('account_id')->references('account_id')->on('accounts')->onDelete('set null');
+            $table->foreign('account_id')->references('id')->on('accounts')->onDelete('set null');
             
             $table->index('vendor_credit_id');
         });
