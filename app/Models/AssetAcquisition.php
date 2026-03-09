@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\IsTenantModel;
 
 class AssetAcquisition extends Model
 {
     use HasFactory;
+    use IsTenantModel;
 
     protected $primaryKey = 'asset_acquisition_id';
 

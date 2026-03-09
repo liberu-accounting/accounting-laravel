@@ -5,10 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Services\ExchangeRateService;
+use App\Traits\IsTenantModel;
 
 class Account extends Model
 {
     use HasFactory;
+    use IsTenantModel;
 
     protected $fillable = [
         'user_id',

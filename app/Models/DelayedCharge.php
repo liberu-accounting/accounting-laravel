@@ -24,8 +24,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int|null $invoice_id
  * @property string $status
  */
+use App\Traits\IsTenantModel;
+
 class DelayedCharge extends Model
 {
+    use IsTenantModel;
     use HasFactory, SoftDeletes;
 
     protected $primaryKey = 'delayed_charge_id';

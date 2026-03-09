@@ -3,9 +3,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Traits\IsTenantModel;
 
 class Budget extends Model
 {
+    use IsTenantModel;
     protected $fillable = [
         'account_id',
         'project_id',

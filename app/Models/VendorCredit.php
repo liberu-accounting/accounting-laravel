@@ -27,8 +27,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string $reason
  * @property string $status
  */
+use App\Traits\IsTenantModel;
+
 class VendorCredit extends Model
 {
+    use IsTenantModel;
     use HasFactory, SoftDeletes;
 
     protected $primaryKey = 'vendor_credit_id';

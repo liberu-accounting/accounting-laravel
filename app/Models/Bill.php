@@ -7,9 +7,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
+use App\Traits\IsTenantModel;
 
 class Bill extends Model
 {
+    use IsTenantModel;
     use HasFactory, SoftDeletes;
 
     protected $primaryKey = 'bill_id';

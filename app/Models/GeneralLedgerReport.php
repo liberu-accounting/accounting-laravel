@@ -5,10 +5,12 @@ namespace App\Models;
 use PDF;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\IsTenantModel;
 
 class GeneralLedgerReport extends Model
 {
     use HasFactory;
+    use IsTenantModel;
 
     protected $fillable = [
         'report_date',

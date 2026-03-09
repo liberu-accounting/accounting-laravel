@@ -8,10 +8,12 @@ use JoelButcher\Socialstream\ConnectedAccount as SocialstreamConnectedAccount;
 use JoelButcher\Socialstream\Events\ConnectedAccountCreated;
 use JoelButcher\Socialstream\Events\ConnectedAccountDeleted;
 use JoelButcher\Socialstream\Events\ConnectedAccountUpdated;
+use App\Traits\IsTenantModel;
 
 class ConnectedAccount extends SocialstreamConnectedAccount
 {
     use HasFactory;
+    use IsTenantModel;
     use HasTimestamps;
 
     /**

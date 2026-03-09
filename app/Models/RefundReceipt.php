@@ -28,8 +28,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string|null $reason
  * @property string $status
  */
+use App\Traits\IsTenantModel;
+
 class RefundReceipt extends Model
 {
+    use IsTenantModel;
     use HasFactory, SoftDeletes;
 
     protected $primaryKey = 'refund_receipt_id';

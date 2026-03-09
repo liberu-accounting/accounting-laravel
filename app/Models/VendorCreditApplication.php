@@ -17,9 +17,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property decimal $amount_applied
  * @property date $application_date
  */
+use App\Traits\IsTenantModel;
+
 class VendorCreditApplication extends Model
 {
     use HasFactory;
+    use IsTenantModel;
 
     protected $primaryKey = 'application_id';
 
