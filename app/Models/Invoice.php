@@ -7,10 +7,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
+use App\Traits\IsTenantModel;
 
 class Invoice extends Model
 {
     use HasFactory;
+    use IsTenantModel;
 
     protected $primaryKey = "invoice_id";
 

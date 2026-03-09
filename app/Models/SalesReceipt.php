@@ -27,8 +27,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string|null $notes
  * @property string $status
  */
+use App\Traits\IsTenantModel;
+
 class SalesReceipt extends Model
 {
+    use IsTenantModel;
     use HasFactory, SoftDeletes;
 
     protected $primaryKey = 'sales_receipt_id';

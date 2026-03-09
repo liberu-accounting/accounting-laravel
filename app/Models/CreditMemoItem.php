@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\IsTenantModel;
 
 class CreditMemoItem extends Model
 {
     use HasFactory;
+    use IsTenantModel;
 
     protected $primaryKey = 'item_id';
 

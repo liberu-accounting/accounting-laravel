@@ -5,10 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Traits\IsTenantModel;
 
 class TaxForm extends Model
 {
     use HasFactory;
+    use IsTenantModel;
 
     protected $primaryKey = 'tax_form_id';
 

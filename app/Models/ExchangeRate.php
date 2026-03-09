@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\IsTenantModel;
 
 class ExchangeRate extends Model
 {
     use HasFactory;
+    use IsTenantModel;
 
     protected $primaryKey = 'exchange_rate_id';
 

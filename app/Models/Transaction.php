@@ -6,10 +6,12 @@ use App\Observers\TransactionObserver;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Services\ExchangeRateService;
+use App\Traits\IsTenantModel;
 
 class Transaction extends Model
 {
     use HasFactory;
+    use IsTenantModel;
 
     protected $primaryKey = 'transaction_id';
 

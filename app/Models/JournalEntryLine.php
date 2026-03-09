@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\IsTenantModel;
 
 class JournalEntryLine extends Model
 {
     use HasFactory;
+    use IsTenantModel;
 
     protected $fillable = [
         'journal_entry_id',

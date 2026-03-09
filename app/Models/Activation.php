@@ -12,8 +12,11 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $created_at
  * @property string $updated_at
  */
+use App\Traits\IsTenantModel;
+
 class Activation extends Model
 {
+    use IsTenantModel;
     /**
      * The "type" of the auto-incrementing ID.
      *

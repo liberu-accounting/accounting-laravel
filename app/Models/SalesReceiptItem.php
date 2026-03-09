@@ -19,9 +19,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property decimal $unit_price
  * @property decimal $amount
  */
+use App\Traits\IsTenantModel;
+
 class SalesReceiptItem extends Model
 {
     use HasFactory;
+    use IsTenantModel;
 
     protected $primaryKey = 'item_id';
 
