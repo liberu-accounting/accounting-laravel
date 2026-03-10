@@ -10,9 +10,9 @@ use App\Models\Account;
 use App\Rules\DoubleEntryValidator;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Grid;
+use Filament\Schemas\Components\Grid;
 use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Section;
+use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -26,6 +26,8 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Actions\Action;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\EditAction;
 use Illuminate\Support\HtmlString;
 
 class JournalEntryResource extends Resource
@@ -227,8 +229,8 @@ class JournalEntryResource extends Resource
                     ]),
             ])
             ->recordActions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\Action::make('post')
+                EditAction::make(),
+                Action::make('post')
                     ->icon('heroicon-o-arrow-up-circle')
                     ->color('success')
                     ->requiresConfirmation()
@@ -248,7 +250,7 @@ class JournalEntryResource extends Resource
                                 ->send();
                         }
                     }),
-                Tables\Actions\Action::make('reverse')
+                Action::make('reverse')
                     ->icon('heroicon-o-arrow-down-circle')
                     ->color('warning')
                     ->requiresConfirmation()
@@ -268,7 +270,7 @@ class JournalEntryResource extends Resource
                                 ->send();
                         }
                     }),
-                Tables\Actions\DeleteAction::make()
+                DeleteAction::make()
                     ->visible(fn ($record) => !$record->is_posted),
             ])
             ->defaultSort('entry_date', 'desc');

@@ -2,6 +2,7 @@
 
 namespace App\Filament\App\Resources\Assets;
 
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
 use Filament\Actions\Action;
@@ -26,39 +27,44 @@ use App\Filament\App\Resources\AssetResource\Pages;
 class AssetResource extends Resource
 {
     protected static ?string $model = Asset::class;
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-cube';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-cube';
     protected static ?int $navigationSort = 4;
-    protected static string | \UnitEnum | null $navigationGroup = 'Assets';
+    protected static string|\UnitEnum|null $navigationGroup = 'Assets';
     protected static ?string $recordTitleAttribute = 'asset_name';
 
     public static function form(Schema $schema): Schema
     {
         return $schema
             ->components([
-                TextInput::make('asset_name')
-                    ->required(),
-                TextInput::make('asset_cost')
-                    ->numeric()
-                    ->required()
-                    ->step('0.01')
-                    ->min('0'),
-                TextInput::make('useful_life_years')
-                    ->numeric()
-                    ->required()
-                    ->min('0'),
-                TextInput::make('salvage_value')
-                    ->numeric()
-                    ->required()
-                    ->step('0.01')
-                    ->min('0'),
-                Select::make('depreciation_method')
-                    ->options([
-                        'straight_line' => 'Straight Line',
-                        'reducing_balance' => 'Reducing Balance'
+                Section::make('Asset Details')
+                    ->columnSpanFull()
+                    ->columns(2)
+                    ->schema([
+                        TextInput::make('asset_name')
+                            ->required(),
+                        TextInput::make('asset_cost')
+                            ->numeric()
+                            ->required()
+                            ->step('0.01')
+                            ->minValue('0'),
+                        TextInput::make('useful_life_years')
+                            ->numeric()
+                            ->required()
+                            ->minValue('0'),
+                        TextInput::make('salvage_value')
+                            ->numeric()
+                            ->required()
+                            ->step('0.01')
+                            ->minValue('0'),
+                        Select::make('depreciation_method')
+                            ->options([
+                                'straight_line' => 'Straight Line',
+                                'reducing_balance' => 'Reducing Balance'
+                            ])
+                            ->required(),
+                        DatePicker::make('acquisition_date')
+                            ->required()
                     ])
-                    ->required(),
-                DatePicker::make('acquisition_date')
-                    ->required()
             ]);
     }
 
@@ -86,11 +92,11 @@ class AssetResource extends Resource
             ->recordActions([
                 EditAction::make(),
                 Action::make('calculate_depreciation')
-                    ->action(fn (Asset $record) => $record->calculateDepreciation())
+                    ->action(fn(Asset $record) => $record->calculateDepreciation())
                     ->button()
                     ->label('Calculate Depreciation'),
                 Action::make('view_schedule')
-                    ->url(fn (Asset $record) => route('filament.app.resources.assets.depreciation-schedule', $record))
+                    ->url(fn(Asset $record) => route('filament.app.resources.assets.depreciation-schedule', $record))
                     ->button()
                     ->label('View Schedule')
             ])

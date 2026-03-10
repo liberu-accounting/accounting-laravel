@@ -35,7 +35,7 @@ class TimeEntryResource extends Resource
                     ->relationship('customer', 'customer_name')
                     ->required(),
                 Select::make('invoice_id')
-                    ->relationship('invoice', 'invoice_id')
+                    ->relationship('invoice', 'id')
                     ->nullable(),
                 DateTimePicker::make('start_time')
                     ->required(),

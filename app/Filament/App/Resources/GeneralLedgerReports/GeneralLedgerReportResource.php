@@ -72,8 +72,7 @@ class GeneralLedgerReportResource extends Resource
                 TextColumn::make('report_type')
                     ->searchable(),
                 TextColumn::make('template_name')
-                    ->searchable()
-                    ->visible(fn ($record) => $record->is_template),
+                    ->searchable(),
                 IconColumn::make('is_template')
                     ->boolean(),
                 TextColumn::make('created_at')

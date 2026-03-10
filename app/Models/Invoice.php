@@ -14,7 +14,7 @@ class Invoice extends Model
     use HasFactory;
     use IsTenantModel;
 
-    protected $primaryKey = "invoice_id";
+    // protected $primaryKey = "invoice_id";
 
    protected $fillable = [
     "customer_id",

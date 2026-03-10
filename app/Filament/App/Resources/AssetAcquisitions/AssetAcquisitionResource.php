@@ -36,7 +36,7 @@ class AssetAcquisitionResource extends Resource
                 TextInput::make('acquisition_price')
                     ->numeric()
                     ->step('0.01')
-                    ->min('0'),
+                    ->minValue('0'),
             ]);
     }
 

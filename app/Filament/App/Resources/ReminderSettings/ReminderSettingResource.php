@@ -38,21 +38,21 @@ class ReminderSettingResource extends Resource
                     ->label('Days Before First Reminder')
                     ->numeric()
                     ->required()
-                    ->min(1)
+                    ->minValue(1)
                     ->helperText('Number of days after invoice date before sending first reminder'),
                 
                 TextInput::make('reminder_frequency_days')
                     ->label('Days Between Reminders')
                     ->numeric()
                     ->required()
-                    ->min(1)
+                    ->minValue(1)
                     ->helperText('Number of days to wait between reminders'),
                 
                 TextInput::make('max_reminders')
                     ->label('Maximum Number of Reminders')
                     ->numeric()
                     ->required()
-                    ->min(1)
+                    ->minValue(1)
                     ->helperText('Maximum number of reminders to send per invoice'),
                 
                 Toggle::make('is_active')
