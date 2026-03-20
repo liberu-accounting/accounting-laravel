@@ -2,9 +2,11 @@
 
 namespace Database\Seeders;
 
+use App\Models\Team;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use BezhanSalleh\FilamentShield\Support\Utils;
 
 class RolesSeeder extends Seeder
 {
@@ -13,64 +15,19 @@ class RolesSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create roles
-        $adminRole = Role::firstOrCreate(['name' => 'admin']);
-        $accountantRole = Role::firstOrCreate(['name' => 'accountant']);
-        $employeeRole = Role::firstOrCreate(['name' => 'employee']);
-
-        // Define permissions for different areas
-        $permissions = [
-            // User management
-            'view_users',
-            'create_users',
-            'edit_users',
-            'delete_users',
-            
-            // Account management
-            'view_accounts',
-            'create_accounts',
-            'edit_accounts',
-            'delete_accounts',
-            
-            // Transaction management
-            'view_transactions',
-            'create_transactions',
-            'edit_transactions',
-            'delete_transactions',
-            
-            // Report management
-            'view_reports',
-            'create_reports',
-            'export_reports'
+        $roleData = [
+            'name' => 'super_admin',
+            'guard_name' => 'web',
         ];
 
-        // Create permissions
-        foreach ($permissions as $permission) {
-            Permission::firstOrCreate(['name' => $permission, 'guard_name' => 'web']);
+        if (Utils::isTenancyEnabled()) {
+            $team = Team::firstOrFail();
+            $roleData["team_id"] = $team->id;
         }
 
-        // Assign permissions to roles
-        // Admin gets all permissions
-        $adminRole->syncPermissions(Permission::all());
+        $adminRole = Role::firstOrCreate($roleData);
 
-        // Accountant permissions
-        $accountantRole->syncPermissions([
-            'view_accounts',
-            'create_accounts',
-            'edit_accounts',
-            'view_transactions',
-            'create_transactions',
-            'edit_transactions',
-            'view_reports',
-            'create_reports',
-            'export_reports'
-        ]);
-
-        // Employee permissions
-        $employeeRole->syncPermissions([
-            'view_accounts',
-            'view_transactions',
-            'view_reports'
-        ]);
+        $permissions = Permission::where('guard_name', 'web')->pluck('id')->toArray();
+        $adminRole->syncPermissions($permissions);
     }
 }
