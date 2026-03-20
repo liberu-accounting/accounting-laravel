@@ -2,6 +2,7 @@
 
 namespace App\Filament\App\Resources\Invoices;
 
+use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
 use App\Models\TaxRate;
 use Filament\Actions\EditAction;

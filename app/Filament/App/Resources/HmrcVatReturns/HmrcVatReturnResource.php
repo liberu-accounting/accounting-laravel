@@ -12,9 +12,14 @@ use Filament\Resources\resource;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Grid;
 use Filament\Notifications\Notification;
+use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 
 class HmrcVatReturnResource extends Resource
 {
@@ -173,7 +178,7 @@ class HmrcVatReturnResource extends Resource
                 Tables\Filters\TernaryFilter::make('finalised'),
             ])
             ->actions([
-                Tables\Actions\Action::make('calculate')
+                Action::make('calculate')
                     ->label('Calculate')
                     ->icon('heroicon-o-calculator')
                     ->action(function (HmrcVatReturn $record) {
@@ -184,7 +189,7 @@ class HmrcVatReturnResource extends Resource
                             ->send();
                     })
                     ->visible(fn (HmrcVatReturn $record) => $record->isEditable()),
-                Tables\Actions\Action::make('submit')
+                Action::make('submit')
                     ->label('Submit to HMRC')
                     ->icon('heroicon-o-paper-airplane')
                     ->requiresConfirmation()
@@ -205,13 +210,13 @@ class HmrcVatReturnResource extends Resource
                         }
                     })
                     ->visible(fn (HmrcVatReturn $record) => $record->finalised && $record->isEditable()),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make()
+                EditAction::make(),
+                DeleteAction::make()
                     ->visible(fn (HmrcVatReturn $record) => $record->isEditable()),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }

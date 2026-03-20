@@ -12,7 +12,7 @@ class Customer extends Authenticatable
     use IsTenantModel;
     use HasFactory, Notifiable;
 
-    protected $primaryKey = 'customer_id';
+    // protected $primaryKey = 'customer_id';
     protected $guard = 'customer';
 
     protected $fillable = [
