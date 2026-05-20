@@ -31,10 +31,10 @@ return static function (RectorConfig $rectorConfig): void {
 
     // Apply sets for Laravel and general code quality
     $rectorConfig->sets([
-        LaravelLevelSetList::UP_TO_LARAVEL_110,
+        LaravelLevelSetList::UP_TO_LARAVEL_130,
         SetList::CODE_QUALITY,
     ]);
 
     // Define PHP version for Rector
-    $rectorConfig->phpVersion(PhpVersion::PHP_84);
+    $rectorConfig->phpVersion(PhpVersion::PHP_85);
 };

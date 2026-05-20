@@ -1,6 +1,6 @@
-# Supported PHP versions: 8.2, 8.3
-# Note: PHP 8.5 is not yet fully supported by all extensions
+# Supported PHP versions: 8.2, 8.3, 8.5
 ARG PHP_VERSION=8.5
+# PHP 8.5 support requires compatible extension builds (check install-php-extensions)
 
 ###########################################
 # Composer dependencies stage
