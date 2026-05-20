@@ -25,7 +25,9 @@ class User extends Authenticatable implements HasDefaultTenant, HasTenants, Fila
 {
     use HasApiTokens;
     use HasConnectedAccounts;
-    use HasRoles;
+    use HasRoles {
+        HasRoles::teams as permissionTeams;
+    }
     use HasFactory;
     use HasProfilePhoto {
         HasProfilePhoto::profilePhotoUrl as getPhotoUrl;
@@ -33,7 +35,9 @@ class User extends Authenticatable implements HasDefaultTenant, HasTenants, Fila
     use Notifiable;
     use SetsProfilePhotoFromUrl;
     use TwoFactorAuthenticatable;
-    use HasTeams;
+    use HasTeams {
+        HasTeams::teams insteadof HasRoles;
+    }
 
     /**
      * The attributes that are mass assignable.
