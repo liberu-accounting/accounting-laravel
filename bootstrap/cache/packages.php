@@ -108,13 +108,6 @@
       0 => 'Filament\\Widgets\\WidgetsServiceProvider',
     ),
   ),
-  'joelbutcher/socialstream' => 
-  array (
-    'providers' => 
-    array (
-      0 => 'JoelButcher\\Socialstream\\SocialstreamServiceProvider',
-    ),
-  ),
   'kirschbaum-development/eloquent-power-joins' => 
   array (
     'providers' => 

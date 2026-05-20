@@ -7,7 +7,6 @@ use App\Models\Team;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
-use JoelButcher\Socialstream\Providers;
 use Laravel\Jetstream\Features as JetstreamFeatures;
 
 /**
@@ -71,10 +70,6 @@ class UserFactory extends Factory
      */
     public function withConnectedAccount(string $provider, callable $callback = null): static
     {
-        if (! Providers::enabled($provider)) {
-            return $this->state([]);
-        }
-
         return $this->has(
             ConnectedAccount::factory()
                 ->state(fn (array $attributes, User $user) => [
