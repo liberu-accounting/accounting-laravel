@@ -24,8 +24,10 @@ class VendorCreditApplication extends Model
     use HasFactory;
     use IsTenantModel;
 
+    #[\Override]
     protected $primaryKey = 'application_id';
 
+    #[\Override]
     protected $fillable = [
         'vendor_credit_id',
         'bill_id',
@@ -33,6 +35,7 @@ class VendorCreditApplication extends Model
         'application_date',
     ];
 
+    #[\Override]
     protected $casts = [
         'amount_applied' => 'decimal:2',
         'application_date' => 'date',

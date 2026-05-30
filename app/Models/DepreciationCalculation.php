@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,6 +13,7 @@ class DepreciationCalculation extends Model
     use HasFactory;
     use IsTenantModel;
 
+    #[\Override]
     protected $fillable = [
         'asset_id',
         'year',
@@ -20,6 +23,7 @@ class DepreciationCalculation extends Model
         'calculation_date'
     ];
 
+    #[\Override]
     protected $casts = [
         'calculation_date' => 'date'
     ];

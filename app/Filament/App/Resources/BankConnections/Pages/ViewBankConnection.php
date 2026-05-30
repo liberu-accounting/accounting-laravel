@@ -12,8 +12,10 @@ use Exception;
 
 class ViewBankConnection extends ViewRecord
 {
+    #[\Override]
     protected static string $resource = BankConnectionResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [
@@ -23,8 +25,8 @@ class ViewBankConnection extends ViewRecord
                 ->label('Sync Transactions')
                 ->icon('heroicon-o-arrow-path')
                 ->color('primary')
-                ->visible(fn () => $this->record->plaid_item_id !== null)
-                ->action(function () {
+                ->visible(fn (): bool => $this->record->plaid_item_id !== null)
+                ->action(function (): void {
                     try {
                         $plaidService = app(PlaidService::class);
                         $result = $plaidService->syncTransactions($this->record);

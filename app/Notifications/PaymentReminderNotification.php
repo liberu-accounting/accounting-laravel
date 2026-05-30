@@ -12,11 +12,8 @@ class PaymentReminderNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    protected $invoice;
-
-    public function __construct(Invoice $invoice)
+    public function __construct(protected \App\Models\Invoice $invoice)
     {
-        $this->invoice = $invoice;
     }
 
     public function via($notifiable): array

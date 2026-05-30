@@ -8,9 +8,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    public function up(): void
     {
-        Schema::create('vendors', function (Blueprint $table) {
+        Schema::create('vendors', function (Blueprint $table): void {
             $table->id('vendor_id');
             $table->string('name');
             $table->string('email')->nullable();
@@ -23,7 +23,7 @@ return new class extends Migration
         });
     }
 
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('vendors');
     }

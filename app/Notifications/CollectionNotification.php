@@ -12,11 +12,8 @@ class CollectionNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    protected $customer;
-
-    public function __construct(Customer $customer)
+    public function __construct(protected \App\Models\Customer $customer)
     {
-        $this->customer = $customer;
     }
 
     public function via($notifiable): array

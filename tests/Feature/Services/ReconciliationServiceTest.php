@@ -13,7 +13,7 @@ class ReconciliationServiceTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_reconciliation_service_matches_transactions()
+    public function test_reconciliation_service_matches_transactions(): void
     {
         $account = Account::factory()->create();
         $bankStatement = BankStatement::factory()->create([

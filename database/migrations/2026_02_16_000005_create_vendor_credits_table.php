@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('vendor_credits', function (Blueprint $table) {
+        Schema::create('vendor_credits', function (Blueprint $table): void {
             $table->id('vendor_credit_id');
             $table->unsignedBigInteger('vendor_id');
             $table->string('vendor_credit_number')->unique();
@@ -38,7 +38,7 @@ return new class extends Migration
             $table->index('status');
         });
 
-        Schema::create('vendor_credit_items', function (Blueprint $table) {
+        Schema::create('vendor_credit_items', function (Blueprint $table): void {
             $table->id('item_id');
             $table->unsignedBigInteger('vendor_credit_id');
             $table->unsignedBigInteger('account_id')->nullable();
@@ -53,7 +53,7 @@ return new class extends Migration
             $table->index('vendor_credit_id');
         });
 
-        Schema::create('vendor_credit_applications', function (Blueprint $table) {
+        Schema::create('vendor_credit_applications', function (Blueprint $table): void {
             $table->id('application_id');
             $table->unsignedBigInteger('vendor_credit_id');
             $table->unsignedBigInteger('bill_id');

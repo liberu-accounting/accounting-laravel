@@ -19,17 +19,24 @@ use Filament\Forms\Components\Toggle;
 
 class ReminderSettingResource extends Resource
 {
+    #[\Override]
     protected static ?string $model = ReminderSetting::class;
+    #[\Override]
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-bell';
+    #[\Override]
     protected static ?string $navigationLabel = 'Reminder Settings';
+    #[\Override]
     protected static string | \UnitEnum | null $navigationGroup = 'Settings';
+    #[\Override]
     protected static ?int $navigationSort = 1;
     
+    #[\Override]
     public static function getNavigationGroup(): ?string
     {
         return static::$navigationGroup;
     }
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -62,6 +69,7 @@ class ReminderSettingResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -80,6 +88,7 @@ class ReminderSettingResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

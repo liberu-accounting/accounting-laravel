@@ -12,8 +12,10 @@ class TaxForm extends Model
     use HasFactory;
     use IsTenantModel;
 
+    #[\Override]
     protected $primaryKey = 'tax_form_id';
 
+    #[\Override]
     protected $fillable = [
         'form_type',
         'customer_id',
@@ -24,6 +26,7 @@ class TaxForm extends Model
         'form_data'
     ];
 
+    #[\Override]
     protected $casts = [
         'form_data' => 'array',
         'total_payments' => 'decimal:2',
@@ -46,7 +49,7 @@ class TaxForm extends Model
         return $pdf->download($this->form_type . '_' . $this->tax_year . '.pdf');
     }
 
-    public function calculateTotals()
+    public function calculateTotals(): void
     {
         $invoices = Invoice::where('customer_id', $this->customer_id)
             ->whereYear('invoice_date', $this->tax_year)

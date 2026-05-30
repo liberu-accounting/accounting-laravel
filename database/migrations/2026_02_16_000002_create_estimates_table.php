@@ -6,9 +6,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    public function up(): void
     {
-        Schema::create('estimates', function (Blueprint $table) {
+        Schema::create('estimates', function (Blueprint $table): void {
             $table->id('estimate_id');
             $table->foreignId('customer_id')->constrained('customers')->onDelete('cascade');
             $table->string('estimate_number')->unique();
@@ -37,7 +37,7 @@ return new class extends Migration
             $table->index('status');
         });
 
-        Schema::create('estimate_items', function (Blueprint $table) {
+        Schema::create('estimate_items', function (Blueprint $table): void {
             $table->id('item_id');
             $table->foreignId('estimate_id')->constrained('estimates', 'estimate_id')->onDelete('cascade');
             $table->string('description');
@@ -52,7 +52,7 @@ return new class extends Migration
         });
     }
 
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('estimate_items');
         Schema::dropIfExists('estimates');

@@ -8,9 +8,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    public function up(): void
     {
-        Schema::create('bank_feed_transactions', function (Blueprint $table) {
+        Schema::create('bank_feed_transactions', function (Blueprint $table): void {
             $table->id();
             $table->foreignId('transaction_id')->constrained('transactions', 'transaction_id')->onDelete('cascade');
             $table->foreignId('bank_connection_id')->constrained()->onDelete('cascade');
@@ -19,7 +19,7 @@ return new class extends Migration
         });
     }
 
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('bank_feed_transactions');
     }

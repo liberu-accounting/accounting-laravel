@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\App\Resources\HmrcVatReturns;
 
 use App\Filament\App\Resources\HmrcVatReturns\Pages\ListHmrcVatReturns;
@@ -23,14 +25,19 @@ use Filament\Actions\EditAction;
 
 class HmrcVatReturnResource extends Resource
 {
+    #[\Override]
     protected static ?string $model = HmrcVatReturn::class;
 
+    #[\Override]
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-document-text';
 
+    #[\Override]
     protected static ?string $navigationLabel = 'VAT Returns';
 
+    #[\Override]
     protected static string | \UnitEnum | null $navigationGroup = 'HMRC Submissions';
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -134,6 +141,7 @@ class HmrcVatReturnResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -181,19 +189,19 @@ class HmrcVatReturnResource extends Resource
                 Action::make('calculate')
                     ->label('Calculate')
                     ->icon('heroicon-o-calculator')
-                    ->action(function (HmrcVatReturn $record) {
+                    ->action(function (HmrcVatReturn $record): void {
                         $record->calculateFromTransactions();
                         Notification::make()
                             ->title('VAT return calculated')
                             ->success()
                             ->send();
                     })
-                    ->visible(fn (HmrcVatReturn $record) => $record->isEditable()),
+                    ->visible(fn (HmrcVatReturn $record): bool => $record->isEditable()),
                 Action::make('submit')
                     ->label('Submit to HMRC')
                     ->icon('heroicon-o-paper-airplane')
                     ->requiresConfirmation()
-                    ->action(function (HmrcVatReturn $record) {
+                    ->action(function (HmrcVatReturn $record): void {
                         try {
                             $service = app(HmrcMtdVatService::class);
                             $service->submitVatReturn($record);
@@ -209,10 +217,10 @@ class HmrcVatReturnResource extends Resource
                                 ->send();
                         }
                     })
-                    ->visible(fn (HmrcVatReturn $record) => $record->finalised && $record->isEditable()),
+                    ->visible(fn (HmrcVatReturn $record): bool => $record->finalised && $record->isEditable()),
                 EditAction::make(),
                 DeleteAction::make()
-                    ->visible(fn (HmrcVatReturn $record) => $record->isEditable()),
+                    ->visible(fn (HmrcVatReturn $record): bool => $record->isEditable()),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
@@ -221,6 +229,7 @@ class HmrcVatReturnResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

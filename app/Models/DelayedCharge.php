@@ -31,8 +31,10 @@ class DelayedCharge extends Model
     use IsTenantModel;
     use HasFactory, SoftDeletes;
 
+    #[\Override]
     protected $primaryKey = 'delayed_charge_id';
 
+    #[\Override]
     protected $fillable = [
         'customer_id',
         'charge_date',
@@ -46,6 +48,7 @@ class DelayedCharge extends Model
         'status',
     ];
 
+    #[\Override]
     protected $casts = [
         'charge_date' => 'date',
         'quantity' => 'integer',
@@ -53,23 +56,25 @@ class DelayedCharge extends Model
         'amount' => 'decimal:2',
     ];
 
+    #[\Override]
     protected $attributes = [
         'status' => 'pending',
         'quantity' => 1,
     ];
 
+    #[\Override]
     protected static function boot()
     {
         parent::boot();
 
-        static::saving(function ($charge) {
+        static::saving(function ($charge): void {
             // Auto-calculate amount
             if (!isset($charge->amount) || $charge->amount == 0) {
                 $charge->amount = $charge->quantity * $charge->unit_price;
             }
         });
 
-        static::created(function ($charge) {
+        static::created(function ($charge): void {
             if (empty($charge->status)) {
                 $charge->status = 'pending';
                 $charge->saveQuietly();

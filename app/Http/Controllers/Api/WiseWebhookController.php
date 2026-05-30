@@ -11,11 +11,8 @@ use Exception;
 
 class WiseWebhookController extends Controller
 {
-    protected WiseService $wiseService;
-
-    public function __construct(WiseService $wiseService)
+    public function __construct(protected WiseService $wiseService)
     {
-        $this->wiseService = $wiseService;
     }
 
     /**

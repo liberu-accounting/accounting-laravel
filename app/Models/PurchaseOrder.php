@@ -11,8 +11,10 @@ class PurchaseOrder extends Model
     use HasFactory;
     use IsTenantModel;
 
+    #[\Override]
     protected $primaryKey = 'purchase_order_id';
 
+    #[\Override]
     protected $fillable = [
         'supplier_id',
         'po_number',
@@ -23,6 +25,7 @@ class PurchaseOrder extends Model
         'notes'
     ];
 
+    #[\Override]
     protected $casts = [
         'order_date' => 'date',
         'expected_delivery_date' => 'date',
@@ -49,7 +52,7 @@ class PurchaseOrder extends Model
         return $this->hasMany(Bill::class, 'purchase_order_id', 'purchase_order_id');
     }
 
-    public static function generatePoNumber()
+    public static function generatePoNumber(): string
     {
         $prefix = 'PO';
         $year = date('Y');
@@ -57,11 +60,7 @@ class PurchaseOrder extends Model
             ->orderBy('po_number', 'desc')
             ->first();
 
-        if (!$lastPo) {
-            $number = 1;
-        } else {
-            $number = (int)substr($lastPo->po_number, -4) + 1;
-        }
+        $number = $lastPo ? (int)substr((string) $lastPo->po_number, -4) + 1 : 1;
 
         return $prefix . $year . str_pad($number, 4, '0', STR_PAD_LEFT);
     }

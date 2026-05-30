@@ -9,8 +9,10 @@ use Illuminate\Support\Facades\Auth;
 
 class CreateJournalEntry extends CreateRecord
 {
+    #[\Override]
     protected static string $resource = JournalEntryResource::class;
 
+    #[\Override]
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $data['user_id'] = Auth::id();
@@ -29,6 +31,7 @@ class CreateJournalEntry extends CreateRecord
         }
     }
 
+    #[\Override]
     protected function getRedirectUrl(): string
     {
         return $this->getResource()::getUrl('index');

@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('asset_acquisitions', function (Blueprint $table) {
+        Schema::create('asset_acquisitions', function (Blueprint $table): void {
             $table->integer('asset_acquisition_id', true);
             $table->date('acquisition_date');
             $table->decimal('acquisition_price', 10, 2);

@@ -8,9 +8,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    public function up(): void
     {
-        Schema::table('invoices', function (Blueprint $table) {
+        Schema::table('invoices', function (Blueprint $table): void {
             $table->foreignId('vendor_id')->nullable()->constrained('vendors', 'vendor_id');
             $table->enum('approval_status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->text('rejection_reason')->nullable();
@@ -20,9 +20,9 @@ return new class extends Migration
         });
     }
 
-    public function down()
+    public function down(): void
     {
-        Schema::table('invoices', function (Blueprint $table) {
+        Schema::table('invoices', function (Blueprint $table): void {
             $table->dropForeign(['vendor_id', 'approved_by']);
             $table->dropColumn([
                 'vendor_id',

@@ -9,14 +9,12 @@ use Illuminate\Support\Facades\Log;
 
 class HmrcMtdCorporationTaxService
 {
-    private string $baseUrl;
-    private HmrcAuthService $authService;
+    private readonly string $baseUrl;
 
-    public function __construct(HmrcAuthService $authService)
+    public function __construct(private readonly HmrcAuthService $authService)
     {
         $environment = config('hmrc.environment');
         $this->baseUrl = config("hmrc.endpoints.{$environment}");
-        $this->authService = $authService;
     }
 
     /**

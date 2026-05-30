@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,8 +13,10 @@ class PaymentTerm extends Model
     use HasFactory;
     use IsTenantModel;
 
+    #[\Override]
     protected $primaryKey = 'payment_term_id';
 
+    #[\Override]
     protected $fillable = [
         'payment_term_name',
         'payment_term_description',

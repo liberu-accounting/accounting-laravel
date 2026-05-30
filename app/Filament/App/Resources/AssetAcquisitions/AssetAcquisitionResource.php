@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\App\Resources\AssetAcquisitions;
 
 use Filament\Schemas\Schema;
@@ -23,10 +25,13 @@ use App\Filament\App\Resources\AssetAcquisitionResource\RelationManagers;
 
 class AssetAcquisitionResource extends Resource
 {
+    #[\Override]
     protected static ?string $model = AssetAcquisition::class;
 
+    #[\Override]
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -40,6 +45,7 @@ class AssetAcquisitionResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -68,6 +74,7 @@ class AssetAcquisitionResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -75,6 +82,7 @@ class AssetAcquisitionResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

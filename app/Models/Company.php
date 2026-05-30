@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,8 +13,10 @@ class Company extends Model
     use HasFactory;
     use IsTenantModel;
     
+    #[\Override]
     protected $primaryKey = "company_id";
 
+    #[\Override]
     protected $fillable = [
         "company_name",
         "company_address",

@@ -8,9 +8,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    public function up(): void
     {
-        Schema::table('invoices', function (Blueprint $table) {
+        Schema::table('invoices', function (Blueprint $table): void {
             $table->boolean('is_recurring')->default(false);
             $table->string('recurrence_frequency')->nullable(); 
             $table->date('recurrence_start')->nullable();
@@ -19,9 +19,9 @@ return new class extends Migration
         });
     }
 
-    public function down()
+    public function down(): void
     {
-        Schema::table('invoices', function (Blueprint $table) {
+        Schema::table('invoices', function (Blueprint $table): void {
             $table->dropColumn([
                 'is_recurring',
                 'recurrence_frequency', 

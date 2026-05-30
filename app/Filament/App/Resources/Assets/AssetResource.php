@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\App\Resources\Assets;
 
 use Filament\Schemas\Components\Section;
@@ -26,12 +28,18 @@ use App\Filament\App\Resources\AssetResource\Pages;
 
 class AssetResource extends Resource
 {
+    #[\Override]
     protected static ?string $model = Asset::class;
+    #[\Override]
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-cube';
+    #[\Override]
     protected static ?int $navigationSort = 4;
+    #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Assets';
+    #[\Override]
     protected static ?string $recordTitleAttribute = 'asset_name';
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -68,6 +76,7 @@ class AssetResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -96,7 +105,7 @@ class AssetResource extends Resource
                     ->button()
                     ->label('Calculate Depreciation'),
                 Action::make('view_schedule')
-                    ->url(fn(Asset $record) => route('filament.app.resources.assets.depreciation-schedule', $record))
+                    ->url(fn(Asset $record): string => route('filament.app.resources.assets.depreciation-schedule', $record))
                     ->button()
                     ->label('View Schedule')
             ])
@@ -107,6 +116,7 @@ class AssetResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -114,6 +124,7 @@ class AssetResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

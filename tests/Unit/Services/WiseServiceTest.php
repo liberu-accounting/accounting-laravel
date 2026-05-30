@@ -28,7 +28,7 @@ class WiseServiceTest extends TestCase
         $this->service = new WiseService();
     }
 
-    public function test_get_authorization_url_returns_correct_url()
+    public function test_get_authorization_url_returns_correct_url(): void
     {
         $url = $this->service->getAuthorizationUrl('random_state_string');
 
@@ -40,7 +40,7 @@ class WiseServiceTest extends TestCase
         $this->assertStringContainsString('scope=', $url);
     }
 
-    public function test_get_authorization_url_uses_production_url_when_configured()
+    public function test_get_authorization_url_uses_production_url_when_configured(): void
     {
         Config::set('services.wise.environment', 'production');
         $service = new WiseService();
@@ -51,7 +51,7 @@ class WiseServiceTest extends TestCase
         $this->assertStringNotContainsString('sandbox', $url);
     }
 
-    public function test_exchange_authorization_code_returns_tokens()
+    public function test_exchange_authorization_code_returns_tokens(): void
     {
         Http::fake([
             'api.sandbox.transferwise.tech/oauth/v2/token' => Http::response([
@@ -68,14 +68,12 @@ class WiseServiceTest extends TestCase
         $this->assertEquals('test_refresh_token', $result['refresh_token']);
         $this->assertEquals(3600, $result['expires_in']);
 
-        Http::assertSent(function ($request) {
-            return str_contains($request->url(), 'oauth/v2/token')
-                && $request['grant_type'] === 'authorization_code'
-                && $request['code'] === 'test_auth_code';
-        });
+        Http::assertSent(fn($request) => str_contains((string) $request->url(), 'oauth/v2/token')
+            && $request['grant_type'] === 'authorization_code'
+            && $request['code'] === 'test_auth_code');
     }
 
-    public function test_exchange_authorization_code_throws_on_failure()
+    public function test_exchange_authorization_code_throws_on_failure(): void
     {
         Http::fake([
             'api.sandbox.transferwise.tech/oauth/v2/token' => Http::response([
@@ -87,7 +85,7 @@ class WiseServiceTest extends TestCase
         $this->service->exchangeAuthorizationCode('invalid_code');
     }
 
-    public function test_refresh_access_token_returns_new_tokens()
+    public function test_refresh_access_token_returns_new_tokens(): void
     {
         Http::fake([
             'api.sandbox.transferwise.tech/oauth/v2/token' => Http::response([
@@ -101,13 +99,11 @@ class WiseServiceTest extends TestCase
 
         $this->assertEquals('new_access_token', $result['access_token']);
 
-        Http::assertSent(function ($request) {
-            return $request['grant_type'] === 'refresh_token'
-                && $request['refresh_token'] === 'old_refresh_token';
-        });
+        Http::assertSent(fn($request) => $request['grant_type'] === 'refresh_token'
+            && $request['refresh_token'] === 'old_refresh_token');
     }
 
-    public function test_refresh_access_token_throws_on_failure()
+    public function test_refresh_access_token_throws_on_failure(): void
     {
         Http::fake([
             'api.sandbox.transferwise.tech/oauth/v2/token' => Http::response([
@@ -119,7 +115,7 @@ class WiseServiceTest extends TestCase
         $this->service->refreshAccessToken('invalid_refresh_token');
     }
 
-    public function test_get_valid_access_token_returns_current_token_when_not_expired()
+    public function test_get_valid_access_token_returns_current_token_when_not_expired(): void
     {
         $connection = BankConnection::factory()->create([
             'bank_id' => 'wise',
@@ -133,7 +129,7 @@ class WiseServiceTest extends TestCase
         $this->assertEquals('valid_access_token', $token);
     }
 
-    public function test_get_valid_access_token_refreshes_when_expired()
+    public function test_get_valid_access_token_refreshes_when_expired(): void
     {
         Http::fake([
             'api.sandbox.transferwise.tech/oauth/v2/token' => Http::response([
@@ -158,7 +154,7 @@ class WiseServiceTest extends TestCase
         $this->assertEquals('refreshed_access_token', $connection->wise_access_token);
     }
 
-    public function test_get_valid_access_token_throws_when_no_refresh_token_and_expired()
+    public function test_get_valid_access_token_throws_when_no_refresh_token_and_expired(): void
     {
         $connection = BankConnection::factory()->create([
             'bank_id' => 'wise',
@@ -173,7 +169,7 @@ class WiseServiceTest extends TestCase
         $this->service->getValidAccessToken($connection);
     }
 
-    public function test_get_profiles_returns_profile_list()
+    public function test_get_profiles_returns_profile_list(): void
     {
         Http::fake([
             'api.sandbox.transferwise.tech/v2/profiles' => Http::response([
@@ -208,13 +204,11 @@ class WiseServiceTest extends TestCase
         $this->assertEquals(12345, $profiles[0]['id']);
         $this->assertEquals('personal', $profiles[0]['type']);
 
-        Http::assertSent(function ($request) {
-            return str_contains($request->url(), '/v2/profiles')
-                && $request->hasHeader('Authorization', 'Bearer valid_token');
-        });
+        Http::assertSent(fn($request) => str_contains((string) $request->url(), '/v2/profiles')
+            && $request->hasHeader('Authorization', 'Bearer valid_token'));
     }
 
-    public function test_get_profiles_throws_on_failure()
+    public function test_get_profiles_throws_on_failure(): void
     {
         Http::fake([
             'api.sandbox.transferwise.tech/v2/profiles' => Http::response([
@@ -232,7 +226,7 @@ class WiseServiceTest extends TestCase
         $this->service->getProfiles($connection);
     }
 
-    public function test_get_balances_returns_balance_list()
+    public function test_get_balances_returns_balance_list(): void
     {
         Http::fake([
             'api.sandbox.transferwise.tech/v4/profiles/12345/balances*' => Http::response([
@@ -271,7 +265,7 @@ class WiseServiceTest extends TestCase
         $this->assertEquals(5000.00, $balances[0]['amount']['value']);
     }
 
-    public function test_get_balances_throws_on_failure()
+    public function test_get_balances_throws_on_failure(): void
     {
         Http::fake([
             'api.sandbox.transferwise.tech/v4/profiles/12345/balances*' => Http::response([
@@ -289,7 +283,7 @@ class WiseServiceTest extends TestCase
         $this->service->getBalances($connection, 12345);
     }
 
-    public function test_get_transfers_with_date_range()
+    public function test_get_transfers_with_date_range(): void
     {
         Http::fake([
             'api.sandbox.transferwise.tech/v1/transfers*' => Http::response([
@@ -316,14 +310,12 @@ class WiseServiceTest extends TestCase
         $this->assertCount(1, $transfers);
         $this->assertEquals(9001, $transfers[0]['id']);
 
-        Http::assertSent(function ($request) {
-            return str_contains($request->url(), '/v1/transfers')
-                && str_contains($request->url(), 'createdDateStart=2026-01-01')
-                && str_contains($request->url(), 'createdDateEnd=2026-01-31');
-        });
+        Http::assertSent(fn($request) => str_contains((string) $request->url(), '/v1/transfers')
+            && str_contains((string) $request->url(), 'createdDateStart=2026-01-01')
+            && str_contains((string) $request->url(), 'createdDateEnd=2026-01-31'));
     }
 
-    public function test_get_transfers_limit_capped_at_100()
+    public function test_get_transfers_limit_capped_at_100(): void
     {
         Http::fake([
             'api.sandbox.transferwise.tech/v1/transfers*' => Http::response([], 200),
@@ -337,12 +329,10 @@ class WiseServiceTest extends TestCase
 
         $this->service->getTransfers($connection, 12345, null, null, 5000);
 
-        Http::assertSent(function ($request) {
-            return str_contains($request->url(), 'limit=100');
-        });
+        Http::assertSent(fn($request) => str_contains((string) $request->url(), 'limit=100'));
     }
 
-    public function test_get_transfers_updates_last_synced_at()
+    public function test_get_transfers_updates_last_synced_at(): void
     {
         Http::fake([
             'api.sandbox.transferwise.tech/v1/transfers*' => Http::response([], 200),
@@ -361,7 +351,7 @@ class WiseServiceTest extends TestCase
         $this->assertNotNull($connection->last_synced_at);
     }
 
-    public function test_service_uses_production_base_url_when_configured()
+    public function test_service_uses_production_base_url_when_configured(): void
     {
         Config::set('services.wise.environment', 'production');
         $service = new WiseService();
@@ -378,12 +368,10 @@ class WiseServiceTest extends TestCase
 
         $service->getProfiles($connection);
 
-        Http::assertSent(function ($request) {
-            return str_contains($request->url(), 'api.transferwise.com');
-        });
+        Http::assertSent(fn($request) => str_contains((string) $request->url(), 'api.transferwise.com'));
     }
 
-    public function test_verify_webhook_signature_with_missing_public_key()
+    public function test_verify_webhook_signature_with_missing_public_key(): void
     {
         $bodyJson = '{"event_type":"transfers#state-change"}';
         $signature = base64_encode('fake_signature');
@@ -393,7 +381,7 @@ class WiseServiceTest extends TestCase
         $this->assertFalse($result);
     }
 
-    public function test_verify_webhook_signature_with_empty_signature()
+    public function test_verify_webhook_signature_with_empty_signature(): void
     {
         $bodyJson = '{"event_type":"transfers#state-change"}';
 
@@ -402,7 +390,7 @@ class WiseServiceTest extends TestCase
         $this->assertFalse($result);
     }
 
-    public function test_verify_webhook_signature_with_invalid_base64_signature()
+    public function test_verify_webhook_signature_with_invalid_base64_signature(): void
     {
         $bodyJson = '{"event_type":"transfers#state-change"}';
 
@@ -411,7 +399,7 @@ class WiseServiceTest extends TestCase
         $this->assertFalse($result);
     }
 
-    public function test_verify_webhook_signature_with_invalid_signature()
+    public function test_verify_webhook_signature_with_invalid_signature(): void
     {
         // Generate a real RSA key pair for testing
         $keyPair = openssl_pkey_new([
@@ -433,14 +421,14 @@ class WiseServiceTest extends TestCase
         ]);
 
         openssl_sign($bodyJson, $rawSignature, $wrongKeyPair, OPENSSL_ALGO_SHA256);
-        $signature = base64_encode($rawSignature);
+        $signature = base64_encode((string) $rawSignature);
 
         $result = $this->service->verifyWebhookSignature($bodyJson, $signature, $publicKeyPem);
 
         $this->assertFalse($result);
     }
 
-    public function test_verify_webhook_signature_with_valid_signature()
+    public function test_verify_webhook_signature_with_valid_signature(): void
     {
         // Generate a real RSA key pair for testing
         $keyPair = openssl_pkey_new([
@@ -455,7 +443,7 @@ class WiseServiceTest extends TestCase
         $bodyJson = '{"event_type":"transfers#state-change","data":{"resource":{"id":9001}}}';
 
         openssl_sign($bodyJson, $rawSignature, $keyPair, OPENSSL_ALGO_SHA256);
-        $signature = base64_encode($rawSignature);
+        $signature = base64_encode((string) $rawSignature);
 
         $result = $this->service->verifyWebhookSignature($bodyJson, $signature, $publicKeyPem);
 

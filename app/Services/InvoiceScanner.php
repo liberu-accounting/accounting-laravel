@@ -8,10 +8,10 @@ use thiagoalessio\TesseractOCR\TesseractOCR;
 
 class InvoiceScanner
 {
-    public function scanInvoice(UploadedFile $file)
+    public function scanInvoice(UploadedFile $file): array
     {
         $image = $this->convertToImage($file);
-        $text = (new TesseractOCR($image))->run();
+        $text = new TesseractOCR($image)->run();
         return $this->extractInvoiceData($text);
     }
 

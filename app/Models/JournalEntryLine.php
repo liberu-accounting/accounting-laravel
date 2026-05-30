@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,6 +13,7 @@ class JournalEntryLine extends Model
     use HasFactory;
     use IsTenantModel;
 
+    #[\Override]
     protected $fillable = [
         'journal_entry_id',
         'account_id',
@@ -21,6 +24,7 @@ class JournalEntryLine extends Model
         'cost_center',
     ];
 
+    #[\Override]
     protected $casts = [
         'debit_amount' => 'decimal:2',
         'credit_amount' => 'decimal:2',
@@ -41,7 +45,7 @@ class JournalEntryLine extends Model
         return $this->debit_amount > 0 ? $this->debit_amount : $this->credit_amount;
     }
 
-    public function getTypeAttribute()
+    public function getTypeAttribute(): string
     {
         return $this->debit_amount > 0 ? 'debit' : 'credit';
     }

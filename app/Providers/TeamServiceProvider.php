@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Providers;
 
 use App\Models\Addr;
@@ -20,6 +22,7 @@ class TeamServiceProvider extends ServiceProvider
     /**
      * Register services.
      */
+    #[\Override]
     public function register(): void
     {
         $this->app->bind(\FamilyTree365\LaravelGedcom\Utils\BatchData::class, BatchData::class);

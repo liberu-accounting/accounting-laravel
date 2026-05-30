@@ -7,6 +7,7 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditVendorCredit extends EditRecord
 {
+    #[\Override]
     protected static string $resource = VendorCreditResource::class;
 
     protected function afterSave(): void

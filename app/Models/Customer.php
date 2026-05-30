@@ -15,6 +15,7 @@ class Customer extends Authenticatable
     // protected $primaryKey = 'customer_id';
     protected $guard = 'customer';
 
+    #[\Override]
     protected $fillable = [
         'customer_name',
         'customer_last_name',
@@ -28,6 +29,7 @@ class Customer extends Authenticatable
         'password',
     ];
 
+    #[\Override]
     protected $hidden = [
         'password',
         'remember_token',
@@ -68,7 +70,7 @@ class Customer extends Authenticatable
         return $this->credit_limit > 0 && $this->current_balance >= $this->credit_limit;
     }
 
-    public function updateBalance()
+    public function updateBalance(): void
     {
         $this->current_balance = $this->invoices()
             ->where('payment_status', 'pending')

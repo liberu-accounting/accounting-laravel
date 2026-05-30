@@ -20,15 +20,20 @@ use Illuminate\Database\Eloquent\Builder;
 
 class AuditLogResource extends Resource
 {
+    #[\Override]
     protected static ?string $model = AuditLog::class;
+    #[\Override]
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-clipboard-document-list';
+    #[\Override]
     protected static string | \UnitEnum | null $navigationGroup = 'System';
     
+    #[\Override]
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()->latest();
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -49,7 +54,7 @@ class AuditLogResource extends Resource
                     }),
                 TextColumn::make('auditable_type')
                     ->label('Record Type')
-                    ->formatStateUsing(fn (string $state) => class_basename($state)),
+                    ->formatStateUsing(fn (string $state): string => class_basename($state)),
                 TextColumn::make('ip_address')
                     ->searchable(),
                 TextColumn::make('user_agent')
@@ -73,21 +78,20 @@ class AuditLogResource extends Resource
                         DatePicker::make('from'),
                         DatePicker::make('until'),
                     ])
-                    ->query(function (Builder $query, array $data): Builder {
-                        return $query
-                            ->when(
-                                $data['from'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
-                            )
-                            ->when(
-                                $data['until'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
-                            );
-                    })
+                    ->query(fn(Builder $query, array $data): Builder => $query
+                        ->when(
+                            $data['from'],
+                            fn (Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
+                        )
+                        ->when(
+                            $data['until'],
+                            fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
+                        ))
             ])
             ->defaultSort('created_at', 'desc');
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

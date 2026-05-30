@@ -14,8 +14,10 @@ class Bill extends Model
     use IsTenantModel;
     use HasFactory, SoftDeletes;
 
+    #[\Override]
     protected $primaryKey = 'bill_id';
 
+    #[\Override]
     protected $fillable = [
         'vendor_id',
         'bill_number',
@@ -38,6 +40,7 @@ class Bill extends Model
         'rejection_reason',
     ];
 
+    #[\Override]
     protected $casts = [
         'bill_date' => 'date',
         'due_date' => 'date',
@@ -80,12 +83,12 @@ class Bill extends Model
     }
 
     // Calculated Attributes
-    public function getAmountDueAttribute()
+    public function getAmountDueAttribute(): int|float
     {
         return $this->total_amount - $this->amount_paid;
     }
 
-    public function getDaysOverdueAttribute()
+    public function getDaysOverdueAttribute(): int|float
     {
         if ($this->payment_status === 'paid' || !$this->due_date) {
             return 0;
@@ -95,7 +98,7 @@ class Bill extends Model
         return $daysOverdue < 0 ? abs($daysOverdue) : 0;
     }
 
-    public function getIsOverdueAttribute()
+    public function getIsOverdueAttribute(): bool
     {
         return $this->days_overdue > 0;
     }
@@ -127,7 +130,7 @@ class Bill extends Model
         return $taxAmount;
     }
 
-    public function calculateTotals()
+    public function calculateTotals(): void
     {
         $this->subtotal_amount = $this->items->sum('amount');
         $this->calculateTax();
@@ -154,7 +157,7 @@ class Bill extends Model
         return $payment;
     }
 
-    public function approve()
+    public function approve(): void
     {
         $this->update([
             'approval_status' => 'approved',
@@ -164,7 +167,7 @@ class Bill extends Model
         ]);
     }
 
-    public function reject($reason)
+    public function reject($reason): void
     {
         $this->update([
             'approval_status' => 'rejected',
@@ -174,7 +177,7 @@ class Bill extends Model
         ]);
     }
 
-    public function markAsVoid()
+    public function markAsVoid(): void
     {
         $this->update([
             'status' => 'void',
@@ -199,11 +202,12 @@ class Bill extends Model
     }
 
     // Auto-generate bill number on creation
+    #[\Override]
     protected static function boot()
     {
         parent::boot();
         
-        static::creating(function ($bill) {
+        static::creating(function ($bill): void {
             if (empty($bill->bill_number)) {
                 $bill->bill_number = static::generateBillNumber();
             }
@@ -219,16 +223,14 @@ class Bill extends Model
         });
 
         // Update status when due date passes
-        static::saving(function ($bill) {
-            if ($bill->isDirty('due_date') || $bill->isDirty('payment_status')) {
-                if ($bill->payment_status !== 'paid' && $bill->due_date < now()) {
-                    $bill->status = 'overdue';
-                }
+        static::saving(function ($bill): void {
+            if (($bill->isDirty('due_date') || $bill->isDirty('payment_status')) && ($bill->payment_status !== 'paid' && $bill->due_date < now())) {
+                $bill->status = 'overdue';
             }
         });
     }
 
-    public static function generateBillNumber()
+    public static function generateBillNumber(): string
     {
         $prefix = 'BILL';
         $year = date('Y');
@@ -240,7 +242,7 @@ class Bill extends Model
             $number = 1;
         } else {
             // Extract number from bill_number (e.g., BILL2026-0001)
-            $parts = explode('-', $lastBill->bill_number);
+            $parts = explode('-', (string) $lastBill->bill_number);
             $number = isset($parts[1]) ? ((int)$parts[1]) + 1 : 1;
         }
 

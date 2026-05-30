@@ -8,9 +8,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    public function up(): void
     {
-        Schema::create('inventory_transactions', function (Blueprint $table) {
+        Schema::create('inventory_transactions', function (Blueprint $table): void {
             $table->id('inventory_transaction_id');
             $table->foreignId('inventory_item_id')->constrained('inventory_items');
             $table->foreignId('transaction_id')->constrained('transactions', 'transaction_id');
@@ -22,7 +22,7 @@ return new class extends Migration
         });
     }
 
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('inventory_transactions');
     }

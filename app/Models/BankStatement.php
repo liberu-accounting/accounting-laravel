@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use App\Traits\IsTenantModel;
@@ -11,6 +13,7 @@ class BankStatement extends Model
     use HasFactory;
     use IsTenantModel;
 
+    #[\Override]
     protected $fillable = [
         'statement_date',
         'account_id',
@@ -21,6 +24,7 @@ class BankStatement extends Model
         'team_id',
     ];
 
+    #[\Override]
     protected $casts = [
         'statement_date' => 'date',
         'total_credits' => 'decimal:2',

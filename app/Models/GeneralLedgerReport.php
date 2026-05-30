@@ -12,6 +12,7 @@ class GeneralLedgerReport extends Model
     use HasFactory;
     use IsTenantModel;
 
+    #[\Override]
     protected $fillable = [
         'report_date',
         'report_type',
@@ -23,6 +24,7 @@ class GeneralLedgerReport extends Model
         'custom_fields'
     ];
 
+    #[\Override]
     protected $casts = [
         'report_date' => 'date',
         'data' => 'array',

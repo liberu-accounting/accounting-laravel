@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories;
 
 use App\Models\ConnectedAccount;
@@ -11,6 +13,7 @@ use Illuminate\Support\Str;
  */
 class ConnectedAccountFactory extends Factory
 {
+    #[\Override]
     protected $model = ConnectedAccount::class;
 
     public function definition(): array

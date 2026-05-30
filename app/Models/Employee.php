@@ -12,6 +12,7 @@ class Employee extends Model
     use HasFactory;
     use IsTenantModel;
 
+    #[\Override]
     protected $fillable = [
         'name',
         'email',
@@ -25,6 +26,7 @@ class Employee extends Model
         'student_loan_plan',
     ];
 
+    #[\Override]
     protected $casts = [
         'hire_date' => 'date',
         'p45_issue_date' => 'date',

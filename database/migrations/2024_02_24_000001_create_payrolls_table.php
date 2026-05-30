@@ -10,7 +10,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('payrolls', function (Blueprint $table) {
+        Schema::create('payrolls', function (Blueprint $table): void {
             $table->id();
             $table->foreignId('employee_id')->constrained()->onDelete('cascade');
             $table->decimal('base_salary', 10, 2);

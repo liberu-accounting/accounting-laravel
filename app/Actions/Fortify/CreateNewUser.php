@@ -43,18 +43,16 @@ class CreateNewUser implements CreatesNewUsers
             ])->validate();
 
            
-            $user = DB::transaction(function () use ($input) {
-                return tap(User::create([
-                    'name'     => $input['name'],
-                    'email'    => $input['email'],
-                    'password' => Hash::make($input['password']),
-                ]), function (User $user) use ($input) {
-                    $team = $this->assignOrCreateTeam($user);
-                    $user->switchTeam($team);
-                    setPermissionsTeamId($team->id);
-                    $user->assignRole($input['role']);
-                });
-            });
+            $user = DB::transaction(fn() => tap(User::create([
+                'name'     => $input['name'],
+                'email'    => $input['email'],
+                'password' => Hash::make($input['password']),
+            ]), function (User $user) use ($input): void {
+                $team = $this->assignOrCreateTeam($user);
+                $user->switchTeam($team);
+                setPermissionsTeamId($team->id);
+                $user->assignRole($input['role']);
+            }));
             // $user = DB::transaction(function () use ($input) {
             //     return tap(,
             //     , function (User $user) use ($input) {
@@ -85,20 +83,20 @@ class CreateNewUser implements CreatesNewUsers
                 'sql' => $e->getSql(),
                 'bindings' => $e->getBindings(),
             ]);
-            throw new Exception($this->getDatabaseErrorMessage($e));
+            throw new Exception($this->getDatabaseErrorMessage($e), $e->getCode(), $e);
         } catch (RoleDoesNotExist $e) {
             Log::error('Invalid role specified during user creation', [
                 'role' => $input['role'] ?? 'not provided',
                 'message' => $e->getMessage(),
             ]);
-            throw new Exception('Invalid role specified. Please choose a valid role.');
+            throw new Exception('Invalid role specified. Please choose a valid role.', $e->getCode(), $e);
         } catch (Exception $e) {
             Log::error('Unexpected error during user creation', [
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
-                'exception_class' => get_class($e),
+                'exception_class' => $e::class,
             ]);
-            throw new Exception('An unexpected error occurred. Please try again later.');
+            throw new Exception('An unexpected error occurred. Please try again later.', $e->getCode(), $e);
         }
     }
     
@@ -107,7 +105,7 @@ class CreateNewUser implements CreatesNewUsers
         $errorCode = $e->getCode();
         $errorMessage = $e->getMessage();
     
-        if (strpos($errorMessage, 'Duplicate entry') !== false) {
+        if (str_contains($errorMessage, 'Duplicate entry')) {
             return 'A user with this email already exists. Please use a different email address.';
         } elseif ($errorCode == 1045) {
             return 'Database access denied. Please contact the administrator.';

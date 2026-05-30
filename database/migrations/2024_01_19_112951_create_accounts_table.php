@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('accounts', function (Blueprint $table) {
+        Schema::create('accounts', function (Blueprint $table): void {
             $table->unsignedBigInteger('id', true);
             $table->foreignId('user_id')->nullable()->constrained('users')->index()->name('users_id_foreign');
             $table->integer('account_number')->unique();

@@ -25,16 +25,22 @@ use Filament\Tables\Filters\SelectFilter;
 
 class DelayedChargeResource extends Resource
 {
+    #[\Override]
     protected static ?string $model = DelayedCharge::class;
     
+    #[\Override]
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-clock';
     
+    #[\Override]
     protected static ?int $navigationSort = 6;
     
+    #[\Override]
     protected static string | \UnitEnum | null $navigationGroup = 'Sales';
     
+    #[\Override]
     protected static ?string $recordTitleAttribute = 'description';
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -66,7 +72,7 @@ class DelayedChargeResource extends Resource
                             ->default(1)
                             ->required()
                             ->live()
-                            ->afterStateUpdated(function ($state, callable $set, $get) {
+                            ->afterStateUpdated(function ($state, callable $set, $get): void {
                                 $unitPrice = $get('unit_price') ?? 0;
                                 $set('amount', $state * $unitPrice);
                             }),
@@ -76,7 +82,7 @@ class DelayedChargeResource extends Resource
                             ->required()
                             ->prefix('$')
                             ->live()
-                            ->afterStateUpdated(function ($state, callable $set, $get) {
+                            ->afterStateUpdated(function ($state, callable $set, $get): void {
                                 $quantity = $get('quantity') ?? 1;
                                 $set('amount', $quantity * $state);
                             }),
@@ -106,7 +112,7 @@ class DelayedChargeResource extends Resource
                             ->searchable()
                             ->preload()
                             ->disabled()
-                            ->visible(fn ($record) => $record !== null && $record->invoice_id),
+                            ->visible(fn ($record): bool => $record !== null && $record->invoice_id),
                             
                         Textarea::make('notes')
                             ->rows(3)
@@ -116,6 +122,7 @@ class DelayedChargeResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -171,7 +178,7 @@ class DelayedChargeResource extends Resource
                     ->label('Add to Invoice')
                     ->icon('heroicon-o-plus-circle')
                     ->color('success')
-                    ->visible(fn ($record) => $record->status === 'pending')
+                    ->visible(fn ($record): bool => $record->status === 'pending')
                     ->form([
                         Select::make('invoice_id')
                             ->label('Invoice')
@@ -180,14 +187,14 @@ class DelayedChargeResource extends Resource
                             ->searchable(),
                     ])
                     ->requiresConfirmation()
-                    ->action(function ($record, array $data) {
+                    ->action(function ($record, array $data): void {
                         $record->addToInvoice($data['invoice_id']);
                     }),
                 Action::make('void')
                     ->label('Void')
                     ->icon('heroicon-o-x-circle')
                     ->color('danger')
-                    ->visible(fn ($record) => $record->status === 'pending')
+                    ->visible(fn ($record): bool => $record->status === 'pending')
                     ->requiresConfirmation()
                     ->action(fn ($record) => $record->void()),
             ])
@@ -199,6 +206,7 @@ class DelayedChargeResource extends Resource
             ->defaultSort('charge_date', 'desc');
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -206,6 +214,7 @@ class DelayedChargeResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

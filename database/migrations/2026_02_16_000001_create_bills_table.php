@@ -6,9 +6,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    public function up(): void
     {
-        Schema::create('bills', function (Blueprint $table) {
+        Schema::create('bills', function (Blueprint $table): void {
             $table->id('bill_id');
             $table->foreignId('vendor_id')->constrained('vendors', 'vendor_id')->onDelete('cascade');
             $table->string('bill_number')->unique();
@@ -39,7 +39,7 @@ return new class extends Migration
             $table->index('payment_status');
         });
 
-        Schema::create('bill_items', function (Blueprint $table) {
+        Schema::create('bill_items', function (Blueprint $table): void {
             $table->id('item_id');
             $table->foreignId('bill_id')->constrained('bills', 'bill_id')->onDelete('cascade');
             $table->foreignId('account_id')->nullable()->constrained('accounts')->nullOnDelete();
@@ -55,7 +55,7 @@ return new class extends Migration
             $table->index('account_id');
         });
 
-        Schema::create('bill_payments', function (Blueprint $table) {
+        Schema::create('bill_payments', function (Blueprint $table): void {
             $table->id('payment_id');
             $table->foreignId('bill_id')->constrained('bills', 'bill_id')->onDelete('cascade');
             $table->date('payment_date');
@@ -71,7 +71,7 @@ return new class extends Migration
         });
     }
 
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('bill_payments');
         Schema::dropIfExists('bill_items');

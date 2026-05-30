@@ -8,14 +8,19 @@ use Illuminate\Support\Facades\Auth;
 
 class PersonalAccessTokensPage extends Page
 {
+    #[\Override]
     protected string $view = 'filament.pages.profile.personal-access-tokens';
 
+    #[\Override]
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-key';
 
+    #[\Override]
     protected static string | \UnitEnum | null $navigationGroup = 'Account';
 
+    #[\Override]
     protected static ?int $navigationSort = 3;
 
+    #[\Override]
     protected static ?string $title = 'Personal Access Tokens';
 
     public User $user;
@@ -35,11 +40,13 @@ class PersonalAccessTokensPage extends Page
         $this->user->tokens()->where('name', $name)->first()->delete();
     }
 
+    #[\Override]
     public function getHeading(): string
     {
         return static::$title;
     }
 
+    #[\Override]
     public static function shouldRegisterNavigation(): bool
     {
         return true;

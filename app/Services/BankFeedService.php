@@ -28,7 +28,7 @@ class BankFeedService
         ]);
     }
 
-    public function importTransactions(BankConnection $connection)
+    public function importTransactions(BankConnection $connection): void
     {
         try {
             $response = Http::withHeaders([
@@ -51,7 +51,7 @@ class BankFeedService
         }
     }
 
-    protected function processTransaction($transactionData, BankConnection $connection)
+    protected function processTransaction(array $transactionData, BankConnection $connection)
     {
         $transaction = Transaction::updateOrCreate(
             [
@@ -76,9 +76,9 @@ class BankFeedService
         return $transaction;
     }
 
-    protected function categorizeTransaction($transactionData): string
+    protected function categorizeTransaction(array $transactionData): string
     {
-        $description = strtolower($transactionData['description']);
+        $description = strtolower((string) $transactionData['description']);
         
         $categories = [
             'salary' => ['payroll', 'salary', 'wage'],

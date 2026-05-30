@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Admin\Resources\Vendors;
 
 use Filament\Schemas\Schema;
@@ -23,11 +25,15 @@ use Filament\Tables;
 
 class VendorResource extends Resource
 {
+    #[\Override]
     protected static ?string $model = Vendor::class;
 
+    #[\Override]
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-building-office';
+    #[\Override]
     protected static string | \UnitEnum | null $navigationGroup = 'Finance';
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -57,6 +63,7 @@ class VendorResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -85,6 +92,7 @@ class VendorResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

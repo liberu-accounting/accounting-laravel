@@ -13,8 +13,10 @@ class Transaction extends Model
     use HasFactory;
     use IsTenantModel;
 
+    #[\Override]
     protected $primaryKey = 'transaction_id';
 
+    #[\Override]
     protected $fillable = [
         'transaction_date',
         'transaction_description',
@@ -39,6 +41,7 @@ class Transaction extends Model
         'user_id',
     ];
 
+    #[\Override]
     protected $casts = [
         'reconciled' => 'boolean',
         'exchange_rate' => 'decimal:6',
@@ -46,6 +49,7 @@ class Transaction extends Model
         'transaction_date' => 'date',
     ];
 
+    #[\Override]
     protected static function boot()
     {
         parent::boot();
@@ -53,7 +57,7 @@ class Transaction extends Model
         static::observe(TransactionObserver::class);
 
         
-        static::creating(function ($transaction) {
+        static::creating(function ($transaction): void {
             if (!$transaction->exchange_rate) {
                 $defaultCurrency = Currency::where('is_default', true)->first();
                 if ($defaultCurrency && $transaction->currency_id && $transaction->currency_id !== $defaultCurrency->currency_id) {
@@ -123,7 +127,7 @@ class Transaction extends Model
         return $this->getAmountInCurrency($defaultCurrency);
     }
 
-    public function updateInventory()
+    public function updateInventory(): void
     {
         foreach ($this->inventoryTransactions as $inventoryTx) {
             $quantity = $inventoryTx->quantity;

@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('delayed_charges', function (Blueprint $table) {
+        Schema::create('delayed_charges', function (Blueprint $table): void {
             $table->id('delayed_charge_id');
             $table->unsignedBigInteger('customer_id');
             $table->date('charge_date');

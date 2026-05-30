@@ -12,7 +12,7 @@ class TestSync extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_sync_debug()
+    public function test_sync_debug(): void
     {
         $user = User::factory()->create();
         $connection = BankConnection::factory()->create([

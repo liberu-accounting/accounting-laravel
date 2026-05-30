@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -11,6 +13,7 @@ class BankConnection extends Model
     use HasFactory;
     use IsTenantModel;
 
+    #[\Override]
     protected $fillable = [
         'user_id',
         'bank_id',
@@ -30,6 +33,7 @@ class BankConnection extends Model
         'last_synced_at',
     ];
 
+    #[\Override]
     protected $casts = [
         'credentials' => 'encrypted:array',
         'plaid_access_token' => 'encrypted',

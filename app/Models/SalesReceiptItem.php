@@ -26,10 +26,13 @@ class SalesReceiptItem extends Model
     use HasFactory;
     use IsTenantModel;
 
+    #[\Override]
     protected $primaryKey = 'item_id';
 
+    #[\Override]
     public $timestamps = false;
 
+    #[\Override]
     protected $fillable = [
         'sales_receipt_id',
         'account_id',
@@ -39,17 +42,19 @@ class SalesReceiptItem extends Model
         'amount',
     ];
 
+    #[\Override]
     protected $casts = [
         'quantity' => 'integer',
         'unit_price' => 'decimal:2',
         'amount' => 'decimal:2',
     ];
 
+    #[\Override]
     protected static function boot()
     {
         parent::boot();
 
-        static::saving(function ($item) {
+        static::saving(function ($item): void {
             // Auto-calculate amount if not provided
             if (!isset($item->amount) || $item->amount == 0) {
                 $item->amount = $item->quantity * $item->unit_price;

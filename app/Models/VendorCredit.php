@@ -34,8 +34,10 @@ class VendorCredit extends Model
     use IsTenantModel;
     use HasFactory, SoftDeletes;
 
+    #[\Override]
     protected $primaryKey = 'vendor_credit_id';
 
+    #[\Override]
     protected $fillable = [
         'vendor_id',
         'vendor_credit_number',
@@ -52,6 +54,7 @@ class VendorCredit extends Model
         'status',
     ];
 
+    #[\Override]
     protected $casts = [
         'credit_date' => 'date',
         'subtotal_amount' => 'decimal:2',
@@ -61,16 +64,18 @@ class VendorCredit extends Model
         'amount_remaining' => 'decimal:2',
     ];
 
+    #[\Override]
     protected $attributes = [
         'amount_applied' => 0,
         'status' => 'open',
     ];
 
+    #[\Override]
     protected static function boot()
     {
         parent::boot();
 
-        static::creating(function ($credit) {
+        static::creating(function ($credit): void {
             if (empty($credit->vendor_credit_number)) {
                 $credit->vendor_credit_number = self::generateCreditNumber();
             }
@@ -79,7 +84,7 @@ class VendorCredit extends Model
             }
         });
 
-        static::saved(function ($credit) {
+        static::saved(function ($credit): void {
             // Update amount_remaining
             $credit->amount_remaining = $credit->total_amount - $credit->amount_applied;
             
@@ -104,7 +109,7 @@ class VendorCredit extends Model
     private static function generateCreditNumber(): string
     {
         $lastCredit = self::orderBy('vendor_credit_id', 'desc')->first();
-        $nextNumber = $lastCredit ? ((int) substr($lastCredit->vendor_credit_number, 3)) + 1 : 1;
+        $nextNumber = $lastCredit ? ((int) substr((string) $lastCredit->vendor_credit_number, 3)) + 1 : 1;
         return 'VC-' . str_pad($nextNumber, 6, '0', STR_PAD_LEFT);
     }
 
@@ -157,11 +162,7 @@ class VendorCredit extends Model
         $this->subtotal_amount = $subtotal;
 
         // Calculate tax
-        if ($this->taxRate) {
-            $this->tax_amount = $subtotal * ($this->taxRate->rate / 100);
-        } else {
-            $this->tax_amount = 0;
-        }
+        $this->tax_amount = $this->taxRate ? $subtotal * ($this->taxRate->rate / 100) : 0;
 
         $this->total_amount = $this->subtotal_amount + $this->tax_amount;
         $this->amount_remaining = $this->total_amount - $this->amount_applied;

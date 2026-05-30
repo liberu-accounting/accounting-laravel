@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,8 +13,10 @@ class ExchangeRate extends Model
     use HasFactory;
     use IsTenantModel;
 
+    #[\Override]
     protected $primaryKey = 'exchange_rate_id';
 
+    #[\Override]
     protected $fillable = [
         'from_currency_id',
         'to_currency_id',
@@ -20,6 +24,7 @@ class ExchangeRate extends Model
         'date',
     ];
 
+    #[\Override]
     protected $casts = [
         'rate' => 'float',
         'date' => 'date',

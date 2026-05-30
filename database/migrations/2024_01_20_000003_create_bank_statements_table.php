@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('bank_statements', function (Blueprint $table) {
+        Schema::create('bank_statements', function (Blueprint $table): void {
             $table->id();
             $table->date('statement_date');
             $table->foreignId('account_id')->constrained('accounts')->onDelete('cascade');

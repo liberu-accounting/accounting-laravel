@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\App\Resources\CreditMemos;
 
 use Filament\Schemas\Schema;
@@ -25,16 +27,22 @@ use Filament\Tables\Filters\SelectFilter;
 
 class CreditMemoResource extends Resource
 {
+    #[\Override]
     protected static ?string $model = CreditMemo::class;
     
+    #[\Override]
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-receipt-percent';
     
+    #[\Override]
     protected static ?int $navigationSort = 4;
     
+    #[\Override]
     protected static string | \UnitEnum | null $navigationGroup = 'Sales';
     
+    #[\Override]
     protected static ?string $recordTitleAttribute = 'credit_memo_number';
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -53,7 +61,7 @@ class CreditMemoResource extends Resource
                 TextInput::make('credit_memo_number')
                     ->disabled()
                     ->dehydrated(false)
-                    ->visible(fn ($record) => $record !== null),
+                    ->visible(fn ($record): bool => $record !== null),
                     
                 DatePicker::make('credit_memo_date')
                     ->required()
@@ -127,6 +135,7 @@ class CreditMemoResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -195,6 +204,7 @@ class CreditMemoResource extends Resource
             ->defaultSort('credit_memo_date', 'desc');
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -202,6 +212,7 @@ class CreditMemoResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

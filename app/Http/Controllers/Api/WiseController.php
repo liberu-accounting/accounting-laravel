@@ -17,11 +17,8 @@ use Exception;
 
 class WiseController extends Controller
 {
-    protected WiseService $wiseService;
-
-    public function __construct(WiseService $wiseService)
+    public function __construct(protected WiseService $wiseService)
     {
-        $this->wiseService = $wiseService;
     }
 
     /**
@@ -353,7 +350,6 @@ class WiseController extends Controller
     {
         $transferId = $wiseTransfer['id'];
         $amount = $wiseTransfer['sourceValue'] ?? 0;
-        $currency = $wiseTransfer['sourceCurrency'] ?? null;
         $createdAt = $wiseTransfer['created'] ?? null;
 
         $transaction = Transaction::updateOrCreate(
@@ -362,7 +358,7 @@ class WiseController extends Controller
                 'bank_connection_id' => $connection->id,
             ],
             [
-                'transaction_date' => $createdAt ? date('Y-m-d', strtotime($createdAt)) : now()->toDateString(),
+                'transaction_date' => $createdAt ? date('Y-m-d', strtotime((string) $createdAt)) : now()->toDateString(),
                 'amount' => abs($amount),
                 'type' => 'debit',
                 'description' => $wiseTransfer['reference'] ?? 'Wise transfer',

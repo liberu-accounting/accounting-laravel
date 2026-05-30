@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('bank_connections', function (Blueprint $table) {
+        Schema::table('bank_connections', function (Blueprint $table): void {
             $table->string('revolut_access_token')->nullable()->after('plaid_cursor');
             $table->string('revolut_refresh_token')->nullable()->after('revolut_access_token');
             $table->timestamp('revolut_token_expires_at')->nullable()->after('revolut_refresh_token');
@@ -19,7 +19,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::table('bank_connections', function (Blueprint $table) {
+        Schema::table('bank_connections', function (Blueprint $table): void {
             $table->dropIndex(['bank_id']);
             $table->dropColumn([
                 'revolut_access_token',

@@ -27,7 +27,7 @@ class HmrcMtdVatServiceTest extends TestCase
         $this->service = new HmrcMtdVatService($this->authService);
     }
 
-    public function test_builds_vat_return_payload_correctly()
+    public function test_builds_vat_return_payload_correctly(): void
     {
         $company = Company::factory()->create([
             'hmrc_vat_number' => '123456789',
@@ -64,7 +64,7 @@ class HmrcMtdVatServiceTest extends TestCase
         $this->assertEquals('TEST123456', $response['formBundleNumber']);
     }
 
-    public function test_throws_exception_when_company_has_no_vat_number()
+    public function test_throws_exception_when_company_has_no_vat_number(): void
     {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Company does not have a VAT registration number');
@@ -85,7 +85,7 @@ class HmrcMtdVatServiceTest extends TestCase
         $this->service->submitVatReturn($vatReturn);
     }
 
-    public function test_throws_exception_when_vat_return_not_finalised()
+    public function test_throws_exception_when_vat_return_not_finalised(): void
     {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('VAT return must be finalised before submission');

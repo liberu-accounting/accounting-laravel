@@ -160,7 +160,6 @@ class WiseService
     /**
      * Get balances for a specific profile
      *
-     * @param BankConnection $connection
      * @param int $profileId The Wise profile ID
      * @param string $type Balance type: STANDARD or SAVINGS
      */
@@ -194,7 +193,6 @@ class WiseService
     /**
      * Get transfers for a specific profile within a date range
      *
-     * @param BankConnection $connection
      * @param int $profileId The Wise profile ID
      * @param string|null $createdDateStart ISO 8601 date string
      * @param string|null $createdDateEnd ISO 8601 date string
@@ -228,11 +226,9 @@ class WiseService
 
             $response = Http::timeout(30)
                 ->connectTimeout(10)
-                ->retry(2, 200, function ($exception, $request) {
-                    return $exception instanceof \Illuminate\Http\Client\ConnectionException ||
-                           ($exception instanceof \Illuminate\Http\Client\RequestException &&
-                            $exception->response->status() >= 500);
-                })
+                ->retry(2, 200, fn($exception, $request) => $exception instanceof \Illuminate\Http\Client\ConnectionException ||
+                       ($exception instanceof \Illuminate\Http\Client\RequestException &&
+                        $exception->response->status() >= 500))
                 ->withToken($accessToken)
                 ->get("{$this->baseUrl}/v1/transfers", $params);
 
@@ -265,12 +261,12 @@ class WiseService
      */
     public function verifyWebhookSignature(string $bodyJson, string $signature, string $publicKey): bool
     {
-        if (empty($publicKey)) {
+        if ($publicKey === '' || $publicKey === '0') {
             Log::warning('Wise webhook public key not configured - rejecting webhook');
             return false;
         }
 
-        if (empty($signature)) {
+        if ($signature === '' || $signature === '0') {
             Log::warning('Wise webhook signature missing');
             return false;
         }

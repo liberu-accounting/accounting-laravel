@@ -25,16 +25,22 @@ use Filament\Tables\Filters\SelectFilter;
 
 class BillResource extends Resource
 {
+    #[\Override]
     protected static ?string $model = Bill::class;
     
+    #[\Override]
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-receipt-refund';
     
+    #[\Override]
     protected static ?int $navigationSort = 3;
     
+    #[\Override]
     protected static string | \UnitEnum | null $navigationGroup = 'Vendors';
     
+    #[\Override]
     protected static ?string $recordTitleAttribute = 'bill_number';
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -48,7 +54,7 @@ class BillResource extends Resource
                 TextInput::make('bill_number')
                     ->disabled()
                     ->dehydrated(false)
-                    ->visible(fn ($record) => $record !== null),
+                    ->visible(fn ($record): bool => $record !== null),
                     
                 DatePicker::make('bill_date')
                     ->required()
@@ -70,7 +76,7 @@ class BillResource extends Resource
                 Select::make('tax_rate_id')
                     ->relationship('taxRate', 'name')
                     ->live()
-                    ->afterStateUpdated(function ($state, callable $set, $get) {
+                    ->afterStateUpdated(function ($state, callable $set, $get): void {
                         if ($state && $get('subtotal_amount')) {
                             $taxRate = TaxRate::find($state);
                             $taxAmount = $get('subtotal_amount') * ($taxRate->rate / 100);
@@ -134,6 +140,7 @@ class BillResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -213,6 +220,7 @@ class BillResource extends Resource
             ->defaultSort('bill_date', 'desc');
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -220,6 +228,7 @@ class BillResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

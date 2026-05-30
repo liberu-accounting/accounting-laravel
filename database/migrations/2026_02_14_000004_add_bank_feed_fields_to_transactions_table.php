@@ -6,9 +6,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    public function up(): void
     {
-        Schema::table('transactions', function (Blueprint $table) {
+        Schema::table('transactions', function (Blueprint $table): void {
             // Add fields for bank feed integration (skip if already present from create migration)
             if (!Schema::hasColumn('transactions', 'external_id')) {
                 $table->string('external_id')->nullable()->unique()->after('transaction_id');
@@ -30,9 +30,9 @@ return new class extends Migration
         });
     }
 
-    public function down()
+    public function down(): void
     {
-        Schema::table('transactions', function (Blueprint $table) {
+        Schema::table('transactions', function (Blueprint $table): void {
             $table->dropForeign(['bank_connection_id']);
             $table->dropIndex(['bank_connection_id']);
             $table->dropIndex(['status']);

@@ -27,16 +27,22 @@ use Filament\Tables\Filters\SelectFilter;
 
 class VendorCreditResource extends Resource
 {
+    #[\Override]
     protected static ?string $model = VendorCredit::class;
     
+    #[\Override]
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-receipt-refund';
     
+    #[\Override]
     protected static ?int $navigationSort = 4;
     
+    #[\Override]
     protected static string | \UnitEnum | null $navigationGroup = 'Vendors';
     
+    #[\Override]
     protected static ?string $recordTitleAttribute = 'vendor_credit_number';
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -53,7 +59,7 @@ class VendorCreditResource extends Resource
                             ->label('Credit #')
                             ->disabled()
                             ->dehydrated(false)
-                            ->visible(fn ($record) => $record !== null),
+                            ->visible(fn ($record): bool => $record !== null),
                             
                         DatePicker::make('credit_date')
                             ->required()
@@ -77,7 +83,7 @@ class VendorCreditResource extends Resource
                         Select::make('tax_rate_id')
                             ->relationship('taxRate', 'name')
                             ->live()
-                            ->afterStateUpdated(function ($state, callable $set, $get) {
+                            ->afterStateUpdated(function ($state, callable $set, $get): void {
                                 if ($state && $get('subtotal_amount')) {
                                     $taxRate = TaxRate::find($state);
                                     $taxAmount = $get('subtotal_amount') * ($taxRate->rate / 100);
@@ -146,7 +152,7 @@ class VendorCreditResource extends Resource
                             ->disabled()
                             ->dehydrated(false)
                             ->prefix('$')
-                            ->visible(fn ($record) => $record !== null),
+                            ->visible(fn ($record): bool => $record !== null),
                     ])
                     ->columns(3),
                     
@@ -170,7 +176,7 @@ class VendorCreditResource extends Resource
                             ])
                             ->columns(3)
                             ->collapsible()
-                            ->visible(fn ($record) => $record !== null),
+                            ->visible(fn ($record): bool => $record !== null),
                     ]),
                     
                 Section::make('Additional Information')
@@ -193,6 +199,7 @@ class VendorCreditResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -251,7 +258,7 @@ class VendorCreditResource extends Resource
                     ->label('Apply to Bill')
                     ->icon('heroicon-o-arrow-right-circle')
                     ->color('success')
-                    ->visible(fn ($record) => $record->amount_remaining > 0 && $record->status !== 'void')
+                    ->visible(fn ($record): bool => $record->amount_remaining > 0 && $record->status !== 'void')
                     ->form([
                         Select::make('bill_id')
                             ->label('Bill')
@@ -265,14 +272,14 @@ class VendorCreditResource extends Resource
                             ->maxValue(fn ($record) => $record->amount_remaining),
                     ])
                     ->requiresConfirmation()
-                    ->action(function ($record, array $data) {
+                    ->action(function ($record, array $data): void {
                         $record->applyToBill($data['bill_id'], $data['amount']);
                     }),
                 Action::make('void')
                     ->label('Void')
                     ->icon('heroicon-o-x-circle')
                     ->color('danger')
-                    ->visible(fn ($record) => $record->status !== 'void')
+                    ->visible(fn ($record): bool => $record->status !== 'void')
                     ->requiresConfirmation()
                     ->action(fn ($record) => $record->void()),
             ])
@@ -284,6 +291,7 @@ class VendorCreditResource extends Resource
             ->defaultSort('credit_date', 'desc');
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -291,6 +299,7 @@ class VendorCreditResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

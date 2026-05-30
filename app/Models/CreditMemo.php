@@ -12,8 +12,10 @@ class CreditMemo extends Model
     use IsTenantModel;
     use HasFactory, SoftDeletes;
 
+    #[\Override]
     protected $primaryKey = 'credit_memo_id';
 
+    #[\Override]
     protected $fillable = [
         'customer_id',
         'invoice_id',
@@ -30,6 +32,7 @@ class CreditMemo extends Model
         'document_path',
     ];
 
+    #[\Override]
     protected $casts = [
         'credit_memo_date' => 'date',
         'subtotal_amount' => 'decimal:2',
@@ -65,12 +68,12 @@ class CreditMemo extends Model
     }
 
     // Calculated Attributes
-    public function getAmountRemainingAttribute()
+    public function getAmountRemainingAttribute(): int|float
     {
         return $this->total_amount - $this->amount_applied;
     }
 
-    public function getIsFullyAppliedAttribute()
+    public function getIsFullyAppliedAttribute(): bool
     {
         return $this->amount_applied >= $this->total_amount;
     }
@@ -102,7 +105,7 @@ class CreditMemo extends Model
         return $taxAmount;
     }
 
-    public function calculateTotals()
+    public function calculateTotals(): void
     {
         $this->subtotal_amount = $this->items->sum('amount');
         $this->calculateTax();
@@ -135,18 +138,14 @@ class CreditMemo extends Model
         $this->amount_applied = $this->applications()->sum('amount_applied');
         
         // Update status
-        if ($this->amount_applied >= $this->total_amount) {
-            $this->status = 'applied';
-        } else {
-            $this->status = 'open';
-        }
+        $this->status = $this->amount_applied >= $this->total_amount ? 'applied' : 'open';
         
         $this->save();
 
         return $application;
     }
 
-    public function markAsVoid()
+    public function markAsVoid(): void
     {
         $this->update([
             'status' => 'void',
@@ -171,11 +170,12 @@ class CreditMemo extends Model
     }
 
     // Auto-generate credit memo number
+    #[\Override]
     protected static function boot()
     {
         parent::boot();
         
-        static::creating(function ($creditMemo) {
+        static::creating(function ($creditMemo): void {
             if (empty($creditMemo->credit_memo_number)) {
                 $creditMemo->credit_memo_number = static::generateCreditMemoNumber();
             }
@@ -185,7 +185,7 @@ class CreditMemo extends Model
         });
     }
 
-    public static function generateCreditMemoNumber()
+    public static function generateCreditMemoNumber(): string
     {
         $prefix = 'CM';
         $year = date('Y');
@@ -196,7 +196,7 @@ class CreditMemo extends Model
         if (!$lastCreditMemo) {
             $number = 1;
         } else {
-            $parts = explode('-', $lastCreditMemo->credit_memo_number);
+            $parts = explode('-', (string) $lastCreditMemo->credit_memo_number);
             $number = isset($parts[1]) ? ((int)$parts[1]) + 1 : 1;
         }
 

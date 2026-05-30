@@ -21,19 +21,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/user', function (Request $request) {
-        return $request->user();
-    });
+Route::middleware('auth:sanctum')->group(function (): void {
+    Route::get('/user', fn(Request $request) => $request->user());
 
     Route::apiResource('transactions', TransactionController::class);
 
-    Route::get('/exchange-rates', function () {
-        return app(App\Services\ExchangeRateService::class)->getLatestRates();
-    })->middleware('throttle:60,1');
+    Route::get('/exchange-rates', fn() => app(App\Services\ExchangeRateService::class)->getLatestRates())->middleware('throttle:60,1');
 
     // Plaid API Routes
-    Route::prefix('plaid')->middleware('throttle:60,1')->group(function () {
+    Route::prefix('plaid')->middleware('throttle:60,1')->group(function (): void {
         Route::post('/create-link-token', [PlaidController::class, 'createLinkToken']);
         Route::post('/store-connection', [PlaidController::class, 'storeConnection']);
         Route::get('/connections', [PlaidController::class, 'listConnections']);
@@ -43,7 +39,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     // Revolut Business API Routes
-    Route::prefix('revolut')->middleware('throttle:60,1')->group(function () {
+    Route::prefix('revolut')->middleware('throttle:60,1')->group(function (): void {
         Route::get('/authorize', [RevolutController::class, 'redirectToRevolut']);
         Route::post('/callback', [RevolutController::class, 'handleCallback']);
         Route::get('/connections', [RevolutController::class, 'listConnections']);
@@ -55,7 +51,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     // Wise API Routes
-    Route::prefix('wise')->middleware('throttle:60,1')->group(function () {
+    Route::prefix('wise')->middleware('throttle:60,1')->group(function (): void {
         Route::get('/authorize', [WiseController::class, 'redirectToWise']);
         Route::post('/callback', [WiseController::class, 'handleCallback']);
         Route::get('/connections', [WiseController::class, 'listConnections']);

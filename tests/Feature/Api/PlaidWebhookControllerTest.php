@@ -32,7 +32,7 @@ class PlaidWebhookControllerTest extends TestCase
         ]);
     }
 
-    public function test_webhook_rejects_invalid_signature()
+    public function test_webhook_rejects_invalid_signature(): void
     {
         $payload = [
             'webhook_type' => 'TRANSACTIONS',
@@ -51,7 +51,7 @@ class PlaidWebhookControllerTest extends TestCase
             ]);
     }
 
-    public function test_webhook_accepts_valid_signature()
+    public function test_webhook_accepts_valid_signature(): void
     {
         Queue::fake();
 
@@ -75,7 +75,7 @@ class PlaidWebhookControllerTest extends TestCase
             ]);
     }
 
-    public function test_webhook_dispatches_sync_job_for_transactions_update()
+    public function test_webhook_dispatches_sync_job_for_transactions_update(): void
     {
         Queue::fake();
 
@@ -92,12 +92,10 @@ class PlaidWebhookControllerTest extends TestCase
             'Plaid-Verification' => $signature,
         ]);
 
-        Queue::assertPushed(SyncPlaidTransactionsJob::class, function ($job) {
-            return $job->connectionId === $this->connection->id;
-        });
+        Queue::assertPushed(SyncPlaidTransactionsJob::class, fn($job) => $job->connectionId === $this->connection->id);
     }
 
-    public function test_webhook_handles_item_error()
+    public function test_webhook_handles_item_error(): void
     {
         $payload = [
             'webhook_type' => 'ITEM',
@@ -122,7 +120,7 @@ class PlaidWebhookControllerTest extends TestCase
         ]);
     }
 
-    public function test_webhook_handles_user_permission_revoked()
+    public function test_webhook_handles_user_permission_revoked(): void
     {
         $payload = [
             'webhook_type' => 'ITEM',
@@ -143,7 +141,7 @@ class PlaidWebhookControllerTest extends TestCase
         ]);
     }
 
-    public function test_webhook_handles_unknown_item_gracefully()
+    public function test_webhook_handles_unknown_item_gracefully(): void
     {
         Queue::fake();
 
@@ -164,9 +162,9 @@ class PlaidWebhookControllerTest extends TestCase
         Queue::assertNothingPushed();
     }
 
-    public function test_webhook_without_verification_key_configured_rejects()
+    public function test_webhook_without_verification_key_configured_rejects(): void
     {
-        Config::set('services.plaid.webhook_verification_key', null);
+        Config::set('services.plaid.webhook_verification_key');
 
         $payload = [
             'webhook_type' => 'TRANSACTIONS',

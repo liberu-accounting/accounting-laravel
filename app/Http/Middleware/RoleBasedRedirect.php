@@ -56,13 +56,13 @@ class RoleBasedRedirect
 //        return redirect()->route('login');
     }
 
-  protected function isInTenantContext(Request $request)
+  protected function isInTenantContext(Request $request): bool
     {
         // Check if the current route is already prefixed with a tenant identifier
         // This might need to be adjusted based on your exact tenancy implementation
         return $request->segment(1) === 'tenant' || $request->is('tenant/*');
     }
-    protected function shouldRedirect(Request $request, $redirect)
+    protected function shouldRedirect(Request $request, string $redirect): bool
     {
         // Check if the current request path matches the redirect path
         return !$request->is($redirect) && !$request->is($redirect . '/*');

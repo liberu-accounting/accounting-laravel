@@ -12,6 +12,7 @@ class Project extends Model
     use HasFactory;
     use IsTenantModel;
 
+    #[\Override]
     protected $fillable = [
         'name',
         'code',
@@ -22,6 +23,7 @@ class Project extends Model
         'allocation_percentage'
     ];
 
+    #[\Override]
     protected $casts = [
         'start_date' => 'date',
         'end_date' => 'date',

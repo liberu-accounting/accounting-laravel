@@ -32,14 +32,19 @@ use Illuminate\Support\HtmlString;
 
 class JournalEntryResource extends Resource
 {
+    #[\Override]
     protected static ?string $model = JournalEntry::class;
 
+    #[\Override]
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-document-text';
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Journal Entries';
 
+    #[\Override]
     protected static string | \UnitEnum | null $navigationGroup = 'Accounting';
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -52,7 +57,7 @@ class JournalEntryResource extends Resource
                                     ->label('Entry Number')
                                     ->disabled()
                                     ->dehydrated(false)
-                                    ->default(fn () => 'Auto-generated'),
+                                    ->default(fn (): string => 'Auto-generated'),
                                 DatePicker::make('entry_date')
                                     ->label('Entry Date')
                                     ->required()
@@ -89,15 +94,11 @@ class JournalEntryResource extends Resource
                                     ->schema([
                                         Select::make('account_id')
                                             ->label('Account')
-                                            ->options(function () {
-                                                return Account::where('is_active', true)
-                                                    ->whereDoesntHave('children')
-                                                    ->orderBy('account_number')
-                                                    ->get()
-                                                    ->mapWithKeys(function ($account) {
-                                                        return [$account->id => $account->account_number . ' - ' . $account->account_name];
-                                                    });
-                                            })
+                                            ->options(fn() => Account::where('is_active', true)
+                                                ->whereDoesntHave('children')
+                                                ->orderBy('account_number')
+                                                ->get()
+                                                ->mapWithKeys(fn($account) => [$account->id => $account->account_number . ' - ' . $account->account_name]))
                                             ->required()
                                             ->searchable()
                                             ->preload()
@@ -141,21 +142,21 @@ class JournalEntryResource extends Resource
                             ->schema([
                                 Placeholder::make('total_debits')
                                     ->label('Total Debits')
-                                    ->content(function ($get) {
+                                    ->content(function ($get): \Illuminate\Support\HtmlString {
                                         $lines = $get('lines') ?? [];
                                         $total = collect($lines)->sum('debit_amount');
                                         return new HtmlString('<span class="text-lg font-bold">$' . number_format($total, 2) . '</span>');
                                     }),
                                 Placeholder::make('total_credits')
                                     ->label('Total Credits')
-                                    ->content(function ($get) {
+                                    ->content(function ($get): \Illuminate\Support\HtmlString {
                                         $lines = $get('lines') ?? [];
                                         $total = collect($lines)->sum('credit_amount');
                                         return new HtmlString('<span class="text-lg font-bold">$' . number_format($total, 2) . '</span>');
                                     }),
                                 Placeholder::make('balance')
                                     ->label('Difference')
-                                    ->content(function ($get) {
+                                    ->content(function ($get): \Illuminate\Support\HtmlString {
                                         $lines = $get('lines') ?? [];
                                         $debits = collect($lines)->sum('debit_amount');
                                         $credits = collect($lines)->sum('credit_amount');
@@ -169,6 +170,7 @@ class JournalEntryResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -234,8 +236,8 @@ class JournalEntryResource extends Resource
                     ->icon('heroicon-o-arrow-up-circle')
                     ->color('success')
                     ->requiresConfirmation()
-                    ->visible(fn ($record) => !$record->is_posted)
-                    ->action(function ($record) {
+                    ->visible(fn ($record): bool => !$record->is_posted)
+                    ->action(function ($record): void {
                         try {
                             $record->post();
                             \Filament\Notifications\Notification::make()
@@ -255,7 +257,7 @@ class JournalEntryResource extends Resource
                     ->color('warning')
                     ->requiresConfirmation()
                     ->visible(fn ($record) => $record->is_posted)
-                    ->action(function ($record) {
+                    ->action(function ($record): void {
                         try {
                             $record->reverse();
                             \Filament\Notifications\Notification::make()
@@ -271,11 +273,12 @@ class JournalEntryResource extends Resource
                         }
                     }),
                 DeleteAction::make()
-                    ->visible(fn ($record) => !$record->is_posted),
+                    ->visible(fn ($record): bool => !$record->is_posted),
             ])
             ->defaultSort('entry_date', 'desc');
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

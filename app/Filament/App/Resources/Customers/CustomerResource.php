@@ -28,10 +28,13 @@ use App\Filament\App\Resources\CustomerResource\RelationManagers;
 
 class CustomerResource extends Resource
 {
+    #[\Override]
     protected static ?string $model = Customer::class;
 
+    #[\Override]
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -46,6 +49,7 @@ class CustomerResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -111,6 +115,7 @@ class CustomerResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -118,6 +123,7 @@ class CustomerResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

@@ -6,9 +6,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    public function up(): void
     {
-        Schema::table('bank_connections', function (Blueprint $table) {
+        Schema::table('bank_connections', function (Blueprint $table): void {
             // Add user_id for multi-tenancy support (only if not already present)
             if (!Schema::hasColumn('bank_connections', 'user_id')) {
                 $table->foreignId('user_id')->after('id')->constrained()->onDelete('cascade');
@@ -41,15 +41,15 @@ return new class extends Migration
             // Index on status (only if not already indexed)
             try {
                 $table->index('status');
-            } catch (\Exception $e) {
+            } catch (\Exception) {
                 // Index may already exist
             }
         });
     }
 
-    public function down()
+    public function down(): void
     {
-        Schema::table('bank_connections', function (Blueprint $table) {
+        Schema::table('bank_connections', function (Blueprint $table): void {
             $table->dropForeign(['user_id']);
             $table->dropIndex(['user_id']);
             $table->dropIndex(['plaid_item_id']);

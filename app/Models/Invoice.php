@@ -16,6 +16,7 @@ class Invoice extends Model
 
     // protected $primaryKey = "invoice_id";
 
+   #[\Override]
    protected $fillable = [
     "customer_id",
     "vendor_id",
@@ -39,6 +40,7 @@ class Invoice extends Model
     "notes",
 ];
 
+#[\Override]
 protected $casts = [
     'total_amount' => 'decimal:2',
     'tax_amount' => 'decimal:2',
@@ -105,7 +107,7 @@ protected $casts = [
         return $taxAmount;
     }
 
-    public function getTotalWithTax()
+    public function getTotalWithTax(): float|int|array
     {
         return $this->total_amount + $this->tax_amount;
     }
@@ -129,7 +131,7 @@ protected $casts = [
         return $pdf->download('invoice_' . $this->invoice_number . '.pdf');
     }
 
-    public function generateRecurring()
+    public function generateRecurring(): void
     {
         if (!$this->is_recurring || !$this->shouldGenerateNew()) {
             return;
@@ -150,8 +152,6 @@ protected $casts = [
         if ($this->recurrence_end && $this->recurrence_end < now()) {
             return false;
         }
-
-        $lastDate = $this->last_generated ?? $this->recurrence_start;
         return $this->getNextDate()->lte(now());
     }
 
@@ -168,7 +168,7 @@ protected $casts = [
         };
 
     }
-    public function approve()
+    public function approve(): void
     {
         $this->update([
             'approval_status' => 'approved',
@@ -179,7 +179,7 @@ protected $casts = [
         event(new InvoiceApproved($this));
     }
 
-    public function reject($reason)
+    public function reject($reason): void
     {
         $this->update([
             'approval_status' => 'rejected',
@@ -196,11 +196,12 @@ protected $casts = [
         return $this->approval_status === 'pending';
     }
 
+    #[\Override]
     protected static function boot()
     {
         parent::boot();
         
-        static::creating(function ($invoice) {
+        static::creating(function ($invoice): void {
             if (empty($invoice->invoice_number)) {
                 $invoice->invoice_number = 'INV-' . str_pad(static::max('invoice_id') + 1, 6, '0', STR_PAD_LEFT);
             }

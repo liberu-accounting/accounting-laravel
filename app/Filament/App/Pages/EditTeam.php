@@ -10,6 +10,7 @@ use Filament\Pages\Tenancy\EditTenantProfile;
 
 class EditTeam extends EditTenantProfile
 {
+    #[\Override]
     protected string $view = 'filament.pages.edit-team';
 
     public $name = '';
@@ -19,6 +20,7 @@ class EditTeam extends EditTenantProfile
         return 'Edit Team';
     }
 
+    #[\Override]
     public function mount(): void
     {
         abort_unless($this->user()->canCreateTeams(), 403);
@@ -50,6 +52,7 @@ class EditTeam extends EditTenantProfile
         return redirect()->route('filament.pages.edit-team', ['team' => $team]);
     }
 
+    #[\Override]
     public function getBreadcrumbs(): array
     {
         return [

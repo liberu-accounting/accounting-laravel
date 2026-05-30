@@ -26,11 +26,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class ExpenseResource extends Resource
 {
+    #[\Override]
     protected static ?string $model = Expense::class;
 
+    #[\Override]
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-currency-dollar';
+    #[\Override]
     protected static string | \UnitEnum | null $navigationGroup = 'Finance';
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -56,7 +60,7 @@ class ExpenseResource extends Resource
                     ->disabled()
                     ->dehydrated(false),
                 Textarea::make('rejection_reason')
-                    ->visible(fn (?Model $record) => $record?->approval_status === 'rejected')
+                    ->visible(fn (?Model $record): bool => $record?->approval_status === 'rejected')
                     ->maxLength(1000)
                     ->columnSpanFull(),
                 Toggle::make('is_recurring')
@@ -82,6 +86,7 @@ class ExpenseResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -121,7 +126,7 @@ class ExpenseResource extends Resource
                 Action::make('approve')
                     ->action(fn (Expense $record) => $record->approve())
                     ->requiresConfirmation()
-                    ->visible(fn (Expense $record) => $record->isPending())
+                    ->visible(fn (Expense $record): bool => $record->isPending())
                     ->color('success')
                     ->icon('heroicon-o-check'),
                 Action::make('reject')
@@ -132,18 +137,20 @@ class ExpenseResource extends Resource
                             ->label('Rejection Reason'),
                     ])
                     ->action(fn (Expense $record, array $data) => $record->reject($data['reason']))
-                    ->visible(fn (Expense $record) => $record->isPending())
+                    ->visible(fn (Expense $record): bool => $record->isPending())
                     ->color('danger')
                     ->icon('heroicon-o-x-mark'),
             ])
             ->defaultSort('created_at', 'desc');
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

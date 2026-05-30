@@ -34,14 +34,19 @@ use App\Filament\App\Resources\TransactionResource\RelationManagers;
 
 class TransactionResource extends Resource
 {
+    #[\Override]
     protected static ?string $model = Transaction::class;
 
+    #[\Override]
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
     
+    #[\Override]
     protected static string | \UnitEnum | null $navigationGroup = 'Banking';
     
+    #[\Override]
     protected static ?int $navigationSort = 3;
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -65,7 +70,7 @@ class TransactionResource extends Resource
                     ->searchable()
                     ->preload()
                     ->live()
-                    ->afterStateUpdated(function ($state, callable $set) {
+                    ->afterStateUpdated(function ($state, callable $set): void {
                         if ($state) {
                             $defaultCurrency = Currency::where('is_default', true)->first();
                             if ($state !== $defaultCurrency->currency_id) {
@@ -106,6 +111,7 @@ class TransactionResource extends Resource
             ]);
     }
     
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -158,6 +164,7 @@ class TransactionResource extends Resource
             ->defaultSort('transaction_date', 'desc');
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -165,6 +172,7 @@ class TransactionResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

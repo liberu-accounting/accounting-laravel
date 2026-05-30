@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('companies', function (Blueprint $table) {
+        Schema::table('companies', function (Blueprint $table): void {
             $table->string('hmrc_utr', 10)->nullable()->after('company_phone')->comment('HMRC Unique Taxpayer Reference');
             $table->string('hmrc_paye_reference', 20)->nullable()->after('hmrc_utr')->comment('HMRC PAYE Reference');
             $table->string('hmrc_vat_number', 12)->nullable()->after('hmrc_paye_reference')->comment('VAT Registration Number');
@@ -27,7 +27,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('companies', function (Blueprint $table) {
+        Schema::table('companies', function (Blueprint $table): void {
             $table->dropColumn([
                 'hmrc_utr',
                 'hmrc_paye_reference',

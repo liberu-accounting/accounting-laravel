@@ -23,7 +23,7 @@ class InventoryValuationService
         }
     }
 
-    private function calculateFIFOCost(InventoryTransaction $transaction)
+    private function calculateFIFOCost(InventoryTransaction $transaction): float|int
     {
         $remainingQty = $transaction->quantity;
         $totalCost = 0;
@@ -40,13 +40,15 @@ class InventoryValuationService
             $layer->save();
             
             $remainingQty -= $qtyFromLayer;
-            if ($remainingQty <= 0) break;
+            if ($remainingQty <= 0) {
+                break;
+            }
         }
 
         return $totalCost;
     }
 
-    private function calculateLIFOCost(InventoryTransaction $transaction)
+    private function calculateLIFOCost(InventoryTransaction $transaction): float|int
     {
         $remainingQty = $transaction->quantity;
         $totalCost = 0;
@@ -63,19 +65,21 @@ class InventoryValuationService
             $layer->save();
             
             $remainingQty -= $qtyFromLayer;
-            if ($remainingQty <= 0) break;
+            if ($remainingQty <= 0) {
+                break;
+            }
         }
 
         return $totalCost;
     }
 
-    private function calculateAverageCost(InventoryTransaction $transaction)
+    private function calculateAverageCost(InventoryTransaction $transaction): int|float
     {
         $item = $transaction->inventoryItem;
         return $transaction->quantity * $item->average_cost;
     }
 
-    public function updateAverageCost(InventoryItem $item, $purchaseQty, $purchaseCost)
+    public function updateAverageCost(InventoryItem $item, $purchaseQty, $purchaseCost): void
     {
         $totalValue = ($item->current_quantity * $item->average_cost) + 
                      ($purchaseQty * $purchaseCost);

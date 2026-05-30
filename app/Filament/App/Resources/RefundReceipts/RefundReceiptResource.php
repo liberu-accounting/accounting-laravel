@@ -26,16 +26,22 @@ use Filament\Tables\Filters\SelectFilter;
 
 class RefundReceiptResource extends Resource
 {
+    #[\Override]
     protected static ?string $model = RefundReceipt::class;
     
+    #[\Override]
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-arrow-uturn-left';
     
+    #[\Override]
     protected static ?int $navigationSort = 7;
     
+    #[\Override]
     protected static string | \UnitEnum | null $navigationGroup = 'Sales';
     
+    #[\Override]
     protected static ?string $recordTitleAttribute = 'refund_receipt_number';
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -52,7 +58,7 @@ class RefundReceiptResource extends Resource
                             ->label('Refund #')
                             ->disabled()
                             ->dehydrated(false)
-                            ->visible(fn ($record) => $record !== null),
+                            ->visible(fn ($record): bool => $record !== null),
                             
                         DatePicker::make('refund_date')
                             ->required()
@@ -172,6 +178,7 @@ class RefundReceiptResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -237,14 +244,14 @@ class RefundReceiptResource extends Resource
                     ->label('Process')
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
-                    ->visible(fn ($record) => $record->status === 'draft')
+                    ->visible(fn ($record): bool => $record->status === 'draft')
                     ->requiresConfirmation()
                     ->action(fn ($record) => $record->process()),
                 Action::make('void')
                     ->label('Void')
                     ->icon('heroicon-o-x-circle')
                     ->color('danger')
-                    ->visible(fn ($record) => $record->status !== 'void')
+                    ->visible(fn ($record): bool => $record->status !== 'void')
                     ->requiresConfirmation()
                     ->action(fn ($record) => $record->void()),
             ])
@@ -256,6 +263,7 @@ class RefundReceiptResource extends Resource
             ->defaultSort('refund_date', 'desc');
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -263,6 +271,7 @@ class RefundReceiptResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

@@ -11,10 +11,6 @@ class FinancialStatementService
 {
     /**
      * Generate Profit & Loss (Income Statement) for a given period
-     *
-     * @param Carbon $startDate
-     * @param Carbon $endDate
-     * @return array
      */
     public function profitAndLoss(Carbon $startDate, Carbon $endDate): array
     {
@@ -70,9 +66,6 @@ class FinancialStatementService
 
     /**
      * Generate Balance Sheet for a given date
-     *
-     * @param Carbon $asOfDate
-     * @return array
      */
     public function balanceSheet(Carbon $asOfDate): array
     {
@@ -125,10 +118,6 @@ class FinancialStatementService
 
     /**
      * Generate Cash Flow Statement for a given period
-     *
-     * @param Carbon $startDate
-     * @param Carbon $endDate
-     * @return array
      */
     public function cashFlowStatement(Carbon $startDate, Carbon $endDate): array
     {
@@ -178,7 +167,7 @@ class FinancialStatementService
      */
     protected function calculateAccountsBalance($accounts, $startDate, $endDate)
     {
-        return $accounts->map(function ($account) use ($startDate, $endDate) {
+        return $accounts->map(function ($account) use ($startDate, $endDate): array {
             $balance = $this->getAccountBalance($account->id, $startDate, $endDate);
             
             return [
@@ -188,19 +177,15 @@ class FinancialStatementService
                 'type' => $account->type,
                 'balance' => $balance,
             ];
-        })->filter(function ($account) {
+        })->filter(
             // Only show accounts with non-zero balances
-            return abs($account['balance']) > 0.01;
-        });
+            fn($account) => abs($account['balance']) > 0.01);
     }
 
     /**
      * Get account balance for a specific period
      *
-     * @param int $accountId
      * @param Carbon|null $startDate
-     * @param Carbon $endDate
-     * @return float
      */
     protected function getAccountBalance(int $accountId, $startDate, Carbon $endDate): float
     {
@@ -210,7 +195,7 @@ class FinancialStatementService
         }
 
         $query = JournalEntryLine::where('account_id', $accountId)
-            ->whereHas('journalEntry', function ($q) use ($startDate, $endDate) {
+            ->whereHas('journalEntry', function ($q) use ($startDate, $endDate): void {
                 $q->where('status', 'posted')
                   ->where('entry_date', '<=', $endDate);
                 
@@ -239,9 +224,6 @@ class FinancialStatementService
 
     /**
      * Calculate retained earnings as of a specific date
-     *
-     * @param Carbon $asOfDate
-     * @return float
      */
     protected function calculateRetainedEarnings(Carbon $asOfDate): float
     {
@@ -254,11 +236,6 @@ class FinancialStatementService
 
     /**
      * Calculate operating cash flow
-     *
-     * @param Carbon $startDate
-     * @param Carbon $endDate
-     * @param float $netIncome
-     * @return array
      */
     protected function calculateOperatingCashFlow(Carbon $startDate, Carbon $endDate, float $netIncome): array
     {
@@ -283,10 +260,6 @@ class FinancialStatementService
 
     /**
      * Calculate investing cash flow
-     *
-     * @param Carbon $startDate
-     * @param Carbon $endDate
-     * @return array
      */
     protected function calculateInvestingCashFlow(Carbon $startDate, Carbon $endDate): array
     {
@@ -303,10 +276,6 @@ class FinancialStatementService
 
     /**
      * Calculate financing cash flow
-     *
-     * @param Carbon $startDate
-     * @param Carbon $endDate
-     * @return array
      */
     protected function calculateFinancingCashFlow(Carbon $startDate, Carbon $endDate): array
     {
@@ -327,9 +296,6 @@ class FinancialStatementService
 
     /**
      * Get cash balance as of a specific date
-     *
-     * @param Carbon $asOfDate
-     * @return float
      */
     protected function getCashBalance(Carbon $asOfDate): float
     {
@@ -337,8 +303,6 @@ class FinancialStatementService
             ->orWhere('name', 'like', '%cash%')
             ->get();
 
-        return $cashAccounts->sum(function ($account) use ($asOfDate) {
-            return $this->getAccountBalance($account->id, null, $asOfDate);
-        });
+        return $cashAccounts->sum(fn($account) => $this->getAccountBalance($account->id, null, $asOfDate));
     }
 }

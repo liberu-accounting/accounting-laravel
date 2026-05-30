@@ -10,12 +10,14 @@ use Illuminate\Support\Facades\Auth;
 
 class EditProfile extends Page
 {
+    #[\Override]
     protected string $view = 'filament.pages.edit-profile';
+    #[\Override]
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-chart-bar';
 
     public User $user;
 
-    public function mount()
+    public function mount(): void
     {
         $this->user = Auth::user();
         $this->form->fill([
@@ -38,7 +40,7 @@ class EditProfile extends Page
         ];
     }
 
-    public function submit()
+    public function submit(): void
     {
         $this->validate();
 
@@ -52,6 +54,7 @@ class EditProfile extends Page
         Filament::notify('success', 'Your profile has been updated.');
     }
 
+    #[\Override]
     public function getBreadcrumbs(): array
     {
         return [

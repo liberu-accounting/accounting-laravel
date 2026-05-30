@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,8 +13,10 @@ class AssetAcquisition extends Model
     use HasFactory;
     use IsTenantModel;
 
+    #[\Override]
     protected $primaryKey = 'asset_acquisition_id';
 
+    #[\Override]
     protected $fillable = [
         'asset_id',
         'acquisition_date',

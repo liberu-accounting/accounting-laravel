@@ -8,9 +8,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    public function up(): void
     {
-        Schema::create('depreciation_calculations', function (Blueprint $table) {
+        Schema::create('depreciation_calculations', function (Blueprint $table): void {
             $table->id();
             $table->foreignId('asset_id')->constrained('assets', 'id');
             $table->integer('year');
@@ -22,7 +22,7 @@ return new class extends Migration
         });
     }
 
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('depreciation_calculations');
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Models\Currency;
@@ -8,16 +10,16 @@ use Illuminate\Support\Facades\Http;
 
 class ExchangeRateService
 {
-    protected $apiKey;
-    protected $apiUrl;
+    private readonly string $apiKey;
+    private readonly string $apiUrl;
 
     public function __construct()
     {
-        $this->apiKey = config('services.exchange_rate_api.key');
-        $this->apiUrl = config('services.exchange_rate_api.url');
+        $this->apiKey = config('services.exchange_rate_api.key') ?? '';
+        $this->apiUrl = config('services.exchange_rate_api.url') ?? '';
     }
 
-    public function updateExchangeRates()
+    public function updateExchangeRates(): void
     {
         $defaultCurrency = Currency::where('is_default', true)->first();
         $currencies = Currency::where('is_default', false)->get();
@@ -45,7 +47,7 @@ class ExchangeRateService
         }
     }
 
-    public function getExchangeRate(Currency $fromCurrency, Currency $toCurrency)
+    public function getExchangeRate(Currency $fromCurrency, Currency $toCurrency): float|int|null
     {
         $exchangeRate = ExchangeRate::where('from_currency_id', $fromCurrency->id)
             ->where('to_currency_id', $toCurrency->id)
@@ -60,6 +62,6 @@ class ExchangeRateService
                 ->first();
         }
 
-        return $exchangeRate ? $exchangeRate->rate : null;
+        return $exchangeRate?->rate;
     }
 }

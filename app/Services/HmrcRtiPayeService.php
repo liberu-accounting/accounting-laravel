@@ -9,14 +9,12 @@ use Illuminate\Support\Facades\Log;
 
 class HmrcRtiPayeService
 {
-    private string $baseUrl;
-    private HmrcAuthService $authService;
+    private readonly string $baseUrl;
 
-    public function __construct(HmrcAuthService $authService)
+    public function __construct(private readonly HmrcAuthService $authService)
     {
         $environment = config('hmrc.environment');
         $this->baseUrl = config("hmrc.endpoints.{$environment}");
-        $this->authService = $authService;
     }
 
     /**
@@ -38,7 +36,7 @@ class HmrcRtiPayeService
             $xml = $this->buildFpsXml($payeSubmission);
             
             // Parse PAYE reference (format: 123/AB12345)
-            [$officeNumber, $payeRef] = explode('/', $company->hmrc_paye_reference);
+            [$officeNumber, $payeRef] = explode('/', (string) $company->hmrc_paye_reference);
             
             $response = Http::withHeaders($this->getHeaders())
                 ->withBody($xml, 'application/xml')
@@ -90,7 +88,7 @@ class HmrcRtiPayeService
     public function submitEps(array $epsData, string $payeReference): array
     {
         try {
-            $xml = $this->buildEpsXml($epsData);
+            $xml = $this->buildEpsXml();
             
             [$officeNumber, $payeRef] = explode('/', $payeReference);
             
@@ -123,7 +121,7 @@ class HmrcRtiPayeService
     public function submitEyu(array $eyuData, string $payeReference): array
     {
         try {
-            $xml = $this->buildEyuXml($eyuData);
+            $xml = $this->buildEyuXml();
             
             [$officeNumber, $payeRef] = explode('/', $payeReference);
             
@@ -185,8 +183,8 @@ class HmrcRtiPayeService
         
         // Employer
         $employer = $employment->addChild('Employer');
-        $employer->addChild('OfficeNumber', explode('/', $company->hmrc_paye_reference)[0]);
-        $employer->addChild('PayeReference', explode('/', $company->hmrc_paye_reference)[1]);
+        $employer->addChild('OfficeNumber', explode('/', (string) $company->hmrc_paye_reference)[0]);
+        $employer->addChild('PayeReference', explode('/', (string) $company->hmrc_paye_reference)[1]);
         $employer->addChild('Name', $company->company_name);
         
         // Employees
@@ -212,32 +210,26 @@ class HmrcRtiPayeService
     /**
      * Build EPS XML for HMRC submission.
      */
-    private function buildEpsXml(array $epsData): string
+    private function buildEpsXml(): string
     {
         $schemaVersion = config('hmrc.rti.schema_version', '16-17');
         $namespace = config('hmrc.rti.namespace_base') . "/EmployerPaymentSummary/{$schemaVersion}";
-        
         $xml = new \SimpleXMLElement("<?xml version=\"1.0\" encoding=\"UTF-8\"?><IRenvelope xmlns=\"{$namespace}\"></IRenvelope>");
-        
         // Build EPS structure similar to FPS
         // This is a simplified version - actual implementation would be more detailed
-        
         return $xml->asXML();
     }
 
     /**
      * Build EYU XML for HMRC submission.
      */
-    private function buildEyuXml(array $eyuData): string
+    private function buildEyuXml(): string
     {
         $schemaVersion = config('hmrc.rti.schema_version', '16-17');
         $namespace = config('hmrc.rti.namespace_base') . "/EarlierYearUpdate/{$schemaVersion}";
-        
         $xml = new \SimpleXMLElement("<?xml version=\"1.0\" encoding=\"UTF-8\"?><IRenvelope xmlns=\"{$namespace}\"></IRenvelope>");
-        
         // Build EYU structure
         // This is a simplified version - actual implementation would be more detailed
-        
         return $xml->asXML();
     }
 

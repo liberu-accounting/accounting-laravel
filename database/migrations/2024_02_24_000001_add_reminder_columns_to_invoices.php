@@ -10,7 +10,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('invoices', function (Blueprint $table) {
+        Schema::table('invoices', function (Blueprint $table): void {
             $table->integer('reminders_sent')->default(0);
             $table->timestamp('last_reminder_sent_at')->nullable();
         });
@@ -18,7 +18,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::table('invoices', function (Blueprint $table) {
+        Schema::table('invoices', function (Blueprint $table): void {
             $table->dropColumn(['reminders_sent', 'last_reminder_sent_at']);
         });
     }

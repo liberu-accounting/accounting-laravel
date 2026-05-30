@@ -8,9 +8,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    public function up(): void
     {
-        Schema::create('tax_forms', function (Blueprint $table) {
+        Schema::create('tax_forms', function (Blueprint $table): void {
             $table->id('tax_form_id');
             $table->string('form_type'); // e.g., '1099-MISC'
             $table->foreignId('customer_id')->constrained('customers', 'id');
@@ -23,7 +23,7 @@ return new class extends Migration
         });
     }
 
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('tax_forms');
     }

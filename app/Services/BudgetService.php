@@ -14,7 +14,7 @@ class BudgetService
             ->orWhereBetween('end_date', [$startDate, $endDate])
             ->get();
 
-        return $budgets->map(function ($budget) {
+        return $budgets->map(function ($budget): array {
             $account = $budget->account;
             $actualAmount = $this->calculateActualAmount($account, $budget);
             $variance = $actualAmount - $budget->planned_amount;
@@ -62,7 +62,7 @@ class BudgetService
         return $historicalData->avg('amount');
     }
 
-    private function calculateActualAmount($account, $budget)
+    private function calculateActualAmount($account, $budget): int|float
     {
         return $account->debitTransactions()
             ->whereBetween('transaction_date', [$budget->start_date, $budget->end_date])
@@ -72,7 +72,7 @@ class BudgetService
             ->sum('amount');
     }
 
-    private function calculatePercentageUsed($actualAmount, $plannedAmount)
+    private function calculatePercentageUsed($actualAmount, $plannedAmount): float|int
     {
         return $plannedAmount != 0 ? ($actualAmount / $plannedAmount) * 100 : 0;
     }

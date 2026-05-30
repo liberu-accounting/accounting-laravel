@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,8 +13,10 @@ class Currency extends Model
     use HasFactory;
     use IsTenantModel;
 
+    #[\Override]
     protected $primaryKey = 'currency_id';
 
+    #[\Override]
     protected $fillable = [
         'code',
         'name',
@@ -20,6 +24,7 @@ class Currency extends Model
         'is_default',
     ];
 
+    #[\Override]
     protected $casts = [
         'is_default' => 'boolean',
     ];

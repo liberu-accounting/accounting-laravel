@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,8 +13,10 @@ class InventoryTransaction extends Model
     use HasFactory;
     use IsTenantModel;
 
+    #[\Override]
     protected $primaryKey = 'inventory_transaction_id';
 
+    #[\Override]
     protected $fillable = [
         'inventory_item_id',
         'transaction_id',
@@ -22,6 +26,7 @@ class InventoryTransaction extends Model
         'notes'
     ];
 
+    #[\Override]
     protected $casts = [
         'quantity' => 'integer',
         'unit_price' => 'decimal:2'

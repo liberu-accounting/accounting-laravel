@@ -9,13 +9,15 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditJournalEntry extends EditRecord
 {
+    #[\Override]
     protected static string $resource = JournalEntryResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [
             Actions\DeleteAction::make()
-                ->visible(fn () => !$this->record->is_posted),
+                ->visible(fn (): bool => !$this->record->is_posted),
         ];
     }
 
@@ -41,6 +43,7 @@ class EditJournalEntry extends EditRecord
         }
     }
 
+    #[\Override]
     protected function getRedirectUrl(): string
     {
         return $this->getResource()::getUrl('index');

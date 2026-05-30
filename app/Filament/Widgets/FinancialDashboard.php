@@ -8,9 +8,12 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class FinancialDashboard extends BaseWidget
 {
+    #[\Override]
     protected static ?string $pollingInterval = '15s';
+    #[\Override]
     protected static bool $isLazy = true;
 
+    #[\Override]
     protected function getStats(): array
     {
         $ledgerService = new GeneralLedgerService();

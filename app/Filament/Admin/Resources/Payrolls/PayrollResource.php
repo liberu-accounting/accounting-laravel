@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Admin\Resources\Payrolls;
 
 use Filament\Schemas\Schema;
@@ -23,11 +25,15 @@ use Filament\Tables\Table;
 
 class PayrollResource extends Resource
 {
+    #[\Override]
     protected static ?string $model = Payroll::class;
 
+    #[\Override]
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-currency-dollar';
+    #[\Override]
     protected static string | \UnitEnum | null $navigationGroup = 'HR';
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -67,6 +73,7 @@ class PayrollResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -104,6 +111,7 @@ class PayrollResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

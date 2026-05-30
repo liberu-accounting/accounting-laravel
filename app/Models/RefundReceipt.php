@@ -35,8 +35,10 @@ class RefundReceipt extends Model
     use IsTenantModel;
     use HasFactory, SoftDeletes;
 
+    #[\Override]
     protected $primaryKey = 'refund_receipt_id';
 
+    #[\Override]
     protected $fillable = [
         'customer_id',
         'sales_receipt_id',
@@ -54,6 +56,7 @@ class RefundReceipt extends Model
         'refund_from_account_id',
     ];
 
+    #[\Override]
     protected $casts = [
         'refund_date' => 'date',
         'subtotal_amount' => 'decimal:2',
@@ -61,15 +64,17 @@ class RefundReceipt extends Model
         'total_amount' => 'decimal:2',
     ];
 
+    #[\Override]
     protected $attributes = [
         'status' => 'draft',
     ];
 
+    #[\Override]
     protected static function boot()
     {
         parent::boot();
 
-        static::creating(function ($refund) {
+        static::creating(function ($refund): void {
             if (empty($refund->refund_receipt_number)) {
                 $refund->refund_receipt_number = self::generateRefundNumber();
             }
@@ -82,7 +87,7 @@ class RefundReceipt extends Model
     private static function generateRefundNumber(): string
     {
         $lastRefund = self::orderBy('refund_receipt_id', 'desc')->first();
-        $nextNumber = $lastRefund ? ((int) substr($lastRefund->refund_receipt_number, 3)) + 1 : 1;
+        $nextNumber = $lastRefund ? ((int) substr((string) $lastRefund->refund_receipt_number, 3)) + 1 : 1;
         return 'RR-' . str_pad($nextNumber, 6, '0', STR_PAD_LEFT);
     }
 

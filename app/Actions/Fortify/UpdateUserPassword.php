@@ -48,7 +48,7 @@ class UpdateUserPassword implements UpdatesUserPasswords
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);
-            throw new Exception('Failed to update password. Please try again later.');
+            throw new Exception('Failed to update password. Please try again later.', $e->getCode(), $e);
         }
     }
 }

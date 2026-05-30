@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -11,12 +13,14 @@ class BankFeedTransaction extends Model
     use HasFactory;
     use IsTenantModel;
 
+    #[\Override]
     protected $fillable = [
         'transaction_id',
         'bank_connection_id',
         'raw_data'
     ];
 
+    #[\Override]
     protected $casts = [
         'raw_data' => 'json'
     ];

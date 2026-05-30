@@ -28,7 +28,7 @@ class PlaidBalanceTest extends TestCase
         ]);
     }
 
-    public function test_get_balances_syncs_account_balances()
+    public function test_get_balances_syncs_account_balances(): void
     {
         Http::fake([
             'sandbox.plaid.com/accounts/balance/get' => Http::response([
@@ -99,7 +99,7 @@ class PlaidBalanceTest extends TestCase
         ]);
     }
 
-    public function test_get_balances_updates_existing_balances()
+    public function test_get_balances_updates_existing_balances(): void
     {
         // Create existing balance
         $existingBalance = BankAccountBalance::create([
@@ -140,7 +140,7 @@ class PlaidBalanceTest extends TestCase
         $this->assertEquals(1450.00, $existingBalance->available_balance);
     }
 
-    public function test_get_balances_prevents_unauthorized_access()
+    public function test_get_balances_prevents_unauthorized_access(): void
     {
         $otherUser = User::factory()->create();
         
@@ -154,7 +154,7 @@ class PlaidBalanceTest extends TestCase
             ]);
     }
 
-    public function test_get_balances_rejects_inactive_connection()
+    public function test_get_balances_rejects_inactive_connection(): void
     {
         $this->connection->update(['status' => 'disconnected']);
 
@@ -168,7 +168,7 @@ class PlaidBalanceTest extends TestCase
             ]);
     }
 
-    public function test_bank_connection_has_balances_relationship()
+    public function test_bank_connection_has_balances_relationship(): void
     {
         BankAccountBalance::create([
             'bank_connection_id' => $this->connection->id,

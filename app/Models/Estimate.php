@@ -13,8 +13,10 @@ class Estimate extends Model
     use IsTenantModel;
     use HasFactory, SoftDeletes;
 
+    #[\Override]
     protected $primaryKey = 'estimate_id';
 
+    #[\Override]
     protected $fillable = [
         'customer_id',
         'estimate_number',
@@ -36,6 +38,7 @@ class Estimate extends Model
         'document_path',
     ];
 
+    #[\Override]
     protected $casts = [
         'estimate_date' => 'date',
         'expiration_date' => 'date',
@@ -79,7 +82,7 @@ class Estimate extends Model
         return Carbon::now()->isAfter($this->expiration_date);
     }
 
-    public function getDaysUntilExpirationAttribute()
+    public function getDaysUntilExpirationAttribute(): ?float
     {
         if (!$this->expiration_date) {
             return null;
@@ -115,14 +118,14 @@ class Estimate extends Model
         return $taxAmount;
     }
 
-    public function calculateTotals()
+    public function calculateTotals(): void
     {
         $this->subtotal_amount = $this->items->sum('amount');
         $this->calculateTax();
         $this->save();
     }
 
-    public function markAsSent()
+    public function markAsSent(): void
     {
         $this->update([
             'status' => 'sent',
@@ -130,7 +133,7 @@ class Estimate extends Model
         ]);
     }
 
-    public function markAsViewed()
+    public function markAsViewed(): void
     {
         if (!$this->viewed_at) {
             $this->update([
@@ -140,7 +143,7 @@ class Estimate extends Model
         }
     }
 
-    public function accept()
+    public function accept(): void
     {
         $this->update([
             'status' => 'accepted',
@@ -148,7 +151,7 @@ class Estimate extends Model
         ]);
     }
 
-    public function decline($reason = null)
+    public function decline($reason = null): void
     {
         $this->update([
             'status' => 'declined',
@@ -200,7 +203,7 @@ class Estimate extends Model
     public function scopeActive($query)
     {
         return $query->whereIn('status', ['draft', 'sent', 'viewed'])
-            ->where(function($q) {
+            ->where(function($q): void {
                 $q->whereNull('expiration_date')
                   ->orWhere('expiration_date', '>=', now());
             });
@@ -212,11 +215,12 @@ class Estimate extends Model
     }
 
     // Auto-generate estimate number and check expiration
+    #[\Override]
     protected static function boot()
     {
         parent::boot();
         
-        static::creating(function ($estimate) {
+        static::creating(function ($estimate): void {
             if (empty($estimate->estimate_number)) {
                 $estimate->estimate_number = static::generateEstimateNumber();
             }
@@ -225,7 +229,7 @@ class Estimate extends Model
             }
         });
 
-        static::saving(function ($estimate) {
+        static::saving(function ($estimate): void {
             // Auto-expire if past expiration date
             if ($estimate->expiration_date && 
                 Carbon::now()->isAfter($estimate->expiration_date) &&
@@ -235,7 +239,7 @@ class Estimate extends Model
         });
     }
 
-    public static function generateEstimateNumber()
+    public static function generateEstimateNumber(): string
     {
         $prefix = 'EST';
         $year = date('Y');
@@ -246,7 +250,7 @@ class Estimate extends Model
         if (!$lastEstimate) {
             $number = 1;
         } else {
-            $parts = explode('-', $lastEstimate->estimate_number);
+            $parts = explode('-', (string) $lastEstimate->estimate_number);
             $number = isset($parts[1]) ? ((int)$parts[1]) + 1 : 1;
         }
 

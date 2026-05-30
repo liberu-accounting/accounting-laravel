@@ -16,7 +16,7 @@ class AgingReportService
             ->with('customer')
             ->get()
             ->groupBy('customer_id')
-            ->map(function ($invoices) use ($today) {
+            ->map(function ($invoices) use ($today): array {
                 $customer = $invoices->first()->customer;
                 
                 $aging = [

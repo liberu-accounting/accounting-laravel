@@ -12,6 +12,7 @@ class HmrcPayeSubmission extends Model
     use HasFactory;
     use IsTenantModel;
 
+    #[\Override]
     protected $fillable = [
         'company_id',
         'hmrc_submission_id',
@@ -30,6 +31,7 @@ class HmrcPayeSubmission extends Model
         'late_reason',
     ];
 
+    #[\Override]
     protected $casts = [
         'payment_date' => 'date',
         'total_gross_pay' => 'decimal:2',

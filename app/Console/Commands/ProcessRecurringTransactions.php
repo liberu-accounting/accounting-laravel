@@ -7,16 +7,18 @@ use Illuminate\Console\Command;
 
 class ProcessRecurringTransactions extends Command
 {
+    #[\Override]
     protected $signature = 'recurring:process';
+    #[\Override]
     protected $description = 'Process all recurring invoices and expenses';
 
-    public function handle()
+    public function handle(): void
     {
-        Invoice::where('is_recurring', true)->each(function ($invoice) {
+        Invoice::where('is_recurring', true)->each(function ($invoice): void {
             $invoice->generateRecurring();
         });
 
-        Expense::where('is_recurring', true)->each(function ($expense) {
+        Expense::where('is_recurring', true)->each(function ($expense): void {
             $expense->generateRecurring();
         });
 

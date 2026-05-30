@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\App\Resources\Companies;
 
 use Filament\Schemas\Schema;
@@ -22,11 +24,16 @@ use App\Filament\App\Resources\CompanyResource\Pages;
 
 class CompanyResource extends Resource
 {
+    #[\Override]
     protected static ?string $model = Company::class;
+    #[\Override]
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-building-office';
+    #[\Override]
     protected static ?int $navigationSort = 3;
+    #[\Override]
     protected static string | \UnitEnum | null $navigationGroup = 'Settings';
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -52,6 +59,7 @@ class CompanyResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -89,6 +97,7 @@ class CompanyResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -96,6 +105,7 @@ class CompanyResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

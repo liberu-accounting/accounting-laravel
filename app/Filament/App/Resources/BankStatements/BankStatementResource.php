@@ -32,14 +32,19 @@ use Filament\Notifications\Notification;
 
 class BankStatementResource extends Resource
 {
+    #[\Override]
     protected static ?string $model = BankStatement::class;
 
+    #[\Override]
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document-text';
     
+    #[\Override]
     protected static string | \UnitEnum | null $navigationGroup = 'Banking';
     
+    #[\Override]
     protected static ?int $navigationSort = 2;
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -93,14 +98,15 @@ class BankStatementResource extends Resource
                             ->label('Import Bank Statement File')
                             ->acceptedFileTypes(['text/csv', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/x-ofx'])
                             ->maxSize(5120)
-                            ->visible(fn ($livewire) => $livewire instanceof CreateBankStatement)
+                            ->visible(fn ($livewire): bool => $livewire instanceof CreateBankStatement)
                             ->helperText('Upload a CSV, Excel, or OFX file with your bank statement transactions'),
                     ])
-                    ->visible(fn ($livewire) => $livewire instanceof CreateBankStatement)
+                    ->visible(fn ($livewire): bool => $livewire instanceof CreateBankStatement)
                     ->collapsible(),
             ]);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -155,17 +161,15 @@ class BankStatementResource extends Resource
                         DatePicker::make('until')
                             ->label('Until'),
                     ])
-                    ->query(function ($query, array $data) {
-                        return $query
-                            ->when(
-                                $data['from'],
-                                fn($query) => $query->whereDate('statement_date', '>=', $data['from'])
-                            )
-                            ->when(
-                                $data['until'],
-                                fn($query) => $query->whereDate('statement_date', '<=', $data['until'])
-                            );
-                    }),
+                    ->query(fn($query, array $data) => $query
+                        ->when(
+                            $data['from'],
+                            fn($query) => $query->whereDate('statement_date', '>=', $data['from'])
+                        )
+                        ->when(
+                            $data['until'],
+                            fn($query) => $query->whereDate('statement_date', '<=', $data['until'])
+                        )),
                 
                 Tables\Filters\TernaryFilter::make('reconciled')
                     ->label('Reconciliation Status')
@@ -189,7 +193,7 @@ class BankStatementResource extends Resource
                             ->required()
                             ->helperText('Upload CSV, Excel, or OFX file'),
                     ])
-                    ->action(function (BankStatement $record, array $data) {
+                    ->action(function (BankStatement $record, array $data): void {
                         $importService = app(BankStatementImportService::class);
                         
                         if (isset($data['statement_file'])) {
@@ -223,11 +227,11 @@ class BankStatementResource extends Resource
                     ->label('Reconcile')
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
-                    ->visible(fn (BankStatement $record) => $record->transactions()->exists() && !$record->reconciled)
+                    ->visible(fn (BankStatement $record): bool => $record->transactions()->exists() && !$record->reconciled)
                     ->requiresConfirmation()
                     ->modalHeading('Reconcile Bank Statement')
                     ->modalDescription('This will attempt to match and reconcile all transactions for this statement.')
-                    ->action(function (BankStatement $record) {
+                    ->action(function (BankStatement $record): void {
                         $reconciliationService = app(ReconciliationService::class);
                         $result = $reconciliationService->reconcile($record);
                         
@@ -263,7 +267,7 @@ class BankStatementResource extends Resource
                     ->color('warning')
                     ->visible(fn (BankStatement $record) => $record->transactions()->exists())
                     ->modalHeading('Reconciliation Discrepancies')
-                    ->modalContent(function (BankStatement $record) {
+                    ->modalContent(function (BankStatement $record): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View {
                         $reconciliationService = app(ReconciliationService::class);
                         $result = $reconciliationService->reconcile($record);
                         
@@ -280,6 +284,7 @@ class BankStatementResource extends Resource
             ->defaultSort('statement_date', 'desc');
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -287,6 +292,7 @@ class BankStatementResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

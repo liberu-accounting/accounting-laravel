@@ -12,8 +12,10 @@ class Asset extends Model
     use HasFactory;
     use IsTenantModel;
 
+    #[\Override]
     protected $primaryKey = 'asset_id';
 
+    #[\Override]
     protected $fillable = [
         'asset_name',
         'asset_cost',
@@ -24,6 +26,7 @@ class Asset extends Model
         'is_active'
     ];
 
+    #[\Override]
     protected $casts = [
         'acquisition_date' => 'date',
         'is_active' => 'boolean'

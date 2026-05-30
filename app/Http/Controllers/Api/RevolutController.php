@@ -17,11 +17,8 @@ use Exception;
 
 class RevolutController extends Controller
 {
-    protected RevolutService $revolutService;
-
-    public function __construct(RevolutService $revolutService)
+    public function __construct(protected RevolutService $revolutService)
     {
-        $this->revolutService = $revolutService;
     }
 
     /**
@@ -448,7 +445,6 @@ class RevolutController extends Controller
     {
         $transactionId = $revolutTransaction['id'];
         $amount = $revolutTransaction['legs'][0]['amount'] ?? 0;
-        $currency = $revolutTransaction['legs'][0]['currency'] ?? null;
         $completedAt = $revolutTransaction['completed_at'] ?? $revolutTransaction['created_at'] ?? null;
 
         $transaction = Transaction::updateOrCreate(
@@ -457,7 +453,7 @@ class RevolutController extends Controller
                 'bank_connection_id' => $connection->id,
             ],
             [
-                'transaction_date' => $completedAt ? date('Y-m-d', strtotime($completedAt)) : now()->toDateString(),
+                'transaction_date' => $completedAt ? date('Y-m-d', strtotime((string) $completedAt)) : now()->toDateString(),
                 'amount' => abs($amount),
                 'type' => $amount < 0 ? 'debit' : 'credit',
                 'description' => $revolutTransaction['reference'] ?? $revolutTransaction['merchant']['name'] ?? 'Revolut transaction',
@@ -515,7 +511,7 @@ class RevolutController extends Controller
 
         $merchantCategory = $revolutTransaction['merchant']['category'] ?? null;
         if ($merchantCategory) {
-            return strtolower($merchantCategory);
+            return strtolower((string) $merchantCategory);
         }
 
         return 'uncategorized';

@@ -12,6 +12,7 @@ class Payroll extends Model
     use HasFactory;
     use IsTenantModel;
 
+    #[\Override]
     protected $fillable = [
         'employee_id',
         'base_salary',
@@ -26,6 +27,7 @@ class Payroll extends Model
         'payment_status',
     ];
 
+    #[\Override]
     protected $casts = [
         'pay_period_start' => 'date',
         'pay_period_end' => 'date',

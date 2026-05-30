@@ -10,7 +10,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('budgets', function (Blueprint $table) {
+        Schema::table('budgets', function (Blueprint $table): void {
             $table->decimal('forecast_amount', 15, 2)->nullable();
             $table->string('forecast_method')->nullable();
             $table->boolean('is_approved')->default(false);
@@ -19,7 +19,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::table('budgets', function (Blueprint $table) {
+        Schema::table('budgets', function (Blueprint $table): void {
             $table->dropColumn(['forecast_amount', 'forecast_method', 'is_approved']);
         });
     }

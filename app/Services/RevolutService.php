@@ -187,7 +187,6 @@ class RevolutService
     /**
      * Get transactions for a connection within a date range
      *
-     * @param BankConnection $connection
      * @param string|null $from ISO 8601 date string (e.g. '2024-01-01')
      * @param string|null $to ISO 8601 date string (e.g. '2024-01-31')
      * @param int $count Maximum number of transactions (default 100, max 1000)
@@ -209,11 +208,9 @@ class RevolutService
 
             $response = Http::timeout(30)
                 ->connectTimeout(10)
-                ->retry(2, 200, function ($exception, $request) {
-                    return $exception instanceof \Illuminate\Http\Client\ConnectionException ||
-                           ($exception instanceof \Illuminate\Http\Client\RequestException &&
-                            $exception->response->status() >= 500);
-                })
+                ->retry(2, 200, fn($exception, $request) => $exception instanceof \Illuminate\Http\Client\ConnectionException ||
+                       ($exception instanceof \Illuminate\Http\Client\RequestException &&
+                        $exception->response->status() >= 500))
                 ->withToken($accessToken)
                 ->get("{$this->baseUrl}/transactions", $params);
 
@@ -238,7 +235,6 @@ class RevolutService
     /**
      * Send a single payment via Revolut Business
      *
-     * @param BankConnection $connection
      * @param array $paymentData Must include: account_id, receiver (counterparty_id + account_id), amount, currency, reference
      * @return array The created payment/transaction data from Revolut
      */
@@ -269,7 +265,6 @@ class RevolutService
     /**
      * Send bulk payments via Revolut Business payment drafts
      *
-     * @param BankConnection $connection
      * @param string $title Title for the bulk payment batch
      * @param array $payments Array of payment objects (same shape as single payment)
      * @param string|null $scheduleFor Date string in Y-m-d format to schedule payments (e.g. '2024-01-01'), null for immediate
@@ -324,12 +319,12 @@ class RevolutService
             return false;
         }
 
-        if (empty($signature)) {
+        if ($signature === '' || $signature === '0') {
             Log::warning('Revolut webhook signature missing');
             return false;
         }
 
-        $computedSignature = 'v1=' . hash_hmac('sha256', $bodyJson, $signingSecret);
+        $computedSignature = 'v1=' . hash_hmac('sha256', $bodyJson, (string) $signingSecret);
 
         return hash_equals($computedSignature, $signature);
     }

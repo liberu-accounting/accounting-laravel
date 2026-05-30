@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tenants', function (Blueprint $table) {
+        Schema::create('tenants', function (Blueprint $table): void {
             $table->string('id')->primary();
 
             // your custom columns may go here

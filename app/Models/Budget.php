@@ -8,6 +8,7 @@ use App\Traits\IsTenantModel;
 class Budget extends Model
 {
     use IsTenantModel;
+    #[\Override]
     protected $fillable = [
         'account_id',
         'project_id',
@@ -32,14 +33,16 @@ class Budget extends Model
         return $this->belongsTo(Account::class);
     }
 
-    public function getVarianceAttribute()
+    public function getVarianceAttribute(): int|float
     {
         return $this->forecast_amount - $this->planned_amount;
     }
 
-    public function getVariancePercentageAttribute()
+    public function getVariancePercentageAttribute(): float|int
     {
-        if ($this->planned_amount == 0) return 0;
+        if ($this->planned_amount == 0) {
+            return 0;
+        }
         return ($this->forecast_amount - $this->planned_amount) / $this->planned_amount * 100;
 
     }
@@ -54,7 +57,7 @@ class Budget extends Model
         return $this->belongsTo(CostCenter::class);
     }
 
-    public function getVariance()
+    public function getVariance(): int|float
     {
         $actualAmount = $this->getActualAmount();
         return $this->planned_amount - $actualAmount;

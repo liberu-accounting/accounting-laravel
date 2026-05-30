@@ -12,6 +12,7 @@ class HmrcSubmission extends Model
     use HasFactory;
     use IsTenantModel;
 
+    #[\Override]
     protected $fillable = [
         'company_id',
         'submission_type',
@@ -26,6 +27,7 @@ class HmrcSubmission extends Model
         'accepted_at',
     ];
 
+    #[\Override]
     protected $casts = [
         'submission_data' => 'array',
         'response_data' => 'array',

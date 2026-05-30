@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('invoices', function (Blueprint $table) {
+        Schema::create('invoices', function (Blueprint $table): void {
             $table->id();
             $table->timestamp('invoice_date');
             $table->decimal('total_amount', 10, 2);

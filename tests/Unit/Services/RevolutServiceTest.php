@@ -28,7 +28,7 @@ class RevolutServiceTest extends TestCase
         $this->service = new RevolutService();
     }
 
-    public function test_get_authorization_url_returns_correct_url()
+    public function test_get_authorization_url_returns_correct_url(): void
     {
         $url = $this->service->getAuthorizationUrl('random_state_string');
 
@@ -39,7 +39,7 @@ class RevolutServiceTest extends TestCase
         $this->assertStringContainsString('redirect_uri=', $url);
     }
 
-    public function test_get_authorization_url_uses_production_url_when_configured()
+    public function test_get_authorization_url_uses_production_url_when_configured(): void
     {
         Config::set('services.revolut.environment', 'production');
         $service = new RevolutService();
@@ -50,7 +50,7 @@ class RevolutServiceTest extends TestCase
         $this->assertStringNotContainsString('sandbox-', $url);
     }
 
-    public function test_exchange_authorization_code_returns_tokens()
+    public function test_exchange_authorization_code_returns_tokens(): void
     {
         Http::fake([
             'sandbox-b2b.revolut.com/api/1.0/auth/token' => Http::response([
@@ -67,15 +67,13 @@ class RevolutServiceTest extends TestCase
         $this->assertEquals('test_refresh_token', $result['refresh_token']);
         $this->assertEquals(2400, $result['expires_in']);
 
-        Http::assertSent(function ($request) {
-            return str_contains($request->url(), 'auth/token')
-                && $request['grant_type'] === 'authorization_code'
-                && $request['code'] === 'test_auth_code'
-                && $request['client_id'] === 'test_client_id';
-        });
+        Http::assertSent(fn($request) => str_contains((string) $request->url(), 'auth/token')
+            && $request['grant_type'] === 'authorization_code'
+            && $request['code'] === 'test_auth_code'
+            && $request['client_id'] === 'test_client_id');
     }
 
-    public function test_exchange_authorization_code_throws_on_failure()
+    public function test_exchange_authorization_code_throws_on_failure(): void
     {
         Http::fake([
             'sandbox-b2b.revolut.com/api/1.0/auth/token' => Http::response([
@@ -87,7 +85,7 @@ class RevolutServiceTest extends TestCase
         $this->service->exchangeAuthorizationCode('invalid_code');
     }
 
-    public function test_refresh_access_token_returns_new_tokens()
+    public function test_refresh_access_token_returns_new_tokens(): void
     {
         Http::fake([
             'sandbox-b2b.revolut.com/api/1.0/auth/token' => Http::response([
@@ -101,13 +99,11 @@ class RevolutServiceTest extends TestCase
 
         $this->assertEquals('new_access_token', $result['access_token']);
 
-        Http::assertSent(function ($request) {
-            return $request['grant_type'] === 'refresh_token'
-                && $request['refresh_token'] === 'old_refresh_token';
-        });
+        Http::assertSent(fn($request) => $request['grant_type'] === 'refresh_token'
+            && $request['refresh_token'] === 'old_refresh_token');
     }
 
-    public function test_refresh_access_token_throws_on_failure()
+    public function test_refresh_access_token_throws_on_failure(): void
     {
         Http::fake([
             'sandbox-b2b.revolut.com/api/1.0/auth/token' => Http::response([
@@ -119,7 +115,7 @@ class RevolutServiceTest extends TestCase
         $this->service->refreshAccessToken('invalid_refresh_token');
     }
 
-    public function test_get_valid_access_token_returns_current_token_when_not_expired()
+    public function test_get_valid_access_token_returns_current_token_when_not_expired(): void
     {
         $connection = BankConnection::factory()->create([
             'bank_id' => 'revolut',
@@ -133,7 +129,7 @@ class RevolutServiceTest extends TestCase
         $this->assertEquals('valid_access_token', $token);
     }
 
-    public function test_get_valid_access_token_refreshes_when_expired()
+    public function test_get_valid_access_token_refreshes_when_expired(): void
     {
         Http::fake([
             'sandbox-b2b.revolut.com/api/1.0/auth/token' => Http::response([
@@ -158,7 +154,7 @@ class RevolutServiceTest extends TestCase
         $this->assertEquals('refreshed_access_token', $connection->revolut_access_token);
     }
 
-    public function test_get_valid_access_token_throws_when_no_refresh_token_and_expired()
+    public function test_get_valid_access_token_throws_when_no_refresh_token_and_expired(): void
     {
         $connection = BankConnection::factory()->create([
             'bank_id' => 'revolut',
@@ -173,7 +169,7 @@ class RevolutServiceTest extends TestCase
         $this->service->getValidAccessToken($connection);
     }
 
-    public function test_get_accounts_returns_account_list()
+    public function test_get_accounts_returns_account_list(): void
     {
         Http::fake([
             'sandbox-b2b.revolut.com/api/1.0/accounts' => Http::response([
@@ -202,13 +198,11 @@ class RevolutServiceTest extends TestCase
         $this->assertEquals('GBP Business Account', $accounts[0]['name']);
         $this->assertEquals(10000.00, $accounts[0]['balance']);
 
-        Http::assertSent(function ($request) {
-            return str_contains($request->url(), '/accounts')
-                && $request->hasHeader('Authorization', 'Bearer valid_token');
-        });
+        Http::assertSent(fn($request) => str_contains((string) $request->url(), '/accounts')
+            && $request->hasHeader('Authorization', 'Bearer valid_token'));
     }
 
-    public function test_get_accounts_throws_on_failure()
+    public function test_get_accounts_throws_on_failure(): void
     {
         Http::fake([
             'sandbox-b2b.revolut.com/api/1.0/accounts' => Http::response([
@@ -226,7 +220,7 @@ class RevolutServiceTest extends TestCase
         $this->service->getAccounts($connection);
     }
 
-    public function test_get_transactions_with_date_range()
+    public function test_get_transactions_with_date_range(): void
     {
         Http::fake([
             'sandbox-b2b.revolut.com/api/1.0/transactions*' => Http::response([
@@ -258,14 +252,12 @@ class RevolutServiceTest extends TestCase
         $this->assertCount(1, $transactions);
         $this->assertEquals('tx_001', $transactions[0]['id']);
 
-        Http::assertSent(function ($request) {
-            return str_contains($request->url(), '/transactions')
-                && str_contains($request->url(), 'from=2026-01-01')
-                && str_contains($request->url(), 'to=2026-01-31');
-        });
+        Http::assertSent(fn($request) => str_contains((string) $request->url(), '/transactions')
+            && str_contains((string) $request->url(), 'from=2026-01-01')
+            && str_contains((string) $request->url(), 'to=2026-01-31'));
     }
 
-    public function test_get_transactions_count_capped_at_1000()
+    public function test_get_transactions_count_capped_at_1000(): void
     {
         Http::fake([
             'sandbox-b2b.revolut.com/api/1.0/transactions*' => Http::response([], 200),
@@ -279,12 +271,10 @@ class RevolutServiceTest extends TestCase
 
         $this->service->getTransactions($connection, null, null, 5000);
 
-        Http::assertSent(function ($request) {
-            return str_contains($request->url(), 'count=1000');
-        });
+        Http::assertSent(fn($request) => str_contains((string) $request->url(), 'count=1000'));
     }
 
-    public function test_get_transactions_updates_last_synced_at()
+    public function test_get_transactions_updates_last_synced_at(): void
     {
         Http::fake([
             'sandbox-b2b.revolut.com/api/1.0/transactions*' => Http::response([], 200),
@@ -303,7 +293,7 @@ class RevolutServiceTest extends TestCase
         $this->assertNotNull($connection->last_synced_at);
     }
 
-    public function test_service_uses_production_base_url_when_configured()
+    public function test_service_uses_production_base_url_when_configured(): void
     {
         Config::set('services.revolut.environment', 'production');
         $service = new RevolutService();
@@ -320,12 +310,10 @@ class RevolutServiceTest extends TestCase
 
         $service->getAccounts($connection);
 
-        Http::assertSent(function ($request) {
-            return str_contains($request->url(), 'b2b.revolut.com');
-        });
+        Http::assertSent(fn($request) => str_contains((string) $request->url(), 'b2b.revolut.com'));
     }
 
-    public function test_verify_webhook_signature_with_valid_signature()
+    public function test_verify_webhook_signature_with_valid_signature(): void
     {
         $bodyJson = '{"event":"TransactionCreated","data":{"id":"tx_001"}}';
         $signature = 'v1=' . hash_hmac('sha256', $bodyJson, 'test_webhook_secret');
@@ -335,7 +323,7 @@ class RevolutServiceTest extends TestCase
         $this->assertTrue($result);
     }
 
-    public function test_send_payment_returns_payment_data()
+    public function test_send_payment_returns_payment_data(): void
     {
         Http::fake([
             'sandbox-b2b.revolut.com/api/1.0/pay' => Http::response([
@@ -367,16 +355,14 @@ class RevolutServiceTest extends TestCase
         $this->assertEquals('pay_001', $result['id']);
         $this->assertEquals('pending', $result['state']);
 
-        Http::assertSent(function ($request) use ($paymentData) {
-            return str_contains($request->url(), '/pay')
-                && $request['account_id'] === $paymentData['account_id']
-                && $request['amount'] === $paymentData['amount']
-                && $request['currency'] === $paymentData['currency']
-                && $request->hasHeader('Authorization', 'Bearer valid_token');
-        });
+        Http::assertSent(fn($request) => str_contains((string) $request->url(), '/pay')
+            && $request['account_id'] === $paymentData['account_id']
+            && $request['amount'] === $paymentData['amount']
+            && $request['currency'] === $paymentData['currency']
+            && $request->hasHeader('Authorization', 'Bearer valid_token'));
     }
 
-    public function test_send_payment_throws_on_failure()
+    public function test_send_payment_throws_on_failure(): void
     {
         Http::fake([
             'sandbox-b2b.revolut.com/api/1.0/pay' => Http::response([
@@ -402,7 +388,7 @@ class RevolutServiceTest extends TestCase
         ]);
     }
 
-    public function test_send_bulk_payment_returns_draft_data()
+    public function test_send_bulk_payment_returns_draft_data(): void
     {
         Http::fake([
             'sandbox-b2b.revolut.com/api/1.0/payment-drafts' => Http::response([
@@ -440,16 +426,14 @@ class RevolutServiceTest extends TestCase
         $this->assertEquals('draft_001', $result['id']);
         $this->assertEquals('CREATED', $result['status']);
 
-        Http::assertSent(function ($request) use ($payments) {
-            return str_contains($request->url(), '/payment-drafts')
-                && $request['title'] === 'Batch January Suppliers'
-                && $request['schedule_for'] === '2026-01-31'
-                && count($request['payments']) === count($payments)
-                && $request->hasHeader('Authorization', 'Bearer valid_token');
-        });
+        Http::assertSent(fn($request) => str_contains((string) $request->url(), '/payment-drafts')
+            && $request['title'] === 'Batch January Suppliers'
+            && $request['schedule_for'] === '2026-01-31'
+            && count($request['payments']) === count($payments)
+            && $request->hasHeader('Authorization', 'Bearer valid_token'));
     }
 
-    public function test_send_bulk_payment_without_schedule_date()
+    public function test_send_bulk_payment_without_schedule_date(): void
     {
         Http::fake([
             'sandbox-b2b.revolut.com/api/1.0/payment-drafts' => Http::response([
@@ -474,13 +458,11 @@ class RevolutServiceTest extends TestCase
             ],
         ]);
 
-        Http::assertSent(function ($request) {
-            return str_contains($request->url(), '/payment-drafts')
-                && !isset($request['schedule_for']);
-        });
+        Http::assertSent(fn($request) => str_contains((string) $request->url(), '/payment-drafts')
+            && !isset($request['schedule_for']));
     }
 
-    public function test_send_bulk_payment_throws_on_failure()
+    public function test_send_bulk_payment_throws_on_failure(): void
     {
         Http::fake([
             'sandbox-b2b.revolut.com/api/1.0/payment-drafts' => Http::response([
@@ -500,7 +482,7 @@ class RevolutServiceTest extends TestCase
         $this->service->sendBulkPayment($connection, 'Bad batch', []);
     }
 
-    public function test_verify_webhook_signature_with_invalid_signature()
+    public function test_verify_webhook_signature_with_invalid_signature(): void
     {
         $bodyJson = '{"event":"TransactionCreated"}';
 
@@ -509,9 +491,9 @@ class RevolutServiceTest extends TestCase
         $this->assertFalse($result);
     }
 
-    public function test_verify_webhook_signature_without_secret_configured()
+    public function test_verify_webhook_signature_without_secret_configured(): void
     {
-        Config::set('services.revolut.webhook_secret', null);
+        Config::set('services.revolut.webhook_secret');
 
         $bodyJson = '{"event":"TransactionCreated"}';
         $signature = 'v1=' . hash_hmac('sha256', $bodyJson, 'some_secret');
@@ -521,7 +503,7 @@ class RevolutServiceTest extends TestCase
         $this->assertFalse($result);
     }
 
-    public function test_verify_webhook_signature_with_empty_signature()
+    public function test_verify_webhook_signature_with_empty_signature(): void
     {
         $bodyJson = '{"event":"TransactionCreated"}';
 

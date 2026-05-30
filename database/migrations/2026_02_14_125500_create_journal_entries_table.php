@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('journal_entries', function (Blueprint $table) {
+        Schema::create('journal_entries', function (Blueprint $table): void {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             // Auto-generated entry number in format: JE-YYYY-NNNNNN (e.g., JE-2024-000001)

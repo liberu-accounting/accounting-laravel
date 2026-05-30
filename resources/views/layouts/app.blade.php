@@ -5,13 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ app(\App\Settings\GeneralSettings::class)->site_name }}</title>
+    @php
+        try {
+            $siteName = app(\App\Settings\GeneralSettings::class)->site_name;
+        } catch (\Throwable) {
+            $siteName = config('app.name', 'Accounting');
+        }
+    @endphp
+
+    <title>{{ $siteName }}</title>
 
     @if(config('googletagmanager.id'))
         @include('googletagmanager::head')
     @endif
 
-    <!-- Styles -->
     @vite('resources/css/app.css')
     @livewireStyles
 </head>
@@ -28,7 +35,6 @@
         <x-footer />
     </div>
 
-    <!-- Scripts -->
     @vite('resources/js/app.js')
     @livewireScripts
 
@@ -38,6 +44,8 @@
             dropdowns.forEach(dropdown => {
                 const toggle = dropdown.querySelector('.dropdown-toggle');
                 const menu = dropdown.querySelector('.dropdown-menu');
+
+                if (!toggle || !menu) return;
 
                 toggle.addEventListener('click', (e) => {
                     e.preventDefault();

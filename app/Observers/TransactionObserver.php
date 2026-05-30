@@ -7,22 +7,22 @@ use Illuminate\Support\Facades\Auth;
 
 class TransactionObserver
 {
-    public function created(Transaction $transaction)
+    public function created(Transaction $transaction): void
     {
         $this->logActivity($transaction, 'created');
     }
 
-    public function updated(Transaction $transaction)
+    public function updated(Transaction $transaction): void
     {
         $this->logActivity($transaction, 'updated');
     }
 
-    public function deleted(Transaction $transaction)
+    public function deleted(Transaction $transaction): void
     {
         $this->logActivity($transaction, 'deleted');
     }
 
-    private function logActivity(Transaction $transaction, string $event)
+    private function logActivity(Transaction $transaction, string $event): void
     {
         AuditLog::create([
             'user_id' => Auth::id(),

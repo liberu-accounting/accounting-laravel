@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('sales_receipts', function (Blueprint $table) {
+        Schema::create('sales_receipts', function (Blueprint $table): void {
             $table->id('sales_receipt_id');
             $table->unsignedBigInteger('customer_id');
             $table->string('sales_receipt_number')->unique();
@@ -37,7 +37,7 @@ return new class extends Migration
             $table->index('status');
         });
 
-        Schema::create('sales_receipt_items', function (Blueprint $table) {
+        Schema::create('sales_receipt_items', function (Blueprint $table): void {
             $table->id('item_id');
             $table->unsignedBigInteger('sales_receipt_id');
             $table->unsignedBigInteger('account_id')->nullable();

@@ -21,7 +21,7 @@ class PlaidControllerTest extends TestCase
         $this->user = User::factory()->create();
     }
 
-    public function test_create_link_token_returns_successful_response()
+    public function test_create_link_token_returns_successful_response(): void
     {
         Http::fake([
             'sandbox.plaid.com/link/token/create' => Http::response([
@@ -46,7 +46,7 @@ class PlaidControllerTest extends TestCase
             ]);
     }
 
-    public function test_create_link_token_handles_plaid_error()
+    public function test_create_link_token_handles_plaid_error(): void
     {
         Http::fake([
             'sandbox.plaid.com/link/token/create' => Http::response([
@@ -64,7 +64,7 @@ class PlaidControllerTest extends TestCase
             ]);
     }
 
-    public function test_store_connection_creates_bank_connection()
+    public function test_store_connection_creates_bank_connection(): void
     {
         Http::fake([
             'sandbox.plaid.com/item/public_token/exchange' => Http::response([
@@ -106,7 +106,7 @@ class PlaidControllerTest extends TestCase
         ]);
     }
 
-    public function test_store_connection_validates_required_fields()
+    public function test_store_connection_validates_required_fields(): void
     {
         $response = $this->actingAs($this->user)
             ->postJson('/api/plaid/store-connection', [
@@ -122,7 +122,7 @@ class PlaidControllerTest extends TestCase
             ]);
     }
 
-    public function test_list_connections_returns_user_connections()
+    public function test_list_connections_returns_user_connections(): void
     {
         BankConnection::factory()->count(3)->create([
             'user_id' => $this->user->id,
@@ -152,7 +152,7 @@ class PlaidControllerTest extends TestCase
             ]);
     }
 
-    public function test_sync_transactions_syncs_from_plaid()
+    public function test_sync_transactions_syncs_from_plaid(): void
     {
         $connection = BankConnection::factory()->create([
             'user_id' => $this->user->id,
@@ -209,7 +209,7 @@ class PlaidControllerTest extends TestCase
         ]);
     }
 
-    public function test_sync_transactions_prevents_unauthorized_access()
+    public function test_sync_transactions_prevents_unauthorized_access(): void
     {
         $otherUser = User::factory()->create();
         $connection = BankConnection::factory()->create([
@@ -226,7 +226,7 @@ class PlaidControllerTest extends TestCase
             ]);
     }
 
-    public function test_sync_transactions_rejects_inactive_connection()
+    public function test_sync_transactions_rejects_inactive_connection(): void
     {
         $connection = BankConnection::factory()->create([
             'user_id' => $this->user->id,
@@ -243,7 +243,7 @@ class PlaidControllerTest extends TestCase
             ]);
     }
 
-    public function test_remove_connection_disconnects_bank()
+    public function test_remove_connection_disconnects_bank(): void
     {
         $connection = BankConnection::factory()->create([
             'user_id' => $this->user->id,
@@ -272,7 +272,7 @@ class PlaidControllerTest extends TestCase
         ]);
     }
 
-    public function test_remove_connection_prevents_unauthorized_access()
+    public function test_remove_connection_prevents_unauthorized_access(): void
     {
         $otherUser = User::factory()->create();
         $connection = BankConnection::factory()->create([
@@ -289,7 +289,7 @@ class PlaidControllerTest extends TestCase
             ]);
     }
 
-    public function test_unauthenticated_requests_are_rejected()
+    public function test_unauthenticated_requests_are_rejected(): void
     {
         $response = $this->postJson('/api/plaid/create-link-token');
         $response->assertStatus(401);
@@ -298,7 +298,7 @@ class PlaidControllerTest extends TestCase
         $response->assertStatus(401);
     }
 
-    public function test_create_link_token_includes_oauth_redirect_uri_when_configured()
+    public function test_create_link_token_includes_oauth_redirect_uri_when_configured(): void
     {
         config(['services.plaid.oauth_redirect_uri' => 'https://example.com/api/plaid/oauth-redirect']);
 
@@ -320,14 +320,14 @@ class PlaidControllerTest extends TestCase
             ]);
 
         // Verify the HTTP request included redirect_uri
-        Http::assertSent(function ($request) {
-            $data = json_decode($request->body(), true);
+        Http::assertSent(function ($request): bool {
+            $data = json_decode((string) $request->body(), true);
             return isset($data['redirect_uri']) && 
                    $data['redirect_uri'] === 'https://example.com/api/plaid/oauth-redirect';
         });
     }
 
-    public function test_create_link_token_supports_update_mode_for_reauthentication()
+    public function test_create_link_token_supports_update_mode_for_reauthentication(): void
     {
         $connection = BankConnection::factory()->create([
             'user_id' => $this->user->id,
@@ -354,14 +354,14 @@ class PlaidControllerTest extends TestCase
             ]);
 
         // Verify the HTTP request included access_token for update mode
-        Http::assertSent(function ($request) {
-            $data = json_decode($request->body(), true);
+        Http::assertSent(function ($request): bool {
+            $data = json_decode((string) $request->body(), true);
             return isset($data['access_token']) && 
                    $data['access_token'] === 'access-test-token';
         });
     }
 
-    public function test_create_link_token_update_mode_rejects_unauthorized_connection()
+    public function test_create_link_token_update_mode_rejects_unauthorized_connection(): void
     {
         $otherUser = User::factory()->create();
         $connection = BankConnection::factory()->create([
@@ -380,7 +380,7 @@ class PlaidControllerTest extends TestCase
             ]);
     }
 
-    public function test_oauth_redirect_endpoint_handles_valid_state()
+    public function test_oauth_redirect_endpoint_handles_valid_state(): void
     {
         $response = $this->getJson('/api/plaid/oauth-redirect?oauth_state_id=test-oauth-state-123');
 
@@ -392,7 +392,7 @@ class PlaidControllerTest extends TestCase
             ]);
     }
 
-    public function test_oauth_redirect_endpoint_requires_state_id()
+    public function test_oauth_redirect_endpoint_requires_state_id(): void
     {
         $response = $this->getJson('/api/plaid/oauth-redirect');
 

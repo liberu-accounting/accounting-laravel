@@ -12,6 +12,7 @@ class CostCenter extends Model
     use HasFactory;
     use IsTenantModel;
 
+    #[\Override]
     protected $fillable = [
         'name',
         'code',
@@ -36,7 +37,7 @@ class CostCenter extends Model
         return $this->hasMany(Budget::class);
     }
 
-    public function calculateAllocation($totalAmount)
+    public function calculateAllocation($totalAmount): float|int
     {
         return match($this->allocation_method) {
             'fixed_percentage' => $totalAmount * ($this->allocation_base / 100),

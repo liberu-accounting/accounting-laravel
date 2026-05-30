@@ -28,7 +28,7 @@ class ResetPasswordController extends AuthenticatedSessionController
 
         $status = Password::broker('admins')->reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),
-            function ($user, $password) {
+            function ($user, $password): void {
                 $user->forceFill([
                     'password' => Hash::make($password),
                 ])->setRememberToken(Str::random(60));

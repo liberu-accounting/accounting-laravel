@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,8 +13,10 @@ class TaxRate extends Model
     use HasFactory;
     use IsTenantModel;
 
+    #[\Override]
     protected $primaryKey = 'tax_rate_id';
 
+    #[\Override]
     protected $fillable = [
         'name',
         'rate',
@@ -21,13 +25,14 @@ class TaxRate extends Model
         'is_active'
     ];
 
+    #[\Override]
     protected $casts = [
         'rate' => 'float',
         'is_compound' => 'boolean',
         'is_active' => 'boolean'
     ];
 
-    public function calculateTax($amount, $previousTaxes = 0)
+    public function calculateTax($amount, $previousTaxes = 0): float|int
     {
         if (!$this->is_active) {
             return 0;

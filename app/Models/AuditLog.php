@@ -10,6 +10,7 @@ use App\Traits\IsTenantModel;
 class AuditLog extends Model
 {
     use IsTenantModel;
+    #[\Override]
     protected $fillable = [
         'user_id',
         'event',
@@ -21,6 +22,7 @@ class AuditLog extends Model
         'user_agent'
     ];
 
+    #[\Override]
     protected $casts = [
         'old_values' => 'array',
         'new_values' => 'array',

@@ -7,8 +7,10 @@ use Filament\Resources\Pages\CreateRecord;
 
 class CreateHmrcVatReturn extends CreateRecord
 {
+    #[\Override]
     protected static string $resource = HmrcVatReturnResource::class;
 
+    #[\Override]
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         // Ensure company_id is set

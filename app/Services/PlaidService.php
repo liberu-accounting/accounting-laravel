@@ -185,12 +185,11 @@ class PlaidService
 
             $response = Http::timeout(30)
                 ->connectTimeout(10)
-                ->retry(2, 200, function ($exception, $request) {
+                ->retry(2, 200, 
                     // Only retry on 5xx errors or network issues, not 4xx
-                    return $exception instanceof \Illuminate\Http\Client\ConnectionException ||
-                           ($exception instanceof \Illuminate\Http\Client\RequestException && 
-                            $exception->response->status() >= 500);
-                })
+                    fn($exception, $request) => $exception instanceof \Illuminate\Http\Client\ConnectionException ||
+                       ($exception instanceof \Illuminate\Http\Client\RequestException && 
+                        $exception->response->status() >= 500))
                 ->post("{$this->baseUrl}/transactions/sync", $payload);
 
             if ($response->successful()) {
@@ -265,7 +264,7 @@ class PlaidService
             ];
 
             // Optionally filter to specific accounts
-            if ($accountIds !== null && !empty($accountIds)) {
+            if ($accountIds !== null && $accountIds !== []) {
                 $payload['options'] = [
                     'account_ids' => $accountIds,
                 ];
@@ -344,7 +343,7 @@ class PlaidService
         }
         
         // Compute HMAC-SHA256 signature
-        $computedSignature = hash_hmac('sha256', $bodyJson, $verificationKey, true);
+        $computedSignature = hash_hmac('sha256', $bodyJson, (string) $verificationKey, true);
         $computedSignatureBase64 = base64_encode($computedSignature);
         
         // Use hash_equals for timing-safe comparison

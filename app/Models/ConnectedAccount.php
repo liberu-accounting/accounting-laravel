@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -10,6 +12,7 @@ class ConnectedAccount extends Model
 {
     use HasFactory, IsTenantModel;
 
+    #[\Override]
     protected $fillable = [
         'user_id',
         'provider',
@@ -24,6 +27,7 @@ class ConnectedAccount extends Model
         'expires_at',
     ];
 
+    #[\Override]
     protected $casts = [
         'created_at' => 'datetime',
         'expires_at' => 'datetime',

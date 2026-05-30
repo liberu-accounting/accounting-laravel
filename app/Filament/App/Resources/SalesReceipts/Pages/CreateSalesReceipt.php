@@ -7,6 +7,7 @@ use Filament\Resources\Pages\CreateRecord;
 
 class CreateSalesReceipt extends CreateRecord
 {
+    #[\Override]
     protected static string $resource = SalesReceiptResource::class;
 
     protected function afterCreate(): void

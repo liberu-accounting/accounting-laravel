@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('hmrc_paye_submissions', function (Blueprint $table) {
+        Schema::create('hmrc_paye_submissions', function (Blueprint $table): void {
             $table->id();
             $table->foreignId('company_id')->constrained('companies', 'company_id')->onDelete('cascade');
             $table->foreignId('hmrc_submission_id')->nullable()->constrained('hmrc_submissions')->onDelete('set null');

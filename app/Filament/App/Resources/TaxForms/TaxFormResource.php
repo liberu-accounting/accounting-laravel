@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\App\Resources\TaxForms;
 
 use Filament\Schemas\Schema;
@@ -21,10 +23,13 @@ use App\Filament\App\Resources\TaxFormResource\Pages;
 
 class TaxFormResource extends Resource
 {
+    #[\Override]
     protected static ?string $model = TaxForm::class;
 
+    #[\Override]
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document-text';
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -61,6 +66,7 @@ class TaxFormResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -85,6 +91,7 @@ class TaxFormResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

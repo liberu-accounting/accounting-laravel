@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('payments', function (Blueprint $table) {
+        Schema::create('payments', function (Blueprint $table): void {
             $table->integer('payment_id', true);
             $table->integer('invoice_id');
             $table->decimal('payment_amount', 10, 2);

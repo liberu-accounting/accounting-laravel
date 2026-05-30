@@ -12,6 +12,7 @@ class HmrcVatReturn extends Model
     use HasFactory;
     use IsTenantModel;
 
+    #[\Override]
     protected $fillable = [
         'company_id',
         'hmrc_submission_id',
@@ -31,6 +32,7 @@ class HmrcVatReturn extends Model
         'finalised',
     ];
 
+    #[\Override]
     protected $casts = [
         'period_from' => 'date',
         'period_to' => 'date',
@@ -87,10 +89,9 @@ class HmrcVatReturn extends Model
         $totalPurchases = Expense::where('company_id', $this->company_id)
             ->whereBetween('expense_date', [$this->period_from, $this->period_to])
             ->get()
-            ->sum(function ($expense) {
+            ->sum(
                 // If tax_amount exists, subtract it to get amount ex-VAT
-                return $expense->amount - ($expense->tax_amount ?? 0);
-            });
+                fn($expense) => $expense->amount - ($expense->tax_amount ?? 0));
 
         $this->vat_due_sales = $salesVat;
         $this->vat_reclaimed = $purchasesVat;

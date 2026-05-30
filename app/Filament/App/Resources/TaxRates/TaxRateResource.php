@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\App\Resources\TaxRates;
 
 use Filament\Schemas\Schema;
@@ -25,10 +27,13 @@ use App\Filament\App\Resources\TaxRateResource\Pages;
 
 class TaxRateResource extends Resource
 {
+    #[\Override]
     protected static ?string $model = TaxRate::class;
 
+    #[\Override]
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-calculator';
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -52,6 +57,7 @@ class TaxRateResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -83,6 +89,7 @@ class TaxRateResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

@@ -34,9 +34,7 @@ class ExpenseApprovalNotification extends Notification implements ShouldQueue
             ->line($message)
             ->line("Amount: {$this->expense->amount}")
             ->line("Description: {$this->expense->description}")
-            ->when($this->status === 'rejected', function($mail) {
-                return $mail->line("Reason: {$this->expense->rejection_reason}");
-            })
+            ->when($this->status === 'rejected', fn($mail) => $mail->line("Reason: {$this->expense->rejection_reason}"))
             ->line("Date: {$this->expense->date->format('Y-m-d')}");
     }
 

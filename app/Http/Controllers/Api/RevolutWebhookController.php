@@ -12,11 +12,8 @@ use Exception;
 
 class RevolutWebhookController extends Controller
 {
-    protected RevolutService $revolutService;
-
-    public function __construct(RevolutService $revolutService)
+    public function __construct(protected RevolutService $revolutService)
     {
-        $this->revolutService = $revolutService;
     }
 
     /**

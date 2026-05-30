@@ -26,16 +26,22 @@ use Filament\Tables\Filters\SelectFilter;
 
 class EstimateResource extends Resource
 {
+    #[\Override]
     protected static ?string $model = Estimate::class;
     
+    #[\Override]
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document-duplicate';
     
+    #[\Override]
     protected static ?int $navigationSort = 2;
     
+    #[\Override]
     protected static string | \UnitEnum | null $navigationGroup = 'Sales';
     
+    #[\Override]
     protected static ?string $recordTitleAttribute = 'estimate_number';
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -49,7 +55,7 @@ class EstimateResource extends Resource
                 TextInput::make('estimate_number')
                     ->disabled()
                     ->dehydrated(false)
-                    ->visible(fn ($record) => $record !== null),
+                    ->visible(fn ($record): bool => $record !== null),
                     
                 DatePicker::make('estimate_date')
                     ->required()
@@ -120,6 +126,7 @@ class EstimateResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -177,7 +184,7 @@ class EstimateResource extends Resource
                 Action::make('convert_to_invoice')
                     ->label('Convert to Invoice')
                     ->icon('heroicon-o-arrow-right-circle')
-                    ->visible(fn ($record) => $record->status === 'accepted' && !$record->invoice_id)
+                    ->visible(fn ($record): bool => $record->status === 'accepted' && !$record->invoice_id)
                     ->requiresConfirmation()
                     ->action(fn ($record) => $record->convertToInvoice()),
             ])
@@ -189,6 +196,7 @@ class EstimateResource extends Resource
             ->defaultSort('estimate_date', 'desc');
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -196,6 +204,7 @@ class EstimateResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

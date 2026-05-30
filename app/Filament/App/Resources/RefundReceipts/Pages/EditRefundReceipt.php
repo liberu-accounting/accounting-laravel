@@ -7,6 +7,7 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditRefundReceipt extends EditRecord
 {
+    #[\Override]
     protected static string $resource = RefundReceiptResource::class;
 
     protected function afterSave(): void

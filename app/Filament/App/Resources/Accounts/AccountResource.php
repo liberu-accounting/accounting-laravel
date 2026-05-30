@@ -27,10 +27,13 @@ use Filament\Tables\Columns\TextColumn;
 
 class AccountResource extends Resource
 {
+    #[\Override]
     protected static ?string $model = Account::class;
 
+    #[\Override]
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -51,6 +54,7 @@ class AccountResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -84,6 +88,7 @@ class AccountResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -91,6 +96,7 @@ class AccountResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

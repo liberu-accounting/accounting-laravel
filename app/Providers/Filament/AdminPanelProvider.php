@@ -33,7 +33,6 @@ class AdminPanelProvider extends PanelProvider
     public function panel(Panel $panel): Panel
     {
         $panel
-            ->default()
             ->id('admin')
             ->path('admin')
             ->login([AuthenticatedSessionController::class, 'create'])
@@ -93,7 +92,7 @@ class AdminPanelProvider extends PanelProvider
                     MenuItem::make()
                         ->label('Team Settings')
                         ->icon('heroicon-o-cog-6-tooth')
-                        ->url(fn() => $this->shouldRegisterMenuItem()
+                        ->url(fn(): \Illuminate\Contracts\Routing\UrlGenerator|string => $this->shouldRegisterMenuItem()
                             ? url(Pages\EditTeam::getUrl())
                             : url($panel->getPath())),
                 ]);
@@ -102,7 +101,7 @@ class AdminPanelProvider extends PanelProvider
         return $panel;
     }
 
-    public function boot()
+    public function boot(): void
     {
         /**
          * Disable Fortify routes.

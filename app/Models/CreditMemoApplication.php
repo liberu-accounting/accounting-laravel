@@ -11,8 +11,10 @@ class CreditMemoApplication extends Model
     use HasFactory;
     use IsTenantModel;
 
+    #[\Override]
     protected $primaryKey = 'application_id';
 
+    #[\Override]
     protected $fillable = [
         'credit_memo_id',
         'invoice_id',
@@ -21,6 +23,7 @@ class CreditMemoApplication extends Model
         'notes',
     ];
 
+    #[\Override]
     protected $casts = [
         'amount_applied' => 'decimal:2',
         'application_date' => 'date',
@@ -38,11 +41,12 @@ class CreditMemoApplication extends Model
     }
 
     // Business Logic
+    #[\Override]
     protected static function boot()
     {
         parent::boot();
         
-        static::created(function ($application) {
+        static::created(function ($application): void {
             // Update credit memo's amount applied
             if ($application->creditMemo) {
                 $creditMemo = $application->creditMemo;
@@ -56,17 +60,13 @@ class CreditMemoApplication extends Model
             }
         });
 
-        static::deleted(function ($application) {
+        static::deleted(function ($application): void {
             // Recalculate credit memo's amount applied
             if ($application->creditMemo) {
                 $creditMemo = $application->creditMemo;
                 $creditMemo->amount_applied = $creditMemo->applications()->sum('amount_applied');
                 
-                if ($creditMemo->amount_applied >= $creditMemo->total_amount) {
-                    $creditMemo->status = 'applied';
-                } else {
-                    $creditMemo->status = 'open';
-                }
+                $creditMemo->status = $creditMemo->amount_applied >= $creditMemo->total_amount ? 'applied' : 'open';
                 
                 $creditMemo->save();
             }

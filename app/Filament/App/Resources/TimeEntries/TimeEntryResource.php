@@ -23,10 +23,13 @@ use Filament\Tables\Table;
 
 class TimeEntryResource extends Resource
 {
+    #[\Override]
     protected static ?string $model = TimeEntry::class;
 
+    #[\Override]
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-clock';
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -56,6 +59,7 @@ class TimeEntryResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -82,6 +86,7 @@ class TimeEntryResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

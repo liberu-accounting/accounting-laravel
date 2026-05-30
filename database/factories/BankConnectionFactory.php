@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 
 class BankConnectionFactory extends Factory
 {
+    #[\Override]
     protected $model = BankConnection::class;
 
     public function definition(): array
@@ -34,21 +35,21 @@ class BankConnectionFactory extends Factory
 
     public function active(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn (array $attributes): array => [
             'status' => 'active',
         ]);
     }
 
     public function disconnected(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn (array $attributes): array => [
             'status' => 'disconnected',
         ]);
     }
 
     public function withCursor(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn (array $attributes): array => [
             'plaid_cursor' => 'cursor-' . $this->faker->uuid(),
         ]);
     }

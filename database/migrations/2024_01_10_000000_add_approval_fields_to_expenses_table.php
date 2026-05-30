@@ -8,9 +8,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    public function up(): void
     {
-        Schema::table('expenses', function (Blueprint $table) {
+        Schema::table('expenses', function (Blueprint $table): void {
             $table->enum('approval_status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->text('rejection_reason')->nullable();
             $table->foreignId('approved_by')->nullable()->constrained('users');
@@ -18,9 +18,9 @@ return new class extends Migration
         });
     }
 
-    public function down()
+    public function down(): void
     {
-        Schema::table('expenses', function (Blueprint $table) {
+        Schema::table('expenses', function (Blueprint $table): void {
             $table->dropColumn(['approval_status', 'rejection_reason', 'approved_by', 'approved_at']);
         });
     }

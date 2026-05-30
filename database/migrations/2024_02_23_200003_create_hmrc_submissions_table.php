@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('hmrc_submissions', function (Blueprint $table) {
+        Schema::create('hmrc_submissions', function (Blueprint $table): void {
             $table->id();
             $table->foreignId('company_id')->constrained('companies', 'company_id')->onDelete('cascade');
             $table->string('submission_type')->comment('Type: vat_return, paye_rti, corporation_tax');

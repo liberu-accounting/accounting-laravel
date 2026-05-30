@@ -13,11 +13,8 @@ use Exception;
 
 class PlaidWebhookController extends Controller
 {
-    protected PlaidService $plaidService;
-
-    public function __construct(PlaidService $plaidService)
+    public function __construct(protected PlaidService $plaidService)
     {
-        $this->plaidService = $plaidService;
     }
 
     /**
@@ -232,12 +229,12 @@ class PlaidWebhookController extends Controller
     protected function handleTransactionsRemoved(BankConnection $connection, array $payload): void
     {
         $removedTransactions = $payload['removed_transactions'] ?? [];
-        
+
         Log::info('Transactions removed', [
             'connection_id' => $connection->id,
             'count' => count($removedTransactions),
         ]);
-        
+
         // Handle removed transactions
         // For now, just log - will implement removal logic if needed
     }

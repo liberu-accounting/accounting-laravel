@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('domains', function (Blueprint $table) {
+        Schema::create('domains', function (Blueprint $table): void {
             $table->increments('id');
             $table->string('domain', 191)->unique();
             $table->string('tenant_id');

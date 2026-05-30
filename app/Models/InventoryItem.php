@@ -11,8 +11,10 @@ class InventoryItem extends Model
     use HasFactory;
     use IsTenantModel;
 
+    #[\Override]
     protected $primaryKey = 'inventory_item_id';
 
+    #[\Override]
     protected $fillable = [
         'name',
         'sku',
@@ -25,6 +27,7 @@ class InventoryItem extends Model
         'is_active'
     ];
 
+    #[\Override]
     protected $casts = [
         'unit_price' => 'decimal:2',
         'current_quantity' => 'integer',
@@ -52,13 +55,13 @@ class InventoryItem extends Model
         return $this->hasMany(InventoryAdjustment::class);
     }
 
-    public function updateQuantity($change)
+    public function updateQuantity($change): void
     {
         $this->current_quantity += $change;
         $this->save();
     }
 
-    public function needsReorder()
+    public function needsReorder(): bool
     {
         return $this->current_quantity <= $this->reorder_point;
     }

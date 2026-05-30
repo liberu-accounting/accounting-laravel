@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\App\Resources\Suppliers;
 
 use Filament\Schemas\Schema;
@@ -21,12 +23,18 @@ use App\Filament\App\Resources\SupplierResource\Pages;
 
 class SupplierResource extends Resource
 {
+    #[\Override]
     protected static ?string $model = Supplier::class;
+    #[\Override]
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-truck';
+    #[\Override]
     protected static ?int $navigationSort = 5;
+    #[\Override]
     protected static string | \UnitEnum | null $navigationGroup = 'Vendors';
+    #[\Override]
     protected static ?string $recordTitleAttribute = 'supplier_name';
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -56,6 +64,7 @@ class SupplierResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -106,6 +115,7 @@ class SupplierResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -113,6 +123,7 @@ class SupplierResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

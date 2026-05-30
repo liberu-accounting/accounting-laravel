@@ -7,6 +7,7 @@ use Filament\Resources\Pages\CreateRecord;
 
 class CreateVendorCredit extends CreateRecord
 {
+    #[\Override]
     protected static string $resource = VendorCreditResource::class;
 
     protected function afterCreate(): void

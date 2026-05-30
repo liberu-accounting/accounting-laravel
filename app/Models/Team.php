@@ -18,6 +18,7 @@ class Team extends JetstreamTeam
      *
      * @var array<int, string>
      */
+    #[\Override]
     protected $fillable = [
         'name',
         'personal_team',
@@ -28,6 +29,7 @@ class Team extends JetstreamTeam
      *
      * @var array<string, class-string>
      */
+    #[\Override]
     protected $dispatchesEvents = [
         'created' => TeamCreated::class,
         'updated' => TeamUpdated::class,
@@ -39,6 +41,7 @@ class Team extends JetstreamTeam
      *
      * @return array<string, string>
      */
+    #[\Override]
     protected function casts(): array
     {
         return [

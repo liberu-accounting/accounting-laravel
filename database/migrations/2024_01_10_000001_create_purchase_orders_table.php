@@ -8,9 +8,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    public function up(): void
     {
-        Schema::create('purchase_orders', function (Blueprint $table) {
+        Schema::create('purchase_orders', function (Blueprint $table): void {
             $table->unsignedBigInteger('purchase_order_id', true);
             $table->foreignId('supplier_id')->constrained('suppliers', 'supplier_id');
             $table->string('po_number')->unique();
@@ -22,7 +22,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('purchase_order_items', function (Blueprint $table) {
+        Schema::create('purchase_order_items', function (Blueprint $table): void {
             $table->id('item_id');
             $table->foreignId('purchase_order_id')->constrained('purchase_orders', 'purchase_order_id')->onDelete('cascade');
             $table->string('description');
@@ -33,7 +33,7 @@ return new class extends Migration
         });
     }
 
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('purchase_order_items');
         Schema::dropIfExists('purchase_orders');

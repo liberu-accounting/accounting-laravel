@@ -45,7 +45,7 @@ class ResetUserPassword implements ResetsUserPasswords
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);
-            throw new Exception('Failed to reset password. Please try again later.');
+            throw new Exception('Failed to reset password. Please try again later.', $e->getCode(), $e);
         }
     }
 }

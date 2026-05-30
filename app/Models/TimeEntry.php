@@ -11,6 +11,7 @@ class TimeEntry extends Model
     use HasFactory;
     use IsTenantModel;
 
+    #[\Override]
     protected $fillable = [
         'customer_id',
         'invoice_id', 
@@ -21,6 +22,7 @@ class TimeEntry extends Model
         'total_amount'
     ];
 
+    #[\Override]
     protected $casts = [
         'start_time' => 'datetime',
         'end_time' => 'datetime',
@@ -38,7 +40,7 @@ class TimeEntry extends Model
         return $this->belongsTo(Invoice::class);
     }
 
-    public function calculateTotalAmount()
+    public function calculateTotalAmount(): int|float
     {
         $hours = $this->end_time->diffInHours($this->start_time);
         $this->total_amount = $hours * $this->hourly_rate;

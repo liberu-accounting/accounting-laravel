@@ -6,11 +6,8 @@ use Illuminate\Contracts\Validation\Rule;
 
 class DoubleEntryValidator implements Rule
 {
-    protected $lines;
-
-    public function __construct($lines = null)
+    public function __construct(protected $lines = null)
     {
-        $this->lines = $lines;
     }
 
     public function passes($attribute, $value)
@@ -37,7 +34,7 @@ class DoubleEntryValidator implements Rule
         $debitAmount = request()->input('debit_amount', 0);
         $creditAmount = request()->input('credit_amount', 0);
         
-        return bccomp($debitAmount, $creditAmount, 2) === 0;
+        return bccomp((string) $debitAmount, (string) $creditAmount, 2) === 0;
     }
 
     public function message()

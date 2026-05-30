@@ -8,9 +8,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    public function up(): void
     {
-        Schema::table('expenses', function (Blueprint $table) {
+        Schema::table('expenses', function (Blueprint $table): void {
             $table->foreignId('supplier_id')
                   ->nullable()
                   ->constrained('suppliers', 'supplier_id')
@@ -18,9 +18,9 @@ return new class extends Migration
         });
     }
 
-    public function down()
+    public function down(): void
     {
-        Schema::table('expenses', function (Blueprint $table) {
+        Schema::table('expenses', function (Blueprint $table): void {
             $table->dropForeign(['supplier_id']);
             $table->dropColumn('supplier_id');
         });

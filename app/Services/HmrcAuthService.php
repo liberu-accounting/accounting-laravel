@@ -8,10 +8,9 @@ use Illuminate\Support\Facades\Cache;
 
 class HmrcAuthService
 {
-    private string $baseUrl;
-    private string $clientId;
-    private string $clientSecret;
-    private string $serverToken;
+    private readonly string $baseUrl;
+    private readonly string $clientId;
+    private readonly string $clientSecret;
 
     public function __construct()
     {
@@ -19,15 +18,14 @@ class HmrcAuthService
         $this->baseUrl = config("hmrc.endpoints.{$environment}");
         $this->clientId = config('hmrc.client_id');
         $this->clientSecret = config('hmrc.client_secret');
-        $this->serverToken = config('hmrc.server_token');
     }
 
     /**
      * Get OAuth authorization URL for user to grant access.
      */
-    public function getAuthorizationUrl(string $scope, string $state = null): string
+    public function getAuthorizationUrl(string $scope, ?string $state = null): string
     {
-        $state = $state ?? bin2hex(random_bytes(16));
+        $state ??= bin2hex(random_bytes(16));
         
         $query = http_build_query([
             'client_id' => $this->clientId,
@@ -80,9 +78,9 @@ class HmrcAuthService
     /**
      * Refresh access token using refresh token.
      */
-    public function refreshAccessToken(string $refreshToken = null): array
+    public function refreshAccessToken(?string $refreshToken = null): array
     {
-        $refreshToken = $refreshToken ?? $this->getCachedRefreshToken();
+        $refreshToken ??= $this->getCachedRefreshToken();
         
         if (!$refreshToken) {
             throw new \Exception('No refresh token available');

@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
-    public function showLoginForm()
+    public function showLoginForm(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
         return view('loginv');
     }
@@ -31,7 +31,7 @@ class LoginController extends Controller
         ]);
     }
 
-    public function logout(Request $request)
+    public function logout(Request $request): \Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse
     {
         Auth::guard('admin')->logout();
         $request->session()->invalidate();

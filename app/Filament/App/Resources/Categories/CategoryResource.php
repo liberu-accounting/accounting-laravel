@@ -25,10 +25,13 @@ use App\Filament\App\Resources\CategoryResource\RelationManagers;
 
 class CategoryResource extends Resource
 {
+    #[\Override]
     protected static ?string $model = Category::class;
 
+    #[\Override]
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -42,6 +45,7 @@ class CategoryResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -68,6 +72,7 @@ class CategoryResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -75,6 +80,7 @@ class CategoryResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

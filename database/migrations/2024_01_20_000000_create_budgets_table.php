@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('budgets', function (Blueprint $table) {
+        Schema::create('budgets', function (Blueprint $table): void {
             $table->id();
             $table->foreignId('account_id')->constrained()->onDelete('cascade');
             $table->date('start_date');

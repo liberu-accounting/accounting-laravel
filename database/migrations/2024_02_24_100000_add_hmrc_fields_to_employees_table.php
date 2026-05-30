@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('employees', function (Blueprint $table) {
+        Schema::table('employees', function (Blueprint $table): void {
             $table->string('national_insurance_number', 9)->nullable()->after('tax_id')->comment('UK National Insurance Number');
             $table->string('starter_declaration', 50)->nullable()->after('national_insurance_number')->comment('PAYE Starter Declaration A, B, or C');
             $table->date('p45_issue_date')->nullable()->after('starter_declaration')->comment('Date P45 was issued');
@@ -25,7 +25,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('employees', function (Blueprint $table) {
+        Schema::table('employees', function (Blueprint $table): void {
             $table->dropColumn([
                 'national_insurance_number',
                 'starter_declaration',

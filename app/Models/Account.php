@@ -12,6 +12,7 @@ class Account extends Model
     use HasFactory;
     use IsTenantModel;
 
+    #[\Override]
     protected $fillable = [
         'user_id',
         'account_number',
@@ -28,6 +29,7 @@ class Account extends Model
         'allow_manual_entry'
     ];
 
+    #[\Override]
     protected $casts = [
         'balance' => 'decimal:2',
         'opening_balance' => 'decimal:2',
@@ -35,12 +37,13 @@ class Account extends Model
         'allow_manual_entry' => 'boolean',
     ];
 
+    #[\Override]
     protected static function boot()
     {
         parent::boot();
 
         // Set normal_balance based on account_type if not provided
-        static::creating(function ($account) {
+        static::creating(function ($account): void {
             if (!$account->normal_balance) {
                 $account->normal_balance = in_array($account->account_type, ['asset', 'expense']) 
                     ? 'debit' 

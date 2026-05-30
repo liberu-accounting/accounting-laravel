@@ -28,8 +28,10 @@ use Illuminate\Database\Eloquent\Builder;
 
 class ChartOfAccountsResource extends Resource
 {
+    #[\Override]
     protected static ?string $model = Account::class;
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -38,7 +40,7 @@ class ChartOfAccountsResource extends Resource
                     ->label('Industry Template')
                     ->options(AccountTemplate::pluck('name', 'id'))
                     ->live()
-                    ->visible(fn ($get) => !$get('parent_id')),
+                    ->visible(fn ($get): bool => !$get('parent_id')),
                 
                 TextInput::make('account_number')
                     ->required()
@@ -74,7 +76,7 @@ class ChartOfAccountsResource extends Resource
                         'debit' => 'Debit',
                         'credit' => 'Credit',
                     ])
-                    ->default(fn ($get) => 
+                    ->default(fn ($get): string => 
                         in_array($get('account_type'), ['asset', 'expense']) ? 'debit' : 'credit'
                     )
                     ->label('Normal Balance'),
@@ -84,9 +86,7 @@ class ChartOfAccountsResource extends Resource
                     ->options(fn () => Account::whereNull('parent_id')
                         ->orderBy('account_number')
                         ->get()
-                        ->mapWithKeys(function ($account) {
-                            return [$account->id => $account->account_number . ' - ' . $account->account_name];
-                        }))
+                        ->mapWithKeys(fn($account) => [$account->id => $account->account_number . ' - ' . $account->account_name]))
                     ->searchable(),
                 
                 TextInput::make('opening_balance')
@@ -117,6 +117,7 @@ class ChartOfAccountsResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -176,6 +177,7 @@ class ChartOfAccountsResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\App\Resources\Tenants;
 
 use Filament\Schemas\Schema;
@@ -21,10 +23,13 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class TenantResource extends Resource
 {
+    #[\Override]
     protected static ?string $model = Tenant::class;
 
+    #[\Override]
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -33,6 +38,7 @@ class TenantResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -52,6 +58,7 @@ class TenantResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -59,6 +66,7 @@ class TenantResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

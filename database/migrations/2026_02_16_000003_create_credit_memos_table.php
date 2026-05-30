@@ -6,9 +6,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    public function up(): void
     {
-        Schema::create('credit_memos', function (Blueprint $table) {
+        Schema::create('credit_memos', function (Blueprint $table): void {
             $table->id('credit_memo_id');
             $table->foreignId('customer_id')->constrained('customers')->onDelete('cascade');
             $table->foreignId('invoice_id')->nullable()->constrained('invoices')->nullOnDelete();
@@ -32,7 +32,7 @@ return new class extends Migration
             $table->index('status');
         });
 
-        Schema::create('credit_memo_items', function (Blueprint $table) {
+        Schema::create('credit_memo_items', function (Blueprint $table): void {
             $table->id('item_id');
             $table->foreignId('credit_memo_id')->constrained('credit_memos', 'credit_memo_id')->onDelete('cascade');
             $table->string('description');
@@ -46,7 +46,7 @@ return new class extends Migration
             $table->index('credit_memo_id');
         });
 
-        Schema::create('credit_memo_applications', function (Blueprint $table) {
+        Schema::create('credit_memo_applications', function (Blueprint $table): void {
             $table->id('application_id');
             $table->foreignId('credit_memo_id')->constrained('credit_memos', 'credit_memo_id')->onDelete('cascade');
             $table->foreignId('invoice_id')->constrained('invoices')->onDelete('cascade');
@@ -60,7 +60,7 @@ return new class extends Migration
         });
     }
 
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('credit_memo_applications');
         Schema::dropIfExists('credit_memo_items');

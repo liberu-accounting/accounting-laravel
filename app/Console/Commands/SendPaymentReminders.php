@@ -9,10 +9,12 @@ use Illuminate\Console\Command;
 
 class SendPaymentReminders extends Command
 {
+    #[\Override]
     protected $signature = 'invoices:send-reminders';
+    #[\Override]
     protected $description = 'Send payment reminders for overdue invoices';
 
-    public function handle()
+    public function handle(): void
     {
         $settings = ReminderSetting::first();
 
@@ -23,25 +25,19 @@ class SendPaymentReminders extends Command
 
         $overdueInvoices = Invoice::where('payment_status', 'pending')
             ->where('invoice_date', '<=', Carbon::now()->subDays($settings->days_before_reminder))
-            ->where(function ($query) use ($settings) {
+            ->where(function ($query) use ($settings): void {
                 $query->where('reminders_sent', '<', $settings->max_reminders)
                     ->orWhereNull('last_reminder_sent_at');
             })
             ->get();
 
         foreach ($overdueInvoices as $invoice) {
-            if ($invoice->customer && $invoice->customer->email) {
-                if (!$invoice->last_reminder_sent_at ||
-                    Carbon::parse($invoice->last_reminder_sent_at)->addDays($settings->reminder_frequency_days)->isPast()) {
-
-                    $invoice->customer->notify(new PaymentReminderNotification($invoice));
-
-                    $invoice->reminders_sent++;
-                    $invoice->last_reminder_sent_at = now();
-                    $invoice->save();
-
-                    $this->info("Reminder sent for Invoice #{$invoice->invoice_id}");
-                }
+            if ($invoice->customer && $invoice->customer->email && (!$invoice->last_reminder_sent_at || Carbon::parse($invoice->last_reminder_sent_at)->addDays($settings->reminder_frequency_days)->isPast())) {
+                $invoice->customer->notify(new PaymentReminderNotification($invoice));
+                $invoice->reminders_sent++;
+                $invoice->last_reminder_sent_at = now();
+                $invoice->save();
+                $this->info("Reminder sent for Invoice #{$invoice->invoice_id}");
             }
         }
     }

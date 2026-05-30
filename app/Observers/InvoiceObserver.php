@@ -8,22 +8,22 @@ use Illuminate\Support\Facades\Auth;
 
 class InvoiceObserver
 {
-    public function created(Invoice $invoice)
+    public function created(Invoice $invoice): void
     {
         $this->logActivity($invoice, 'created');
     }
 
-    public function updated(Invoice $invoice)
+    public function updated(Invoice $invoice): void
     {
         $this->logActivity($invoice, 'updated');
     }
 
-    public function deleted(Invoice $invoice)
+    public function deleted(Invoice $invoice): void
     {
         $this->logActivity($invoice, 'deleted');
     }
 
-    private function logActivity(Invoice $invoice, string $event)
+    private function logActivity(Invoice $invoice, string $event): void
     {
         AuditLog::create([
             'user_id' => Auth::id(),

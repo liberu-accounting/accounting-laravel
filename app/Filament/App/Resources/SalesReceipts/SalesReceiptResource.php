@@ -27,16 +27,22 @@ use Filament\Tables\Filters\SelectFilter;
 
 class SalesReceiptResource extends Resource
 {
+    #[\Override]
     protected static ?string $model = SalesReceipt::class;
     
+    #[\Override]
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-receipt-percent';
     
+    #[\Override]
     protected static ?int $navigationSort = 5;
     
+    #[\Override]
     protected static string | \UnitEnum | null $navigationGroup = 'Sales';
     
+    #[\Override]
     protected static ?string $recordTitleAttribute = 'sales_receipt_number';
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -52,7 +58,7 @@ class SalesReceiptResource extends Resource
                         TextInput::make('sales_receipt_number')
                             ->disabled()
                             ->dehydrated(false)
-                            ->visible(fn ($record) => $record !== null),
+                            ->visible(fn ($record): bool => $record !== null),
                             
                         DatePicker::make('sales_receipt_date')
                             ->label('Receipt Date')
@@ -83,7 +89,7 @@ class SalesReceiptResource extends Resource
                         Select::make('tax_rate_id')
                             ->relationship('taxRate', 'name')
                             ->live()
-                            ->afterStateUpdated(function ($state, callable $set, $get) {
+                            ->afterStateUpdated(function ($state, callable $set, $get): void {
                                 if ($state && $get('subtotal_amount')) {
                                     $taxRate = TaxRate::find($state);
                                     $taxAmount = $get('subtotal_amount') * ($taxRate->rate / 100);
@@ -161,6 +167,7 @@ class SalesReceiptResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -224,7 +231,7 @@ class SalesReceiptResource extends Resource
                     ->label('Void')
                     ->icon('heroicon-o-x-circle')
                     ->color('danger')
-                    ->visible(fn ($record) => $record->status !== 'void')
+                    ->visible(fn ($record): bool => $record->status !== 'void')
                     ->requiresConfirmation()
                     ->action(fn ($record) => $record->void()),
             ])
@@ -236,6 +243,7 @@ class SalesReceiptResource extends Resource
             ->defaultSort('sales_receipt_date', 'desc');
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -243,6 +251,7 @@ class SalesReceiptResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

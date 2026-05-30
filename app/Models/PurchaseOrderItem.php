@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,8 +13,10 @@ class PurchaseOrderItem extends Model
     use HasFactory;
     use IsTenantModel;
 
+    #[\Override]
     protected $primaryKey = 'item_id';
 
+    #[\Override]
     protected $fillable = [
         'purchase_order_id',
         'description',
@@ -21,6 +25,7 @@ class PurchaseOrderItem extends Model
         'total_price'
     ];
 
+    #[\Override]
     protected $casts = [
         'unit_price' => 'decimal:2',
         'total_price' => 'decimal:2',

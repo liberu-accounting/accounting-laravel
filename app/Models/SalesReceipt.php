@@ -34,8 +34,10 @@ class SalesReceipt extends Model
     use IsTenantModel;
     use HasFactory, SoftDeletes;
 
+    #[\Override]
     protected $primaryKey = 'sales_receipt_id';
 
+    #[\Override]
     protected $fillable = [
         'customer_id',
         'sales_receipt_number',
@@ -51,6 +53,7 @@ class SalesReceipt extends Model
         'deposit_to_account_id',
     ];
 
+    #[\Override]
     protected $casts = [
         'sales_receipt_date' => 'date',
         'subtotal_amount' => 'decimal:2',
@@ -58,11 +61,12 @@ class SalesReceipt extends Model
         'total_amount' => 'decimal:2',
     ];
 
+    #[\Override]
     protected static function boot()
     {
         parent::boot();
 
-        static::creating(function ($salesReceipt) {
+        static::creating(function ($salesReceipt): void {
             if (empty($salesReceipt->sales_receipt_number)) {
                 $salesReceipt->sales_receipt_number = self::generateReceiptNumber();
             }
@@ -78,7 +82,7 @@ class SalesReceipt extends Model
     private static function generateReceiptNumber(): string
     {
         $lastReceipt = self::orderBy('sales_receipt_id', 'desc')->first();
-        $nextNumber = $lastReceipt ? ((int) substr($lastReceipt->sales_receipt_number, 3)) + 1 : 1;
+        $nextNumber = $lastReceipt ? ((int) substr((string) $lastReceipt->sales_receipt_number, 3)) + 1 : 1;
         return 'SR-' . str_pad($nextNumber, 6, '0', STR_PAD_LEFT);
     }
 
@@ -123,11 +127,7 @@ class SalesReceipt extends Model
         $this->subtotal_amount = $subtotal;
 
         // Calculate tax
-        if ($this->taxRate) {
-            $this->tax_amount = $subtotal * ($this->taxRate->rate / 100);
-        } else {
-            $this->tax_amount = 0;
-        }
+        $this->tax_amount = $this->taxRate ? $subtotal * ($this->taxRate->rate / 100) : 0;
 
         $this->total_amount = $this->subtotal_amount + $this->tax_amount;
         $this->save();
@@ -153,7 +153,7 @@ class SalesReceipt extends Model
     /**
      * Create a refund receipt from this sales receipt
      */
-    public function createRefund(array $items, string $reason = null): RefundReceipt
+    public function createRefund(array $items, ?string $reason = null): RefundReceipt
     {
         $refund = RefundReceipt::create([
             'customer_id' => $this->customer_id,

@@ -16,9 +16,9 @@ class BankStatementImportService
         $handle = fopen($filePath, 'r');
 
         // Skip header row
-        fgetcsv($handle);
+        fgetcsv($handle, escape: '\\');
 
-        while (($data = fgetcsv($handle)) !== false) {
+        while (($data = fgetcsv($handle, escape: '\\')) !== false) {
             try {
                 $transaction = Transaction::create([
                     'transaction_date' => $this->parseDate($data[0]),

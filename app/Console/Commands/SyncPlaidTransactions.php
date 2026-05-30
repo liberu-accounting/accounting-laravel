@@ -11,6 +11,7 @@ class SyncPlaidTransactions extends Command
     /**
      * The name and signature of the console command.
      */
+    #[\Override]
     protected $signature = 'plaid:sync-transactions
                             {--connection= : Sync a specific connection ID}
                             {--all : Sync all active connections}';
@@ -18,6 +19,7 @@ class SyncPlaidTransactions extends Command
     /**
      * The console command description.
      */
+    #[\Override]
     protected $description = 'Sync transactions from Plaid for bank connections';
 
     /**

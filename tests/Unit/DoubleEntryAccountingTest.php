@@ -61,7 +61,7 @@ class DoubleEntryAccountingTest extends TestCase
             'allow_manual_entry' => true,
         ]);
     }
-    public function test_can_create_a_balanced_journal_entry()
+    public function test_can_create_a_balanced_journal_entry(): void
     {
         $journalEntry = JournalEntry::create([
             'user_id' => $this->user->id,
@@ -90,7 +90,7 @@ class DoubleEntryAccountingTest extends TestCase
         $this->assertEquals(500.00, $journalEntry->total_debits);
         $this->assertEquals(500.00, $journalEntry->total_credits);
     }
-    public function test_detects_unbalanced_journal_entry()
+    public function test_detects_unbalanced_journal_entry(): void
     {
         $journalEntry = JournalEntry::create([
             'user_id' => $this->user->id,
@@ -115,7 +115,7 @@ class DoubleEntryAccountingTest extends TestCase
 
         $this->assertFalse($journalEntry->isBalanced());
     }
-    public function test_posts_journal_entry_and_updates_account_balances()
+    public function test_posts_journal_entry_and_updates_account_balances(): void
     {
         $journalEntry = JournalEntry::create([
             'user_id' => $this->user->id,
@@ -155,7 +155,7 @@ class DoubleEntryAccountingTest extends TestCase
         $this->assertTrue($journalEntry->is_posted);
         $this->assertNotNull($journalEntry->posted_at);
     }
-    public function test_reverses_journal_entry_and_restores_account_balances()
+    public function test_reverses_journal_entry_and_restores_account_balances(): void
     {
         $journalEntry = JournalEntry::create([
             'user_id' => $this->user->id,
@@ -194,7 +194,7 @@ class DoubleEntryAccountingTest extends TestCase
         $this->assertFalse($journalEntry->is_posted);
         $this->assertNull($journalEntry->posted_at);
     }
-    public function test_prevents_posting_unbalanced_journal_entry()
+    public function test_prevents_posting_unbalanced_journal_entry(): void
     {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Journal entry must be balanced before posting');
@@ -221,7 +221,7 @@ class DoubleEntryAccountingTest extends TestCase
 
         $journalEntry->post();
     }
-    public function test_prevents_posting_already_posted_entry()
+    public function test_prevents_posting_already_posted_entry(): void
     {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Journal entry is already posted');
@@ -249,7 +249,7 @@ class DoubleEntryAccountingTest extends TestCase
         $journalEntry->post();
         $journalEntry->post(); // Should throw exception
     }
-    public function test_generates_unique_entry_numbers()
+    public function test_generates_unique_entry_numbers(): void
     {
         $entry1 = JournalEntry::create([
             'user_id' => $this->user->id,
@@ -267,7 +267,7 @@ class DoubleEntryAccountingTest extends TestCase
         $this->assertNotNull($entry2->entry_number);
         $this->assertNotEquals($entry1->entry_number, $entry2->entry_number);
     }
-    public function account_can_check_if_it_accepts_entries()
+    public function account_can_check_if_it_accepts_entries(): void
     {
         // Active account with no children should accept entries
         $this->assertTrue($this->cashAccount->canAcceptEntries());
@@ -296,7 +296,7 @@ class DoubleEntryAccountingTest extends TestCase
         $this->cashAccount->save();
         $this->assertFalse($this->cashAccount->canAcceptEntries());
     }
-    public function account_normal_balance_is_set_automatically()
+    public function account_normal_balance_is_set_automatically(): void
     {
         $assetAccount = Account::create([
             'user_id' => $this->user->id,

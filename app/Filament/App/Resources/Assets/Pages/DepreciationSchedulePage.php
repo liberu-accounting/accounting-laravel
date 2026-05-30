@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\App\Resources\Assets\Pages;
 
 use Filament\Actions\Action;
@@ -10,8 +12,10 @@ use Filament\Actions;
 
 class DepreciationSchedulePage extends Page
 {
+    #[\Override]
     protected static string $resource = AssetResource::class;
 
+    #[\Override]
     protected string $view = 'filament.app.resources.asset-resource.pages.depreciation-schedule-page';
 
     public Asset $record;
@@ -21,11 +25,12 @@ class DepreciationSchedulePage extends Page
         $this->record = $record;
     }
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [
             Action::make('back')
-                ->url(fn () => AssetResource::getUrl())
+                ->url(fn (): string => AssetResource::getUrl())
                 ->label('Back to Assets')
                 ->icon('heroicon-o-arrow-left'),
         ];

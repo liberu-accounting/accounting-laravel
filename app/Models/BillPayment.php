@@ -11,8 +11,10 @@ class BillPayment extends Model
     use HasFactory;
     use IsTenantModel;
 
+    #[\Override]
     protected $primaryKey = 'payment_id';
 
+    #[\Override]
     protected $fillable = [
         'bill_id',
         'payment_date',
@@ -23,6 +25,7 @@ class BillPayment extends Model
         'notes',
     ];
 
+    #[\Override]
     protected $casts = [
         'payment_date' => 'date',
         'amount' => 'decimal:2',
@@ -40,11 +43,12 @@ class BillPayment extends Model
     }
 
     // Business Logic
+    #[\Override]
     protected static function boot()
     {
         parent::boot();
         
-        static::created(function ($payment) {
+        static::created(function ($payment): void {
             // Recalculate bill's payment status
             if ($payment->bill) {
                 $bill = $payment->bill;
@@ -61,7 +65,7 @@ class BillPayment extends Model
             }
         });
 
-        static::deleted(function ($payment) {
+        static::deleted(function ($payment): void {
             // Recalculate bill's amount paid
             if ($payment->bill) {
                 $bill = $payment->bill;

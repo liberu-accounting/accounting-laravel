@@ -31,10 +31,13 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class GeneralLedgerReportResource extends Resource
 {
+    #[\Override]
     protected static ?string $model = GeneralLedgerReport::class;
 
+    #[\Override]
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document-chart-bar';
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -53,15 +56,16 @@ class GeneralLedgerReportResource extends Resource
                 Select::make('chart_type')
                     ->options(GeneralLedgerReport::CHART_TYPES)
                     ->default('none')
-                    ->visible(fn ($get) => $get('report_type') !== 'custom'),
+                    ->visible(fn ($get): bool => $get('report_type') !== 'custom'),
                 KeyValue::make('filters')
                     ->label('Report Filters'),
                 KeyValue::make('custom_fields')
                     ->label('Custom Fields')
-                    ->visible(fn ($get) => $get('report_type') === 'custom'),
+                    ->visible(fn ($get): bool => $get('report_type') === 'custom'),
             ]);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -93,9 +97,9 @@ class GeneralLedgerReportResource extends Resource
                     ->action(fn ($record) => $record->generatePdf()),
                 Action::make('duplicate')
                     ->icon('heroicon-o-document-duplicate')
-                    ->action(function ($record) {
+                    ->action(function ($record): void {
                         $new = $record->replicate();
-                        $new->template_name = $new->template_name . ' (Copy)';
+                        $new->template_name .= ' (Copy)';
                         $new->save();
                     }),
             ])
@@ -104,6 +108,7 @@ class GeneralLedgerReportResource extends Resource
             ]);
     }
     
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -111,6 +116,7 @@ class GeneralLedgerReportResource extends Resource
         ];
     }
     
+    #[\Override]
     public static function getPages(): array
     {
         return [

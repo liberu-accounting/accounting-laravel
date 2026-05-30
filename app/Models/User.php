@@ -38,6 +38,7 @@ class User extends Authenticatable implements HasDefaultTenant, HasTenants, Fila
      *
      * @var array<int, string>
      */
+    #[\Override]
     protected $fillable = [
         'name',
         'email',
@@ -49,6 +50,7 @@ class User extends Authenticatable implements HasDefaultTenant, HasTenants, Fila
      *
      * @var array<int, string>
      */
+    #[\Override]
     protected $hidden = [
         'password',
         'remember_token',
@@ -61,6 +63,7 @@ class User extends Authenticatable implements HasDefaultTenant, HasTenants, Fila
      *
      * @var array<int, string>
      */
+    #[\Override]
     protected $appends = [
         'profile_photo_url',
     ];
@@ -70,6 +73,7 @@ class User extends Authenticatable implements HasDefaultTenant, HasTenants, Fila
      *
      * @return array<string, string>
      */
+    #[\Override]
     protected function casts(): array
     {
         return [

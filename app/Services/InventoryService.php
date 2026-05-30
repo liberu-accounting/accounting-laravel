@@ -9,11 +9,8 @@ use App\Models\InventoryCostLayer;
 
 class InventoryService
 {
-    protected $valuationService;
-
-    public function __construct(InventoryValuationService $valuationService)
+    public function __construct(protected \App\Services\InventoryValuationService $valuationService)
     {
-        $this->valuationService = $valuationService;
     }
 
     public function createInventoryTransaction(
@@ -38,11 +35,10 @@ class InventoryService
                 'unit_cost' => $unitPrice,
                 'purchase_date' => now()
             ]);
-
             if ($item->valuation_method === 'average') {
                 $this->valuationService->updateAverageCost($item, $quantity, $unitPrice);
             }
-        } else if ($type === 'sale') {
+        } elseif ($type === 'sale') {
             $costOfGoodsSold = $this->valuationService->calculateCostOfGoodsSold($inventoryTx);
             $inventoryTx->update(['cost_of_goods_sold' => $costOfGoodsSold]);
         }
@@ -64,24 +60,20 @@ class InventoryService
     {
         return InventoryItem::where('is_active', true)
             ->get()
-            ->sum(function ($item) {
-                return $this->valuationService->getInventoryValuation($item);
-            });
+            ->sum(fn($item) => $this->valuationService->getInventoryValuation($item));
     }
 
     public function getInventoryReport()
     {
         return InventoryItem::where('is_active', true)
             ->get()
-            ->map(function ($item) {
-                return [
-                    'id' => $item->id,
-                    'name' => $item->name,
-                    'sku' => $item->sku,
-                    'quantity' => $item->current_quantity,
-                    'valuation_method' => $item->valuation_method,
-                    'total_value' => $this->valuationService->getInventoryValuation($item)
-                ];
-            });
+            ->map(fn($item) => [
+                'id' => $item->id,
+                'name' => $item->name,
+                'sku' => $item->sku,
+                'quantity' => $item->current_quantity,
+                'valuation_method' => $item->valuation_method,
+                'total_value' => $this->valuationService->getInventoryValuation($item)
+            ]);
     }
 }

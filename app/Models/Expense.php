@@ -14,6 +14,7 @@ class Expense extends Model
 
     use IsTenantModel;
 
+    #[\Override]
     protected $fillable = [
         'amount',
         'description',
@@ -33,6 +34,7 @@ class Expense extends Model
         'last_generated'
     ];
 
+    #[\Override]
     protected $casts = [
         'date' => 'date',
         'approved_at' => 'datetime',
@@ -65,7 +67,7 @@ class Expense extends Model
         return $this->belongsTo(CostCenter::class);
     }
 
-    public function approve()
+    public function approve(): void
     {
         $this->update([
             'approval_status' => 'approved',
@@ -76,7 +78,7 @@ class Expense extends Model
         $this->user->notify(new ExpenseApprovalNotification($this, 'approved'));
     }
 
-    public function reject($reason)
+    public function reject($reason): void
     {
         $this->update([
             'approval_status' => 'rejected',
@@ -101,7 +103,7 @@ class Expense extends Model
         return $this->amount;
     }
 
-    public function generateRecurring()
+    public function generateRecurring(): void
     {
         if (!$this->is_recurring || !$this->shouldGenerateNew()) {
             return;
@@ -123,8 +125,6 @@ class Expense extends Model
         if ($this->recurrence_end && $this->recurrence_end < now()) {
             return false;
         }
-
-        $lastDate = $this->last_generated ?? $this->recurrence_start;
         return $this->getNextDate()->lte(now());
     }
 

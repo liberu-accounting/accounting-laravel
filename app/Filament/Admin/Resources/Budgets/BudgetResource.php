@@ -26,10 +26,13 @@ use App\Services\BudgetService;
 
 class BudgetResource extends Resource
 {
+    #[\Override]
     protected static ?string $model = Budget::class;
 
+    #[\Override]
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-calculator';
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -54,6 +57,7 @@ class BudgetResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -80,7 +84,7 @@ class BudgetResource extends Resource
                 EditAction::make(),
                 DeleteAction::make(),
                 Action::make('generate_forecast')
-                    ->action(function (Budget $record) {
+                    ->action(function (Budget $record): void {
                         $budgetService = new BudgetService();
                         $budgetService->generateForecast($record);
                     })
@@ -93,6 +97,7 @@ class BudgetResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

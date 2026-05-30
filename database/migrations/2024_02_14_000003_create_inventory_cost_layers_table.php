@@ -8,9 +8,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    public function up(): void
     {
-        Schema::create('inventory_cost_layers', function (Blueprint $table) {
+        Schema::create('inventory_cost_layers', function (Blueprint $table): void {
             $table->id();
             $table->foreignId('inventory_item_id')->constrained('inventory_items');
             $table->integer('quantity');
@@ -20,7 +20,7 @@ return new class extends Migration
         });
     }
 
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('inventory_cost_layers');
     }

@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('accounts', function (Blueprint $table) {
+        Schema::table('accounts', function (Blueprint $table): void {
             $table->enum('normal_balance', ['debit', 'credit'])->after('account_type')->default('debit');
             $table->decimal('opening_balance', 15, 2)->after('balance')->default(0);
             $table->text('description')->nullable()->after('account_name');
@@ -25,7 +25,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('accounts', function (Blueprint $table) {
+        Schema::table('accounts', function (Blueprint $table): void {
             $table->dropColumn(['normal_balance', 'opening_balance', 'description', 'is_active', 'allow_manual_entry']);
         });
     }

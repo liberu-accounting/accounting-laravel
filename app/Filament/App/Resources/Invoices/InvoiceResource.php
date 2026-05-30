@@ -25,10 +25,13 @@ use App\Filament\App\Resources\InvoiceResource\Pages;
 
 class InvoiceResource extends Resource
 {
+    #[\Override]
     protected static ?string $model = Invoice::class;
 
+    #[\Override]
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document-text';
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -40,7 +43,7 @@ class InvoiceResource extends Resource
                 TextInput::make('invoice_number')
                     ->disabled()
                     ->dehydrated(false)
-                    ->visible(fn ($record) => $record !== null),
+                    ->visible(fn ($record): bool => $record !== null),
                 DatePicker::make('invoice_date')
                     ->required(),
                 DatePicker::make('due_date'),
@@ -48,7 +51,7 @@ class InvoiceResource extends Resource
                     ->numeric()
                     ->required()
                     ->live()
-                    ->afterStateUpdated(function ($state, callable $set, $get) {
+                    ->afterStateUpdated(function ($state, callable $set, $get): void {
                         if ($get('tax_rate_id')) {
                             $taxRate = TaxRate::find($get('tax_rate_id'));
                             $taxAmount = $state * ($taxRate->rate / 100);
@@ -58,7 +61,7 @@ class InvoiceResource extends Resource
                 Select::make('tax_rate_id')
                     ->relationship('taxRate', 'name')
                     ->live()
-                    ->afterStateUpdated(function ($state, callable $set, $get) {
+                    ->afterStateUpdated(function ($state, callable $set, $get): void {
                         if ($state && $get('total_amount')) {
                             $taxRate = TaxRate::find($state);
                             $taxAmount = $get('total_amount') * ($taxRate->rate / 100);
@@ -100,6 +103,7 @@ class InvoiceResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -129,17 +133,19 @@ class InvoiceResource extends Resource
                 Action::make('download')
                     ->icon('heroicon-o-document-download')
                     ->action(fn (Invoice $record) => response()->streamDownload(
-                        fn () => print($record->generatePDF()),
+                        fn (): int => print($record->generatePDF()),
                         "invoice_{$record->invoice_number}.pdf"
                     )),
             ]);
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

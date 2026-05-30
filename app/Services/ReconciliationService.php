@@ -8,7 +8,7 @@ use Illuminate\Support\Collection;
 
 class ReconciliationService
 {
-    public function reconcile(BankStatement $bankStatement)
+    public function reconcile(BankStatement $bankStatement): array
     {
         $transactions = Transaction::where('account_id', $bankStatement->account_id)
             ->whereBetween('transaction_date', [

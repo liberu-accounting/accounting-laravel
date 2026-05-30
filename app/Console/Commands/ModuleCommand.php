@@ -12,19 +12,18 @@ class ModuleCommand extends Command
     /**
      * The name and signature of the console command.
      */
+    #[\Override]
     protected $signature = 'module {action} {name?} {--force}';
 
     /**
      * The console command description.
      */
+    #[\Override]
     protected $description = 'Manage application modules';
 
-    protected ModuleManager $moduleManager;
-
-    public function __construct(ModuleManager $moduleManager)
+    public function __construct(protected ModuleManager $moduleManager)
     {
         parent::__construct();
-        $this->moduleManager = $moduleManager;
     }
 
     /**
@@ -61,14 +60,12 @@ class ModuleCommand extends Command
 
         $this->table(
             ['Name', 'Version', 'Status', 'Description'],
-            $modules->map(function ($module) {
-                return [
-                    $module->getName(),
-                    $module->getVersion(),
-                    $module->isEnabled() ? '<fg=green>Enabled</>' : '<fg=red>Disabled</>',
-                    $module->getDescription(),
-                ];
-            })->toArray()
+            $modules->map(fn($module) => [
+                $module->getName(),
+                $module->getVersion(),
+                $module->isEnabled() ? '<fg=green>Enabled</>' : '<fg=red>Disabled</>',
+                $module->getDescription(),
+            ])->toArray()
         );
 
         return 0;
@@ -156,11 +153,9 @@ class ModuleCommand extends Command
             return 1;
         }
 
-        if (!$this->option('force')) {
-            if (!$this->confirm("Are you sure you want to uninstall module '{$name}'? This action cannot be undone.")) {
-                $this->info('Operation cancelled.');
-                return 0;
-            }
+        if (!$this->option('force') && !$this->confirm("Are you sure you want to uninstall module '{$name}'? This action cannot be undone.")) {
+            $this->info('Operation cancelled.');
+            return 0;
         }
 
         try {
@@ -212,7 +207,7 @@ class ModuleCommand extends Command
 
         $info = $this->moduleManager->getModuleInfo($name);
 
-        if (empty($info)) {
+        if ($info === []) {
             $this->error("Module '{$name}' not found.");
             return 1;
         }

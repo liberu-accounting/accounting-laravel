@@ -29,14 +29,19 @@ use Exception;
 
 class BankConnectionResource extends Resource
 {
+    #[\Override]
     protected static ?string $model = BankConnection::class;
 
+    #[\Override]
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-building-library';
     
+    #[\Override]
     protected static string | \UnitEnum | null $navigationGroup = 'Banking';
     
+    #[\Override]
     protected static ?int $navigationSort = 1;
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -86,10 +91,11 @@ class BankConnectionResource extends Resource
                             ->helperText('Last time transactions were synced from Plaid'),
                     ])->columns(2)
                     ->collapsible()
-                    ->collapsed(fn ($record) => !$record || !$record->plaid_item_id),
+                    ->collapsed(fn ($record): bool => !$record || !$record->plaid_item_id),
             ]);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -124,9 +130,9 @@ class BankConnectionResource extends Resource
                 
                 TextColumn::make('plaid_item_id')
                     ->label('Plaid Connected')
-                    ->formatStateUsing(fn ($state) => $state ? 'Yes' : 'No')
+                    ->formatStateUsing(fn ($state): string => $state ? 'Yes' : 'No')
                     ->badge()
-                    ->color(fn ($state) => $state ? 'success' : 'gray')
+                    ->color(fn ($state): string => $state ? 'success' : 'gray')
                     ->sortable(),
                 
                 TextColumn::make('last_synced_at')
@@ -170,9 +176,9 @@ class BankConnectionResource extends Resource
                     ->label('Sync Transactions')
                     ->icon('heroicon-o-arrow-path')
                     ->color('primary')
-                    ->visible(fn (BankConnection $record) => $record->plaid_item_id !== null)
+                    ->visible(fn (BankConnection $record): bool => $record->plaid_item_id !== null)
                     ->requiresConfirmation()
-                    ->action(function (BankConnection $record) {
+                    ->action(function (BankConnection $record): void {
                         try {
                             $plaidService = app(PlaidService::class);
                             $result = $plaidService->syncTransactions($record);
@@ -199,11 +205,11 @@ class BankConnectionResource extends Resource
                     ->label('Disconnect')
                     ->icon('heroicon-o-x-mark')
                     ->color('danger')
-                    ->visible(fn (BankConnection $record) => $record->plaid_item_id !== null)
+                    ->visible(fn (BankConnection $record): bool => $record->plaid_item_id !== null)
                     ->requiresConfirmation()
                     ->modalHeading('Disconnect Bank Connection')
                     ->modalDescription('Are you sure you want to disconnect this bank? This will remove the Plaid connection but keep historical transaction data.')
-                    ->action(function (BankConnection $record) {
+                    ->action(function (BankConnection $record): void {
                         try {
                             $plaidService = app(PlaidService::class);
                             $plaidService->removeItem($record->plaid_access_token);
@@ -239,6 +245,7 @@ class BankConnectionResource extends Resource
             ->defaultSort('created_at', 'desc');
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -246,6 +253,7 @@ class BankConnectionResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

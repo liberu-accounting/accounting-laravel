@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http;
 
 use App\Http\Middleware\TrustProxies;
@@ -37,6 +39,7 @@ class Kernel extends HttpKernel
      *
      * @var array<int, class-string|string>
      */
+    #[\Override]
     protected $middleware = [
         // \App\Http\Middleware\TrustHosts::class,
         TrustProxies::class,
@@ -52,6 +55,7 @@ class Kernel extends HttpKernel
      *
      * @var array<string, array<int, class-string|string>>
      */
+    #[\Override]
     protected $middlewareGroups = [
         'web' => [
             EncryptCookies::class,
@@ -76,6 +80,7 @@ class Kernel extends HttpKernel
      *
      * @var array<string, class-string|string>
      */
+    #[\Override]
     protected $middlewareAliases = [
         'auth' => Authenticate::class,
         'auth.basic' => AuthenticateWithBasicAuth::class,

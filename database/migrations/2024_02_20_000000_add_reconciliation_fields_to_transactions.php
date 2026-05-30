@@ -8,9 +8,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    public function up(): void
     {
-        Schema::table('transactions', function (Blueprint $table) {
+        Schema::table('transactions', function (Blueprint $table): void {
             if (!Schema::hasColumn('transactions', 'reconciled')) {
                 $table->boolean('reconciled')->default(false);
             }
@@ -26,9 +26,9 @@ return new class extends Migration
         });
     }
 
-    public function down()
+    public function down(): void
     {
-        Schema::table('transactions', function (Blueprint $table) {
+        Schema::table('transactions', function (Blueprint $table): void {
             $table->dropForeign(['reconciled_by_user_id']);
             $table->dropColumn(['reconciled', 'discrepancy_notes', 'reconciled_at', 'reconciled_by_user_id']);
         });

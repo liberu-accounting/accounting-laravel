@@ -8,7 +8,7 @@ use Carbon\Carbon;
 
 class ProjectReportService
 {
-    public function getProjectFinancials(Project $project, $startDate, $endDate)
+    public function getProjectFinancials(Project $project, $startDate, $endDate): array
     {
         $transactions = $project->transactions()
             ->whereBetween('transaction_date', [$startDate, $endDate])
@@ -38,13 +38,13 @@ class ProjectReportService
                 'profit_margin' => $revenue > 0 ? 
                     (($revenue - ($directCosts + $indirectCosts)) / $revenue) * 100 : 0
             ],
-            'transactions' => $transactions->map(fn($t) => [
+            'transactions' => $transactions->map(fn($t): array => [
                 'date' => $t->transaction_date,
                 'type' => $t->type,
                 'amount' => $t->amount,
                 'description' => $t->description
             ]),
-            'expenses' => $expenses->map(fn($e) => [
+            'expenses' => $expenses->map(fn($e): array => [
                 'date' => $e->date,
                 'amount' => $e->amount,
                 'description' => $e->description,
@@ -62,7 +62,7 @@ class ProjectReportService
             ->sum(fn($expense) => $expense->getAllocatedAmount());
     }
 
-    public function getBudgetVariance(Project $project, $startDate, $endDate)
+    public function getBudgetVariance(Project $project, $startDate, $endDate): array
     {
         $actuals = $this->getProjectFinancials($project, $startDate, $endDate);
         $budgets = $project->budgets()

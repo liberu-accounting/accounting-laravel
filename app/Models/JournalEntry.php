@@ -11,6 +11,7 @@ class JournalEntry extends Model
     use HasFactory;
     use IsTenantModel;
 
+    #[\Override]
     protected $fillable = [
         'user_id',
         'entry_number',
@@ -25,6 +26,7 @@ class JournalEntry extends Model
         'posted_at',
     ];
 
+    #[\Override]
     protected $casts = [
         'entry_date' => 'date',
         'is_approved' => 'boolean',
@@ -33,11 +35,12 @@ class JournalEntry extends Model
         'posted_at' => 'datetime',
     ];
 
+    #[\Override]
     protected static function boot()
     {
         parent::boot();
 
-        static::creating(function ($journalEntry) {
+        static::creating(function ($journalEntry): void {
             if (!$journalEntry->entry_number) {
                 $journalEntry->entry_number = static::generateEntryNumber();
             }
@@ -69,12 +72,12 @@ class JournalEntry extends Model
         return $this->lines()->sum('credit_amount');
     }
 
-    public function isBalanced()
+    public function isBalanced(): bool
     {
         return bccomp($this->total_debits, $this->total_credits, 2) === 0;
     }
 
-    public function post()
+    public function post(): static
     {
         if ($this->is_posted) {
             throw new \Exception('Journal entry is already posted.');
@@ -84,7 +87,7 @@ class JournalEntry extends Model
             throw new \Exception('Journal entry must be balanced before posting.');
         }
 
-        \DB::transaction(function () {
+        \DB::transaction(function (): void {
             foreach ($this->lines as $line) {
                 $account = $line->account;
                 
@@ -105,13 +108,13 @@ class JournalEntry extends Model
         return $this;
     }
 
-    public function reverse()
+    public function reverse(): static
     {
         if (!$this->is_posted) {
             throw new \Exception('Cannot reverse an unposted journal entry.');
         }
 
-        \DB::transaction(function () {
+        \DB::transaction(function (): void {
             foreach ($this->lines as $line) {
                 $account = $line->account;
                 
@@ -132,7 +135,7 @@ class JournalEntry extends Model
         return $this;
     }
 
-    protected static function generateEntryNumber()
+    protected static function generateEntryNumber(): string
     {
         $year = date('Y');
         $lastEntry = static::where('entry_number', 'like', "JE-{$year}-%")
@@ -140,7 +143,7 @@ class JournalEntry extends Model
             ->first();
 
         if ($lastEntry) {
-            $lastNumber = (int) substr($lastEntry->entry_number, -6);
+            $lastNumber = (int) substr((string) $lastEntry->entry_number, -6);
             $newNumber = $lastNumber + 1;
         } else {
             $newNumber = 1;

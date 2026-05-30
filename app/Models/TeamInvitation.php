@@ -15,6 +15,7 @@ class TeamInvitation extends JetstreamTeamInvitation
      *
      * @var array<int, string>
      */
+    #[\Override]
     protected $fillable = [
         'email',
         'role',
@@ -23,6 +24,7 @@ class TeamInvitation extends JetstreamTeamInvitation
     /**
      * Get the team that the invitation belongs to.
      */
+    #[\Override]
     public function team(): BelongsTo
     {
         return $this->belongsTo(Jetstream::teamModel());

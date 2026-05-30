@@ -17,11 +17,8 @@ use Exception;
 
 class PlaidController extends Controller
 {
-    protected PlaidService $plaidService;
-
-    public function __construct(PlaidService $plaidService)
+    public function __construct(protected PlaidService $plaidService)
     {
-        $this->plaidService = $plaidService;
     }
 
     /**
@@ -444,7 +441,7 @@ class PlaidController extends Controller
         }
 
         // Use the most specific category (last one in the array)
-        return strtolower(end($categories));
+        return strtolower((string) end($categories));
     }
 
     /**

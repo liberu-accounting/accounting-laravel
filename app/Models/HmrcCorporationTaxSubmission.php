@@ -12,6 +12,7 @@ class HmrcCorporationTaxSubmission extends Model
     use HasFactory;
     use IsTenantModel;
 
+    #[\Override]
     protected $fillable = [
         'company_id',
         'hmrc_submission_id',
@@ -29,6 +30,7 @@ class HmrcCorporationTaxSubmission extends Model
         'is_amended',
     ];
 
+    #[\Override]
     protected $casts = [
         'accounting_period_start' => 'date',
         'accounting_period_end' => 'date',

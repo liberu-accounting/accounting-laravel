@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('time_entries', function (Blueprint $table) {
+        Schema::create('time_entries', function (Blueprint $table): void {
             $table->id();
         
             $table->dateTime('start_time');

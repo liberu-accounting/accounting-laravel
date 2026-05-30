@@ -8,18 +8,18 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    public function up(): void
     {
-        Schema::table('customers', function (Blueprint $table) {
+        Schema::table('customers', function (Blueprint $table): void {
             $table->decimal('credit_limit', 10, 2)->default(0);
             $table->decimal('current_balance', 10, 2)->default(0);
             $table->boolean('credit_hold')->default(false);
         });
     }
 
-    public function down()
+    public function down(): void
     {
-        Schema::table('customers', function (Blueprint $table) {
+        Schema::table('customers', function (Blueprint $table): void {
             $table->dropColumn(['credit_limit', 'current_balance', 'credit_hold']);
         });
     }

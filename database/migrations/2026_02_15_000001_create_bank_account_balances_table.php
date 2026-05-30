@@ -6,9 +6,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    public function up(): void
     {
-        Schema::create('bank_account_balances', function (Blueprint $table) {
+        Schema::create('bank_account_balances', function (Blueprint $table): void {
             $table->id();
             $table->foreignId('bank_connection_id')->constrained()->onDelete('cascade');
             $table->string('plaid_account_id');
@@ -29,7 +29,7 @@ return new class extends Migration
         });
     }
 
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('bank_account_balances');
     }

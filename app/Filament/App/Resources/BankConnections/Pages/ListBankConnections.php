@@ -12,8 +12,10 @@ use Exception;
 
 class ListBankConnections extends ListRecords
 {
+    #[\Override]
     protected static string $resource = BankConnectionResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [
