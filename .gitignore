@@ -20,6 +20,8 @@ public_html/storage
 public_html/hot
 
 storage/*.key
+storage/rector/
+bootstrap/cache/*.php
 .env
 Homestead.yaml
 Homestead.json
