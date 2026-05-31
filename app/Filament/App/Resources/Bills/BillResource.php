@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\App\Resources\Bills;
 
 use Filament\Schemas\Schema;

@@ -44,7 +44,7 @@ class PurchaseOrderResource extends Resource
                     ->relationship('supplier', 'supplier_first_name')
                     ->required(),
                 TextInput::make('po_number')
-                    ->default(fn () => PurchaseOrder::generatePoNumber())
+                    ->default(fn (): string => PurchaseOrder::generatePoNumber())
                     ->disabled()
                     ->required(),
                 DatePicker::make('order_date')

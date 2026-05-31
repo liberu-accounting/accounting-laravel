@@ -67,7 +67,7 @@ class RevolutServiceTest extends TestCase
         $this->assertEquals('test_refresh_token', $result['refresh_token']);
         $this->assertEquals(2400, $result['expires_in']);
 
-        Http::assertSent(fn($request) => str_contains((string) $request->url(), 'auth/token')
+        Http::assertSent(fn($request): bool => str_contains((string) $request->url(), 'auth/token')
             && $request['grant_type'] === 'authorization_code'
             && $request['code'] === 'test_auth_code'
             && $request['client_id'] === 'test_client_id');
@@ -99,7 +99,7 @@ class RevolutServiceTest extends TestCase
 
         $this->assertEquals('new_access_token', $result['access_token']);
 
-        Http::assertSent(fn($request) => $request['grant_type'] === 'refresh_token'
+        Http::assertSent(fn($request): bool => $request['grant_type'] === 'refresh_token'
             && $request['refresh_token'] === 'old_refresh_token');
     }
 
@@ -198,7 +198,7 @@ class RevolutServiceTest extends TestCase
         $this->assertEquals('GBP Business Account', $accounts[0]['name']);
         $this->assertEquals(10000.00, $accounts[0]['balance']);
 
-        Http::assertSent(fn($request) => str_contains((string) $request->url(), '/accounts')
+        Http::assertSent(fn($request): bool => str_contains((string) $request->url(), '/accounts')
             && $request->hasHeader('Authorization', 'Bearer valid_token'));
     }
 
@@ -252,7 +252,7 @@ class RevolutServiceTest extends TestCase
         $this->assertCount(1, $transactions);
         $this->assertEquals('tx_001', $transactions[0]['id']);
 
-        Http::assertSent(fn($request) => str_contains((string) $request->url(), '/transactions')
+        Http::assertSent(fn($request): bool => str_contains((string) $request->url(), '/transactions')
             && str_contains((string) $request->url(), 'from=2026-01-01')
             && str_contains((string) $request->url(), 'to=2026-01-31'));
     }
@@ -271,7 +271,7 @@ class RevolutServiceTest extends TestCase
 
         $this->service->getTransactions($connection, null, null, 5000);
 
-        Http::assertSent(fn($request) => str_contains((string) $request->url(), 'count=1000'));
+        Http::assertSent(fn($request): bool => str_contains((string) $request->url(), 'count=1000'));
     }
 
     public function test_get_transactions_updates_last_synced_at(): void
@@ -310,7 +310,7 @@ class RevolutServiceTest extends TestCase
 
         $service->getAccounts($connection);
 
-        Http::assertSent(fn($request) => str_contains((string) $request->url(), 'b2b.revolut.com'));
+        Http::assertSent(fn($request): bool => str_contains((string) $request->url(), 'b2b.revolut.com'));
     }
 
     public function test_verify_webhook_signature_with_valid_signature(): void
@@ -355,7 +355,7 @@ class RevolutServiceTest extends TestCase
         $this->assertEquals('pay_001', $result['id']);
         $this->assertEquals('pending', $result['state']);
 
-        Http::assertSent(fn($request) => str_contains((string) $request->url(), '/pay')
+        Http::assertSent(fn($request): bool => str_contains((string) $request->url(), '/pay')
             && $request['account_id'] === $paymentData['account_id']
             && $request['amount'] === $paymentData['amount']
             && $request['currency'] === $paymentData['currency']
@@ -426,7 +426,7 @@ class RevolutServiceTest extends TestCase
         $this->assertEquals('draft_001', $result['id']);
         $this->assertEquals('CREATED', $result['status']);
 
-        Http::assertSent(fn($request) => str_contains((string) $request->url(), '/payment-drafts')
+        Http::assertSent(fn($request): bool => str_contains((string) $request->url(), '/payment-drafts')
             && $request['title'] === 'Batch January Suppliers'
             && $request['schedule_for'] === '2026-01-31'
             && count($request['payments']) === count($payments)
@@ -458,7 +458,7 @@ class RevolutServiceTest extends TestCase
             ],
         ]);
 
-        Http::assertSent(fn($request) => str_contains((string) $request->url(), '/payment-drafts')
+        Http::assertSent(fn($request): bool => str_contains((string) $request->url(), '/payment-drafts')
             && !isset($request['schedule_for']));
     }
 

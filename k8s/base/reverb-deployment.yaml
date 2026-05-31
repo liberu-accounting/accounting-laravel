@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: accounting-reverb
+  namespace: accounting
+  labels:
+    app: accounting-laravel
+    component: reverb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: accounting-laravel
+      component: reverb
+  template:
+    metadata:
+      labels:
+        app: accounting-laravel
+        component: reverb
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+      containers:
+        - name: reverb
+          image: accounting-laravel:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+              name: websocket
+          env:
+            - name: CONTAINER_MODE
+              value: reverb
+          envFrom:
+            - configMapRef:
+                name: accounting-config
+            - secretRef:
+                name: accounting-secret
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]

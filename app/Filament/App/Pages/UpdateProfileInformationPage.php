@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\App\Pages;
 
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Schema;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\Auth;
 
@@ -12,10 +15,10 @@ class UpdateProfileInformationPage extends Page
     protected string $view = 'filament.pages.profile.update-profile-information';
 
     #[\Override]
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-user';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-user';
 
     #[\Override]
-    protected static string | \UnitEnum | null $navigationGroup = 'Account';
+    protected static string|\UnitEnum|null $navigationGroup = 'Account';
 
     #[\Override]
     protected static ?int $navigationSort = 0;
@@ -23,9 +26,8 @@ class UpdateProfileInformationPage extends Page
     #[\Override]
     protected static ?string $title = 'Profile';
 
-    public $name;
-
-    public $email;
+    public ?string $name  = null;
+    public ?string $email = null;
 
     public function mount(): void
     {
@@ -35,43 +37,40 @@ class UpdateProfileInformationPage extends Page
         ]);
     }
 
-    protected function getFormSchema(): array
+    public function form(Schema $schema): Schema
     {
-        return [
+        return $schema->schema([
             TextInput::make('name')
                 ->label('Name')
                 ->required(),
             TextInput::make('email')
                 ->label('Email Address')
+                ->email()
                 ->required(),
-        ];
+        ]);
     }
 
     public function submit(): void
     {
-        $this->form->getState();
+        $state = $this->form->getState();
 
-        $state = array_filter([
-            'name'  => $this->name,
-            'email' => $this->email,
-        ]);
-
-        $user = Auth::user();
-
-        $user->forceFill($state)->save();
+        Auth::user()->forceFill(array_filter([
+            'name'  => $state['name'] ?? null,
+            'email' => $state['email'] ?? null,
+        ]))->save();
 
         session()->flash('status', 'Your profile has been updated.');
     }
 
     #[\Override]
-    public function getHeading(): string
+    public function getHeading(): string|\Illuminate\Contracts\Support\Htmlable
     {
-        return static::$title;
+        return static::$title ?? '';
     }
 
     #[\Override]
     public static function shouldRegisterNavigation(): bool
     {
-        return true; //config('filament-jetstream.show_update_profile_information_page');
+        return true;
     }
 }

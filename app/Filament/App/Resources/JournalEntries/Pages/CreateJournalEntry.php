@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\App\Resources\JournalEntries\Pages;
 
 use App\Filament\App\Resources\JournalEntries\JournalEntryResource;

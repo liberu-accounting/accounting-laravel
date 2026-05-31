@@ -21,6 +21,7 @@
 
     @vite('resources/css/app.css')
     @livewireStyles
+    {{-- Livewire 4: styles injected automatically by Vite, kept for compatibility --}}
 </head>
 <body class="font-sans antialiased">
     @if(config('googletagmanager.id'))
@@ -36,7 +37,7 @@
     </div>
 
     @vite('resources/js/app.js')
-    @livewireScripts
+    @livewireScriptConfig{{-- Livewire 4 replacement for @livewireScripts --}}
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {

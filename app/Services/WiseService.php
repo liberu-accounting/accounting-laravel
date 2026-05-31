@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Models\BankConnection;
@@ -226,7 +228,7 @@ class WiseService
 
             $response = Http::timeout(30)
                 ->connectTimeout(10)
-                ->retry(2, 200, fn($exception, $request) => $exception instanceof \Illuminate\Http\Client\ConnectionException ||
+                ->retry(2, 200, fn($exception, $request): bool => $exception instanceof \Illuminate\Http\Client\ConnectionException ||
                        ($exception instanceof \Illuminate\Http\Client\RequestException &&
                         $exception->response->status() >= 500))
                 ->withToken($accessToken)

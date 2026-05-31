@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\App\Resources\ChartOfAccounts;
 
 use Filament\Schemas\Schema;
@@ -86,7 +88,7 @@ class ChartOfAccountsResource extends Resource
                     ->options(fn () => Account::whereNull('parent_id')
                         ->orderBy('account_number')
                         ->get()
-                        ->mapWithKeys(fn($account) => [$account->id => $account->account_number . ' - ' . $account->account_name]))
+                        ->mapWithKeys(fn($account): array => [$account->id => $account->account_number . ' - ' . $account->account_name]))
                     ->searchable(),
                 
                 TextInput::make('opening_balance')

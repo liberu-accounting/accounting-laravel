@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Models\InventoryItem;
@@ -9,18 +11,16 @@ use Illuminate\Support\Facades\DB;
 
 class InventoryValuationService
 {
-    public function calculateCostOfGoodsSold(InventoryTransaction $transaction)
+    public function calculateCostOfGoodsSold(InventoryTransaction $transaction): float|int|null
     {
         $item = $transaction->inventoryItem;
         
-        switch ($item->valuation_method) {
-            case 'fifo':
-                return $this->calculateFIFOCost($transaction);
-            case 'lifo':
-                return $this->calculateLIFOCost($transaction);
-            case 'average':
-                return $this->calculateAverageCost($transaction);
-        }
+        return match ($item->valuation_method) {
+            'fifo' => $this->calculateFIFOCost($transaction),
+            'lifo' => $this->calculateLIFOCost($transaction),
+            'average' => $this->calculateAverageCost($transaction),
+            default => null,
+        };
     }
 
     private function calculateFIFOCost(InventoryTransaction $transaction): float|int

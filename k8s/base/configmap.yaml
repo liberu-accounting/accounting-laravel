@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: accounting-config
+  namespace: accounting
+  labels:
+    app: accounting-laravel
+data:
+  APP_NAME: "Liberu Accounting"
+  APP_ENV: production
+  APP_DEBUG: "false"
+  APP_URL: "https://accounting.example.com"
+  LOG_CHANNEL: stack
+  LOG_LEVEL: warning
+  DB_CONNECTION: mysql
+  DB_HOST: accounting-mysql
+  DB_PORT: "3306"
+  DB_DATABASE: liberu_accounting
+  DB_USERNAME: liberu
+  CACHE_DRIVER: redis
+  QUEUE_CONNECTION: redis
+  SESSION_DRIVER: redis
+  REDIS_HOST: accounting-redis
+  REDIS_PORT: "6379"
+  BROADCAST_DRIVER: reverb
+  REVERB_HOST: accounting-reverb
+  REVERB_PORT: "8080"
+  REVERB_SCHEME: http
+  REVERB_SERVER_HOST: "0.0.0.0"
+  REVERB_SERVER_PORT: "8080"
+  OCTANE_SERVER: roadrunner
+  CONTAINER_MODE: http
+  WITH_SCHEDULER: "true"
+  WITH_HORIZON: "false"
+  MAIL_MAILER: smtp
+  MULTITENANCY: "false"

@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Middleware\Authenticate;
+use App\Http\Middleware\SecurityHeaders;
 use App\Http\Middleware\EncryptCookies;
 use App\Http\Middleware\PreventRequestsDuringMaintenance;
 use App\Http\Middleware\RedirectIfAuthenticated;
@@ -46,6 +47,7 @@ return Application::configure(basePath: dirname(__DIR__))
             ValidatePostSize::class,
             TrimStrings::class,
             ConvertEmptyStringsToNull::class,
+            SecurityHeaders::class,
         ]);
 
         $middleware->web(replace: [

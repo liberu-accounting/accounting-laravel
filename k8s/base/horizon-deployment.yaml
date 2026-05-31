@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: accounting-horizon
+  namespace: accounting
+  labels:
+    app: accounting-laravel
+    component: horizon
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: accounting-laravel
+      component: horizon
+  template:
+    metadata:
+      labels:
+        app: accounting-laravel
+        component: horizon
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+      containers:
+        - name: horizon
+          image: accounting-laravel:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: CONTAINER_MODE
+              value: horizon
+          envFrom:
+            - configMapRef:
+                name: accounting-config
+            - secretRef:
+                name: accounting-secret
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Models\Transaction;
@@ -52,7 +54,7 @@ class GeneralLedgerService
                 'account_id' => $account->account_id,
                 'account_name' => $account->account_name,
                 'debit' => $balance > 0 ? $balance : 0,
-                'credit' => $balance < 0 ? abs($balance) : 0,
+                'credit' => $balance < 0 ? abs((float) $balance) : 0,
                 'currency' => $displayCurrency->code,
             ];
         });
@@ -110,7 +112,7 @@ class GeneralLedgerService
         // Generate chart data (last 7 days)
         $revenueChart = $this->generateChartData('revenue', 7);
         $expensesChart = $this->generateChartData('expense', 7);
-        $netIncomeChart = array_map(fn(int $i) => $revenueChart[$i] - $expensesChart[$i], range(0, 6));
+        $netIncomeChart = array_map(fn(int $i): int|float => $revenueChart[$i] - $expensesChart[$i], range(0, 6));
 
         return [
             'revenue' => $revenue,

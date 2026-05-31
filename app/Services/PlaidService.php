@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Models\BankConnection;
@@ -187,7 +189,7 @@ class PlaidService
                 ->connectTimeout(10)
                 ->retry(2, 200, 
                     // Only retry on 5xx errors or network issues, not 4xx
-                    fn($exception, $request) => $exception instanceof \Illuminate\Http\Client\ConnectionException ||
+                    fn($exception, $request): bool => $exception instanceof \Illuminate\Http\Client\ConnectionException ||
                        ($exception instanceof \Illuminate\Http\Client\RequestException && 
                         $exception->response->status() >= 500))
                 ->post("{$this->baseUrl}/transactions/sync", $payload);

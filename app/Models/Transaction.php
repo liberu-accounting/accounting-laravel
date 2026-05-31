@@ -1,13 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use App\Observers\TransactionObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Services\ExchangeRateService;
 use App\Traits\IsTenantModel;
 
+#[ObservedBy(TransactionObserver::class)]
 class Transaction extends Model
 {
     use HasFactory;
@@ -54,9 +58,6 @@ class Transaction extends Model
     {
         parent::boot();
 
-        static::observe(TransactionObserver::class);
-
-        
         static::creating(function ($transaction): void {
             if (!$transaction->exchange_rate) {
                 $defaultCurrency = Currency::where('is_default', true)->first();

@@ -1,39 +1,35 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\App\Pages;
 
-use Filament\Support\Enums\Width;
-use App\Models\User;
-use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Schema;
 use Filament\Pages\Tenancy\RegisterTenant;
+use Filament\Support\Enums\Width;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Auth;
 
 class CreateTeam extends RegisterTenant
 {
     #[\Override]
     protected string $view = 'filament.pages.create-team';
 
-    public $name = '';
-
     #[\Override]
     protected Width|string|null $maxWidth = '2xl';
 
     #[\Override]
-    public function mount(): void
-    {
-        // abort_unless(Filament::auth()->user()->canCreateTeams(), 403);
-    }
+    public function mount(): void {}
 
-    protected function getFormSchema(): array
+    #[\Override]
+    public function form(Schema $schema): Schema
     {
-        return [
+        return $schema->schema([
             TextInput::make('name')
                 ->label('Team Name')
                 ->required()
                 ->maxLength(255),
-        ];
+        ]);
     }
 
     #[\Override]
@@ -44,9 +40,7 @@ class CreateTeam extends RegisterTenant
 
     public function getBreadcrumbs(): array
     {
-        return [
-            url()->current() => 'Create Team',
-        ];
+        return [url()->current() => 'Create Team'];
     }
 
     public static function getLabel(): string

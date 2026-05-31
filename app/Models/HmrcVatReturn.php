@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -91,7 +93,7 @@ class HmrcVatReturn extends Model
             ->get()
             ->sum(
                 // If tax_amount exists, subtract it to get amount ex-VAT
-                fn($expense) => $expense->amount - ($expense->tax_amount ?? 0));
+                fn($expense): int|float => $expense->amount - ($expense->tax_amount ?? 0));
 
         $this->vat_due_sales = $salesVat;
         $this->vat_reclaimed = $purchasesVat;

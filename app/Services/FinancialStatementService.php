@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Models\Account;
@@ -37,9 +39,9 @@ class FinancialStatementService
 
         // Calculate totals
         $totalRevenue = $revenue->sum('balance');
-        $totalCogs = abs($cogs->sum('balance'));
+        $totalCogs = abs((float) $cogs->sum('balance'));
         $grossProfit = $totalRevenue - $totalCogs;
-        $totalExpenses = abs($expenses->sum('balance'));
+        $totalExpenses = abs((float) $expenses->sum('balance'));
         $netIncome = $grossProfit - $totalExpenses;
 
         return [
@@ -94,7 +96,7 @@ class FinancialStatementService
 
         // Calculate totals
         $totalAssets = $assets->sum('balance');
-        $totalLiabilities = abs($liabilities->sum('balance'));
+        $totalLiabilities = abs((float) $liabilities->sum('balance'));
         $totalEquity = $equity->sum('balance') + $retainedEarnings;
 
         return [
@@ -179,7 +181,7 @@ class FinancialStatementService
             ];
         })->filter(
             // Only show accounts with non-zero balances
-            fn($account) => abs($account['balance']) > 0.01);
+            fn($account): bool => abs((float) $account['balance']) > 0.01);
     }
 
     /**
@@ -303,6 +305,6 @@ class FinancialStatementService
             ->orWhere('name', 'like', '%cash%')
             ->get();
 
-        return $cashAccounts->sum(fn($account) => $this->getAccountBalance($account->id, null, $asOfDate));
+        return $cashAccounts->sum(fn($account): float => $this->getAccountBalance($account->id, null, $asOfDate));
     }
 }

@@ -51,6 +51,25 @@
                     </x-button>
                 </div>
             </form>
+
+            @if (count(config('socialstream.providers', [])) > 0)
+                <div class="mt-4">
+                    <div class="flex items-center">
+                        <div class="flex-1 border-t border-gray-300"></div>
+                        <span class="px-3 text-sm text-gray-500">{{ __('Or register via') }}</span>
+                        <div class="flex-1 border-t border-gray-300"></div>
+                    </div>
+
+                    <div class="mt-4 flex flex-wrap justify-center gap-2">
+                        @foreach (config('socialstream.providers', []) as $provider)
+                            <a href="{{ route('oauth.redirect', ['provider' => $provider->getId()]) }}"
+                               class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                                {{ $provider->getName() }}
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
         </div>
     </div>
 @endsection

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Models\Budget;
@@ -21,7 +23,7 @@ class BudgetService
             $percentageUsed = $this->calculatePercentageUsed($actualAmount, $budget->planned_amount);
 
             return [
-                'account_name' => $account->name,
+                'account_name' => $account?->account_name ?? 'Unknown',
                 'planned_amount' => $budget->planned_amount,
                 'actual_amount' => $actualAmount,
                 'forecast_amount' => $budget->forecast_amount,
@@ -64,15 +66,16 @@ class BudgetService
 
     private function calculateActualAmount($account, $budget): int|float
     {
-        return $account->debitTransactions()
-            ->whereBetween('transaction_date', [$budget->start_date, $budget->end_date])
-            ->sum('amount') -
-            $account->creditTransactions()
+        if (! $account) {
+            return 0;
+        }
+
+        return (float) \App\Models\Transaction::where('account_id', $account->id)
             ->whereBetween('transaction_date', [$budget->start_date, $budget->end_date])
             ->sum('amount');
     }
 
-    private function calculatePercentageUsed($actualAmount, $plannedAmount): float|int
+    private function calculatePercentageUsed(float|int $actualAmount, $plannedAmount): float|int
     {
         return $plannedAmount != 0 ? ($actualAmount / $plannedAmount) * 100 : 0;
     }

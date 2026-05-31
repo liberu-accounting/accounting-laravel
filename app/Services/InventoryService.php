@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Models\InventoryItem;
@@ -60,14 +62,14 @@ class InventoryService
     {
         return InventoryItem::where('is_active', true)
             ->get()
-            ->sum(fn($item) => $this->valuationService->getInventoryValuation($item));
+            ->sum(fn(\App\Models\InventoryItem $item) => $this->valuationService->getInventoryValuation($item));
     }
 
     public function getInventoryReport()
     {
         return InventoryItem::where('is_active', true)
             ->get()
-            ->map(fn($item) => [
+            ->map(fn(\App\Models\InventoryItem $item): array => [
                 'id' => $item->id,
                 'name' => $item->name,
                 'sku' => $item->sku,

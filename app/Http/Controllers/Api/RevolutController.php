@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
@@ -454,7 +456,7 @@ class RevolutController extends Controller
             ],
             [
                 'transaction_date' => $completedAt ? date('Y-m-d', strtotime((string) $completedAt)) : now()->toDateString(),
-                'amount' => abs($amount),
+                'amount' => abs((float) $amount),
                 'type' => $amount < 0 ? 'debit' : 'credit',
                 'description' => $revolutTransaction['reference'] ?? $revolutTransaction['merchant']['name'] ?? 'Revolut transaction',
                 'category' => $this->categorizeRevolutTransaction($revolutTransaction),

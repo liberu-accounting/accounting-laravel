@@ -39,7 +39,7 @@ class PlaidServiceTest extends TestCase
 
         $this->assertEquals('link-sandbox-test-token', $result['link_token']);
         
-        Http::assertSent(fn($request) => $request->url() === 'https://sandbox.plaid.com/link/token/create'
+        Http::assertSent(fn($request): bool => $request->url() === 'https://sandbox.plaid.com/link/token/create'
             && $request['client_id'] === 'test_client_id'
             && $request['user']['client_user_id'] === '123'
             && $request['language'] === 'en');
@@ -59,7 +59,7 @@ class PlaidServiceTest extends TestCase
         $this->assertEquals('access-sandbox-test-token', $result['access_token']);
         $this->assertEquals('item-test-123', $result['item_id']);
         
-        Http::assertSent(fn($request) => $request->url() === 'https://sandbox.plaid.com/item/public_token/exchange'
+        Http::assertSent(fn($request): bool => $request->url() === 'https://sandbox.plaid.com/item/public_token/exchange'
             && $request['public_token'] === 'public-test-token');
     }
 
@@ -132,7 +132,7 @@ class PlaidServiceTest extends TestCase
 
         $this->service->syncTransactions($connection);
 
-        Http::assertSent(fn($request) => $request['cursor'] === 'existing_cursor');
+        Http::assertSent(fn($request): bool => $request['cursor'] === 'existing_cursor');
 
         $connection->refresh();
         $this->assertEquals('updated_cursor', $connection->plaid_cursor);
@@ -172,7 +172,7 @@ class PlaidServiceTest extends TestCase
 
         $this->assertTrue($result);
         
-        Http::assertSent(fn($request) => $request->url() === 'https://sandbox.plaid.com/item/remove'
+        Http::assertSent(fn($request): bool => $request->url() === 'https://sandbox.plaid.com/item/remove'
             && $request['access_token'] === 'access-test-token');
     }
 
@@ -189,7 +189,7 @@ class PlaidServiceTest extends TestCase
 
         $service->createLinkToken(123);
 
-        Http::assertSent(fn($request) => str_contains((string) $request->url(), 'development.plaid.com'));
+        Http::assertSent(fn($request): bool => str_contains((string) $request->url(), 'development.plaid.com'));
     }
 
     public function test_service_uses_correct_base_url_for_production(): void
@@ -205,7 +205,7 @@ class PlaidServiceTest extends TestCase
 
         $service->createLinkToken(123);
 
-        Http::assertSent(fn($request) => str_contains((string) $request->url(), 'production.plaid.com'));
+        Http::assertSent(fn($request): bool => str_contains((string) $request->url(), 'production.plaid.com'));
     }
 
     public function test_create_link_token_throws_exception_on_failure(): void
@@ -272,7 +272,7 @@ class PlaidServiceTest extends TestCase
 
         $this->service->getBalances('access-test-token', ['acc_123', 'acc_456']);
 
-        Http::assertSent(fn($request) => isset($request['options']['account_ids'])
+        Http::assertSent(fn($request): bool => isset($request['options']['account_ids'])
             && $request['options']['account_ids'] === ['acc_123', 'acc_456']);
     }
 

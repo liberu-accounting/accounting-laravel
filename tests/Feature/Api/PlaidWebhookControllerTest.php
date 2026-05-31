@@ -92,7 +92,7 @@ class PlaidWebhookControllerTest extends TestCase
             'Plaid-Verification' => $signature,
         ]);
 
-        Queue::assertPushed(SyncPlaidTransactionsJob::class, fn($job) => $job->connectionId === $this->connection->id);
+        Queue::assertPushed(SyncPlaidTransactionsJob::class, fn($job): bool => $job->connectionId === $this->connection->id);
     }
 
     public function test_webhook_handles_item_error(): void

@@ -16,7 +16,7 @@ return new class extends Migration
                     ->listTableForeignKeys('customer_tax_rate');
                 
                 $foreignKeyExists = collect($foreignKeys)
-                    ->contains(fn($foreignKey) => $foreignKey->getName() === 'customer_tax_rate_customer_id_foreign');
+                    ->contains(fn($foreignKey): bool => $foreignKey->getName() === 'customer_tax_rate_customer_id_foreign');
 
                 if ($foreignKeyExists) {
                     $table->dropForeign(['customer_id']);

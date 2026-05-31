@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -74,7 +76,7 @@ class JournalEntry extends Model
 
     public function isBalanced(): bool
     {
-        return bccomp($this->total_debits, $this->total_credits, 2) === 0;
+        return bccomp((string) $this->total_debits, (string) $this->total_credits, 2) === 0;
     }
 
     public function post(): static

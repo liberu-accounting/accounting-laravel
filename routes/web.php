@@ -15,4 +15,4 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', fn() => view('home'))->name('home');
+Route::get('/', fn(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View => view('home'))->name('home');

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\App\Resources\BankStatements;
 
 use Filament\Schemas\Schema;
@@ -237,7 +239,7 @@ class BankStatementResource extends Resource
                         
                         $matched = $result['matched_transactions']->count();
                         $unmatched = $result['unmatched_transactions']->count();
-                        $balanceDiscrepancy = abs($result['balance_discrepancy']);
+                        $balanceDiscrepancy = abs((float) $result['balance_discrepancy']);
                         
                         if ($unmatched === 0 && $balanceDiscrepancy < 0.01) {
                             $record->update(['reconciled' => true]);

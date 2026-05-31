@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
@@ -359,7 +361,7 @@ class WiseController extends Controller
             ],
             [
                 'transaction_date' => $createdAt ? date('Y-m-d', strtotime((string) $createdAt)) : now()->toDateString(),
-                'amount' => abs($amount),
+                'amount' => abs((float) $amount),
                 'type' => 'debit',
                 'description' => $wiseTransfer['reference'] ?? 'Wise transfer',
                 'category' => 'transfer',

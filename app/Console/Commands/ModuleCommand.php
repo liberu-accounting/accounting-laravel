@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Console\Commands;
 
 use Exception;
@@ -60,7 +62,7 @@ class ModuleCommand extends Command
 
         $this->table(
             ['Name', 'Version', 'Status', 'Description'],
-            $modules->map(fn($module) => [
+            $modules->map(fn($module): array => [
                 $module->getName(),
                 $module->getVersion(),
                 $module->isEnabled() ? '<fg=green>Enabled</>' : '<fg=red>Disabled</>',

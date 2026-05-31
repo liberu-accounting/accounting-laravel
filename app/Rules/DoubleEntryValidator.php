@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Rules;
 
 use Illuminate\Contracts\Validation\Rule;
@@ -25,8 +27,7 @@ class DoubleEntryValidator implements Rule
                 $totalCredits += floatval($credit);
             }
 
-            // Use bccomp for precise decimal comparison
-            return bccomp($totalDebits, $totalCredits, 2) === 0;
+            return bccomp(number_format($totalDebits, 2, '.', ''), number_format($totalCredits, 2, '.', ''), 2) === 0;
         }
 
         // Legacy validation for simple transactions (backwards compatibility)

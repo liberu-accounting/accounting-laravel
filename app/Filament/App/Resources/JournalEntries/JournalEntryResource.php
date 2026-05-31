@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\App\Resources\JournalEntries;
 
 use App\Filament\App\Resources\JournalEntries\Pages\ListJournalEntries;
@@ -98,7 +100,7 @@ class JournalEntryResource extends Resource
                                                 ->whereDoesntHave('children')
                                                 ->orderBy('account_number')
                                                 ->get()
-                                                ->mapWithKeys(fn($account) => [$account->id => $account->account_number . ' - ' . $account->account_name]))
+                                                ->mapWithKeys(fn($account): array => [$account->id => $account->account_number . ' - ' . $account->account_name]))
                                             ->required()
                                             ->searchable()
                                             ->preload()

@@ -31,6 +31,13 @@
       0 => 'BladeUI\\Icons\\BladeIconsServiceProvider',
     ),
   ),
+  'bursteri/socialstream' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'JoelButcher\\Socialstream\\SocialstreamServiceProvider',
+    ),
+  ),
   'filament/actions' => 
   array (
     'providers' => 
@@ -122,6 +129,17 @@
       0 => 'Laravel\\Fortify\\FortifyServiceProvider',
     ),
   ),
+  'laravel/horizon' => 
+  array (
+    'aliases' => 
+    array (
+      'Horizon' => 'Laravel\\Horizon\\Horizon',
+    ),
+    'providers' => 
+    array (
+      0 => 'Laravel\\Horizon\\HorizonServiceProvider',
+    ),
+  ),
   'laravel/jetstream' => 
   array (
     'providers' => 
@@ -154,6 +172,14 @@
       0 => 'Laravel\\Passkeys\\PasskeysServiceProvider',
     ),
   ),
+  'laravel/reverb' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Laravel\\Reverb\\ApplicationManagerServiceProvider',
+      1 => 'Laravel\\Reverb\\ReverbServiceProvider',
+    ),
+  ),
   'laravel/sail' => 
   array (
     'providers' => 
@@ -166,6 +192,31 @@
     'providers' => 
     array (
       0 => 'Laravel\\Sanctum\\SanctumServiceProvider',
+    ),
+  ),
+  'laravel/sentinel' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Laravel\\Sentinel\\SentinelServiceProvider',
+    ),
+  ),
+  'laravel/socialite' => 
+  array (
+    'aliases' => 
+    array (
+      'Socialite' => 'Laravel\\Socialite\\Facades\\Socialite',
+    ),
+    'providers' => 
+    array (
+      0 => 'Laravel\\Socialite\\SocialiteServiceProvider',
+    ),
+  ),
+  'laravel/tinker' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Laravel\\Tinker\\TinkerServiceProvider',
     ),
   ),
   'livewire/livewire' => 

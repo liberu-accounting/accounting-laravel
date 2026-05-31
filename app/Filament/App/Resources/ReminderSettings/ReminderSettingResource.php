@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\App\Resources\ReminderSettings;
 
 use Filament\Schemas\Schema;

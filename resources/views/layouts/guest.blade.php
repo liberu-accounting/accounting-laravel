@@ -33,6 +33,6 @@
     </div>
 
     @vite('resources/js/app.js')
-    @livewireScripts
+    @livewireScriptConfig{{-- Livewire 4 replacement for @livewireScripts --}}
 </body>
 </html>

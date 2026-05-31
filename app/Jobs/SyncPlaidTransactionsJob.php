@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Jobs;
 
 use App\Models\BankConnection;
@@ -144,7 +146,7 @@ class SyncPlaidTransactionsJob implements ShouldQueue
             ],
             [
                 'transaction_date' => $plaidTransaction['date'] ?? $plaidTransaction['authorized_date'] ?? now(),
-                'amount' => abs($plaidTransaction['amount']),
+                'amount' => abs((float) $plaidTransaction['amount']),
                 // In Plaid: positive = debit (money out), negative = credit (money in)
                 'type' => $plaidTransaction['amount'] > 0 ? 'debit' : 'credit',
                 'description' => $plaidTransaction['name'] ?? 'Unknown',

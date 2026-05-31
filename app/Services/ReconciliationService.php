@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Models\BankStatement;
@@ -24,10 +26,11 @@ class ReconciliationService
         $discrepancies = collect();
     
         foreach ($transactions as $transaction) {
-            if ($transaction->amount > 0) {
-                $totalCredits += $transaction->amount;
+            $amount = (float) $transaction->amount;
+            if ($amount > 0) {
+                $totalCredits += $amount;
             } else {
-                $totalDebits += abs($transaction->amount);
+                $totalDebits += abs($amount);
             }
     
             $matched = $this->findMatch($transaction, $bankStatement);

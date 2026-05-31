@@ -1,10 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\App\Pages;
 
 use App\Models\User;
-use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Schema;
+use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\Auth;
 
@@ -12,8 +15,9 @@ class EditProfile extends Page
 {
     #[\Override]
     protected string $view = 'filament.pages.edit-profile';
+
     #[\Override]
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-chart-bar';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-chart-bar';
 
     public User $user;
 
@@ -26,24 +30,23 @@ class EditProfile extends Page
         ]);
     }
 
-    protected function getFormSchema(): array
+    public function form(Schema $schema): Schema
     {
-        return [
+        return $schema->schema([
             TextInput::make('name')
                 ->label('Name')
                 ->required()
                 ->maxLength(255),
             TextInput::make('email')
                 ->label('Email Address')
+                ->email()
                 ->required()
                 ->maxLength(255),
-        ];
+        ]);
     }
 
     public function submit(): void
     {
-        $this->validate();
-
         $state = $this->form->getState();
 
         $this->user->forceFill([
@@ -51,14 +54,15 @@ class EditProfile extends Page
             'email' => $state['email'],
         ])->save();
 
-        Filament::notify('success', 'Your profile has been updated.');
+        Notification::make()
+            ->title('Profile updated successfully')
+            ->success()
+            ->send();
     }
 
     #[\Override]
     public function getBreadcrumbs(): array
     {
-        return [
-            url()->current() => 'Edit Profile',
-        ];
+        return [url()->current() => 'Edit Profile'];
     }
 }

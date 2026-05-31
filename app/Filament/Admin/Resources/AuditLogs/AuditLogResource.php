@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Admin\Resources\AuditLogs;
 
 use Filament\Tables\Columns\TextColumn;

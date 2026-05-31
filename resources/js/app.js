@@ -1,1 +1,1 @@
-import 'preline/dist/preline.js';
+import 'preline';

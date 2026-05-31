@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: accounting-app
+  namespace: accounting
+  labels:
+    app: accounting-laravel
+    component: application
+spec:
+  type: ClusterIP
+  selector:
+    app: accounting-laravel
+    component: application
+  ports:
+    - port: 80
+      targetPort: 8000
+      name: http
+  sessionAffinity: ClientIP
+  sessionAffinityConfig:
+    clientIP:
+      timeoutSeconds: 10800
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: accounting-reverb
+  namespace: accounting
+  labels:
+    app: accounting-laravel
+    component: reverb
+spec:
+  type: ClusterIP
+  selector:
+    app: accounting-laravel
+    component: reverb
+  ports:
+    - port: 8080
+      targetPort: 8080
+      name: websocket
