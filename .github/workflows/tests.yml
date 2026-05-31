@@ -46,4 +46,4 @@ jobs:
         run: php artisan key:generate
 
       - name: Run tests
-        run: ./vendor/bin/pest --no-coverage
+        run: php artisan test --coverage-clover=coverage.xml
