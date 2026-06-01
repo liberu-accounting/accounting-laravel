@@ -1,5 +1,5 @@
 # Supported PHP versions: 8.2, 8.3, 8.5
-ARG PHP_VERSION=8.5
+ARG PHP_VERSION=8.3
 # PHP 8.5 support requires compatible extension builds (check install-php-extensions)
 
 ###########################################
@@ -55,7 +55,7 @@ ENV TERM=xterm-color \
 
 WORKDIR ${ROOT}
 
-SHELL ["/bin/sh", "-eou", "pipefail", "-c"]
+SHELL ["/bin/sh", "-lc"]
 
 RUN ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime \
   && echo ${TZ} > /etc/timezone
