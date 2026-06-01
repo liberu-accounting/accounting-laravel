@@ -9,6 +9,7 @@ use App\Modules\Contracts\ModuleInterface;
 final readonly class ModuleEnabled
 {
     public function __construct(
+        public string $name,
         public ModuleInterface $module,
     ) {}
 }

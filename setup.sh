@@ -1,7 +1,7 @@
 #!/bin/bash
 # Setup script for Liberu Accounting.
 # Supports Standalone, Docker, and Kubernetes deployments.
-# Version: 2.0
+# Version: 2.1
 # Requirements: bash 4.0+, curl/wget, PHP 8.5+, composer, npm (for frontend)
 
 set -euo pipefail
@@ -17,11 +17,11 @@ RESET='\e[0m'
 BOLD='\e[1m'
 
 print_header()  { echo ""; echo -e "${BOLD}=================================="; echo -e "  $1"; echo -e "==================================${RESET}"; echo ""; }
-print_error()   { echo -e "${RED}❌  ERROR: $1${RESET}" >&2; }
-print_success() { echo -e "${GREEN}✅  $1${RESET}"; }
-print_info()    { echo -e "${BLUE}ℹ   $1${RESET}"; }
-print_warning() { echo -e "${YELLOW}⚠   $1${RESET}"; }
-print_debug()   { [ "${DEBUG:-0}" = "1" ] && echo -e "${MAGENTA}🔧  DEBUG: $1${RESET}" || true; }
+print_error()   { echo -e "${RED}ERROR: $1${RESET}" >&2; }
+print_success() { echo -e "${GREEN}OK: $1${RESET}"; }
+print_info()    { echo -e "${BLUE}INFO: $1${RESET}"; }
+print_warning() { echo -e "${YELLOW}WARN: $1${RESET}"; }
+print_debug()   { [ "${DEBUG:-0}" = "1" ] && echo -e "${MAGENTA}DEBUG: $1${RESET}" || true; }
 
 command_exists() { command -v "$1" >/dev/null 2>&1; }
 
@@ -32,24 +32,47 @@ DEBUG="${DEBUG:-0}"
 SKIP_TESTS="${SKIP_TESTS:-0}"
 INSTALL_HORIZON="${INSTALL_HORIZON:-1}"
 INSTALL_REVERB="${INSTALL_REVERB:-1}"
+PHP_CMD=""
+
+# ── PHP Binary Detection ───────────────────────────────────────────────────────
+# Detect the first PHP 8.5+ binary, checking common versioned paths first so
+# systems like AlmaLinux (where `php` may still point to 8.3) work out of the
+# box without requiring users to change their PATH.
+detect_php() {
+    local required="8.5"
+    local candidates=(
+        php85 php8.5
+        /usr/bin/php85 /usr/bin/php8.5
+        /usr/local/bin/php85 /usr/local/bin/php8.5
+        /opt/php85/bin/php /opt/php8.5/bin/php
+        php
+    )
+
+    for candidate in "${candidates[@]}"; do
+        if command -v "$candidate" >/dev/null 2>&1; then
+            if "$candidate" -r "exit(version_compare(PHP_VERSION, '${required}', '>=') ? 0 : 1);" 2>/dev/null; then
+                PHP_CMD="$candidate"
+                return 0
+            fi
+        fi
+    done
+    return 1
+}
 
 # ── PHP Version Check ──────────────────────────────────────────────────────────
 check_php_version() {
-    if ! command_exists php; then
-        print_error "PHP is not installed. Please install PHP 8.5+."
+    local required="8.5"
+
+    if detect_php; then
+        local full_ver
+        full_ver=$("$PHP_CMD" -r 'echo PHP_VERSION;')
+        print_success "PHP ${full_ver} detected (${PHP_CMD})"
+    else
+        print_error "PHP ${required}+ is required but not found."
+        print_info  "On AlmaLinux/RHEL: sudo dnf install php8.5 php8.5-cli"
+        print_info  "On Ubuntu/Debian:  sudo apt install php8.5-cli"
         exit 1
     fi
-
-    PHP_VERSION=$(php -r 'echo PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;')
-    REQUIRED="8.5"
-    PHP_FULL=$(php -r 'echo PHP_VERSION;')
-
-    if ! php -r "exit(version_compare(PHP_VERSION, '${REQUIRED}', '>=') ? 0 : 1);"; then
-        print_error "PHP ${REQUIRED}+ is required. Found PHP ${PHP_VERSION}."
-        exit 1
-    fi
-
-    print_success "PHP ${PHP_FULL} detected"
 }
 
 # ── Dependency Validation ──────────────────────────────────────────────────────
@@ -57,11 +80,11 @@ validate_dependencies() {
     print_header "DEPENDENCY VALIDATION"
     local missing_deps=0
 
-    if ! command_exists php; then
-        print_warning "PHP not found"
+    if ! detect_php; then
+        print_warning "PHP 8.5+ not found"
         ((missing_deps++))
     else
-        print_success "PHP found"
+        print_success "PHP 8.5+ found: ${PHP_CMD}"
     fi
 
     if ! command_exists composer; then
@@ -105,9 +128,9 @@ ensure_composer() {
     fi
 
     print_info "Downloading Composer installer..."
-    if curl -sS https://getcomposer.org/installer | php -- --quiet; then
+    if curl -sS https://getcomposer.org/installer | "${PHP_CMD:-php}" -- --quiet; then
         if [ -f "composer.phar" ]; then
-            COMPOSER_CMD="php composer.phar"
+            COMPOSER_CMD="${PHP_CMD:-php} composer.phar"
             print_success "composer.phar downloaded successfully"
             return 0
         fi
@@ -214,7 +237,7 @@ laravel_setup() {
     # Generate key if missing
     if ! grep -q "^APP_KEY=base64:" .env 2>/dev/null; then
         print_info "Generating application key..."
-        php artisan key:generate --force
+        "$PHP_CMD" artisan key:generate --force
         print_success "Application key generated"
     else
         print_success "APP_KEY already configured"
@@ -225,18 +248,18 @@ laravel_setup() {
     read -rp "Run database migrations with seeding? (y/n): " run_migrations
     if [[ $run_migrations =~ ^[Yy]$ ]]; then
         print_info "Running migrations..."
-        php artisan migrate:fresh --seed --force
+        "$PHP_CMD" artisan migrate:fresh --seed --force
         print_success "Database migrated and seeded"
     else
         print_info "Running standard migrations..."
-        php artisan migrate --force
+        "$PHP_CMD" artisan migrate --force
         print_success "Migrations complete"
     fi
 
     # Horizon installation (optional)
     if [ "$INSTALL_HORIZON" = "1" ]; then
         print_info "Setting up Horizon..."
-        if php artisan horizon:install 2>/dev/null; then
+        if "$PHP_CMD" artisan horizon:install 2>/dev/null; then
             print_success "Horizon configured"
         fi
     fi
@@ -244,27 +267,27 @@ laravel_setup() {
     # Reverb installation (optional)
     if [ "$INSTALL_REVERB" = "1" ]; then
         print_info "Setting up Reverb..."
-        if php artisan reverb:install 2>/dev/null; then
+        if "$PHP_CMD" artisan reverb:install 2>/dev/null; then
             print_success "Reverb configured"
         fi
     fi
 
     # Shield permissions
     print_info "Generating Filament Shield permissions..."
-    if php artisan shield:generate --all 2>/dev/null; then
+    if "$PHP_CMD" artisan shield:generate --all 2>/dev/null; then
         print_success "Shield permissions generated"
     fi
 
     # Storage link
     print_info "Creating storage link..."
-    php artisan storage:link 2>/dev/null || true
+    "$PHP_CMD" artisan storage:link 2>/dev/null || true
 
     # Cache optimization
     print_info "Optimizing caches..."
-    php artisan optimize:clear
-    php artisan event:cache
-    php artisan config:cache
-    php artisan route:cache
+    "$PHP_CMD" artisan optimize:clear
+    "$PHP_CMD" artisan event:cache
+    "$PHP_CMD" artisan config:cache
+    "$PHP_CMD" artisan route:cache
     print_success "Caches optimized"
 }
 
@@ -312,7 +335,7 @@ run_linting() {
 # ── Standalone ─────────────────────────────────────────────────────────────────
 install_standalone() {
     print_header "STANDALONE INSTALLATION"
-    print_info "PHP $(php -r 'echo PHP_VERSION;') | User: $(whoami) | Environment: $ENVIRONMENT"
+    print_info "PHP $("$PHP_CMD" -r 'echo PHP_VERSION;' 2>/dev/null || echo 'unknown') | User: $(whoami) | Environment: $ENVIRONMENT"
 
     check_php_version
     validate_dependencies
@@ -357,17 +380,17 @@ install_standalone() {
     echo ""
     print_info "Next steps:"
     echo ""
-    echo "  Development server:    ${CYAN}php artisan serve${RESET}"
-    echo "  Production server:      ${CYAN}php artisan octane:start${RESET}"
-    echo "  Queue worker:           ${CYAN}php artisan horizon${RESET}"
-    echo "  WebSockets:             ${CYAN}php artisan reverb:start${RESET}"
+    echo "  Development server:    ${CYAN}${PHP_CMD} artisan serve${RESET}"
+    echo "  Production server:      ${CYAN}${PHP_CMD} artisan octane:start${RESET}"
+    echo "  Queue worker:           ${CYAN}${PHP_CMD} artisan horizon${RESET}"
+    echo "  WebSockets:             ${CYAN}${PHP_CMD} artisan reverb:start${RESET}"
     echo "  Run tests:              ${CYAN}./vendor/bin/pest${RESET}"
     echo ""
-    
+
     read -rp "Start development server now? (y/n): " start
     if [[ $start =~ ^[Yy]$ ]]; then
         print_info "Starting Octane server..."
-        php artisan octane:start
+        "$PHP_CMD" artisan octane:start
     fi
 }
 

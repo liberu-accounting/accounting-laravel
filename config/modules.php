@@ -153,4 +153,29 @@ return [
         'laravel' => '13.0',
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Composer Module Loading
+    |--------------------------------------------------------------------------
+    |
+    | When enabled, the module system will scan vendor packages for modules
+    | that ship their own module.json and module class.
+    |
+    */
+
+    'load_composer_modules' => env('MODULES_LOAD_COMPOSER', false),
+
+    /*
+    |--------------------------------------------------------------------------
+    | External Module Paths
+    |--------------------------------------------------------------------------
+    |
+    | Additional paths to scan for external modules beyond app/Modules and
+    | composer packages. Paths must contain module subdirectories with a
+    | module.json file.
+    |
+    */
+
+    'external_paths' => [],
+
 ];
