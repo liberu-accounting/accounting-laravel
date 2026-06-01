@@ -26,7 +26,7 @@ class SocialstreamRegistrationTest extends TestCase
             'gitlab',
             'google',
             'linkedin',
-            \JoelButcher\Socialstream\Providers::linkedinOpenId(),
+            'linkedin-openid',
             'slack',
             'twitter-oauth-2',
         ];
