@@ -80,6 +80,14 @@ Clone the repository and run the interactive setup script:
 ```bash
 git clone https://github.com/liberu-accounting/accounting-laravel.git
 cd accounting-laravel
+```
+
+```bash
+Windows users : 
+./setup.sh
+
+MacOS users : 
+chmod 755 setup.sh
 ./setup.sh
 ```
 
