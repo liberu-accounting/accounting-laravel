@@ -94,14 +94,17 @@ class Account extends Model
 
     public function getBalanceInCurrency(Currency $targetCurrency)
     {
-        if ($this->currency_id === $targetCurrency->currency_id) {
+        // An account with no explicit currency holds its balance in the default
+        // (reporting) currency — fall back to it rather than passing null.
+        $source = $this->currency ?? Currency::where('is_default', true)->first();
+
+        if (! $source || $source->currency_id === $targetCurrency->currency_id) {
             return $this->balance;
         }
 
-        $exchangeRateService = app(ExchangeRateService::class);
-        $rate = $exchangeRateService->getExchangeRate($this->currency, $targetCurrency);
+        $rate = app(ExchangeRateService::class)->getExchangeRate($source, $targetCurrency);
 
-        return $this->balance * $rate;
+        return $this->balance * ($rate ?? 1);
     }
 
     public function getBalanceInDefaultCurrency()
