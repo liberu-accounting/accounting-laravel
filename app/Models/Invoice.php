@@ -80,6 +80,20 @@ class Invoice extends Model
         return $this->hasMany(TimeEntry::class, 'invoice_id');
     }
 
+    public function items()
+    {
+        return $this->hasMany(InvoiceItem::class, 'invoice_id');
+    }
+
+    /**
+     * Roll the line-item amounts up into the invoice total.
+     */
+    public function calculateTotals(): void
+    {
+        $this->total_amount = (float) $this->items()->sum('amount');
+        $this->save();
+    }
+
     public function creditMemos()
     {
         return $this->hasMany(CreditMemo::class, 'invoice_id');
@@ -211,7 +225,7 @@ class Invoice extends Model
 
         static::creating(function ($invoice): void {
             if (empty($invoice->invoice_number)) {
-                $invoice->invoice_number = 'INV-'.str_pad(static::max('invoice_id') + 1, 6, '0', STR_PAD_LEFT);
+                $invoice->invoice_number = 'INV-'.str_pad((string) ((int) static::max('id') + 1), 6, '0', STR_PAD_LEFT);
             }
             if (empty($invoice->approval_status)) {
                 $invoice->approval_status = 'pending';
