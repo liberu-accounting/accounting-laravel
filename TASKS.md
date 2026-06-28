@@ -142,3 +142,105 @@ Explicitly **not** in this effort:
 - **HMRC beyond MTD VAT** — full RTI PAYE / Corporation Tax filing. R8 adds tests only; new filing flows out of scope.
 - **API versioning / public API docs / SDK** — R7 adds endpoints; versioning + OpenAPI publishing deferred.
 - **UI/UX redesign** — Filament defaults retained; no theming work.
+
+---
+
+# Phase 2 — Platform & Maturity (R9–R14)
+
+Derived from [`PRD.md`](PRD.md) Phase 2. Prioritized by value × cost × risk. Same workflow as Phase 1: one branch per requirement off `master`, TDD, Pint before commit, full suite green before PR.
+
+**Build order (top = first):** P1 quick wins → P2 correctness/core → P3 platform → P4 invasive refactor.
+
+## Dependency graph
+
+```
+R7 (REST endpoints, done) ──► R13 (API versioning)
+QBO sync (done) ──► R11 (Xero/Sage)  [extract shared sync base first]
+#798 (exchange_rates fix, done) ──► R10 (multi-currency completion)
+HMRC RTI submission (done) ──► R12 (payroll tax engine feeds employee_data)
+R9 (modularize) — no hard deps, but do LAST (invasive; churns every module's files)
+```
+
+Nothing in R9–R14 hard-blocks another; the only sequencing is "do R9 last" and "extract a sync base before R11".
+
+---
+
+## P1 — Quick wins (small, high value, no deps)
+
+### R14 · UI/UX branding + theme `S`
+- [ ] `->brandName('Liberu Accounting')` + logo on both panel providers (`AdminPanelProvider`, `AppPanelProvider`)
+- [ ] Custom primary color palette (replace `Color::Gray`)
+- [ ] Branded assets + dark-mode contrast pass
+- [ ] **Acceptance:** both panels show brand name/logo + custom palette; light/dark legible; no contrast regressions
+- **Deps:** none. **Boundary:** Filament layout kept; no bespoke component rewrites, no external SPA.
+
+### R10a · Multi-currency bug fixes `S` (remaining after #798)
+- [ ] Fix `ExchangeRateService::updateExchangeRates` — uses `$currency->id` but Currency PK is `currency_id` (→ null `from/to_currency_id`)
+- [ ] Add a `CurrencyFactory` / `ExchangeRateFactory` for tests
+- [ ] **Acceptance:** `updateExchangeRates` persists rows with correct currency ids; test with `Http::fake`
+- **Deps:** #798 (table + `getLatestRates`) — merged. **Boundary:** wiring/correctness only; FX posting is R10b.
+
+---
+
+## P2 — Correctness / core
+
+### R12 · Payroll tax engine (PAYE / NI) `L`
+- [ ] `PayrollTaxService` — PAYE income tax by band (personal allowance, basic/higher/additional) from gross + tax code
+- [ ] Employee NI + employer NI by threshold/category
+- [ ] Student-loan repayment by plan
+- [ ] Tax-year tables in `config/` (bands, thresholds, allowances) — replace the hardcoded `0.20`
+- [ ] Wire output into `Payroll::calculateNetSalary` and the FPS `employee_data`
+- [ ] **Acceptance:** computed PAYE / EE-NI / ER-NI / student loan match HMRC worked examples to the penny in tests
+- **Deps:** HMRC RTI submission (done) consumes it. **Boundary:** UK PAYE/NI only — no other jurisdictions; no pensions/auto-enrolment.
+
+### R10b · Multi-currency completion `L`
+- [ ] Capture per-transaction currency at entry (UI + API)
+- [ ] Configurable **reporting currency** (config + setting)
+- [ ] FX **gain/loss** GL posting on revaluation/settlement at a changed rate
+- [ ] Currency-aware financial statements (trial balance / GL in reporting currency)
+- [ ] **Acceptance:** a foreign-currency invoice settled at a different rate posts a balanced FX gain/loss JE; trial balance renders in reporting currency; tests cover conversion + gain/loss
+- **Deps:** R10a (correct rate data). **Boundary:** uses existing `ExchangeRateService` source; no live-FX trading, no hedging.
+
+---
+
+## P3 — Platform
+
+### R13 · API versioning + OpenAPI docs `M`
+- [ ] Introduce `/v1` prefix (alias current paths for back-compat)
+- [ ] Sanctum token **abilities/scopes** (e.g. `invoices:read`, `payroll:write`) enforced per route
+- [ ] Generate **OpenAPI** spec (annotations or generator) served at a docs route
+- [ ] Replace the stale `docs/api.md` (documents 2 of ~15 groups)
+- [ ] **Acceptance:** all resource endpoints under `/v1`; a limited-ability token is rejected on out-of-scope routes (test); OpenAPI validates + lists every endpoint with schema
+- **Deps:** R7 endpoints (done). **Boundary:** no SDK generation, no breaking removal of current unversioned paths in this pass.
+
+### R11 · Xero / Sage integration `L`
+- [ ] Extract a shared sync base/contract from `QuickBooksService` (client/refresh/upsert-by-remote-id)
+- [ ] `XeroService` + `XeroConnection` (OAuth 2.0, encrypted tokens) — mirror QBO
+- [ ] Push/pull accounts, invoices, bills, payments + webhook handling
+- [ ] `SageService` after Xero (same base)
+- [ ] **Acceptance:** connect a Xero sandbox org, round-trip an invoice both directions, `Http::fake` tests per entity (QBO bar)
+- **Deps:** QBO sync (done) as template; the shared base is a soft prerequisite. **Boundary:** Xero first, Sage second; no other providers.
+
+---
+
+## P4 — Invasive refactor (do last)
+
+### R9 · Modularize existing features `M`
+- [ ] Convert **Inventory** to `app/Modules/Inventory` (reference module — cleanest service boundary)
+- [ ] Convert **Fixed Assets** to a module
+- [ ] Convert **Reconciliation** to a module
+- [ ] Each: module class extends `BaseModule`, owns models/migrations/Filament resources/services, toggElable in `config/modules.php`
+- [ ] **Acceptance:** disabling a module removes its panel resources + routes without errors; enabling restores them; existing tests pass
+- **Deps:** none hard — but do AFTER R10–R14 so it doesn't churn files those PRs touch. **Boundary:** one module per PR; keep DB table names stable; framework already exists (no rewrite of `ModuleManager`).
+
+---
+
+## Phase 2 — Out of scope
+
+- Bespoke front-end outside Filament (custom SPA, marketing site, mobile apps).
+- Non-UK payroll jurisdictions (R12 is UK PAYE/NI only); pensions / auto-enrolment.
+- Live-FX trading / hedging (R10 uses the existing rate source only).
+- API SDK generation; removing the current unversioned API paths.
+- Integrations beyond Xero then Sage (no Stripe/NetSuite/etc.).
+- Migrating off Filament / Livewire; real-time collaborative editing.
+- Rewriting the module framework (`ModuleManager`/`BaseModule` already exist — R9 only adds modules).
