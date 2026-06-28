@@ -10,7 +10,7 @@ The canonical, always-current description is the OpenAPI document:
 GET /api/v1/openapi.json
 ```
 
-It lists every versioned endpoint with its required ability and is served without authentication (so docs/tooling can read it). Point Swagger UI / Redoc / Postman at that URL.
+It is **generated from the live routes**, so it can never drift from what's actually wired — every `/v1` endpoint appears with the Sanctum ability read off its route middleware. Served without authentication (so docs/tooling can read it). Point Swagger UI / Redoc / Postman at that URL.
 
 ## Authentication
 
@@ -35,4 +35,4 @@ Ability convention: `<resource>:read` for GET, `<resource>:write` for POST/PUT/D
 
 `60 req/min` default; `30/min` for read-heavy bank fetches; `10/min` for sync operations. See `routes/api.php`.
 
-> Applying the per-verb ability convention to **all** v1 resources (currently fully applied to `invoices` and `bills`) is mechanical follow-up; the OpenAPI spec already documents the intended scope for each.
+> The per-verb ability convention now applies to **all** v1 resources (invoices, bills, estimates, chart-of-accounts, journal-entries, general-ledger). The OpenAPI spec is generated from the routes, so it stays in sync automatically.

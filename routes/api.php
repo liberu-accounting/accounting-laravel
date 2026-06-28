@@ -20,6 +20,7 @@ use App\Http\Controllers\Api\XeroController;
 use App\Services\ExchangeRateService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 
 /*
 |--------------------------------------------------------------------------
@@ -53,21 +54,34 @@ Route::middleware('auth:sanctum')->group(function (): void {
     // abilities (e.g. invoices:read / invoices:write). The unversioned routes
     // above are kept as back-compat aliases.
     Route::prefix('v1')->middleware('throttle:60,1')->group(function (): void {
-        // Read endpoints require the matching :read ability; writes require :write.
-        Route::get('invoices', [InvoiceController::class, 'index'])->middleware('ability:invoices:read');
-        Route::get('invoices/{invoice}', [InvoiceController::class, 'show'])->middleware('ability:invoices:read');
-        Route::post('invoices', [InvoiceController::class, 'store'])->middleware('ability:invoices:write');
-        Route::put('invoices/{invoice}', [InvoiceController::class, 'update'])->middleware('ability:invoices:write');
-        Route::delete('invoices/{invoice}', [InvoiceController::class, 'destroy'])->middleware('ability:invoices:write');
+        // Every resource is scoped: GET requires <resource>:read; writes require
+        // <resource>:write. Registered via a map so scopes can't be forgotten and
+        // the OpenAPI spec (generated from these routes) stays in sync.
+        $resources = [
+            'invoices' => [InvoiceController::class, ['index', 'store', 'show', 'update', 'destroy']],
+            'bills' => [BillController::class, ['index', 'store', 'show', 'update', 'destroy']],
+            'estimates' => [EstimateController::class, ['index', 'store', 'show', 'update', 'destroy']],
+            'chart-of-accounts' => [ChartOfAccountController::class, ['index', 'store', 'show', 'update', 'destroy']],
+            'journal-entries' => [JournalEntryController::class, ['index', 'store', 'show', 'destroy']],
+        ];
 
-        Route::get('bills', [BillController::class, 'index'])->middleware('ability:bills:read');
-        Route::get('bills/{bill}', [BillController::class, 'show'])->middleware('ability:bills:read');
-        Route::post('bills', [BillController::class, 'store'])->middleware('ability:bills:write');
+        $param = fn (string $name): string => '{'.Str::singular(str_replace('-', '_', $name)).'}';
 
-        Route::get('estimates', [EstimateController::class, 'index'])->middleware('ability:estimates:read');
-        Route::get('chart-of-accounts', [ChartOfAccountController::class, 'index'])->middleware('ability:chart-of-accounts:read');
-        Route::get('journal-entries', [JournalEntryController::class, 'index'])->middleware('ability:journal-entries:read');
+        foreach ($resources as $name => [$controller, $verbs]) {
+            $read = "ability:{$name}:read";
+            $write = "ability:{$name}:write";
+            $one = $name.'/'.$param($name);
+
+            in_array('index', $verbs, true) && Route::get($name, [$controller, 'index'])->middleware($read);
+            in_array('show', $verbs, true) && Route::get($one, [$controller, 'show'])->middleware($read);
+            in_array('store', $verbs, true) && Route::post($name, [$controller, 'store'])->middleware($write);
+            in_array('update', $verbs, true) && Route::put($one, [$controller, 'update'])->middleware($write);
+            in_array('destroy', $verbs, true) && Route::delete($one, [$controller, 'destroy'])->middleware($write);
+        }
+
+        // General ledger is a read-only report.
         Route::get('general-ledger/trial-balance', [GeneralLedgerController::class, 'trialBalance'])->middleware('ability:general-ledger:read');
+        Route::get('general-ledger/balances', [GeneralLedgerController::class, 'balances'])->middleware('ability:general-ledger:read');
     });
 
     Route::get('/exchange-rates', fn () => app(ExchangeRateService::class)->getLatestRates())->middleware('throttle:60,1');
