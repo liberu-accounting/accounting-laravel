@@ -1,0 +1,9 @@
+{
+    "name": "Reconciliation",
+    "version": "1.0.0",
+    "description": "Bank statement reconciliation: transaction matching and discrepancy workflow.",
+    "dependencies": [],
+    "config": {
+        "enabled": true
+    }
+}
