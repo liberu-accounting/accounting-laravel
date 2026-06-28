@@ -84,12 +84,14 @@ before finalizing.
 
 ## P2 — Finish partial modules
 
-### R5 · Inventory UI + tests `#9`
-- [ ] `InventoryCostLayer` model (referenced, absent) + migration
-- [ ] Filament `InventoryItemResource`
-- [ ] Stock-movement views (in/out)
-- [ ] Verify COGS journal posting
-- [ ] Tests: FIFO / LIFO / avg valuation + COGS
+### R5 · Inventory UI + tests `#9` — done (branch `feat/r5-inventory-ui`)
+- [x] `InventoryCostLayer` model (table already existed; model was absent)
+- [x] Filament `InventoryItemResource` (App panel) + List/Create/Edit pages
+- [x] `InventoryItemFactory`
+- [x] COGS journal posting (`InventoryPostingService::postCogs` — debit COGS expense, credit inventory asset)
+- [x] Tests: FIFO / LIFO / average valuation + balanced COGS JE (`InventoryValuationTest`, 4 tests)
+- Fixed `InventoryItem` PK override (`inventory_item_id` → table uses `id`; broke relations); added missing `cost_of_goods_sold` column the service writes
+- Stock-movement UI deferred (transaction/adjustment screens) — valuation engine + COGS verified, item CRUD shipped
 
 ### R6 · Reconciliation workflow UI `#11`
 - [ ] Reconcile action on `BankStatementResource`

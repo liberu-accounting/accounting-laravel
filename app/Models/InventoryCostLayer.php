@@ -7,39 +7,32 @@ namespace App\Models;
 use App\Traits\IsTenantModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class InventoryTransaction extends Model
+/**
+ * A FIFO/LIFO cost layer: a batch of stock purchased at a given unit cost.
+ * The valuation service consumes these oldest- or newest-first on a sale.
+ */
+class InventoryCostLayer extends Model
 {
     use HasFactory;
     use IsTenantModel;
 
-    #[\Override]
-    protected $primaryKey = 'inventory_transaction_id';
-
-    #[\Override]
     protected $fillable = [
         'inventory_item_id',
-        'transaction_id',
         'quantity',
-        'unit_price',
-        'transaction_type',
-        'notes',
-        'cost_of_goods_sold',
+        'unit_cost',
+        'purchase_date',
     ];
 
-    #[\Override]
     protected $casts = [
         'quantity' => 'integer',
-        'unit_price' => 'decimal:2',
+        'unit_cost' => 'decimal:2',
+        'purchase_date' => 'date',
     ];
 
-    public function inventoryItem()
+    public function inventoryItem(): BelongsTo
     {
         return $this->belongsTo(InventoryItem::class);
-    }
-
-    public function transaction()
-    {
-        return $this->belongsTo(Transaction::class);
     }
 }
