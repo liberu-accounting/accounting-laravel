@@ -8,6 +8,7 @@ use App\Filament\App\Resources\BankStatements\Pages\CreateBankStatement;
 use App\Filament\App\Resources\BankStatements\Pages\EditBankStatement;
 use App\Filament\App\Resources\BankStatements\Pages\ListBankStatements;
 use App\Models\BankStatement;
+use App\Modules\Reconciliation\ReconciliationModule;
 use App\Services\BankStatementImportService;
 use App\Services\ReconciliationService;
 use Exception;
@@ -229,7 +230,7 @@ class BankStatementResource extends Resource
                     ->label('Reconcile')
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
-                    ->visible(fn (BankStatement $record): bool => $record->transactions()->exists() && ! $record->reconciled)
+                    ->visible(fn (BankStatement $record): bool => ReconciliationModule::isActive() && $record->transactions()->exists() && ! $record->reconciled)
                     ->requiresConfirmation()
                     ->modalHeading('Reconcile Bank Statement')
                     ->modalDescription('This will attempt to match and reconcile all transactions for this statement.')
@@ -265,7 +266,7 @@ class BankStatementResource extends Resource
                     ->label('View Discrepancies')
                     ->icon('heroicon-o-exclamation-triangle')
                     ->color('warning')
-                    ->visible(fn (BankStatement $record) => $record->transactions()->exists())
+                    ->visible(fn (BankStatement $record) => ReconciliationModule::isActive() && $record->transactions()->exists())
                     ->modalHeading('Reconciliation Discrepancies')
                     ->modalContent(function (BankStatement $record): Factory|View {
                         $reconciliationService = app(ReconciliationService::class);
