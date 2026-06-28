@@ -33,6 +33,16 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'xero' => [
+        'client_id' => env('XERO_CLIENT_ID'),
+        'client_secret' => env('XERO_CLIENT_SECRET'),
+        'redirect_uri' => env('XERO_REDIRECT_URI'),
+        'authorization_url' => env('XERO_AUTHORIZATION_URL', 'https://login.xero.com/identity/connect/authorize'),
+        'token_url' => env('XERO_TOKEN_URL', 'https://identity.xero.com/connect/token'),
+        'connections_url' => env('XERO_CONNECTIONS_URL', 'https://api.xero.com/connections'),
+        'api_base_url' => env('XERO_API_BASE_URL', 'https://api.xero.com/api.xro/2.0'),
+    ],
+
     'qbo' => [
         'client_id' => env('QBO_CLIENT_ID'),
         'client_secret' => env('QBO_CLIENT_SECRET'),
