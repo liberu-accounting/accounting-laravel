@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\RevolutWebhookController;
 use App\Http\Controllers\Api\TransactionController;
 use App\Http\Controllers\Api\WiseController;
 use App\Http\Controllers\Api\WiseWebhookController;
+use App\Http\Controllers\Api\XeroController;
 use App\Services\ExchangeRateService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -94,6 +95,13 @@ Route::middleware('auth:sanctum')->group(function (): void {
         Route::post('/connections/{connection}/pay', [RevolutController::class, 'sendPayment'])->middleware('throttle:30,1');
         Route::post('/connections/{connection}/bulk-pay', [RevolutController::class, 'sendBulkPayment'])->middleware('throttle:10,1');
         Route::delete('/connections/{connection}', [RevolutController::class, 'removeConnection']);
+    });
+
+    // Xero API Routes
+    Route::prefix('xero')->middleware('throttle:60,1')->group(function (): void {
+        Route::get('/connect', [XeroController::class, 'connect']);
+        Route::get('/callback', [XeroController::class, 'callback']);
+        Route::post('/connections/{connection}/sync', [XeroController::class, 'sync'])->middleware('throttle:10,1');
     });
 
     // QuickBooks Online API Routes
