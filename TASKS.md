@@ -56,12 +56,12 @@ before finalizing.
 
 ## P1 — Core accounting gaps
 
-### R2 · Account import/export `#5`
-- [ ] Add export action to `ChartOfAccountsResource` (CSV/Excel)
-- [ ] Add import action (header/bulk)
-- [ ] Validate on import: account type, parent ref, normal-balance
-- [ ] Pick lib: `league/csv` or `maatwebsite/excel`
-- [ ] Test: export → re-import to empty tenant, hierarchy + types preserved
+### R2 · Account import/export `#5` — done (branch `feat/r2-account-import-export`)
+- [x] Add export action to `ChartOfAccounts` list page (CSV download)
+- [x] Add import action (header action, CSV upload)
+- [x] Validate on import: account type, parent ref, normal-balance
+- [x] Lib: native `fputcsv`/`fgetcsv` — no new dependency (ponytail)
+- [x] Test: export → re-import to empty tenant, hierarchy + types preserved (`AccountCsvServiceTest`, 5 tests)
 
 ### R3 · Invoice line items `#7`
 - [ ] `InvoiceItem` model (mirror `BillItem`: qty, unit_price, amount)
