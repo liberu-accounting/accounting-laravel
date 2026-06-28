@@ -48,6 +48,27 @@ class ExchangeRateService
         }
     }
 
+    /**
+     * The most recent rate for each currency pair, newest first.
+     *
+     * @return list<array{from: ?string, to: ?string, rate: float, date: ?string}>
+     */
+    public function getLatestRates(): array
+    {
+        return ExchangeRate::with(['fromCurrency', 'toCurrency'])
+            ->orderByDesc('date')
+            ->get()
+            ->unique(fn (ExchangeRate $r): string => $r->from_currency_id.'-'.$r->to_currency_id)
+            ->map(fn (ExchangeRate $r): array => [
+                'from' => $r->fromCurrency?->code,
+                'to' => $r->toCurrency?->code,
+                'rate' => (float) $r->rate,
+                'date' => $r->date?->toDateString(),
+            ])
+            ->values()
+            ->all();
+    }
+
     public function getExchangeRate(Currency $fromCurrency, Currency $toCurrency): float|int|null
     {
         $exchangeRate = ExchangeRate::where('from_currency_id', $fromCurrency->id)
