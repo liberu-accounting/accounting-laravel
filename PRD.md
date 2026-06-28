@@ -91,3 +91,87 @@ API covers only bank/payment integrations (31 routes). Add Sanctum-auth resource
 - "Modular architecture" is real but only `BlogModule` ships; Inventory/Fixed Assets/Reconciliation are not modularized — README implies more breadth than exists.
 - Evidence (file:line) for every grade lives in the audit; ask to inline it.
 - Implemented features (no work): double-entry engine, post/reverse, account hierarchy, CoA, ledger, fixed-asset depreciation, Plaid (49 tests), module framework.
+
+---
+
+# PRD — Phase 2: Platform & Maturity Backlog
+
+**Status:** Draft · **Added:** 2026-06-28 · **Context:** Phase 1 (R1–R8) closed every README "Key Features" gap. Phase 2 scopes the larger platform investments deliberately left out of scope in Phase 1. Each item is graded by what **already exists** (recon-backed, file:line) vs greenfield, so we build on foundations rather than from scratch.
+
+## Summary
+
+| # | Area | Today | Effort |
+|---|------|-------|--------|
+| R9 | Modularize existing features | Foundation exists (framework + blueprint), only `BlogModule` ships | M |
+| R10 | Multi-currency completion | Partial (models exist; FX + reporting missing; 2 bugs) | L |
+| R11 | Xero / Sage integration | Greenfield (mirror QBO pattern) | L |
+| R12 | Payroll tax engine (PAYE/NI) | Partial (RTI submission exists; tax is a hardcoded 20%) | L |
+| R13 | API versioning + OpenAPI docs | Partial (flat routes, binary Sanctum, stale `api.md`) | M |
+| R14 | UI/UX branding + theme | None (default Filament Gray) | S |
+
+---
+
+## R9 · Modularize existing features
+
+**Today.** The module framework is real: `app/Modules/BaseModule.php` (lifecycle hooks), `app/Modules/ModuleManager.php`, `ModuleServiceProvider` (auto-discovery), `config/modules.php`, and a full blueprint in `docs/MODULAR_ARCHITECTURE.md`. Only `app/Modules/BlogModule/` ships. Inventory, Fixed Assets, and Reconciliation are plain app code under `app/Models` + `app/Filament/App/Resources` — not modules.
+
+**Deliverable.** Convert Inventory, Fixed Assets, and Reconciliation into first-class modules under `app/Modules/*` (module class extending `BaseModule`, owning their models/migrations/Filament resources/services), discoverable + toggleable via `config/modules.php`.
+
+**Acceptance.** Disabling a module in config removes its panel resources and routes without errors; enabling restores them; existing tests still pass. One module ships fully migrated as the reference (recommend Inventory — already has the cleanest service boundary).
+
+**Risks.** Migration/namespace moves are invasive; do one module per PR, keep DB table names stable.
+
+## R10 · Multi-currency completion
+
+**Today.** Data model exists: `Currency` (`currency_id`, `code`, `is_default`), `ExchangeRate` model, `Account::getBalanceInCurrency(Currency)`, `Transaction.currency_id` + `getAmountInCurrency()`. `ExchangeRateService::getExchangeRate()` fetches/falls back.
+
+**Bugs to fix first (quick wins).**
+- `ExchangeRate` model has **no `exchange_rates` table migration** — create it.
+- `routes/api.php` `/exchange-rates` calls `ExchangeRateService::getLatestRates()`, which **does not exist** → the endpoint 500s. Implement it or fix the route.
+
+**Deliverable.** True multi-currency: per-transaction currency captured at entry, a configurable **reporting currency**, FX **gain/loss** posting on revaluation (a GL entry when rates move), and currency-aware financial statements.
+
+**Acceptance.** A foreign-currency invoice posts and, on settlement at a different rate, generates a balanced FX gain/loss journal entry; trial balance renders in the reporting currency; tests cover conversion + gain/loss.
+
+## R11 · Xero / Sage integration
+
+**Today.** None — `grep xero|sage` is empty. The QBO integration is the template: `QuickBooksService` (OAuth 2.0, token refresh, push/pull per entity) + `QboConnection` (encrypted tokens) + webhook controller + `/api/qbo/*` routes.
+
+**Deliverable.** A `XeroService` (and later `SageService`) mirroring the QBO shape: OAuth connect/callback, encrypted `*Connection` model, push/pull for accounts, invoices, bills, payments, plus webhook handling.
+
+**Acceptance.** Connect a Xero sandbox org, round-trip an invoice both directions, tests with `Http::fake` per entity — same bar as the QBO suite.
+
+**Note.** Extract the shared sync shape (client/refresh/upsert-by-remote-id) into a reusable base or contract so each provider is thin.
+
+## R12 · Payroll tax engine (PAYE / NI)
+
+**Today.** `HmrcRtiPayeService` builds + submits RTI/FPS XML with `GrossPay`, `TaxDeducted`, `EmployeeNICs`, `EmployerNICs`, `StudentLoan` fields — but it is **submission-only** and trusts pre-calculated `Payroll.employee_data`. Nothing calculates those: `Payroll::calculateNetSalary()` is a hardcoded `gross * 0.20`. `config/hmrc.php` has Corporation Tax bands but **no PAYE bands or NI thresholds**.
+
+**Deliverable.** A `PayrollTaxService` computing real UK statutory figures from gross + tax code: PAYE income tax by band (personal allowance, basic/higher/additional), employee + employer NI by threshold, and student-loan repayment by plan — driven by configurable tax-year tables in `config/`. Wire its output into `Payroll` and into the FPS `employee_data`.
+
+**Acceptance.** Given a known salary + tax code + NI category, the computed PAYE / employee NI / employer NI / student loan match HMRC worked examples (to the penny) in tests; `calculateNetSalary` uses the engine, not the 20% placeholder.
+
+## R13 · API versioning + OpenAPI docs
+
+**Today.** `routes/api.php` is a flat namespace (no `/v1/`). Auth is binary `auth:sanctum` (no abilities/scopes). `docs/api.md` is hand-written and **documents only 2 of ~15 endpoint groups** (Transactions, Exchange Rates) — stale and incomplete.
+
+**Deliverable.** Introduce a `/v1` prefix (keep current paths aliased for back-compat), add Sanctum token **abilities/scopes** (e.g. `invoices:read`, `payroll:write`) enforced per route, and generate an **OpenAPI** spec (annotations or a generator) served at a docs route. Replace the stale `api.md`.
+
+**Acceptance.** All resource endpoints live under `/v1`; a token minted with limited abilities is rejected on out-of-scope routes (test); OpenAPI spec validates and lists every endpoint with request/response schema.
+
+## R14 · UI/UX branding + theme
+
+**Today.** Both panels (`AdminPanelProvider`, `AppPanelProvider`) use default Filament with `Color::Gray` and the stock `theme.css`; no `brandName`, logo, or custom palette. `tailwind.config.js` is the default preset.
+
+**Deliverable.** Brand both panels: `->brandName('Liberu Accounting')` + logo, a custom primary color palette, dark-mode polish, and a small set of branded assets. Keep Filament defaults for layout (no bespoke component rewrites).
+
+**Acceptance.** Both panels show the brand name + logo and the custom palette; light/dark both legible; no accessibility regressions (contrast).
+
+---
+
+## Out of scope (Phase 2)
+
+- Bespoke front-end outside Filament (custom SPA, marketing site).
+- Non-UK payroll jurisdictions (R12 targets UK PAYE/NI first).
+- Real-time collaborative editing, mobile apps.
+- Migrating off Filament/Livewire.
