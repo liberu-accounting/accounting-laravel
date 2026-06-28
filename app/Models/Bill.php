@@ -40,6 +40,7 @@ class Bill extends Model
         'approved_at',
         'approval_status',
         'rejection_reason',
+        'team_id',
     ];
 
     #[\Override]
@@ -249,6 +250,6 @@ class Bill extends Model
             $number = isset($parts[1]) ? ((int) $parts[1]) + 1 : 1;
         }
 
-        return $prefix.$year.'-'.str_pad($number, 4, '0', STR_PAD_LEFT);
+        return $prefix.$year.'-'.str_pad((string) $number, 4, '0', STR_PAD_LEFT);
     }
 }

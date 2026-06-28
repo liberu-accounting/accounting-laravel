@@ -101,14 +101,17 @@ before finalizing.
 - [x] `ReconciliationService::reconcileStatement()` — single source of truth for the reconciled rule (no unmatched + zero discrepancy)
 - [x] Test: balanced → reconciled, discrepancy → stays open (`ReconciliationWorkflowTest`, 2 tests)
 
-### R7 · Core REST endpoints `#15` — partial (branch `feat/r7-rest-endpoints`)
+### R7 · Core REST endpoints `#15` — done (branches `feat/r7-rest-endpoints` + `feat/r7b-sales-purchase-api`)
 - [x] chart of accounts (`/api/chart-of-accounts`, full CRUD, Sanctum, user-scoped)
 - [x] journal entries (`/api/journal-entries`, index/store/show/destroy; store rejects unbalanced lines)
 - [x] general ledger (`/api/general-ledger/trial-balance` + `/balances`, read-only)
+- [x] invoices (`/api/invoices`, full CRUD, team-scoped)
+- [x] bills (`/api/bills`, full CRUD, team-scoped)
+- [x] estimates (`/api/estimates`, full CRUD, team-scoped)
 - [x] Apply existing rate-limit pattern (`throttle:60,1`)
-- [x] Tests per endpoint (`ChartOfAccountApiTest` 5, `JournalEntryApiTest` 5, `GeneralLedgerApiTest` 2)
-- [x] Fixed `GeneralLedgerService` null-currency crash + wrong `account_id` column in trial-balance/balances
-- [ ] invoices / bills / estimates — **deferred**: depend on R3's invoice fixes (str_pad boot bug, `invoice_number` column) + missing Bill/Estimate factories. Build once R3 (#786) merges to avoid duplicating it.
+- [x] Tests per endpoint (CoA 5, journal 5, GL 2, invoice 3, bill 3, estimate 3)
+- [x] Fixed `GeneralLedgerService` null-currency crash + wrong `account_id` column
+- [x] Fixed `str_pad(int)` boot bug in `Bill`/`Estimate` number generators; added `team_id` to fillable; new `Vendor`/`Bill`/`Estimate` factories
 
 ---
 
