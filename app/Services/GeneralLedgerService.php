@@ -23,13 +23,15 @@ class GeneralLedgerService
         }])
             ->get()
             ->map(function ($account) use ($displayCurrency): array {
-                $balance = $account->getBalanceInCurrency($displayCurrency);
+                $balance = $displayCurrency instanceof Currency
+                    ? $account->getBalanceInCurrency($displayCurrency)
+                    : (float) $account->balance;
 
                 return [
-                    'account_id' => $account->account_id,
+                    'account_id' => $account->getKey(),
                     'account_name' => $account->account_name,
                     'balance' => $balance,
-                    'currency' => $displayCurrency->code,
+                    'currency' => $displayCurrency?->code,
                 ];
             });
     }
@@ -45,14 +47,16 @@ class GeneralLedgerService
         }])
             ->get()
             ->map(function ($account) use ($displayCurrency): array {
-                $balance = $account->getBalanceInCurrency($displayCurrency);
+                $balance = $displayCurrency instanceof Currency
+                    ? $account->getBalanceInCurrency($displayCurrency)
+                    : (float) $account->balance;
 
                 return [
-                    'account_id' => $account->account_id,
+                    'account_id' => $account->getKey(),
                     'account_name' => $account->account_name,
                     'debit' => $balance > 0 ? $balance : 0,
                     'credit' => $balance < 0 ? abs((float) $balance) : 0,
-                    'currency' => $displayCurrency->code,
+                    'currency' => $displayCurrency?->code,
                 ];
             });
     }

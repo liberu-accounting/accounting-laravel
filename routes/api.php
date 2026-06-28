@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Api\ChartOfAccountController;
+use App\Http\Controllers\Api\GeneralLedgerController;
+use App\Http\Controllers\Api\JournalEntryController;
 use App\Http\Controllers\Api\PlaidController;
 use App\Http\Controllers\Api\PlaidWebhookController;
 use App\Http\Controllers\Api\QboController;
@@ -28,6 +31,15 @@ Route::middleware('auth:sanctum')->group(function (): void {
     Route::get('/user', fn (Request $request) => $request->user());
 
     Route::apiResource('transactions', TransactionController::class);
+
+    // Core accounting REST endpoints (R7)
+    Route::middleware('throttle:60,1')->group(function (): void {
+        Route::apiResource('chart-of-accounts', ChartOfAccountController::class);
+        Route::apiResource('journal-entries', JournalEntryController::class)
+            ->only(['index', 'store', 'show', 'destroy']);
+        Route::get('/general-ledger/trial-balance', [GeneralLedgerController::class, 'trialBalance']);
+        Route::get('/general-ledger/balances', [GeneralLedgerController::class, 'balances']);
+    });
 
     Route::get('/exchange-rates', fn () => app(ExchangeRateService::class)->getLatestRates())->middleware('throttle:60,1');
 
