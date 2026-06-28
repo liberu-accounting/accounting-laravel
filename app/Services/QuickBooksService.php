@@ -11,9 +11,10 @@ use App\Models\Invoice;
 use App\Models\Payment;
 use App\Models\QboConnection;
 use App\Models\Vendor;
+use App\Services\Concerns\RequestsProviderTokens;
+use App\Services\Concerns\ResolvesSyncedContacts;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Str;
 
 /**
  * Two-way sync with QuickBooks Online via OAuth 2.0.
@@ -25,6 +26,9 @@ use Illuminate\Support\Str;
  */
 class QuickBooksService
 {
+    use RequestsProviderTokens;
+    use ResolvesSyncedContacts;
+
     /** @var array<string, mixed> */
     private array $cfg;
 
@@ -328,15 +332,7 @@ class QuickBooksService
      */
     private function resolveVendorId(?array $vendorRef): int
     {
-        $name = $vendorRef['name'] ?? ('QBO Vendor '.($vendorRef['value'] ?? 'Unknown'));
-        $ref = (string) ($vendorRef['value'] ?? Str::random(8));
-
-        $vendor = Vendor::firstOrCreate(
-            ['name' => $name],
-            ['email' => Str::slug($name).'.'.$ref.'@qbo.imported'],
-        );
-
-        return (int) $vendor->getKey();
+        return $this->syncedVendorId($vendorRef['name'] ?? ('QBO Vendor '.($vendorRef['value'] ?? 'Unknown')), 'qbo');
     }
 
     /**
@@ -347,22 +343,7 @@ class QuickBooksService
      */
     private function resolveCustomerId(?array $customerRef): int
     {
-        $name = $customerRef['name'] ?? ('QBO Customer '.($customerRef['value'] ?? 'Unknown'));
-
-        $ref = (string) ($customerRef['value'] ?? Str::random(8));
-
-        $customer = Customer::firstOrCreate(
-            ['customer_name' => $name],
-            [
-                'customer_last_name' => '',
-                'customer_address' => 'Imported from QuickBooks Online',
-                'customer_email' => Str::slug($name).'.'.$ref.'@qbo.imported',
-                'customer_phone' => 'qbo-'.$ref,
-                'customer_city' => 'Unknown',
-            ],
-        );
-
-        return (int) $customer->getKey();
+        return $this->syncedCustomerId($customerRef['name'] ?? ('QBO Customer '.($customerRef['value'] ?? 'Unknown')), 'qbo');
     }
 
     /**
@@ -403,10 +384,6 @@ class QuickBooksService
      */
     private function requestTokens(array $form): array
     {
-        return Http::asForm()
-            ->withBasicAuth($this->cfg['client_id'], $this->cfg['client_secret'])
-            ->post($this->cfg['token_url'], $form)
-            ->throw()
-            ->json();
+        return $this->requestProviderTokens($this->cfg, $form);
     }
 }

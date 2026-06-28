@@ -6,22 +6,24 @@ namespace App\Services;
 
 use App\Models\Account;
 use App\Models\Bill;
-use App\Models\Customer;
 use App\Models\Invoice;
 use App\Models\Payment;
-use App\Models\Vendor;
 use App\Models\XeroConnection;
+use App\Services\Concerns\RequestsProviderTokens;
+use App\Services\Concerns\ResolvesSyncedContacts;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Str;
 
 /**
- * Two-way sync with Xero via OAuth 2.0. Mirrors QuickBooksService — kept as a
- * separate service rather than a shared base; extract a common contract if a
- * third accounting provider lands.
+ * Two-way sync with Xero via OAuth 2.0. Shares the OAuth token request and
+ * contact-resolution helpers with the other providers via the Concerns traits;
+ * provider-specific endpoints/payloads stay here.
  */
 class XeroService
 {
+    use RequestsProviderTokens;
+    use ResolvesSyncedContacts;
+
     /** @var array<string, mixed> */
     private array $cfg;
 
@@ -46,13 +48,11 @@ class XeroService
      */
     public function handleCallback(int $userId, string $code): XeroConnection
     {
-        $tokens = Http::asForm()
-            ->withBasicAuth($this->cfg['client_id'], $this->cfg['client_secret'])
-            ->post($this->cfg['token_url'], [
-                'grant_type' => 'authorization_code',
-                'code' => $code,
-                'redirect_uri' => $this->cfg['redirect_uri'],
-            ])->throw()->json();
+        $tokens = $this->requestProviderTokens($this->cfg, [
+            'grant_type' => 'authorization_code',
+            'code' => $code,
+            'redirect_uri' => $this->cfg['redirect_uri'],
+        ]);
 
         $tenantId = Http::withToken($tokens['access_token'])
             ->acceptJson()
@@ -256,15 +256,7 @@ class XeroService
      */
     private function resolveVendorId(?array $contact): int
     {
-        $name = $contact['Name'] ?? 'Xero Vendor';
-        $ref = Str::random(8);
-
-        $vendor = Vendor::firstOrCreate(
-            ['name' => $name],
-            ['email' => Str::slug($name).'.'.$ref.'@xero.imported'],
-        );
-
-        return (int) $vendor->getKey();
+        return $this->syncedVendorId($contact['Name'] ?? 'Xero Vendor', 'xero');
     }
 
     private function client(XeroConnection $connection): PendingRequest
@@ -280,20 +272,6 @@ class XeroService
      */
     private function resolveCustomerId(?array $contact): int
     {
-        $name = $contact['Name'] ?? 'Xero Customer';
-        $ref = Str::random(8);
-
-        $customer = Customer::firstOrCreate(
-            ['customer_name' => $name],
-            [
-                'customer_last_name' => '',
-                'customer_address' => 'Imported from Xero',
-                'customer_email' => Str::slug($name).'.'.$ref.'@xero.imported',
-                'customer_phone' => 'xero-'.$ref,
-                'customer_city' => 'Unknown',
-            ],
-        );
-
-        return (int) $customer->getKey();
+        return $this->syncedCustomerId($contact['Name'] ?? 'Xero Customer', 'xero');
     }
 }
