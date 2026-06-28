@@ -75,11 +75,12 @@ before finalizing.
 - [ ] Posts balanced journal entry
 - [ ] Test: N line items, total + balanced JE
 
-### R4 · Payslip generation `#8`
-- [ ] `Payslip` model (or PDF service) — gross/deductions/net per employee
-- [ ] `dompdf` render
-- [ ] Download action on `PayrollResource`
-- [ ] Test: run pay-run → download PDF w/ gross, deductions, net
+### R4 · Payslip generation `#8` — done (branch `feat/r4-payslip-generation`)
+- [x] `PayslipService` (no separate model needed) — gross/deductions/net per employee
+- [x] `dompdf` render — installed `barryvdh/laravel-dompdf` (also unbreaks `Invoice::generatePDF`)
+- [x] Download action on `PayrollResource`
+- [x] Payroll `grossSalary()` + `totalDeductions()` helpers; `payslips.template` blade view
+- [x] Test: gross/deduction helpers, payslip HTML content, PDF bytes (`PayslipServiceTest`, 3 tests)
 
 ---
 

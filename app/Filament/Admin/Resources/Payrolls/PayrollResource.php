@@ -8,6 +8,8 @@ use App\Filament\Admin\Resources\Payrolls\Pages\CreatePayroll;
 use App\Filament\Admin\Resources\Payrolls\Pages\EditPayroll;
 use App\Filament\Admin\Resources\Payrolls\Pages\ListPayrolls;
 use App\Models\Payroll;
+use App\Services\PayslipService;
+use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
@@ -105,6 +107,14 @@ class PayrollResource extends Resource
             ])
             ->recordActions([
                 EditAction::make(),
+                Action::make('downloadPayslip')
+                    ->label('Payslip')
+                    ->icon('heroicon-o-document-arrow-down')
+                    ->action(fn (Payroll $record) => response()->streamDownload(
+                        fn (): int => print (app(PayslipService::class)->pdf($record)),
+                        "payslip_{$record->id}.pdf",
+                        ['Content-Type' => 'application/pdf'],
+                    )),
                 DeleteAction::make(),
             ]);
     }
