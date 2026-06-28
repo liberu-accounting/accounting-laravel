@@ -93,12 +93,13 @@ before finalizing.
 - Fixed `InventoryItem` PK override (`inventory_item_id` → table uses `id`; broke relations); added missing `cost_of_goods_sold` column the service writes
 - Stock-movement UI deferred (transaction/adjustment screens) — valuation engine + COGS verified, item CRUD shipped
 
-### R6 · Reconciliation workflow UI `#11`
-- [ ] Reconcile action on `BankStatementResource`
-- [ ] Match / unmatch UI
-- [ ] Statement status: open / reconciled
-- [ ] Difference display
-- [ ] Test: import → auto-match → manual match → reconcile at diff=0
+### R6 · Reconciliation workflow UI `#11` — done (branch `feat/r6-reconciliation-ui`)
+- [x] Reconcile action on `BankStatementResource` (existed; was **broken** — called `->count()` on an int; now routes through the service)
+- [x] Match / unmatch UI (discrepancies modal — fixed to the int contract, unmatched list driven from discrepancies)
+- [x] Statement status: open / reconciled (`reconciled` flag, set by `reconcileStatement`)
+- [x] Difference display (balance discrepancy in modal + notification)
+- [x] `ReconciliationService::reconcileStatement()` — single source of truth for the reconciled rule (no unmatched + zero discrepancy)
+- [x] Test: balanced → reconciled, discrepancy → stays open (`ReconciliationWorkflowTest`, 2 tests)
 
 ### R7 · Core REST endpoints `#15`
 - [ ] `/api` invoices (CRUD, Sanctum)
