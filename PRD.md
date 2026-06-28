@@ -175,3 +175,70 @@ API covers only bank/payment integrations (31 routes). Add Sanctum-auth resource
 - Non-UK payroll jurisdictions (R12 targets UK PAYE/NI first).
 - Real-time collaborative editing, mobile apps.
 - Migrating off Filament/Livewire.
+
+---
+
+# PRD — Phase 3: Follow-ups
+
+**Status:** Draft · **Added:** 2026-06-28 · **Context:** Phases 1–2 (R1–R14) are shipped. Phase 3 collects the deliberate, non-blocking follow-ups each of those PRs deferred. All are extensions of working, tested code — no new foundations.
+
+## Summary
+
+| # | Follow-up | From | Today | Effort |
+|---|-----------|------|-------|--------|
+| F1 | Fixed Assets module | R9 | Inventory module shipped as reference; Assets still plain app code | S |
+| F2 | Reconciliation module | R9 | same pattern, not yet applied | S |
+| F3 | Xero accounts/bills/payments mapping | R11 | Xero does invoices only; QBO does all four | M |
+| F4 | Sage integration | R11 | greenfield; mirror Xero/QBO | L |
+| F5 | Per-transaction currency UI/API | R10b | `Transaction` model supports it; not exposed | M |
+| F6 | Full API scopes + generated OpenAPI | R13 | invoices/bills fully scoped; spec hand-maintained | M |
+| F7 | Pay-period payroll apportionment | R12 | engine is annual-basis; no period/cumulative codes | M |
+
+---
+
+## F1 · Fixed Assets module `S`
+**Today.** R9 (#806) shipped Inventory as the reference module (gate-in-place: `InventoryModule::isActive()` + `canAccess()`/`shouldRegisterNavigation()` on the resource; code/tables unchanged). Fixed Assets is still plain app code.
+**Deliverable.** `app/Modules/FixedAssets` (module class + `module.json`); gate `AssetResource` (+ `AssetAcquisitionResource`) on the module state — same pattern as Inventory.
+**Acceptance.** Disabling the module removes the asset panel resources without errors; enabling restores them; existing asset tests pass.
+**Deps:** R9 pattern (done). **Boundary:** gate-in-place; no model/migration relocation; keep table names.
+
+## F2 · Reconciliation module `S`
+**Today.** Reconciliation is integrated into `ReconciliationService` + the `BankStatement` resource; not a module.
+**Deliverable.** `app/Modules/Reconciliation` module gating the reconcile actions / statement resource.
+**Acceptance.** Disable → reconcile UI gone; enable → restored; reconciliation tests pass.
+**Deps:** R9 pattern. **Boundary:** as F1.
+
+## F3 · Xero accounts / bills / payments mapping `M`
+**Today.** `XeroService` (R11, #805) round-trips invoices only. QBO maps invoices, accounts, bills, payments.
+**Deliverable.** `pushAccount`/`pullAccounts`, `pushBill`/`pullBills`, `pushPayment`/`pullPayments` on `XeroService` (Xero `Accounts`/`Bills` are `ACCPAY` invoices/`Payments`), mirroring the QBO methods; add `xero_id` where needed.
+**Acceptance.** Each entity round-trips both directions with `Http::fake` tests (QBO bar).
+**Deps:** R11. **Boundary:** Xero only.
+
+## F4 · Sage integration `L`
+**Today.** None. QBO + Xero exist as the template.
+**Deliverable.** `SageService` + `SageConnection` (OAuth 2.0, encrypted tokens), invoice round-trip first, then accounts/bills/payments.
+**Acceptance.** Connect a Sage sandbox, round-trip an invoice both directions, faked tests.
+**Deps:** R11 (template). **Boundary:** consider extracting a shared sync contract now that there are 3 providers (QBO/Xero/Sage).
+
+## F5 · Per-transaction currency UI/API `M`
+**Today.** `Transaction` has `currency_id` + `exchange_rate` + `getAmountInCurrency()`, and the boot hook auto-sets the rate. R10b added FX gain/loss + reporting currency. But the currency isn't exposed at entry.
+**Deliverable.** Currency selector on the transaction Filament form; `currency_id` (+ optional `exchange_rate`) accepted on the transaction API; surface FX gain/loss posting (`FxRevaluationService`) at settlement.
+**Acceptance.** Create a foreign-currency transaction via UI + API; on settlement at a changed rate, the FX gain/loss entry posts; tests cover both surfaces.
+**Deps:** R10b (done). **Boundary:** uses existing rate source.
+
+## F6 · Full API scopes + generated OpenAPI `M`
+**Today.** R13 (#804) added `/v1`, Sanctum ability scopes (invoices + bills fully gated), and a hand-maintained OpenAPI doc at `/api/v1/openapi.json`.
+**Deliverable.** Apply the `<resource>:read`/`:write` ability convention to **all** v1 resources (estimates, journal-entries, chart-of-accounts, general-ledger); replace the hand-written spec with an annotation/attribute-driven generator so it can't drift.
+**Acceptance.** A limited-ability token is rejected on every out-of-scope route; the generated spec lists every endpoint with request/response schemas and validates.
+**Deps:** R13. **Boundary:** still no breaking removal of unversioned aliases; no SDK generation.
+
+## F7 · Pay-period payroll apportionment `M`
+**Today.** `PayrollTaxService` (R12, #802) computes correct **annual** UK PAYE/NI/student-loan and `calculateNetSalary` uses it. There is no pay-period (monthly/weekly) apportionment or cumulative tax-code operation.
+**Deliverable.** Period-aware calculation (annualise the period gross, compute, de-annualise) with cumulative vs non-cumulative (`W1/M1`) code handling; a tax-year selector so multiple years' tables coexist in `config/payroll.php`.
+**Acceptance.** A monthly run for a known salary + code matches HMRC monthly worked examples; switching tax year picks the right tables; tests per scenario.
+**Deps:** R12. **Boundary:** UK only; no pensions/auto-enrolment.
+
+---
+
+## Out of scope (Phase 3)
+- Same global exclusions as Phase 2 (non-UK payroll, live-FX trading, non-Filament front-ends, migrating off Filament/Livewire, module-framework rewrite, API SDK generation, providers beyond QBO/Xero/Sage).

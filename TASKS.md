@@ -244,3 +244,88 @@ Nothing in R9–R14 hard-blocks another; the only sequencing is "do R9 last" and
 - Integrations beyond Xero then Sage (no Stripe/NetSuite/etc.).
 - Migrating off Filament / Livewire; real-time collaborative editing.
 - Rewriting the module framework (`ModuleManager`/`BaseModule` already exist — R9 only adds modules).
+
+---
+
+# Phase 3 — Follow-ups (F1–F7)
+
+From [`PRD.md`](PRD.md) Phase 3. Non-blocking extensions of shipped work. Same workflow: one branch per item off `master`, TDD, Pint, full suite green before PR. **Verify `git branch --show-current` before each commit** (commits have slipped onto `master` otherwise).
+
+## Build order
+
+```
+P1 quick wins:   F1 Fixed Assets module · F2 Reconciliation module   (R9 pattern, done)
+P2 correctness:  F7 payroll pay-period apportionment · F5 per-transaction currency UI/API
+P3 breadth:      F3 Xero accounts/bills/payments · F6 full API scopes + generated OpenAPI
+P4 large:        F4 Sage integration   (consider extracting a shared sync contract here)
+```
+
+Deps: every item builds on already-merged work (R9/R10b/R11/R12/R13). No item blocks another. F4 is the natural point to extract a shared provider-sync base (QBO + Xero + Sage = 3).
+
+---
+
+## P1 — Quick wins (R9 gate-in-place pattern)
+
+### F1 · Fixed Assets module `S`
+- [ ] `app/Modules/FixedAssets` — module class extends `BaseModule` + `module.json`
+- [ ] `FixedAssetsModule::isActive()` (default-on when unmanaged)
+- [ ] Gate `AssetResource` (+ `AssetAcquisitionResource`) — `canAccess()` / `shouldRegisterNavigation()`
+- [ ] Test: default-on, disable removes resources, enable restores
+- **Boundary:** gate-in-place; no model/migration relocation; keep table names.
+
+### F2 · Reconciliation module `S`
+- [ ] `app/Modules/Reconciliation` module + `module.json`
+- [ ] Gate the reconcile actions / `BankStatementResource` reconciliation UI on module state
+- [ ] Test: disable hides reconcile flow, enable restores
+- **Boundary:** as F1.
+
+---
+
+## P2 — Correctness / exposure
+
+### F7 · Pay-period payroll apportionment `M`
+- [ ] Period-aware calc (annualise period gross → compute → de-annualise) for monthly/weekly
+- [ ] Cumulative vs non-cumulative (`W1/M1`) tax-code handling
+- [ ] Tax-year selector — multiple years' tables coexist in `config/payroll.php`
+- [ ] Test: monthly run matches HMRC monthly worked examples; year switch picks right tables
+- **Deps:** R12. **Boundary:** UK only; no pensions/auto-enrolment.
+
+### F5 · Per-transaction currency UI/API `M`
+- [ ] Currency selector on the transaction Filament form
+- [ ] `currency_id` (+ optional `exchange_rate`) accepted on the transaction API
+- [ ] Surface `FxRevaluationService` gain/loss posting at settlement
+- [ ] Test: foreign-currency transaction via UI + API; FX gain/loss posts on settlement
+- **Deps:** R10b. **Boundary:** existing rate source only.
+
+---
+
+## P3 — Breadth
+
+### F3 · Xero accounts / bills / payments mapping `M`
+- [ ] `pushAccount` / `pullAccounts` on `XeroService`
+- [ ] `pushBill` / `pullBills` (Xero `ACCPAY`)
+- [ ] `pushPayment` / `pullPayments`
+- [ ] `xero_id` columns where needed; `Http::fake` tests per entity
+- **Deps:** R11. **Boundary:** Xero only.
+
+### F6 · Full API scopes + generated OpenAPI `M`
+- [ ] Apply `<resource>:read`/`:write` abilities to estimates, journal-entries, chart-of-accounts, general-ledger
+- [ ] Replace hand-written spec with annotation/attribute-driven OpenAPI generator
+- [ ] Test: limited-ability token rejected on every out-of-scope route; generated spec validates + lists all endpoints
+- **Deps:** R13. **Boundary:** no breaking removal of unversioned aliases; no SDK.
+
+---
+
+## P4 — Large
+
+### F4 · Sage integration `L`
+- [ ] (Optional but recommended) extract a shared provider-sync contract from QBO + Xero (3rd provider justifies it)
+- [ ] `SageService` + `SageConnection` (OAuth 2.0, encrypted tokens)
+- [ ] Invoice round-trip first, then accounts/bills/payments
+- [ ] Connect a Sage sandbox; faked round-trip tests (QBO/Xero bar)
+- **Deps:** R11 template. **Boundary:** Sage only.
+
+---
+
+## Phase 3 — Out of scope
+Same global exclusions as Phase 2: non-UK payroll, live-FX trading, non-Filament front-ends, migrating off Filament/Livewire, module-framework rewrite, API SDK generation, providers beyond QBO/Xero/Sage.
