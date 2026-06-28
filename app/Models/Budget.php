@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Traits\IsTenantModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Traits\IsTenantModel;
 
 class Budget extends Model
 {
@@ -31,11 +31,11 @@ class Budget extends Model
 
     #[\Override]
     protected $casts = [
-        'start_date'      => 'date',
-        'end_date'        => 'date',
-        'planned_amount'  => 'decimal:2',
+        'start_date' => 'date',
+        'end_date' => 'date',
+        'planned_amount' => 'decimal:2',
         'forecast_amount' => 'decimal:2',
-        'is_approved'     => 'boolean',
+        'is_approved' => 'boolean',
     ];
 
     public function account(): BelongsTo

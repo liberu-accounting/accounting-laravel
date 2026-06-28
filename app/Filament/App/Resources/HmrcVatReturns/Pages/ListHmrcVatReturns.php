@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\App\Resources\HmrcVatReturns\Pages;
 
 use App\Filament\App\Resources\HmrcVatReturns\HmrcVatReturnResource;
+use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
 class ListHmrcVatReturns extends ListRecords
@@ -16,7 +17,7 @@ class ListHmrcVatReturns extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            \Filament\Actions\CreateAction::make(),
+            CreateAction::make(),
         ];
     }
 }

@@ -4,26 +4,23 @@ declare(strict_types=1);
 
 namespace App\Filament\App\Resources\TaxRates;
 
-use Filament\Schemas\Schema;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\Toggle;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Filters\TernaryFilter;
-use Filament\Actions\EditAction;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use App\Filament\App\Resources\TaxRates\Pages\ListTaxRates;
 use App\Filament\App\Resources\TaxRates\Pages\CreateTaxRate;
 use App\Filament\App\Resources\TaxRates\Pages\EditTaxRate;
+use App\Filament\App\Resources\TaxRates\Pages\ListTaxRates;
 use App\Models\TaxRate;
-use Filament\Forms;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
-use App\Filament\App\Resources\TaxRateResource\Pages;
 
 class TaxRateResource extends Resource
 {
@@ -31,7 +28,7 @@ class TaxRateResource extends Resource
     protected static ?string $model = TaxRate::class;
 
     #[\Override]
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-calculator';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-calculator';
 
     #[\Override]
     public static function form(Schema $schema): Schema

@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Models\Project;
-use App\Models\Transaction;
-use Carbon\Carbon;
 
 class ProjectReportService
 {
@@ -29,7 +27,7 @@ class ProjectReportService
             'project_code' => $project->code,
             'period' => [
                 'start' => $startDate,
-                'end' => $endDate
+                'end' => $endDate,
             ],
             'summary' => [
                 'revenue' => $revenue,
@@ -37,21 +35,21 @@ class ProjectReportService
                 'indirect_costs' => $indirectCosts,
                 'total_costs' => $directCosts + $indirectCosts,
                 'gross_profit' => $revenue - ($directCosts + $indirectCosts),
-                'profit_margin' => $revenue > 0 ? 
-                    (($revenue - ($directCosts + $indirectCosts)) / $revenue) * 100 : 0
+                'profit_margin' => $revenue > 0 ?
+                    (($revenue - ($directCosts + $indirectCosts)) / $revenue) * 100 : 0,
             ],
-            'transactions' => $transactions->map(fn($t): array => [
+            'transactions' => $transactions->map(fn ($t): array => [
                 'date' => $t->transaction_date,
                 'type' => $t->type,
                 'amount' => $t->amount,
-                'description' => $t->description
+                'description' => $t->description,
             ]),
-            'expenses' => $expenses->map(fn($e): array => [
+            'expenses' => $expenses->map(fn ($e): array => [
                 'date' => $e->date,
                 'amount' => $e->amount,
                 'description' => $e->description,
-                'type' => $e->is_indirect ? 'Indirect' : 'Direct'
-            ])
+                'type' => $e->is_indirect ? 'Indirect' : 'Direct',
+            ]),
         ];
     }
 
@@ -61,7 +59,7 @@ class ProjectReportService
             ->where('is_indirect', true)
             ->whereBetween('date', [$startDate, $endDate])
             ->get()
-            ->sum(fn($expense) => $expense->getAllocatedAmount());
+            ->sum(fn ($expense) => $expense->getAllocatedAmount());
     }
 
     public function getBudgetVariance(Project $project, $startDate, $endDate): array
@@ -77,8 +75,8 @@ class ProjectReportService
             'budget_amount' => $totalBudget,
             'actual_amount' => $actuals['summary']['total_costs'],
             'variance' => $totalBudget - $actuals['summary']['total_costs'],
-            'variance_percentage' => $totalBudget > 0 ? 
-                (($totalBudget - $actuals['summary']['total_costs']) / $totalBudget) * 100 : 0
+            'variance_percentage' => $totalBudget > 0 ?
+                (($totalBudget - $actuals['summary']['total_costs']) / $totalBudget) * 100 : 0,
         ];
     }
 }

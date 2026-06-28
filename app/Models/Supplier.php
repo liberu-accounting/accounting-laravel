@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Traits\IsTenantModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Traits\IsTenantModel;
 
 class Supplier extends Model
 {
@@ -25,13 +25,11 @@ class Supplier extends Model
         'supplier_address',
         'supplier_phone_number',
         'supplier_limit_credit',
-        'supplier_tin'
+        'supplier_tin',
     ];
 
     public function paymentTerm()
     {
-        return $this->belongsTo(PaymentTerm::class,  'payment_term_id');
+        return $this->belongsTo(PaymentTerm::class, 'payment_term_id');
     }
-
-
 }

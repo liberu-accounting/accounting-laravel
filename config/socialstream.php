@@ -1,6 +1,8 @@
 <?php
 
 declare(strict_types=1);
+use JoelButcher\Socialstream\Features;
+use JoelButcher\Socialstream\Providers;
 
 return [
 
@@ -32,15 +34,15 @@ return [
     */
 
     'providers' => [
-        \JoelButcher\Socialstream\Providers::bitbucket(),
-        \JoelButcher\Socialstream\Providers::facebook(),
-        \JoelButcher\Socialstream\Providers::github(),
-        \JoelButcher\Socialstream\Providers::gitlab(),
-        \JoelButcher\Socialstream\Providers::google(),
-        \JoelButcher\Socialstream\Providers::linkedin(),
-        \JoelButcher\Socialstream\Providers::linkedinOpenId(),
-        \JoelButcher\Socialstream\Providers::slack(),
-        \JoelButcher\Socialstream\Providers::twitterOAuth2(),
+        Providers::bitbucket(),
+        Providers::facebook(),
+        Providers::github(),
+        Providers::gitlab(),
+        Providers::google(),
+        Providers::linkedin(),
+        Providers::linkedinOpenId(),
+        Providers::slack(),
+        Providers::twitterOAuth2(),
     ],
 
     /*
@@ -58,11 +60,11 @@ return [
     */
 
     'features' => [
-        \JoelButcher\Socialstream\Features::rememberSession(),
-        \JoelButcher\Socialstream\Features::providerAvatars(),
-        \JoelButcher\Socialstream\Features::generateMissingEmails(),
-        \JoelButcher\Socialstream\Features::createAccountOnFirstLogin(),
-        \JoelButcher\Socialstream\Features::globalLogin(),
+        Features::rememberSession(),
+        Features::providerAvatars(),
+        Features::generateMissingEmails(),
+        Features::createAccountOnFirstLogin(),
+        Features::globalLogin(),
     ],
 
 ];

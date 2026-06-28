@@ -7,6 +7,7 @@ namespace App\Filament\App\Resources\JournalEntries\Pages;
 use App\Filament\App\Resources\JournalEntries\JournalEntryResource;
 use App\Rules\DoubleEntryValidator;
 use Filament\Actions;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 
 class EditJournalEntry extends EditRecord
@@ -19,7 +20,7 @@ class EditJournalEntry extends EditRecord
     {
         return [
             Actions\DeleteAction::make()
-                ->visible(fn (): bool => !$this->record->is_posted),
+                ->visible(fn (): bool => ! $this->record->is_posted),
         ];
     }
 
@@ -28,19 +29,20 @@ class EditJournalEntry extends EditRecord
         // Don't allow editing posted entries
         if ($this->record->is_posted) {
             $this->halt();
-            \Filament\Notifications\Notification::make()
+            Notification::make()
                 ->title('Cannot edit posted journal entry')
                 ->body('Please reverse the entry first before editing.')
                 ->danger()
                 ->send();
+
             return;
         }
 
         $lines = $this->data['lines'] ?? [];
-        
+
         $validator = new DoubleEntryValidator($lines);
-        
-        if (!$validator->passes('lines', $lines)) {
+
+        if (! $validator->passes('lines', $lines)) {
             $this->addError('lines', $validator->message());
         }
     }

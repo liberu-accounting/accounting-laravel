@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\App\Resources\HmrcVatReturns\Pages;
 
 use App\Filament\App\Resources\HmrcVatReturns\HmrcVatReturnResource;
+use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 
 class EditHmrcVatReturn extends EditRecord
@@ -16,7 +17,7 @@ class EditHmrcVatReturn extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            \Filament\Actions\DeleteAction::make(),
+            DeleteAction::make(),
         ];
     }
 }

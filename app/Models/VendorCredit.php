@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Traits\IsTenantModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,10 +13,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Vendor Credit Model
- * 
+ *
  * Represents credits received from vendors for returns, overpayments, or adjustments.
  * Vendor credits can be applied to future bills from the vendor.
- * 
+ *
  * @property int $vendor_credit_id
  * @property int $vendor_id
  * @property string $vendor_credit_number
@@ -29,12 +30,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string $reason
  * @property string $status
  */
-use App\Traits\IsTenantModel;
-
 class VendorCredit extends Model
 {
-    use IsTenantModel;
     use HasFactory, SoftDeletes;
+    use IsTenantModel;
 
     #[\Override]
     protected $primaryKey = 'vendor_credit_id';
@@ -89,7 +88,7 @@ class VendorCredit extends Model
         static::saved(function ($credit): void {
             // Update amount_remaining
             $credit->amount_remaining = $credit->total_amount - $credit->amount_applied;
-            
+
             // Update status based on remaining amount
             if ($credit->amount_remaining <= 0) {
                 $credit->status = 'applied';
@@ -98,7 +97,7 @@ class VendorCredit extends Model
             } else {
                 $credit->status = 'open';
             }
-            
+
             if ($credit->isDirty(['amount_remaining', 'status'])) {
                 $credit->saveQuietly();
             }
@@ -112,7 +111,8 @@ class VendorCredit extends Model
     {
         $lastCredit = self::orderBy('vendor_credit_id', 'desc')->first();
         $nextNumber = $lastCredit ? ((int) substr((string) $lastCredit->vendor_credit_number, 3)) + 1 : 1;
-        return 'VC-' . str_pad($nextNumber, 6, '0', STR_PAD_LEFT);
+
+        return 'VC-'.str_pad($nextNumber, 6, '0', STR_PAD_LEFT);
     }
 
     /**

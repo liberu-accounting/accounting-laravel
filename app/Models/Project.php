@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Traits\IsTenantModel;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Traits\IsTenantModel;
 
 class Project extends Model
 {
@@ -22,14 +22,14 @@ class Project extends Model
         'start_date',
         'end_date',
         'status',
-        'allocation_percentage'
+        'allocation_percentage',
     ];
 
     #[\Override]
     protected $casts = [
         'start_date' => 'date',
         'end_date' => 'date',
-        'allocation_percentage' => 'decimal:2'
+        'allocation_percentage' => 'decimal:2',
     ];
 
     public function transactions(): HasMany

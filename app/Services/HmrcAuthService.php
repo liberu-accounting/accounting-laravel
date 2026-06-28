@@ -4,14 +4,16 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Cache;
 
 class HmrcAuthService
 {
     private readonly string $baseUrl;
+
     private readonly string $clientId;
+
     private readonly string $clientSecret;
 
     public function __construct()
@@ -28,7 +30,7 @@ class HmrcAuthService
     public function getAuthorizationUrl(string $scope, ?string $state = null): string
     {
         $state ??= bin2hex(random_bytes(16));
-        
+
         $query = http_build_query([
             'client_id' => $this->clientId,
             'response_type' => 'code',
@@ -37,7 +39,7 @@ class HmrcAuthService
             'redirect_uri' => config('hmrc.callback_url'),
         ]);
 
-        return $this->baseUrl . '/oauth/authorize?' . $query;
+        return $this->baseUrl.'/oauth/authorize?'.$query;
     }
 
     /**
@@ -47,7 +49,7 @@ class HmrcAuthService
     {
         try {
             $response = Http::asForm()
-                ->post($this->baseUrl . '/oauth/token', [
+                ->post($this->baseUrl.'/oauth/token', [
                     'client_id' => $this->clientId,
                     'client_secret' => $this->clientSecret,
                     'grant_type' => 'authorization_code',
@@ -57,10 +59,10 @@ class HmrcAuthService
 
             if ($response->successful()) {
                 $data = $response->json();
-                
+
                 // Cache the access token
                 $this->cacheAccessToken($data['access_token'], $data['expires_in']);
-                
+
                 if (isset($data['refresh_token'])) {
                     $this->cacheRefreshToken($data['refresh_token']);
                 }
@@ -70,7 +72,6 @@ class HmrcAuthService
 
             $this->logError('Token exchange failed', $response->json());
             throw new \Exception('Failed to exchange authorization code for token');
-
         } catch (\Exception $e) {
             $this->logError('Token exchange error', ['error' => $e->getMessage()]);
             throw $e;
@@ -83,14 +84,14 @@ class HmrcAuthService
     public function refreshAccessToken(?string $refreshToken = null): array
     {
         $refreshToken ??= $this->getCachedRefreshToken();
-        
-        if (!$refreshToken) {
+
+        if (! $refreshToken) {
             throw new \Exception('No refresh token available');
         }
 
         try {
             $response = Http::asForm()
-                ->post($this->baseUrl . '/oauth/token', [
+                ->post($this->baseUrl.'/oauth/token', [
                     'client_id' => $this->clientId,
                     'client_secret' => $this->clientSecret,
                     'grant_type' => 'refresh_token',
@@ -99,9 +100,9 @@ class HmrcAuthService
 
             if ($response->successful()) {
                 $data = $response->json();
-                
+
                 $this->cacheAccessToken($data['access_token'], $data['expires_in']);
-                
+
                 if (isset($data['refresh_token'])) {
                     $this->cacheRefreshToken($data['refresh_token']);
                 }
@@ -111,7 +112,6 @@ class HmrcAuthService
 
             $this->logError('Token refresh failed', $response->json());
             throw new \Exception('Failed to refresh access token');
-
         } catch (\Exception $e) {
             $this->logError('Token refresh error', ['error' => $e->getMessage()]);
             throw $e;
@@ -124,10 +124,11 @@ class HmrcAuthService
     public function getAccessToken(): string
     {
         $token = $this->getCachedAccessToken();
-        
-        if (!$token) {
+
+        if (! $token) {
             // Try to refresh the token
             $data = $this->refreshAccessToken();
+
             return $data['access_token'];
         }
 

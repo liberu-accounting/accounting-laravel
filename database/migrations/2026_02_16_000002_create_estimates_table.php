@@ -30,7 +30,7 @@ return new class extends Migration
             $table->string('document_path')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            
+
             $table->index('customer_id');
             $table->index('estimate_date');
             $table->index('expiration_date');
@@ -47,7 +47,7 @@ return new class extends Migration
             $table->decimal('tax_amount', 15, 2)->default(0);
             $table->foreignId('tax_rate_id')->nullable()->constrained('tax_rates', 'tax_rate_id')->nullOnDelete();
             $table->timestamps();
-            
+
             $table->index('estimate_id');
         });
     }

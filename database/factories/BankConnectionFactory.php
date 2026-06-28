@@ -24,9 +24,9 @@ class BankConnectionFactory extends Factory
                 'US Bank',
                 'Capital One',
             ]),
-            'plaid_access_token' => 'access-sandbox-' . $this->faker->uuid(),
-            'plaid_item_id' => 'item-' . $this->faker->uuid(),
-            'plaid_institution_id' => 'ins_' . $this->faker->randomNumber(5),
+            'plaid_access_token' => 'access-sandbox-'.$this->faker->uuid(),
+            'plaid_item_id' => 'item-'.$this->faker->uuid(),
+            'plaid_institution_id' => 'ins_'.$this->faker->randomNumber(5),
             'plaid_cursor' => null,
             'status' => $this->faker->randomElement(['active', 'disconnected', 'error']),
             'last_synced_at' => $this->faker->optional()->dateTimeBetween('-30 days', 'now'),
@@ -50,7 +50,7 @@ class BankConnectionFactory extends Factory
     public function withCursor(): static
     {
         return $this->state(fn (array $attributes): array => [
-            'plaid_cursor' => 'cursor-' . $this->faker->uuid(),
+            'plaid_cursor' => 'cursor-'.$this->faker->uuid(),
         ]);
     }
 }

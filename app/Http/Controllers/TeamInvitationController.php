@@ -16,7 +16,7 @@ class TeamInvitationController extends Controller
     public function sendInvitation(Request $request)
     {
         $request->validate([
-            'email'   => 'required|email',
+            'email' => 'required|email',
             'team_id' => 'required|exists:teams,id',
         ]);
 
@@ -26,7 +26,7 @@ class TeamInvitationController extends Controller
         $invitationToken = Str::random(32);
         $user->invitations()->create([
             'team_id' => $team->id,
-            'token'   => $invitationToken,
+            'token' => $invitationToken,
         ]);
 
         Mail::to($request->email)->send(new TeamInvitation($user, $team, $invitationToken));

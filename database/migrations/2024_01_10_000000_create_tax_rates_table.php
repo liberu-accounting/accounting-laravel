@@ -16,17 +16,17 @@ return new class extends Migration
         });
 
         Schema::dropIfExists('customer_tax_rate');
-        
+
         Schema::create('customer_tax_rate', function (Blueprint $table): void {
             $table->unsignedBigInteger('customer_id');
             $table->unsignedBigInteger('tax_rate_id');
             $table->primary(['customer_id', 'tax_rate_id']);
-            
+
             $table->foreign('customer_id')
                 ->references('id')
                 ->on('customers')
                 ->onDelete('cascade');
-                
+
             $table->foreign('tax_rate_id')
                 ->references('tax_rate_id')
                 ->on('tax_rates')

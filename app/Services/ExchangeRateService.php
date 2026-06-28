@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Http;
 class ExchangeRateService
 {
     private readonly string $apiKey;
+
     private readonly string $apiUrl;
 
     public function __construct()
@@ -54,7 +55,7 @@ class ExchangeRateService
             ->latest('date')
             ->first();
 
-        if (!$exchangeRate) {
+        if (! $exchangeRate) {
             $this->updateExchangeRates();
             $exchangeRate = ExchangeRate::where('from_currency_id', $fromCurrency->id)
                 ->where('to_currency_id', $toCurrency->id)

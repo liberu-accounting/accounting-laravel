@@ -4,41 +4,39 @@ declare(strict_types=1);
 
 namespace App\Filament\App\Resources\DelayedCharges;
 
-use Filament\Schemas\Schema;
-use Filament\Actions\EditAction;
+use App\Filament\App\Resources\DelayedCharges\Pages\CreateDelayedCharge;
+use App\Filament\App\Resources\DelayedCharges\Pages\EditDelayedCharge;
+use App\Filament\App\Resources\DelayedCharges\Pages\ListDelayedCharges;
+use App\Models\DelayedCharge;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use App\Filament\App\Resources\DelayedCharges\Pages\ListDelayedCharges;
-use App\Filament\App\Resources\DelayedCharges\Pages\CreateDelayedCharge;
-use App\Filament\App\Resources\DelayedCharges\Pages\EditDelayedCharge;
-use Filament\Forms;
-use Filament\Tables;
-use App\Models\DelayedCharge;
-use Filament\Tables\Table;
-use Filament\Resources\Resource;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
 
 class DelayedChargeResource extends Resource
 {
     #[\Override]
     protected static ?string $model = DelayedCharge::class;
-    
+
     #[\Override]
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-clock';
-    
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-clock';
+
     #[\Override]
     protected static ?int $navigationSort = 6;
-    
+
     #[\Override]
-    protected static string | \UnitEnum | null $navigationGroup = 'Sales';
-    
+    protected static string|\UnitEnum|null $navigationGroup = 'Sales';
+
     #[\Override]
     protected static ?string $recordTitleAttribute = 'description';
 
@@ -54,21 +52,21 @@ class DelayedChargeResource extends Resource
                             ->required()
                             ->searchable()
                             ->preload(),
-                            
+
                         DatePicker::make('charge_date')
                             ->required()
                             ->default(now()),
-                            
+
                         Select::make('account_id')
                             ->relationship('account', 'name')
                             ->label('Income Account')
                             ->searchable()
                             ->preload(),
-                            
+
                         TextInput::make('description')
                             ->required()
                             ->columnSpanFull(),
-                            
+
                         TextInput::make('quantity')
                             ->numeric()
                             ->default(1)
@@ -78,7 +76,7 @@ class DelayedChargeResource extends Resource
                                 $unitPrice = $get('unit_price') ?? 0;
                                 $set('amount', $state * $unitPrice);
                             }),
-                            
+
                         TextInput::make('unit_price')
                             ->numeric()
                             ->required()
@@ -88,7 +86,7 @@ class DelayedChargeResource extends Resource
                                 $quantity = $get('quantity') ?? 1;
                                 $set('amount', $quantity * $state);
                             }),
-                            
+
                         TextInput::make('amount')
                             ->numeric()
                             ->disabled()
@@ -96,7 +94,7 @@ class DelayedChargeResource extends Resource
                             ->prefix('$'),
                     ])
                     ->columns(2),
-                    
+
                 Section::make('Status & Notes')
                     ->schema([
                         Select::make('status')
@@ -107,7 +105,7 @@ class DelayedChargeResource extends Resource
                             ])
                             ->default('pending')
                             ->required(),
-                            
+
                         Select::make('invoice_id')
                             ->relationship('invoice', 'invoice_number')
                             ->label('Added to Invoice')
@@ -115,7 +113,7 @@ class DelayedChargeResource extends Resource
                             ->preload()
                             ->disabled()
                             ->visible(fn ($record): bool => $record !== null && $record->invoice_id),
-                            
+
                         Textarea::make('notes')
                             ->rows(3)
                             ->columnSpanFull(),
@@ -133,20 +131,20 @@ class DelayedChargeResource extends Resource
                     ->label('Customer')
                     ->searchable()
                     ->sortable(),
-                    
+
                 TextColumn::make('charge_date')
                     ->label('Date')
                     ->date()
                     ->sortable(),
-                    
+
                 TextColumn::make('description')
                     ->searchable()
                     ->limit(50),
-                    
+
                 TextColumn::make('amount')
                     ->money('USD')
                     ->sortable(),
-                    
+
                 TextColumn::make('status')
                     ->badge()
                     ->colors([
@@ -154,13 +152,13 @@ class DelayedChargeResource extends Resource
                         'success' => 'invoiced',
                         'danger' => 'void',
                     ]),
-                    
+
                 TextColumn::make('invoice.invoice_number')
                     ->label('Invoice')
                     ->searchable()
                     ->sortable()
                     ->toggleable(),
-                    
+
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Observers\TransactionObserver;
+use App\Services\ExchangeRateService;
+use App\Traits\IsTenantModel;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Services\ExchangeRateService;
-use App\Traits\IsTenantModel;
 
 #[ObservedBy(TransactionObserver::class)]
 class Transaction extends Model
@@ -59,7 +59,7 @@ class Transaction extends Model
         parent::boot();
 
         static::creating(function ($transaction): void {
-            if (!$transaction->exchange_rate) {
+            if (! $transaction->exchange_rate) {
                 $defaultCurrency = Currency::where('is_default', true)->first();
                 if ($defaultCurrency && $transaction->currency_id && $transaction->currency_id !== $defaultCurrency->currency_id) {
                     $exchangeRateService = app(ExchangeRateService::class);
@@ -109,7 +109,6 @@ class Transaction extends Model
         return $this->morphMany(AuditLog::class, 'auditable');
     }
 
-  
     public function getAmountInCurrency(Currency $targetCurrency)
     {
         if ($this->currency_id === $targetCurrency->currency_id) {
@@ -118,13 +117,14 @@ class Transaction extends Model
 
         $exchangeRateService = app(ExchangeRateService::class);
         $rate = $exchangeRateService->getExchangeRate($this->currency, $targetCurrency);
-        
+
         return $this->amount * $rate;
     }
 
     public function getAmountInDefaultCurrency()
     {
         $defaultCurrency = Currency::where('is_default', true)->first();
+
         return $this->getAmountInCurrency($defaultCurrency);
     }
 

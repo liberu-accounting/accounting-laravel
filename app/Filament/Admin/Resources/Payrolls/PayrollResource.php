@@ -4,23 +4,20 @@ declare(strict_types=1);
 
 namespace App\Filament\Admin\Resources\Payrolls;
 
-use Filament\Schemas\Schema;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\DatePicker;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\BadgeColumn;
-use Filament\Tables\Filters\SelectFilter;
-use Filament\Actions\EditAction;
-use Filament\Actions\DeleteAction;
-use App\Filament\Admin\Resources\Payrolls\Pages\ListPayrolls;
 use App\Filament\Admin\Resources\Payrolls\Pages\CreatePayroll;
 use App\Filament\Admin\Resources\Payrolls\Pages\EditPayroll;
-use App\Filament\Admin\Resources\PayrollResource\Pages;
+use App\Filament\Admin\Resources\Payrolls\Pages\ListPayrolls;
 use App\Models\Payroll;
-use Filament\Forms;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\EditAction;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\BadgeColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
 class PayrollResource extends Resource
@@ -29,9 +26,10 @@ class PayrollResource extends Resource
     protected static ?string $model = Payroll::class;
 
     #[\Override]
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-currency-dollar';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-currency-dollar';
+
     #[\Override]
-    protected static string | \UnitEnum | null $navigationGroup = 'HR';
+    protected static string|\UnitEnum|null $navigationGroup = 'HR';
 
     #[\Override]
     public static function form(Schema $schema): Schema

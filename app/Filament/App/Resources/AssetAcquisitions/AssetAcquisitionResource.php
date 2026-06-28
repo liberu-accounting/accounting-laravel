@@ -4,24 +4,18 @@ declare(strict_types=1);
 
 namespace App\Filament\App\Resources\AssetAcquisitions;
 
-use Filament\Schemas\Schema;
-use Filament\Actions\EditAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use App\Filament\App\Resources\AssetAcquisitions\Pages\ListAssetAcquisitions;
 use App\Filament\App\Resources\AssetAcquisitions\Pages\CreateAssetAcquisition;
 use App\Filament\App\Resources\AssetAcquisitions\Pages\EditAssetAcquisition;
-use Filament\Forms;
-use Filament\Tables;
-use Filament\Tables\Table;
+use App\Filament\App\Resources\AssetAcquisitions\Pages\ListAssetAcquisitions;
 use App\Models\AssetAcquisition;
-use Filament\Resources\Resource;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\TextInput;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\App\Resources\AssetAcquisitionResource\Pages;
-use App\Filament\App\Resources\AssetAcquisitionResource\RelationManagers;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 
 class AssetAcquisitionResource extends Resource
 {
@@ -29,7 +23,7 @@ class AssetAcquisitionResource extends Resource
     protected static ?string $model = AssetAcquisition::class;
 
     #[\Override]
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';
 
     #[\Override]
     public static function form(Schema $schema): Schema

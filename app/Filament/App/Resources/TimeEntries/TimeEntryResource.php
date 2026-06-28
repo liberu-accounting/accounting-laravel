@@ -4,23 +4,20 @@ declare(strict_types=1);
 
 namespace App\Filament\App\Resources\TimeEntries;
 
-use Filament\Schemas\Schema;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\TextInput;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Actions\EditAction;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use App\Filament\App\Resources\TimeEntries\Pages\ListTimeEntries;
 use App\Filament\App\Resources\TimeEntries\Pages\CreateTimeEntry;
 use App\Filament\App\Resources\TimeEntries\Pages\EditTimeEntry;
-use App\Filament\App\Resources\TimeEntryResource\Pages;
+use App\Filament\App\Resources\TimeEntries\Pages\ListTimeEntries;
 use App\Models\TimeEntry;
-use Filament\Forms;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
 class TimeEntryResource extends Resource
@@ -29,7 +26,7 @@ class TimeEntryResource extends Resource
     protected static ?string $model = TimeEntry::class;
 
     #[\Override]
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-clock';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-clock';
 
     #[\Override]
     public static function form(Schema $schema): Schema
@@ -52,8 +49,7 @@ class TimeEntryResource extends Resource
                     ->numeric()
                     ->required()
                     ->live()
-                    ->afterStateUpdated(fn ($state, callable $set, TimeEntry $record) => 
-                        $set('total_amount', $record->calculateTotalAmount())
+                    ->afterStateUpdated(fn ($state, callable $set, TimeEntry $record) => $set('total_amount', $record->calculateTotalAmount())
                     ),
                 TextInput::make('total_amount')
                     ->numeric()

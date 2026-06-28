@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class SocialstreamRegistrationTest extends TestCase
@@ -15,7 +16,7 @@ class SocialstreamRegistrationTest extends TestCase
         $this->assertNotEmpty($providers, 'socialstream.providers must not be empty');
 
         $providerIds = array_map(
-            fn($p) => is_object($p) ? $p->getId() : (string) $p,
+            fn ($p) => is_object($p) ? $p->getId() : (string) $p,
             $providers,
         );
 
@@ -45,7 +46,7 @@ class SocialstreamRegistrationTest extends TestCase
         $providers = config('socialstream.providers', []);
 
         $providerIds = array_map(
-            fn($p) => is_object($p) ? $p->getId() : (string) $p,
+            fn ($p) => is_object($p) ? $p->getId() : (string) $p,
             $providers,
         );
 
@@ -56,7 +57,7 @@ class SocialstreamRegistrationTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('oauthProviderDataProvider')]
+    #[DataProvider('oauthProviderDataProvider')]
     public function test_oauth_services_config_has_credentials_keys(string $provider): void
     {
         $this->assertArrayHasKey($provider, config('services'));
@@ -65,14 +66,14 @@ class SocialstreamRegistrationTest extends TestCase
     public static function oauthProviderDataProvider(): array
     {
         return [
-            'github'          => ['github'],
-            'google'          => ['google'],
-            'facebook'        => ['facebook'],
-            'gitlab'          => ['gitlab'],
-            'bitbucket'       => ['bitbucket'],
-            'linkedin'        => ['linkedin'],
+            'github' => ['github'],
+            'google' => ['google'],
+            'facebook' => ['facebook'],
+            'gitlab' => ['gitlab'],
+            'bitbucket' => ['bitbucket'],
+            'linkedin' => ['linkedin'],
             'linkedin-openid' => ['linkedin-openid'],
-            'slack'           => ['slack'],
+            'slack' => ['slack'],
             'twitter-oauth-2' => ['twitter-oauth-2'],
         ];
     }

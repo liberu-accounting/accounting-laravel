@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Traits\IsTenantModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Traits\IsTenantModel;
 
 class BillPayment extends Model
 {
@@ -49,20 +49,20 @@ class BillPayment extends Model
     protected static function boot()
     {
         parent::boot();
-        
+
         static::created(function ($payment): void {
             // Recalculate bill's payment status
             if ($payment->bill) {
                 $bill = $payment->bill;
                 $bill->amount_paid = $bill->payments()->sum('amount');
-                
+
                 if ($bill->amount_paid >= $bill->total_amount) {
                     $bill->payment_status = 'paid';
                     $bill->status = 'paid';
                 } elseif ($bill->amount_paid > 0) {
                     $bill->payment_status = 'partial';
                 }
-                
+
                 $bill->save();
             }
         });
@@ -72,7 +72,7 @@ class BillPayment extends Model
             if ($payment->bill) {
                 $bill = $payment->bill;
                 $bill->amount_paid = $bill->payments()->sum('amount');
-                
+
                 if ($bill->amount_paid >= $bill->total_amount) {
                     $bill->payment_status = 'paid';
                     $bill->status = 'paid';
@@ -81,7 +81,7 @@ class BillPayment extends Model
                 } else {
                     $bill->payment_status = 'unpaid';
                 }
-                
+
                 $bill->save();
             }
         });

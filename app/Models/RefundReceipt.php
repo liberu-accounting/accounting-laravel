@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Traits\IsTenantModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,10 +13,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Refund Receipt Model
- * 
+ *
  * Records refunds given to customers for returned goods or overpayments.
  * Decreases income and shows the outgoing payment to the customer.
- * 
+ *
  * @property int $refund_receipt_id
  * @property int $customer_id
  * @property int|null $sales_receipt_id
@@ -30,12 +31,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string|null $reason
  * @property string $status
  */
-use App\Traits\IsTenantModel;
-
 class RefundReceipt extends Model
 {
-    use IsTenantModel;
     use HasFactory, SoftDeletes;
+    use IsTenantModel;
 
     #[\Override]
     protected $primaryKey = 'refund_receipt_id';
@@ -90,7 +89,8 @@ class RefundReceipt extends Model
     {
         $lastRefund = self::orderBy('refund_receipt_id', 'desc')->first();
         $nextNumber = $lastRefund ? ((int) substr((string) $lastRefund->refund_receipt_number, 3)) + 1 : 1;
-        return 'RR-' . str_pad($nextNumber, 6, '0', STR_PAD_LEFT);
+
+        return 'RR-'.str_pad($nextNumber, 6, '0', STR_PAD_LEFT);
     }
 
     /**

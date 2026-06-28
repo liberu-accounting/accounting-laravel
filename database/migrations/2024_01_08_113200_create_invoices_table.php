@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('payment_status');
             $table->timestamps();
 
-    $table->foreignId('customer_id')->constrained()->onDelete('cascade');
+            $table->foreignId('customer_id')->constrained()->onDelete('cascade');
         });
     }
 

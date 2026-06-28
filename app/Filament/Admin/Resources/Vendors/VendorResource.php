@@ -4,24 +4,21 @@ declare(strict_types=1);
 
 namespace App\Filament\Admin\Resources\Vendors;
 
-use Filament\Schemas\Schema;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\Select;
-use Filament\Tables\Table;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\BadgeColumn;
-use Filament\Tables\Filters\SelectFilter;
-use Filament\Actions\EditAction;
-use Filament\Actions\DeleteAction;
-use App\Filament\Admin\Resources\Vendors\Pages\ListVendors;
 use App\Filament\Admin\Resources\Vendors\Pages\CreateVendor;
 use App\Filament\Admin\Resources\Vendors\Pages\EditVendor;
-use App\Filament\Admin\Resources\VendorResource\Pages;
+use App\Filament\Admin\Resources\Vendors\Pages\ListVendors;
 use App\Models\Vendor;
-use Filament\Forms;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\EditAction;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\BadgeColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
 
 class VendorResource extends Resource
 {
@@ -29,9 +26,10 @@ class VendorResource extends Resource
     protected static ?string $model = Vendor::class;
 
     #[\Override]
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-building-office';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-building-office';
+
     #[\Override]
-    protected static string | \UnitEnum | null $navigationGroup = 'Finance';
+    protected static string|\UnitEnum|null $navigationGroup = 'Finance';
 
     #[\Override]
     public static function form(Schema $schema): Schema

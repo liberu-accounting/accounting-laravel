@@ -11,6 +11,7 @@ class CalculateLateFees extends Command
 {
     #[\Override]
     protected $signature = 'invoices:calculate-late-fees';
+
     #[\Override]
     protected $description = 'Calculate late fees for overdue invoices';
 

@@ -31,8 +31,8 @@ class TestSync extends TestCase
         ]);
 
         $response = $this->actingAs($user)->postJson("/api/plaid/connections/{$connection->id}/sync");
-        
-        // Show the response body 
-        $this->fail('Response: ' . $response->getContent());
+
+        // Show the response body
+        $this->fail('Response: '.$response->getContent());
     }
 }

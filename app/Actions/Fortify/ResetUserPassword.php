@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Actions\Fortify;
 
-use Illuminate\Validation\ValidationException;
 use App\Models\User;
+use Exception;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 use Laravel\Fortify\Contracts\ResetsUserPasswords;
-use Exception;
 
 class ResetUserPassword implements ResetsUserPasswords
 {
@@ -20,6 +20,7 @@ class ResetUserPassword implements ResetsUserPasswords
      * Validate and reset the user's forgotten password.
      *
      * @param  array<string, string>  $input
+     *
      * @throws ValidationException
      * @throws Exception
      */

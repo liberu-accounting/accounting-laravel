@@ -10,24 +10,23 @@ use App\Filament\App\Resources\BankConnections\Pages\ListBankConnections;
 use App\Filament\App\Resources\BankConnections\Pages\ViewBankConnection;
 use App\Models\BankConnection;
 use App\Services\PlaidService;
+use Exception;
+use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
-use Filament\Forms;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Select;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
-use Filament\Schemas\Schema;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Filament\Tables;
-use Filament\Tables\Table;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\IconColumn;
-use Filament\Actions\Action;
-use Filament\Actions\EditAction;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\ViewAction;
-use Exception;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 
 class BankConnectionResource extends Resource
 {
@@ -36,10 +35,10 @@ class BankConnectionResource extends Resource
 
     #[\Override]
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-building-library';
-    
+
     #[\Override]
-    protected static string | \UnitEnum | null $navigationGroup = 'Banking';
-    
+    protected static string|\UnitEnum|null $navigationGroup = 'Banking';
+
     #[\Override]
     protected static ?int $navigationSort = 1;
 
@@ -54,13 +53,13 @@ class BankConnectionResource extends Resource
                             ->label('Bank/Institution Name')
                             ->required()
                             ->maxLength(255),
-                        
+
                         TextInput::make('bank_id')
                             ->label('Bank ID')
                             ->required()
                             ->maxLength(255)
                             ->helperText('Internal identifier for this bank connection'),
-                        
+
                         Select::make('status')
                             ->label('Connection Status')
                             ->options([
@@ -72,7 +71,7 @@ class BankConnectionResource extends Resource
                             ->required()
                             ->default('pending'),
                     ])->columns(2),
-                
+
                 Section::make('Plaid Integration')
                     ->schema([
                         TextInput::make('plaid_item_id')
@@ -80,20 +79,20 @@ class BankConnectionResource extends Resource
                             ->maxLength(255)
                             ->disabled()
                             ->helperText('Automatically populated when connected via Plaid'),
-                        
+
                         TextInput::make('plaid_institution_id')
                             ->label('Plaid Institution ID')
                             ->maxLength(255)
                             ->disabled()
                             ->helperText('Plaid institution identifier'),
-                        
+
                         DateTimePicker::make('last_synced_at')
                             ->label('Last Synced')
                             ->disabled()
                             ->helperText('Last time transactions were synced from Plaid'),
                     ])->columns(2)
                     ->collapsible()
-                    ->collapsed(fn ($record): bool => !$record || !$record->plaid_item_id),
+                    ->collapsed(fn ($record): bool => ! $record || ! $record->plaid_item_id),
             ]);
     }
 
@@ -106,12 +105,12 @@ class BankConnectionResource extends Resource
                     ->label('Institution')
                     ->searchable()
                     ->sortable(),
-                
+
                 TextColumn::make('bank_id')
                     ->label('Bank ID')
                     ->searchable()
                     ->toggleable(),
-                
+
                 IconColumn::make('status')
                     ->label('Status')
                     ->icon(fn (string $state): string => match ($state) {
@@ -129,25 +128,25 @@ class BankConnectionResource extends Resource
                         default => 'gray',
                     })
                     ->sortable(),
-                
+
                 TextColumn::make('plaid_item_id')
                     ->label('Plaid Connected')
                     ->formatStateUsing(fn ($state): string => $state ? 'Yes' : 'No')
                     ->badge()
                     ->color(fn ($state): string => $state ? 'success' : 'gray')
                     ->sortable(),
-                
+
                 TextColumn::make('last_synced_at')
                     ->label('Last Synced')
                     ->dateTime()
                     ->sortable()
                     ->placeholder('Never'),
-                
+
                 TextColumn::make('transactions_count')
                     ->label('Transactions')
                     ->counts('transactions')
                     ->sortable(),
-                
+
                 TextColumn::make('created_at')
                     ->label('Created')
                     ->dateTime()
@@ -162,7 +161,7 @@ class BankConnectionResource extends Resource
                         'error' => 'Error',
                         'pending' => 'Pending',
                     ]),
-                
+
                 Tables\Filters\TernaryFilter::make('plaid_connected')
                     ->label('Plaid Connected')
                     ->queries(
@@ -173,7 +172,7 @@ class BankConnectionResource extends Resource
             ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
-                
+
                 Action::make('sync_transactions')
                     ->label('Sync Transactions')
                     ->icon('heroicon-o-arrow-path')
@@ -184,11 +183,11 @@ class BankConnectionResource extends Resource
                         try {
                             $plaidService = app(PlaidService::class);
                             $result = $plaidService->syncTransactions($record);
-                            
+
                             $addedCount = count($result['added'] ?? []);
                             $modifiedCount = count($result['modified'] ?? []);
                             $removedCount = count($result['removed'] ?? []);
-                            
+
                             Notification::make()
                                 ->title('Transactions Synced Successfully')
                                 ->body("Added: {$addedCount}, Modified: {$modifiedCount}, Removed: {$removedCount}")
@@ -202,7 +201,7 @@ class BankConnectionResource extends Resource
                                 ->send();
                         }
                     }),
-                
+
                 Action::make('disconnect')
                     ->label('Disconnect')
                     ->icon('heroicon-o-x-mark')
@@ -215,7 +214,7 @@ class BankConnectionResource extends Resource
                         try {
                             $plaidService = app(PlaidService::class);
                             $plaidService->removeItem($record->plaid_access_token);
-                            
+
                             $record->update([
                                 'status' => 'inactive',
                                 'plaid_access_token' => null,
@@ -223,7 +222,7 @@ class BankConnectionResource extends Resource
                                 'plaid_institution_id' => null,
                                 'plaid_cursor' => null,
                             ]);
-                            
+
                             Notification::make()
                                 ->title('Bank Disconnected')
                                 ->body('The bank connection has been removed.')
@@ -237,7 +236,7 @@ class BankConnectionResource extends Resource
                                 ->send();
                         }
                     }),
-                
+
                 DeleteAction::make(),
             ])
             ->toolbarActions([

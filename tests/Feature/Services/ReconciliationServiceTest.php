@@ -38,7 +38,7 @@ class ReconciliationServiceTest extends TestCase
             'amount' => -200,
         ]);
 
-        $reconciliationService = new ReconciliationService();
+        $reconciliationService = new ReconciliationService;
         $result = $reconciliationService->reconcile($bankStatement);
 
         $this->assertEquals(5, $result['matched_transactions']);

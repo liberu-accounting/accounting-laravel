@@ -6,7 +6,6 @@ namespace App\Services;
 
 use App\Models\BankStatement;
 use App\Models\Transaction;
-use Illuminate\Support\Collection;
 
 class ReconciliationService
 {
@@ -15,16 +14,16 @@ class ReconciliationService
         $transactions = Transaction::where('account_id', $bankStatement->account_id)
             ->whereBetween('transaction_date', [
                 $bankStatement->statement_date->startOfMonth(),
-                $bankStatement->statement_date->endOfMonth()
+                $bankStatement->statement_date->endOfMonth(),
             ])
             ->get();
-    
+
         $totalCredits = 0;
         $totalDebits = 0;
         $matchedTransactions = collect();
         $unmatchedTransactions = collect();
         $discrepancies = collect();
-    
+
         foreach ($transactions as $transaction) {
             $amount = (float) $transaction->amount;
             if ($amount > 0) {
@@ -32,9 +31,9 @@ class ReconciliationService
             } else {
                 $totalDebits += abs($amount);
             }
-    
+
             $matched = $this->findMatch($transaction, $bankStatement);
-            
+
             if ($matched) {
                 $matchedTransactions->push($transaction);
                 $transaction->update(['reconciled' => true]);
@@ -43,30 +42,30 @@ class ReconciliationService
                 $discrepancies->push([
                     'type' => 'unmatched_transaction',
                     'date' => $transaction->transaction_date,
-                    'amount' => $transaction->amount
+                    'amount' => $transaction->amount,
                 ]);
             }
         }
-    
-        $balanceDiscrepancy = ($totalCredits - $totalDebits) - 
+
+        $balanceDiscrepancy = ($totalCredits - $totalDebits) -
             ($bankStatement->total_credits - $bankStatement->total_debits);
-    
+
         if ($balanceDiscrepancy != 0) {
             $discrepancies->push([
                 'type' => 'balance_mismatch',
                 'amount' => $balanceDiscrepancy,
                 'expected' => $bankStatement->ending_balance,
-                'actual' => $totalCredits - $totalDebits
+                'actual' => $totalCredits - $totalDebits,
             ]);
         }
-    
+
         return [
             'matched_transactions' => $matchedTransactions->count(),
             'unmatched_transactions' => $unmatchedTransactions->count(),
             'discrepancies' => $discrepancies,
             'total_credits' => $totalCredits,
             'total_debits' => $totalDebits,
-            'balance_discrepancy' => $balanceDiscrepancy
+            'balance_discrepancy' => $balanceDiscrepancy,
         ];
     }
 
@@ -86,7 +85,7 @@ class ReconciliationService
         $fuzzyMatch = $bankStatement->transactions()
             ->whereBetween('transaction_date', [
                 $transaction->transaction_date->subDays(2),
-                $transaction->transaction_date->addDays(2)
+                $transaction->transaction_date->addDays(2),
             ])
             ->where('amount', $transaction->amount)
             ->exists();

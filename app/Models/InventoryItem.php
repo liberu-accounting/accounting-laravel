@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Traits\IsTenantModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Traits\IsTenantModel;
 
 class InventoryItem extends Model
 {
@@ -20,13 +20,13 @@ class InventoryItem extends Model
     protected $fillable = [
         'name',
         'sku',
-        'description', 
+        'description',
         'unit_price',
         'current_quantity',
         'reorder_point',
         'account_id',
         'category_id',
-        'is_active'
+        'is_active',
     ];
 
     #[\Override]
@@ -34,7 +34,7 @@ class InventoryItem extends Model
         'unit_price' => 'decimal:2',
         'current_quantity' => 'integer',
         'reorder_point' => 'integer',
-        'is_active' => 'boolean'
+        'is_active' => 'boolean',
     ];
 
     public function account()
@@ -42,7 +42,7 @@ class InventoryItem extends Model
         return $this->belongsTo(Account::class);
     }
 
-    public function category() 
+    public function category()
     {
         return $this->belongsTo(Category::class);
     }

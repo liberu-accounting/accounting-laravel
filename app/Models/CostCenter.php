@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Traits\IsTenantModel;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Traits\IsTenantModel;
 
 class CostCenter extends Model
 {
@@ -21,7 +21,7 @@ class CostCenter extends Model
         'description',
         'allocation_method',
         'allocation_base',
-        'status'
+        'status',
     ];
 
     public function transactions(): HasMany
@@ -41,7 +41,7 @@ class CostCenter extends Model
 
     public function calculateAllocation($totalAmount): float|int
     {
-        return match($this->allocation_method) {
+        return match ($this->allocation_method) {
             'fixed_percentage' => $totalAmount * ($this->allocation_base / 100),
             'headcount' => $totalAmount * ($this->getHeadcount() / $this->getTotalHeadcount()),
             'direct_labor_hours' => $totalAmount * ($this->getDirectLaborHours() / $this->getTotalDirectLaborHours()),

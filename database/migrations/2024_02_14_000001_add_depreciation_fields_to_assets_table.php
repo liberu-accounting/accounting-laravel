@@ -23,9 +23,9 @@ return new class extends Migration
         Schema::table('assets', function (Blueprint $table): void {
             $table->dropColumn([
                 'depreciation_method',
-                'salvage_value', 
+                'salvage_value',
                 'acquisition_date',
-                'is_active'
+                'is_active',
             ]);
         });
     }

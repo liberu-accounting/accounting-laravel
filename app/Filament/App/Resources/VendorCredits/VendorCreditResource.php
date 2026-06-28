@@ -4,43 +4,41 @@ declare(strict_types=1);
 
 namespace App\Filament\App\Resources\VendorCredits;
 
-use Filament\Schemas\Schema;
-use Filament\Actions\EditAction;
+use App\Filament\App\Resources\VendorCredits\Pages\CreateVendorCredit;
+use App\Filament\App\Resources\VendorCredits\Pages\EditVendorCredit;
+use App\Filament\App\Resources\VendorCredits\Pages\ListVendorCredits;
+use App\Models\TaxRate;
+use App\Models\VendorCredit;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use App\Filament\App\Resources\VendorCredits\Pages\ListVendorCredits;
-use App\Filament\App\Resources\VendorCredits\Pages\CreateVendorCredit;
-use App\Filament\App\Resources\VendorCredits\Pages\EditVendorCredit;
-use Filament\Forms;
-use Filament\Tables;
-use App\Models\VendorCredit;
-use App\Models\TaxRate;
-use Filament\Tables\Table;
-use Filament\Resources\Resource;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
 
 class VendorCreditResource extends Resource
 {
     #[\Override]
     protected static ?string $model = VendorCredit::class;
-    
+
     #[\Override]
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-receipt-refund';
-    
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-receipt-refund';
+
     #[\Override]
     protected static ?int $navigationSort = 4;
-    
+
     #[\Override]
-    protected static string | \UnitEnum | null $navigationGroup = 'Vendors';
-    
+    protected static string|\UnitEnum|null $navigationGroup = 'Vendors';
+
     #[\Override]
     protected static ?string $recordTitleAttribute = 'vendor_credit_number';
 
@@ -56,23 +54,23 @@ class VendorCreditResource extends Resource
                             ->required()
                             ->searchable()
                             ->preload(),
-                            
+
                         TextInput::make('vendor_credit_number')
                             ->label('Credit #')
                             ->disabled()
                             ->dehydrated(false)
                             ->visible(fn ($record): bool => $record !== null),
-                            
+
                         DatePicker::make('credit_date')
                             ->required()
                             ->default(now()),
-                            
+
                         Select::make('bill_id')
                             ->relationship('bill', 'bill_number')
                             ->label('Original Bill')
                             ->searchable()
                             ->preload(),
-                            
+
                         Select::make('reason')
                             ->options([
                                 'product_return' => 'Product Return',
@@ -81,7 +79,7 @@ class VendorCreditResource extends Resource
                                 'discount' => 'Discount',
                                 'other' => 'Other',
                             ]),
-                            
+
                         Select::make('tax_rate_id')
                             ->relationship('taxRate', 'name')
                             ->live()
@@ -94,7 +92,7 @@ class VendorCreditResource extends Resource
                             }),
                     ])
                     ->columns(2),
-                    
+
                 Section::make('Line Items')
                     ->schema([
                         Repeater::make('items')
@@ -122,7 +120,7 @@ class VendorCreditResource extends Resource
                             ->collapsible()
                             ->itemLabel(fn (array $state): ?string => $state['description'] ?? null),
                     ]),
-                    
+
                 Section::make('Totals')
                     ->schema([
                         TextInput::make('subtotal_amount')
@@ -130,25 +128,25 @@ class VendorCreditResource extends Resource
                             ->disabled()
                             ->dehydrated(false)
                             ->prefix('$'),
-                            
+
                         TextInput::make('tax_amount')
                             ->numeric()
                             ->disabled()
                             ->dehydrated(false)
                             ->prefix('$'),
-                            
+
                         TextInput::make('total_amount')
                             ->numeric()
                             ->disabled()
                             ->dehydrated(false)
                             ->prefix('$'),
-                            
+
                         TextInput::make('amount_applied')
                             ->numeric()
                             ->disabled()
                             ->dehydrated(false)
                             ->prefix('$'),
-                            
+
                         TextInput::make('amount_remaining')
                             ->numeric()
                             ->disabled()
@@ -157,7 +155,7 @@ class VendorCreditResource extends Resource
                             ->visible(fn ($record): bool => $record !== null),
                     ])
                     ->columns(3),
-                    
+
                 Section::make('Applications')
                     ->schema([
                         Repeater::make('applications')
@@ -180,7 +178,7 @@ class VendorCreditResource extends Resource
                             ->collapsible()
                             ->visible(fn ($record): bool => $record !== null),
                     ]),
-                    
+
                 Section::make('Additional Information')
                     ->schema([
                         Select::make('status')
@@ -192,7 +190,7 @@ class VendorCreditResource extends Resource
                             ])
                             ->default('open')
                             ->required(),
-                            
+
                         Textarea::make('notes')
                             ->rows(3)
                             ->columnSpanFull(),
@@ -210,27 +208,27 @@ class VendorCreditResource extends Resource
                     ->label('Credit #')
                     ->searchable()
                     ->sortable(),
-                    
+
                 TextColumn::make('vendor.vendor_first_name')
                     ->label('Vendor')
                     ->searchable()
                     ->sortable(),
-                    
+
                 TextColumn::make('credit_date')
                     ->label('Date')
                     ->date()
                     ->sortable(),
-                    
+
                 TextColumn::make('total_amount')
                     ->label('Total')
                     ->money('USD')
                     ->sortable(),
-                    
+
                 TextColumn::make('amount_remaining')
                     ->label('Remaining')
                     ->money('USD')
                     ->sortable(),
-                    
+
                 TextColumn::make('status')
                     ->badge()
                     ->colors([
@@ -239,7 +237,7 @@ class VendorCreditResource extends Resource
                         'success' => 'applied',
                         'danger' => 'void',
                     ]),
-                    
+
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

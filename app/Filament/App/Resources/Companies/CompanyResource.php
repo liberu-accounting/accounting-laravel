@@ -4,34 +4,34 @@ declare(strict_types=1);
 
 namespace App\Filament\App\Resources\Companies;
 
-use Filament\Schemas\Schema;
-use Filament\Actions\EditAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use App\Filament\App\Resources\Companies\Pages\ListCompanies;
 use App\Filament\App\Resources\Companies\Pages\CreateCompany;
 use App\Filament\App\Resources\Companies\Pages\EditCompany;
-use Filament\Forms;
-use Filament\Tables;
+use App\Filament\App\Resources\Companies\Pages\ListCompanies;
 use App\Models\Company;
-use Filament\Tables\Table;
-use Filament\Resources\Resource;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\FileUpload;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\ImageColumn;
-use App\Filament\App\Resources\CompanyResource\Pages;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 
 class CompanyResource extends Resource
 {
     #[\Override]
     protected static ?string $model = Company::class;
+
     #[\Override]
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-building-office';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-building-office';
+
     #[\Override]
     protected static ?int $navigationSort = 3;
+
     #[\Override]
-    protected static string | \UnitEnum | null $navigationGroup = 'Settings';
+    protected static string|\UnitEnum|null $navigationGroup = 'Settings';
 
     #[\Override]
     public static function form(Schema $schema): Schema

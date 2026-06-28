@@ -4,38 +4,38 @@ declare(strict_types=1);
 
 namespace App\Filament\App\Resources\Assets;
 
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Schema;
-use Filament\Actions\EditAction;
+use App\Filament\App\Resources\Assets\Pages\CreateAsset;
+use App\Filament\App\Resources\Assets\Pages\DepreciationSchedulePage;
+use App\Filament\App\Resources\Assets\Pages\EditAsset;
+use App\Filament\App\Resources\Assets\Pages\ListAssets;
+use App\Models\Asset;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use App\Filament\App\Resources\Assets\Pages\ListAssets;
-use App\Filament\App\Resources\Assets\Pages\CreateAsset;
-use App\Filament\App\Resources\Assets\Pages\EditAsset;
-use App\Filament\App\Resources\Assets\Pages\DepreciationSchedulePage;
-use Filament\Forms;
-use Filament\Tables;
-use App\Models\Asset;
-use Filament\Tables\Table;
-use Filament\Resources\Resource;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Toggle;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
-use App\Filament\App\Resources\AssetResource\Pages;
+use Filament\Tables\Table;
 
 class AssetResource extends Resource
 {
     #[\Override]
     protected static ?string $model = Asset::class;
+
     #[\Override]
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-cube';
+
     #[\Override]
     protected static ?int $navigationSort = 4;
+
     #[\Override]
     protected static string|\UnitEnum|null $navigationGroup = 'Assets';
+
     #[\Override]
     protected static ?string $recordTitleAttribute = 'asset_name';
 
@@ -67,12 +67,12 @@ class AssetResource extends Resource
                         Select::make('depreciation_method')
                             ->options([
                                 'straight_line' => 'Straight Line',
-                                'reducing_balance' => 'Reducing Balance'
+                                'reducing_balance' => 'Reducing Balance',
                             ])
                             ->required(),
                         DatePicker::make('acquisition_date')
-                            ->required()
-                    ])
+                            ->required(),
+                    ]),
             ]);
     }
 
@@ -101,13 +101,13 @@ class AssetResource extends Resource
             ->recordActions([
                 EditAction::make(),
                 Action::make('calculate_depreciation')
-                    ->action(fn(Asset $record) => $record->calculateDepreciation())
+                    ->action(fn (Asset $record) => $record->calculateDepreciation())
                     ->button()
                     ->label('Calculate Depreciation'),
                 Action::make('view_schedule')
-                    ->url(fn(Asset $record): string => route('filament.app.resources.assets.depreciation-schedule', $record))
+                    ->url(fn (Asset $record): string => route('filament.app.resources.assets.depreciation-schedule', $record))
                     ->button()
-                    ->label('View Schedule')
+                    ->label('View Schedule'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

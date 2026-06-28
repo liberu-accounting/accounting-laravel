@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Traits\IsTenantModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Traits\IsTenantModel;
 
 class CreditMemoApplication extends Model
 {
@@ -47,17 +47,17 @@ class CreditMemoApplication extends Model
     protected static function boot()
     {
         parent::boot();
-        
+
         static::created(function ($application): void {
             // Update credit memo's amount applied
             if ($application->creditMemo) {
                 $creditMemo = $application->creditMemo;
                 $creditMemo->amount_applied = $creditMemo->applications()->sum('amount_applied');
-                
+
                 if ($creditMemo->amount_applied >= $creditMemo->total_amount) {
                     $creditMemo->status = 'applied';
                 }
-                
+
                 $creditMemo->save();
             }
         });
@@ -67,9 +67,9 @@ class CreditMemoApplication extends Model
             if ($application->creditMemo) {
                 $creditMemo = $application->creditMemo;
                 $creditMemo->amount_applied = $creditMemo->applications()->sum('amount_applied');
-                
+
                 $creditMemo->status = $creditMemo->amount_applied >= $creditMemo->total_amount ? 'applied' : 'open';
-                
+
                 $creditMemo->save();
             }
         });

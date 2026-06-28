@@ -8,16 +8,14 @@ use App\Http\Controllers\Controller;
 use App\Jobs\SyncPlaidTransactionsJob;
 use App\Models\BankConnection;
 use App\Services\PlaidService;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Exception;
 
 class PlaidWebhookController extends Controller
 {
-    public function __construct(protected PlaidService $plaidService)
-    {
-    }
+    public function __construct(protected PlaidService $plaidService) {}
 
     /**
      * Handle incoming Plaid webhooks
@@ -27,13 +25,13 @@ class PlaidWebhookController extends Controller
         try {
             // Get raw request body for signature verification
             $rawBody = $request->getContent();
-            
+
             // Verify webhook signature
-            if (!$this->plaidService->verifyWebhookSignature($rawBody, $request->headers->all())) {
+            if (! $this->plaidService->verifyWebhookSignature($rawBody, $request->headers->all())) {
                 Log::warning('Plaid webhook signature verification failed', [
                     'ip' => $request->ip(),
                 ]);
-                
+
                 return response()->json([
                     'success' => false,
                     'message' => 'Invalid signature',
@@ -88,31 +86,32 @@ class PlaidWebhookController extends Controller
         $itemId = $payload['item_id'];
 
         $connection = BankConnection::where('plaid_item_id', $itemId)->first();
-        
-        if (!$connection) {
+
+        if (! $connection) {
             Log::warning('Bank connection not found for webhook', [
                 'item_id' => $itemId,
                 'webhook_code' => $webhookCode,
             ]);
+
             return;
         }
 
         match ($webhookCode) {
             // New transactions available
             'SYNC_UPDATES_AVAILABLE' => $this->handleSyncUpdatesAvailable($connection),
-            
+
             // Initial transactions ready
             'INITIAL_UPDATE' => $this->handleInitialUpdate($connection),
-            
+
             // Historical update complete
             'HISTORICAL_UPDATE' => $this->handleHistoricalUpdate($connection),
-            
+
             // Default transactions update (legacy)
             'DEFAULT_UPDATE' => $this->handleDefaultUpdate($connection),
-            
+
             // Transactions removed
             'TRANSACTIONS_REMOVED' => $this->handleTransactionsRemoved($connection, $payload),
-            
+
             default => Log::info('Unhandled transactions webhook code', ['code' => $webhookCode]),
         };
     }
@@ -127,30 +126,31 @@ class PlaidWebhookController extends Controller
         $error = $payload['error'] ?? null;
 
         $connection = BankConnection::where('plaid_item_id', $itemId)->first();
-        
-        if (!$connection) {
+
+        if (! $connection) {
             Log::warning('Bank connection not found for item webhook', [
                 'item_id' => $itemId,
                 'webhook_code' => $webhookCode,
             ]);
+
             return;
         }
 
         match ($webhookCode) {
             // Item login required
             'ERROR' => $this->handleItemError($connection, $error),
-            
+
             // Item webhook updated
             'WEBHOOK_UPDATE_ACKNOWLEDGED' => Log::info('Webhook update acknowledged', [
                 'connection_id' => $connection->id,
             ]),
-            
+
             // Pending expiration
             'PENDING_EXPIRATION' => $this->handlePendingExpiration($connection),
-            
+
             // User permission revoked
             'USER_PERMISSION_REVOKED' => $this->handleUserPermissionRevoked($connection),
-            
+
             default => Log::info('Unhandled item webhook code', ['code' => $webhookCode]),
         };
     }
@@ -161,7 +161,7 @@ class PlaidWebhookController extends Controller
     protected function handleAuthWebhook(array $payload): void
     {
         $webhookCode = $payload['webhook_code'];
-        
+
         Log::info('Auth webhook received', [
             'code' => $webhookCode,
             'payload' => $payload,
@@ -174,7 +174,7 @@ class PlaidWebhookController extends Controller
     protected function handleAssetsWebhook(array $payload): void
     {
         $webhookCode = $payload['webhook_code'];
-        
+
         Log::info('Assets webhook received', [
             'code' => $webhookCode,
             'payload' => $payload,
@@ -187,7 +187,7 @@ class PlaidWebhookController extends Controller
     protected function handleSyncUpdatesAvailable(BankConnection $connection): void
     {
         Log::info('Sync updates available', ['connection_id' => $connection->id]);
-        
+
         // Dispatch job to sync transactions
         SyncPlaidTransactionsJob::dispatch($connection->id);
     }
@@ -198,7 +198,7 @@ class PlaidWebhookController extends Controller
     protected function handleInitialUpdate(BankConnection $connection): void
     {
         Log::info('Initial update received', ['connection_id' => $connection->id]);
-        
+
         // Dispatch job to sync transactions
         SyncPlaidTransactionsJob::dispatch($connection->id);
     }
@@ -209,7 +209,7 @@ class PlaidWebhookController extends Controller
     protected function handleHistoricalUpdate(BankConnection $connection): void
     {
         Log::info('Historical update complete', ['connection_id' => $connection->id]);
-        
+
         // Dispatch job to sync transactions
         SyncPlaidTransactionsJob::dispatch($connection->id);
     }
@@ -220,7 +220,7 @@ class PlaidWebhookController extends Controller
     protected function handleDefaultUpdate(BankConnection $connection): void
     {
         Log::info('Default update received', ['connection_id' => $connection->id]);
-        
+
         // Dispatch job to sync transactions
         SyncPlaidTransactionsJob::dispatch($connection->id);
     }
@@ -246,7 +246,7 @@ class PlaidWebhookController extends Controller
      */
     protected function handleItemError(BankConnection $connection, ?array $error): void
     {
-        if (!$error) {
+        if (! $error) {
             return;
         }
 

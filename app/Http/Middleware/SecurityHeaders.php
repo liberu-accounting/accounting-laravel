@@ -40,7 +40,7 @@ class SecurityHeaders
                 "frame-ancestors 'self'",
                 "base-uri 'self'",
                 "form-action 'self'",
-                "upgrade-insecure-requests",
+                'upgrade-insecure-requests',
             ]);
             $response->headers->set('Content-Security-Policy', $csp);
         }

@@ -55,7 +55,7 @@ return [
     | OAuth callback URL for HMRC authentication
     |
     */
-    'callback_url' => env('HMRC_CALLBACK_URL', env('APP_URL') . '/hmrc/callback'),
+    'callback_url' => env('HMRC_CALLBACK_URL', env('APP_URL').'/hmrc/callback'),
 
     /*
     |--------------------------------------------------------------------------

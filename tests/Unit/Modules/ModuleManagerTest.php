@@ -6,6 +6,7 @@ namespace Tests\Unit\Modules;
 
 use App\Modules\ModuleManager;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Collection;
 use Tests\TestCase;
 
 class ModuleManagerTest extends TestCase
@@ -23,14 +24,14 @@ class ModuleManagerTest extends TestCase
     public function test_all_returns_collection(): void
     {
         $result = $this->manager->all();
-        $this->assertInstanceOf(\Illuminate\Support\Collection::class, $result);
+        $this->assertInstanceOf(Collection::class, $result);
     }
 
     public function test_enabled_returns_only_enabled_modules(): void
     {
         $enabled = $this->manager->enabled();
 
-        $this->assertInstanceOf(\Illuminate\Support\Collection::class, $enabled);
+        $this->assertInstanceOf(Collection::class, $enabled);
 
         foreach ($enabled as $module) {
             $this->assertTrue($module->isEnabled());
@@ -41,7 +42,7 @@ class ModuleManagerTest extends TestCase
     {
         $disabled = $this->manager->disabled();
 
-        $this->assertInstanceOf(\Illuminate\Support\Collection::class, $disabled);
+        $this->assertInstanceOf(Collection::class, $disabled);
 
         foreach ($disabled as $module) {
             $this->assertFalse($module->isEnabled());

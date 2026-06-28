@@ -10,18 +10,16 @@ use App\Models\BankConnection;
 use App\Models\BankFeedTransaction;
 use App\Models\Transaction;
 use App\Services\PlaidService;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
-use Exception;
 
 class PlaidController extends Controller
 {
-    public function __construct(protected PlaidService $plaidService)
-    {
-    }
+    public function __construct(protected PlaidService $plaidService) {}
 
     /**
      * Create a link token for Plaid Link initialization
@@ -41,7 +39,7 @@ class PlaidController extends Controller
                 $connection = BankConnection::find($connectionId);
 
                 // Verify ownership
-                if (!$connection || $connection->user_id !== $user->id) {
+                if (! $connection || $connection->user_id !== $user->id) {
                     return response()->json([
                         'success' => false,
                         'message' => 'Connection not found or unauthorized',
@@ -66,7 +64,7 @@ class PlaidController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to create link token: ' . $e->getMessage(),
+                'message' => 'Failed to create link token: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -130,7 +128,7 @@ class PlaidController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to store connection: ' . $e->getMessage(),
+                'message' => 'Failed to store connection: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -248,7 +246,7 @@ class PlaidController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to sync transactions: ' . $e->getMessage(),
+                'message' => 'Failed to sync transactions: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -296,7 +294,7 @@ class PlaidController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to remove connection: ' . $e->getMessage(),
+                'message' => 'Failed to remove connection: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -327,7 +325,7 @@ class PlaidController extends Controller
             try {
                 // Get balances from Plaid
                 $balanceData = $this->plaidService->getBalances($connection->plaid_access_token);
-                
+
                 $accounts = $balanceData['accounts'] ?? [];
                 $syncedAccounts = [];
 
@@ -380,7 +378,7 @@ class PlaidController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to get balances: ' . $e->getMessage(),
+                'message' => 'Failed to get balances: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -391,7 +389,7 @@ class PlaidController extends Controller
     protected function processPlaidTransaction(array $plaidTransaction, BankConnection $connection, bool $isUpdate = false): void
     {
         $transactionId = $plaidTransaction['transaction_id'];
-        
+
         // Find or create the transaction
         $transaction = Transaction::updateOrCreate(
             [
@@ -437,7 +435,7 @@ class PlaidController extends Controller
     protected function categorizePlaidTransaction(array $plaidTransaction): string
     {
         $categories = $plaidTransaction['category'] ?? [];
-        
+
         if (empty($categories)) {
             return 'uncategorized';
         }
@@ -455,7 +453,7 @@ class PlaidController extends Controller
         try {
             $oauthStateId = $request->input('oauth_state_id');
 
-            if (!$oauthStateId) {
+            if (! $oauthStateId) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Missing OAuth state ID',

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Traits\IsTenantModel;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -14,11 +15,10 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $created_at
  * @property string $updated_at
  */
-use App\Traits\IsTenantModel;
-
 class Activation extends Model
 {
     use IsTenantModel;
+
     /**
      * The "type" of the auto-incrementing ID.
      *

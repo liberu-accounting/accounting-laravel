@@ -15,15 +15,16 @@ class HmrcMtdVatServiceTest extends TestCase
     use RefreshDatabase;
 
     protected HmrcMtdVatService $service;
+
     protected HmrcAuthService $authService;
 
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         $this->authService = $this->createStub(HmrcAuthService::class);
         $this->authService->method('getAccessToken')->willReturn('test-token');
-        
+
         $this->service = new HmrcMtdVatService($this->authService);
     }
 

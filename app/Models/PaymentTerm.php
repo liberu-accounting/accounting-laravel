@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Traits\IsTenantModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Traits\IsTenantModel;
 
 class PaymentTerm extends Model
 {
@@ -25,6 +25,6 @@ class PaymentTerm extends Model
 
     public function suppliers()
     {
-        return $this->hasMany(Supplier::class,  'payment_term_id');
+        return $this->hasMany(Supplier::class, 'payment_term_id');
     }
 }

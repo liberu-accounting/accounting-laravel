@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Traits\IsTenantModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Traits\IsTenantModel;
 
 class HmrcVatReturn extends Model
 {
@@ -93,17 +93,17 @@ class HmrcVatReturn extends Model
             ->get()
             ->sum(
                 // If tax_amount exists, subtract it to get amount ex-VAT
-                fn($expense): int|float => $expense->amount - ($expense->tax_amount ?? 0));
+                fn ($expense): int|float => $expense->amount - ($expense->tax_amount ?? 0));
 
         $this->vat_due_sales = $salesVat;
         $this->vat_reclaimed = $purchasesVat;
         $this->total_value_sales = $totalSales;
         $this->total_value_purchases = $totalPurchases;
-        
+
         // Calculate totals
         $this->total_vat_due = $this->vat_due_sales + $this->vat_due_acquisitions;
         $this->net_vat_due = $this->total_vat_due - $this->vat_reclaimed;
-        
+
         $this->save();
     }
 
@@ -115,7 +115,7 @@ class HmrcVatReturn extends Model
         if ($this->hmrcSubmission) {
             return $this->hmrcSubmission->status;
         }
-        
+
         return $this->finalised ? 'ready' : 'draft';
     }
 
@@ -124,6 +124,6 @@ class HmrcVatReturn extends Model
      */
     public function isEditable(): bool
     {
-        return !$this->finalised && (!$this->hmrcSubmission || $this->hmrcSubmission->isEditable());
+        return ! $this->finalised && (! $this->hmrcSubmission || $this->hmrcSubmission->isEditable());
     }
 }

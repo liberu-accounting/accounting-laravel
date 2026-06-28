@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Models\Budget;
-use App\Models\Account;
-use Carbon\Carbon;
+use App\Models\Transaction;
 
 class BudgetService
 {
@@ -30,7 +29,7 @@ class BudgetService
                 'variance' => $variance,
                 'percentage_used' => round($percentageUsed, 2),
                 'start_date' => $budget->start_date,
-                'end_date' => $budget->end_date
+                'end_date' => $budget->end_date,
             ];
         });
     }
@@ -39,14 +38,14 @@ class BudgetService
     {
         $account = $budget->account;
         $historicalData = $this->getHistoricalData($account);
-        
+
         // Simple moving average forecast
         $forecastAmount = $this->calculateMovingAverage($historicalData);
-        
+
         $budget->forecast_amount = $forecastAmount;
         $budget->forecast_method = 'moving_average';
         $budget->save();
-        
+
         return $forecastAmount;
     }
 
@@ -70,7 +69,7 @@ class BudgetService
             return 0;
         }
 
-        return (float) \App\Models\Transaction::where('account_id', $account->id)
+        return (float) Transaction::where('account_id', $account->id)
             ->whereBetween('transaction_date', [$budget->start_date, $budget->end_date])
             ->sum('amount');
     }

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Filament\App\Resources\Invoices\Pages;
 
 use App\Filament\App\Resources\Invoices\InvoiceResource;
-use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateInvoice extends CreateRecord

@@ -5,18 +5,22 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Models\BankConnection;
-use App\Models\BankFeedTransaction;
-use App\Models\Transaction;
+use Exception;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Exception;
 
 class WiseService
 {
     protected string $clientId;
+
     protected string $clientSecret;
+
     protected string $environment;
+
     protected string $baseUrl;
+
     protected string $authUrl;
 
     public function __construct()
@@ -72,7 +76,7 @@ class WiseService
                 return $response->json();
             }
 
-            throw new Exception('Failed to exchange authorization code: ' . $response->body());
+            throw new Exception('Failed to exchange authorization code: '.$response->body());
         } catch (Exception $e) {
             Log::error('Wise authorization code exchange failed', [
                 'error' => $e->getMessage(),
@@ -100,7 +104,7 @@ class WiseService
                 return $response->json();
             }
 
-            throw new Exception('Failed to refresh access token: ' . $response->body());
+            throw new Exception('Failed to refresh access token: '.$response->body());
         } catch (Exception $e) {
             Log::error('Wise token refresh failed', [
                 'error' => $e->getMessage(),
@@ -116,7 +120,7 @@ class WiseService
     {
         // Check if the access token is expired (with 60-second buffer)
         if ($connection->wise_token_expires_at && now()->addSeconds(60)->isAfter($connection->wise_token_expires_at)) {
-            if (!$connection->wise_refresh_token) {
+            if (! $connection->wise_refresh_token) {
                 throw new Exception('Access token expired and no refresh token available');
             }
 
@@ -149,7 +153,7 @@ class WiseService
                 return $response->json();
             }
 
-            throw new Exception('Failed to get profiles: ' . $response->body());
+            throw new Exception('Failed to get profiles: '.$response->body());
         } catch (Exception $e) {
             Log::error('Wise get profiles failed', [
                 'connection_id' => $connection->id,
@@ -162,8 +166,8 @@ class WiseService
     /**
      * Get balances for a specific profile
      *
-     * @param int $profileId The Wise profile ID
-     * @param string $type Balance type: STANDARD or SAVINGS
+     * @param  int  $profileId  The Wise profile ID
+     * @param  string  $type  Balance type: STANDARD or SAVINGS
      */
     public function getBalances(BankConnection $connection, int $profileId, string $type = 'STANDARD'): array
     {
@@ -181,7 +185,7 @@ class WiseService
                 return $response->json();
             }
 
-            throw new Exception('Failed to get balances: ' . $response->body());
+            throw new Exception('Failed to get balances: '.$response->body());
         } catch (Exception $e) {
             Log::error('Wise get balances failed', [
                 'connection_id' => $connection->id,
@@ -195,11 +199,11 @@ class WiseService
     /**
      * Get transfers for a specific profile within a date range
      *
-     * @param int $profileId The Wise profile ID
-     * @param string|null $createdDateStart ISO 8601 date string
-     * @param string|null $createdDateEnd ISO 8601 date string
-     * @param int $limit Maximum number of transfers (default 20, max 100)
-     * @param string $status Transfer status filter
+     * @param  int  $profileId  The Wise profile ID
+     * @param  string|null  $createdDateStart  ISO 8601 date string
+     * @param  string|null  $createdDateEnd  ISO 8601 date string
+     * @param  int  $limit  Maximum number of transfers (default 20, max 100)
+     * @param  string  $status  Transfer status filter
      */
     public function getTransfers(
         BankConnection $connection,
@@ -228,8 +232,8 @@ class WiseService
 
             $response = Http::timeout(30)
                 ->connectTimeout(10)
-                ->retry(2, 200, fn($exception, $request): bool => $exception instanceof \Illuminate\Http\Client\ConnectionException ||
-                       ($exception instanceof \Illuminate\Http\Client\RequestException &&
+                ->retry(2, 200, fn ($exception, $request): bool => $exception instanceof ConnectionException ||
+                       ($exception instanceof RequestException &&
                         $exception->response->status() >= 500))
                 ->withToken($accessToken)
                 ->get("{$this->baseUrl}/v1/transfers", $params);
@@ -242,7 +246,7 @@ class WiseService
                 return $transfers;
             }
 
-            throw new Exception('Failed to get transfers: ' . $response->body());
+            throw new Exception('Failed to get transfers: '.$response->body());
         } catch (Exception $e) {
             Log::error('Wise get transfers failed', [
                 'connection_id' => $connection->id,
@@ -256,32 +260,36 @@ class WiseService
     /**
      * Verify the webhook signature from Wise using RSA public key
      *
-     * @param string $bodyJson The raw JSON body of the webhook request
-     * @param string $signature The base64-encoded signature from the 'X-Signature-SHA256' header
-     * @param string $publicKey The Wise RSA public key (PEM format)
+     * @param  string  $bodyJson  The raw JSON body of the webhook request
+     * @param  string  $signature  The base64-encoded signature from the 'X-Signature-SHA256' header
+     * @param  string  $publicKey  The Wise RSA public key (PEM format)
      * @return bool True if signature is valid
      */
     public function verifyWebhookSignature(string $bodyJson, string $signature, string $publicKey): bool
     {
         if ($publicKey === '' || $publicKey === '0') {
             Log::warning('Wise webhook public key not configured - rejecting webhook');
+
             return false;
         }
 
         if ($signature === '' || $signature === '0') {
             Log::warning('Wise webhook signature missing');
+
             return false;
         }
 
         $decodedSignature = base64_decode($signature, true);
         if ($decodedSignature === false) {
             Log::warning('Wise webhook signature is not valid base64');
+
             return false;
         }
 
         $publicKeyResource = openssl_pkey_get_public($publicKey);
         if ($publicKeyResource === false) {
             Log::error('Failed to load Wise webhook public key');
+
             return false;
         }
 

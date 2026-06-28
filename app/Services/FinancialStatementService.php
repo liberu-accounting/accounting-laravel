@@ -7,7 +7,7 @@ namespace App\Services;
 use App\Models\Account;
 use App\Models\JournalEntryLine;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Collection;
 
 class FinancialStatementService
 {
@@ -20,12 +20,12 @@ class FinancialStatementService
         $revenueAccounts = Account::where('type', 'revenue')
             ->orderBy('code')
             ->get();
-        
+
         // Get expense accounts
         $expenseAccounts = Account::where('type', 'expense')
             ->orderBy('code')
             ->get();
-        
+
         // Get cost of goods sold accounts
         $cogsAccounts = Account::where('type', 'cost_of_goods_sold')
             ->orWhere('name', 'like', '%cost of goods%')
@@ -75,12 +75,12 @@ class FinancialStatementService
         $assetAccounts = Account::whereIn('type', ['asset', 'bank', 'current_asset', 'fixed_asset', 'other_asset'])
             ->orderBy('code')
             ->get();
-        
+
         // Get liability accounts
         $liabilityAccounts = Account::whereIn('type', ['liability', 'current_liability', 'long_term_liability'])
             ->orderBy('code')
             ->get();
-        
+
         // Get equity accounts
         $equityAccounts = Account::where('type', 'equity')
             ->orderBy('code')
@@ -129,15 +129,15 @@ class FinancialStatementService
 
         // Operating Activities
         $operatingActivities = $this->calculateOperatingCashFlow($startDate, $endDate, $netIncome);
-        
+
         // Investing Activities
         $investingActivities = $this->calculateInvestingCashFlow($startDate, $endDate);
-        
+
         // Financing Activities
         $financingActivities = $this->calculateFinancingCashFlow($startDate, $endDate);
 
         // Calculate net change in cash
-        $netCashFlow = $operatingActivities['net_cash_from_operations'] 
+        $netCashFlow = $operatingActivities['net_cash_from_operations']
                       + $investingActivities['net_cash_from_investing']
                       + $financingActivities['net_cash_from_financing'];
 
@@ -162,16 +162,16 @@ class FinancialStatementService
     /**
      * Calculate account balances for given accounts and date range
      *
-     * @param \Illuminate\Support\Collection $accounts
-     * @param Carbon|null $startDate
-     * @param Carbon $endDate
-     * @return \Illuminate\Support\Collection
+     * @param  Collection  $accounts
+     * @param  Carbon|null  $startDate
+     * @param  Carbon  $endDate
+     * @return Collection
      */
     protected function calculateAccountsBalance($accounts, $startDate, $endDate)
     {
         return $accounts->map(function ($account) use ($startDate, $endDate): array {
             $balance = $this->getAccountBalance($account->id, $startDate, $endDate);
-            
+
             return [
                 'id' => $account->id,
                 'code' => $account->code,
@@ -181,26 +181,26 @@ class FinancialStatementService
             ];
         })->filter(
             // Only show accounts with non-zero balances
-            fn($account): bool => abs((float) $account['balance']) > 0.01);
+            fn ($account): bool => abs((float) $account['balance']) > 0.01);
     }
 
     /**
      * Get account balance for a specific period
      *
-     * @param Carbon|null $startDate
+     * @param  Carbon|null  $startDate
      */
     protected function getAccountBalance(int $accountId, $startDate, Carbon $endDate): float
     {
         $account = Account::find($accountId);
-        if (!$account) {
+        if (! $account) {
             return 0;
         }
 
         $query = JournalEntryLine::where('account_id', $accountId)
             ->whereHas('journalEntry', function ($q) use ($startDate, $endDate): void {
                 $q->where('status', 'posted')
-                  ->where('entry_date', '<=', $endDate);
-                
+                    ->where('entry_date', '<=', $endDate);
+
                 if ($startDate) {
                     $q->where('entry_date', '>=', $startDate);
                 }
@@ -213,11 +213,11 @@ class FinancialStatementService
         // Assets and Expenses: Debit increases, Credit decreases
         // Liabilities, Equity, Revenue: Credit increases, Debit decreases
         $normalBalanceIsDebit = in_array($account->type, ['asset', 'expense', 'bank', 'current_asset', 'fixed_asset', 'other_asset', 'cost_of_goods_sold']);
-        
+
         $balance = $normalBalanceIsDebit ? ($debits - $credits) : ($credits - $debits);
 
         // Add opening balance if no start date (balance sheet)
-        if (!$startDate && $account->opening_balance) {
+        if (! $startDate && $account->opening_balance) {
             $balance += $account->opening_balance;
         }
 
@@ -232,7 +232,7 @@ class FinancialStatementService
         // Get net income from the beginning of time to the as-of date
         $startOfTime = Carbon::parse('2000-01-01'); // Or your company's start date
         $profitLoss = $this->profitAndLoss($startOfTime, $asOfDate);
-        
+
         return $profitLoss['net_income'];
     }
 
@@ -243,7 +243,7 @@ class FinancialStatementService
     {
         // Simplified version - in a real implementation, you'd add back non-cash expenses
         // and adjust for changes in working capital
-        
+
         $adjustments = [
             'depreciation' => 0, // Would need to calculate from depreciation entries
             'accounts_receivable_change' => 0,
@@ -305,6 +305,6 @@ class FinancialStatementService
             ->orWhere('name', 'like', '%cash%')
             ->get();
 
-        return $cashAccounts->sum(fn($account): float => $this->getAccountBalance($account->id, null, $asOfDate));
+        return $cashAccounts->sum(fn ($account): float => $this->getAccountBalance($account->id, null, $asOfDate));
     }
 }

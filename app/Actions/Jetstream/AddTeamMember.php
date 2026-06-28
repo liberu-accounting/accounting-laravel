@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Actions\Jetstream;
 
-use Illuminate\Contracts\Validation\Rule;
 use App\Models\Team;
 use App\Models\User;
 use Closure;
+use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Jetstream\Contracts\AddsTeamMembers;
@@ -46,7 +46,7 @@ class AddTeamMember implements AddsTeamMembers
     {
         Validator::make([
             'email' => $email,
-            'role'  => $role,
+            'role' => $role,
         ], $this->rules(), [
             'email.exists' => __('We were unable to find a registered user with this email address.'),
         ])->after(
@@ -63,8 +63,8 @@ class AddTeamMember implements AddsTeamMembers
     {
         return array_filter([
             'email' => ['required', 'email', 'exists:users'],
-            'role'  => Jetstream::hasRoles()
-                            ? ['required', 'string', new Role()]
+            'role' => Jetstream::hasRoles()
+                            ? ['required', 'string', new Role]
                             : null,
         ]);
     }

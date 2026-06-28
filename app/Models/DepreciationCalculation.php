@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Traits\IsTenantModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Traits\IsTenantModel;
 
 class DepreciationCalculation extends Model
 {
@@ -20,12 +20,12 @@ class DepreciationCalculation extends Model
         'depreciation_amount',
         'accumulated_depreciation',
         'book_value',
-        'calculation_date'
+        'calculation_date',
     ];
 
     #[\Override]
     protected $casts = [
-        'calculation_date' => 'date'
+        'calculation_date' => 'date',
     ];
 
     public function asset()

@@ -4,29 +4,23 @@ declare(strict_types=1);
 
 namespace App\Filament\App\Resources\Customers;
 
-use Filament\Schemas\Schema;
-use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Filters\SelectFilter;
-use Filament\Tables\Filters\TernaryFilter;
-use Filament\Tables\Filters\Filter;
-use Filament\Actions\EditAction;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use App\Filament\App\Resources\Customers\Pages\ListCustomers;
 use App\Filament\App\Resources\Customers\Pages\CreateCustomer;
 use App\Filament\App\Resources\Customers\Pages\EditCustomer;
-use Filament\Forms;
-use Filament\Tables;
+use App\Filament\App\Resources\Customers\Pages\ListCustomers;
 use App\Models\Customer;
-use Filament\Tables\Table;
-use Filament\Resources\Resource;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\TextInput;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\App\Resources\CustomerResource\Pages;
-use App\Filament\App\Resources\CustomerResource\RelationManagers;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
+use Filament\Tables\Table;
 
 class CustomerResource extends Resource
 {
@@ -34,7 +28,7 @@ class CustomerResource extends Resource
     protected static ?string $model = Customer::class;
 
     #[\Override]
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';
 
     #[\Override]
     public static function form(Schema $schema): Schema

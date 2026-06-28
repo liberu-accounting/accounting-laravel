@@ -4,34 +4,34 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Traits\IsTenantModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Traits\IsTenantModel;
 
 class Company extends Model
 {
     use HasFactory;
     use IsTenantModel;
-    
+
     #[\Override]
-    protected $primaryKey = "company_id";
+    protected $primaryKey = 'company_id';
 
     #[\Override]
     protected $fillable = [
-        "company_name",
-        "company_address",
-        "company_email",
-        "company_phone",
-        "company_city",
-        "company_tin",
-        "company_logo",
-        "hmrc_utr",
-        "hmrc_paye_reference",
-        "hmrc_vat_number",
-        "hmrc_accounts_office_reference",
-        "hmrc_corporation_tax_utr",
-        "vat_scheme",
-        "vat_period"
+        'company_name',
+        'company_address',
+        'company_email',
+        'company_phone',
+        'company_city',
+        'company_tin',
+        'company_logo',
+        'hmrc_utr',
+        'hmrc_paye_reference',
+        'hmrc_vat_number',
+        'hmrc_accounts_office_reference',
+        'hmrc_corporation_tax_utr',
+        'vat_scheme',
+        'vat_period',
     ];
 
     /**
@@ -71,7 +71,7 @@ class Company extends Model
      */
     public function isVatRegistered(): bool
     {
-        return !empty($this->hmrc_vat_number);
+        return ! empty($this->hmrc_vat_number);
     }
 
     /**
@@ -79,7 +79,7 @@ class Company extends Model
      */
     public function hasPayeScheme(): bool
     {
-        return !empty($this->hmrc_paye_reference);
+        return ! empty($this->hmrc_paye_reference);
     }
 
     /**
@@ -87,6 +87,6 @@ class Company extends Model
      */
     public function isCorporationTaxRegistered(): bool
     {
-        return !empty($this->hmrc_corporation_tax_utr);
+        return ! empty($this->hmrc_corporation_tax_utr);
     }
 }

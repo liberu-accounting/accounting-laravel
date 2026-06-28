@@ -58,13 +58,14 @@ return new class extends Migration
         'vendors',
         'vendor_credits',
     ];
+
     /**
      * Run the migrations.
      */
     public function up(): void
     {
         foreach ($this->tables as $table) {
-            if (Schema::hasTable($table) && !Schema::hasColumn($table, 'team_id')) {
+            if (Schema::hasTable($table) && ! Schema::hasColumn($table, 'team_id')) {
                 Schema::table($table, function (Blueprint $table): void {
                     $table->foreignId('team_id')->nullable()->constrained()->onDelete('cascade')->default(1);
                 });

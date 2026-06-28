@@ -4,27 +4,24 @@ declare(strict_types=1);
 
 namespace App\Filament\App\Resources\PurchaseOrders;
 
-use Filament\Schemas\Schema;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Textarea;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\BadgeColumn;
-use Filament\Tables\Filters\SelectFilter;
-use Filament\Actions\EditAction;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use App\Filament\App\Resources\PurchaseOrders\Pages\ListPurchaseOrders;
 use App\Filament\App\Resources\PurchaseOrders\Pages\CreatePurchaseOrder;
 use App\Filament\App\Resources\PurchaseOrders\Pages\EditPurchaseOrder;
-use App\Filament\App\Resources\PurchaseOrderResource\Pages;
+use App\Filament\App\Resources\PurchaseOrders\Pages\ListPurchaseOrders;
 use App\Models\PurchaseOrder;
-use Filament\Forms;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\BadgeColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
 class PurchaseOrderResource extends Resource
@@ -33,7 +30,7 @@ class PurchaseOrderResource extends Resource
     protected static ?string $model = PurchaseOrder::class;
 
     #[\Override]
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-shopping-cart';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-shopping-cart';
 
     #[\Override]
     public static function form(Schema $schema): Schema

@@ -6,9 +6,9 @@ namespace App\Filament\App\Pages;
 
 use App\Models\User;
 use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Schema;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Auth;
 
 class EditProfile extends Page
@@ -25,7 +25,7 @@ class EditProfile extends Page
     {
         $this->user = Auth::user();
         $this->form->fill([
-            'name'  => $this->user->name,
+            'name' => $this->user->name,
             'email' => $this->user->email,
         ]);
     }
@@ -50,7 +50,7 @@ class EditProfile extends Page
         $state = $this->form->getState();
 
         $this->user->forceFill([
-            'name'  => $state['name'],
+            'name' => $state['name'],
             'email' => $state['email'],
         ])->save();
 

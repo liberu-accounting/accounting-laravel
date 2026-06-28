@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Traits\IsTenantModel;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Barryvdh\DomPDF\Facade\Pdf;
-use App\Traits\IsTenantModel;
 
 class TaxForm extends Model
 {
@@ -25,7 +25,7 @@ class TaxForm extends Model
         'total_payments',
         'total_tax_withheld',
         'status',
-        'form_data'
+        'form_data',
     ];
 
     #[\Override]
@@ -46,9 +46,10 @@ class TaxForm extends Model
             'form' => $this,
             'customer' => $this->customer,
         ];
-        
-        $pdf = PDF::loadView('tax-forms.' . strtolower($this->form_type), $data);
-        return $pdf->download($this->form_type . '_' . $this->tax_year . '.pdf');
+
+        $pdf = Pdf::loadView('tax-forms.'.strtolower($this->form_type), $data);
+
+        return $pdf->download($this->form_type.'_'.$this->tax_year.'.pdf');
     }
 
     public function calculateTotals(): void
@@ -59,26 +60,26 @@ class TaxForm extends Model
 
         $this->total_payments = $invoices->sum('total_amount');
         $this->total_tax_withheld = $invoices->sum('tax_amount');
-        
+
         // Calculate tax summaries by rate
         $taxSummary = [];
         foreach ($invoices as $invoice) {
             if ($invoice->taxRate) {
                 $rateName = $invoice->taxRate->name;
-                if (!isset($taxSummary[$rateName])) {
+                if (! isset($taxSummary[$rateName])) {
                     $taxSummary[$rateName] = [
                         'rate' => $invoice->taxRate->rate,
-                        'amount' => 0
+                        'amount' => 0,
                     ];
                 }
                 $taxSummary[$rateName]['amount'] += $invoice->tax_amount;
             }
         }
-        
+
         $this->form_data = array_merge($this->form_data ?? [], [
-            'tax_summary' => $taxSummary
+            'tax_summary' => $taxSummary,
         ]);
-        
+
         $this->save();
     }
 

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use PDF;
+use App\Traits\IsTenantModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Traits\IsTenantModel;
+use PDF;
 
 class GeneralLedgerReport extends Model
 {
@@ -23,7 +23,7 @@ class GeneralLedgerReport extends Model
         'is_template',
         'chart_type',
         'filters',
-        'custom_fields'
+        'custom_fields',
     ];
 
     #[\Override]
@@ -32,30 +32,30 @@ class GeneralLedgerReport extends Model
         'data' => 'array',
         'filters' => 'array',
         'is_template' => 'boolean',
-        'custom_fields' => 'array'
+        'custom_fields' => 'array',
     ];
 
     public const REPORT_TYPES = [
         'balance_sheet' => 'Balance Sheet',
         'income_statement' => 'Income Statement',
         'cash_flow' => 'Cash Flow Statement',
-        'custom' => 'Custom Report'
+        'custom' => 'Custom Report',
     ];
 
     public const CHART_TYPES = [
         'bar' => 'Bar Chart',
         'line' => 'Line Chart',
         'pie' => 'Pie Chart',
-        'none' => 'No Chart'
+        'none' => 'No Chart',
     ];
 
     public function generatePdf()
     {
         // Implementation for PDF generation
         $pdf = PDF::loadView('reports.general-ledger', [
-            'report' => $this
+            'report' => $this,
         ]);
-        
-        return $pdf->download($this->template_name . '.pdf');
+
+        return $pdf->download($this->template_name.'.pdf');
     }
 }

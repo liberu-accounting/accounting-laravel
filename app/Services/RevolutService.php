@@ -5,18 +5,22 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Models\BankConnection;
-use App\Models\BankFeedTransaction;
-use App\Models\Transaction;
+use Exception;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Exception;
 
 class RevolutService
 {
     protected string $clientId;
+
     protected string $clientSecret;
+
     protected string $environment;
+
     protected string $baseUrl;
+
     protected string $authUrl;
 
     public function __construct()
@@ -71,7 +75,7 @@ class RevolutService
                 return $response->json();
             }
 
-            throw new Exception('Failed to exchange authorization code: ' . $response->body());
+            throw new Exception('Failed to exchange authorization code: '.$response->body());
         } catch (Exception $e) {
             Log::error('Revolut authorization code exchange failed', [
                 'error' => $e->getMessage(),
@@ -99,7 +103,7 @@ class RevolutService
                 return $response->json();
             }
 
-            throw new Exception('Failed to refresh access token: ' . $response->body());
+            throw new Exception('Failed to refresh access token: '.$response->body());
         } catch (Exception $e) {
             Log::error('Revolut token refresh failed', [
                 'error' => $e->getMessage(),
@@ -115,7 +119,7 @@ class RevolutService
     {
         // Check if the access token is expired (with 60-second buffer)
         if ($connection->revolut_token_expires_at && now()->addSeconds(60)->isAfter($connection->revolut_token_expires_at)) {
-            if (!$connection->revolut_refresh_token) {
+            if (! $connection->revolut_refresh_token) {
                 throw new Exception('Access token expired and no refresh token available');
             }
 
@@ -148,7 +152,7 @@ class RevolutService
                 return $response->json();
             }
 
-            throw new Exception('Failed to get accounts: ' . $response->body());
+            throw new Exception('Failed to get accounts: '.$response->body());
         } catch (Exception $e) {
             Log::error('Revolut get accounts failed', [
                 'connection_id' => $connection->id,
@@ -175,7 +179,7 @@ class RevolutService
                 return $response->json();
             }
 
-            throw new Exception('Failed to get account: ' . $response->body());
+            throw new Exception('Failed to get account: '.$response->body());
         } catch (Exception $e) {
             Log::error('Revolut get account failed', [
                 'connection_id' => $connection->id,
@@ -189,9 +193,9 @@ class RevolutService
     /**
      * Get transactions for a connection within a date range
      *
-     * @param string|null $from ISO 8601 date string (e.g. '2024-01-01')
-     * @param string|null $to ISO 8601 date string (e.g. '2024-01-31')
-     * @param int $count Maximum number of transactions (default 100, max 1000)
+     * @param  string|null  $from  ISO 8601 date string (e.g. '2024-01-01')
+     * @param  string|null  $to  ISO 8601 date string (e.g. '2024-01-31')
+     * @param  int  $count  Maximum number of transactions (default 100, max 1000)
      */
     public function getTransactions(BankConnection $connection, ?string $from = null, ?string $to = null, int $count = 100): array
     {
@@ -210,8 +214,8 @@ class RevolutService
 
             $response = Http::timeout(30)
                 ->connectTimeout(10)
-                ->retry(2, 200, fn($exception, $request): bool => $exception instanceof \Illuminate\Http\Client\ConnectionException ||
-                       ($exception instanceof \Illuminate\Http\Client\RequestException &&
+                ->retry(2, 200, fn ($exception, $request): bool => $exception instanceof ConnectionException ||
+                       ($exception instanceof RequestException &&
                         $exception->response->status() >= 500))
                 ->withToken($accessToken)
                 ->get("{$this->baseUrl}/transactions", $params);
@@ -224,7 +228,7 @@ class RevolutService
                 return $transactions;
             }
 
-            throw new Exception('Failed to get transactions: ' . $response->body());
+            throw new Exception('Failed to get transactions: '.$response->body());
         } catch (Exception $e) {
             Log::error('Revolut get transactions failed', [
                 'connection_id' => $connection->id,
@@ -237,7 +241,7 @@ class RevolutService
     /**
      * Send a single payment via Revolut Business
      *
-     * @param array $paymentData Must include: account_id, receiver (counterparty_id + account_id), amount, currency, reference
+     * @param  array  $paymentData  Must include: account_id, receiver (counterparty_id + account_id), amount, currency, reference
      * @return array The created payment/transaction data from Revolut
      */
     public function sendPayment(BankConnection $connection, array $paymentData): array
@@ -254,7 +258,7 @@ class RevolutService
                 return $response->json();
             }
 
-            throw new Exception('Failed to send payment: ' . $response->body());
+            throw new Exception('Failed to send payment: '.$response->body());
         } catch (Exception $e) {
             Log::error('Revolut send payment failed', [
                 'connection_id' => $connection->id,
@@ -267,9 +271,9 @@ class RevolutService
     /**
      * Send bulk payments via Revolut Business payment drafts
      *
-     * @param string $title Title for the bulk payment batch
-     * @param array $payments Array of payment objects (same shape as single payment)
-     * @param string|null $scheduleFor Date string in Y-m-d format to schedule payments (e.g. '2024-01-01'), null for immediate
+     * @param  string  $title  Title for the bulk payment batch
+     * @param  array  $payments  Array of payment objects (same shape as single payment)
+     * @param  string|null  $scheduleFor  Date string in Y-m-d format to schedule payments (e.g. '2024-01-01'), null for immediate
      * @return array The created payment draft data from Revolut
      */
     public function sendBulkPayment(BankConnection $connection, string $title, array $payments, ?string $scheduleFor = null): array
@@ -295,7 +299,7 @@ class RevolutService
                 return $response->json();
             }
 
-            throw new Exception('Failed to send bulk payment: ' . $response->body());
+            throw new Exception('Failed to send bulk payment: '.$response->body());
         } catch (Exception $e) {
             Log::error('Revolut send bulk payment failed', [
                 'connection_id' => $connection->id,
@@ -308,8 +312,8 @@ class RevolutService
     /**
      * Verify the webhook signature from Revolut
      *
-     * @param string $bodyJson The raw JSON body of the webhook request
-     * @param string $signature The signature from the 'Revolut-Signature' header
+     * @param  string  $bodyJson  The raw JSON body of the webhook request
+     * @param  string  $signature  The signature from the 'Revolut-Signature' header
      * @return bool True if signature is valid
      */
     public function verifyWebhookSignature(string $bodyJson, string $signature): bool
@@ -318,15 +322,17 @@ class RevolutService
 
         if (empty($signingSecret)) {
             Log::warning('Revolut webhook signing secret not configured - rejecting webhook');
+
             return false;
         }
 
         if ($signature === '' || $signature === '0') {
             Log::warning('Revolut webhook signature missing');
+
             return false;
         }
 
-        $computedSignature = 'v1=' . hash_hmac('sha256', $bodyJson, (string) $signingSecret);
+        $computedSignature = 'v1='.hash_hmac('sha256', $bodyJson, (string) $signingSecret);
 
         return hash_equals($computedSignature, $signature);
     }

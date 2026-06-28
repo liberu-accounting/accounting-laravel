@@ -4,33 +4,34 @@ declare(strict_types=1);
 
 namespace App\Filament\App\Resources\Suppliers;
 
-use Filament\Schemas\Schema;
-use Filament\Actions\EditAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use App\Filament\App\Resources\Suppliers\Pages\ListSuppliers;
 use App\Filament\App\Resources\Suppliers\Pages\CreateSupplier;
 use App\Filament\App\Resources\Suppliers\Pages\EditSupplier;
-use Filament\Forms;
-use Filament\Tables;
+use App\Filament\App\Resources\Suppliers\Pages\ListSuppliers;
 use App\Models\Supplier;
-use Filament\Tables\Table;
-use Filament\Resources\Resource;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
-use App\Filament\App\Resources\SupplierResource\Pages;
+use Filament\Tables\Table;
 
 class SupplierResource extends Resource
 {
     #[\Override]
     protected static ?string $model = Supplier::class;
+
     #[\Override]
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-truck';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-truck';
+
     #[\Override]
     protected static ?int $navigationSort = 5;
+
     #[\Override]
-    protected static string | \UnitEnum | null $navigationGroup = 'Vendors';
+    protected static string|\UnitEnum|null $navigationGroup = 'Vendors';
+
     #[\Override]
     protected static ?string $recordTitleAttribute = 'supplier_name';
 

@@ -14,14 +14,14 @@ return new class extends Migration
                 $foreignKeys = Schema::getConnection()
                     ->getDoctrineSchemaManager()
                     ->listTableForeignKeys('customer_tax_rate');
-                
+
                 $foreignKeyExists = collect($foreignKeys)
-                    ->contains(fn($foreignKey): bool => $foreignKey->getName() === 'customer_tax_rate_customer_id_foreign');
+                    ->contains(fn ($foreignKey): bool => $foreignKey->getName() === 'customer_tax_rate_customer_id_foreign');
 
                 if ($foreignKeyExists) {
                     $table->dropForeign(['customer_id']);
                 }
-                
+
                 // Add the new foreign key constraint
                 $table->foreign('customer_id')
                     ->references('id')

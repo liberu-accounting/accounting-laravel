@@ -25,23 +25,23 @@ class HmrcMtdCorporationTaxService
     public function submitComputation(HmrcCorporationTaxSubmission $ctSubmission): array
     {
         $company = $ctSubmission->company;
-        
-        if (!$company->hmrc_corporation_tax_utr) {
+
+        if (! $company->hmrc_corporation_tax_utr) {
             throw new \Exception('Company does not have a Corporation Tax UTR');
         }
 
         try {
             $payload = $this->buildComputationPayload($ctSubmission);
-            
+
             $response = Http::withHeaders($this->getHeaders())
                 ->post(
-                    $this->baseUrl . "/organisations/corporation-tax/{$company->hmrc_corporation_tax_utr}/computations",
+                    $this->baseUrl."/organisations/corporation-tax/{$company->hmrc_corporation_tax_utr}/computations",
                     $payload
                 );
 
             if ($response->successful()) {
                 $responseData = $response->json();
-                
+
                 // Create submission record
                 $submission = HmrcSubmission::create([
                     'company_id' => $company->company_id,
@@ -71,8 +71,7 @@ class HmrcMtdCorporationTaxService
             }
 
             $this->logError('CT computation submission failed', $response->json());
-            throw new \Exception('Failed to submit corporation tax computation: ' . $response->body());
-
+            throw new \Exception('Failed to submit corporation tax computation: '.$response->body());
         } catch (\Exception $e) {
             $this->logError('CT computation submission error', ['error' => $e->getMessage()]);
             throw $e;
@@ -86,7 +85,7 @@ class HmrcMtdCorporationTaxService
     {
         try {
             $response = Http::withHeaders($this->getHeaders())
-                ->get($this->baseUrl . "/organisations/corporation-tax/{$utr}/obligations", [
+                ->get($this->baseUrl."/organisations/corporation-tax/{$utr}/obligations", [
                     'from' => $from,
                     'to' => $to,
                 ]);
@@ -96,8 +95,7 @@ class HmrcMtdCorporationTaxService
             }
 
             $this->logError('Failed to retrieve CT obligations', $response->json());
-            throw new \Exception('Failed to retrieve corporation tax obligations: ' . $response->body());
-
+            throw new \Exception('Failed to retrieve corporation tax obligations: '.$response->body());
         } catch (\Exception $e) {
             $this->logError('CT obligations error', ['error' => $e->getMessage()]);
             throw $e;
@@ -111,7 +109,7 @@ class HmrcMtdCorporationTaxService
     {
         try {
             $response = Http::withHeaders($this->getHeaders())
-                ->get($this->baseUrl . "/organisations/corporation-tax/{$utr}/liabilities", [
+                ->get($this->baseUrl."/organisations/corporation-tax/{$utr}/liabilities", [
                     'from' => $from,
                     'to' => $to,
                 ]);
@@ -121,8 +119,7 @@ class HmrcMtdCorporationTaxService
             }
 
             $this->logError('Failed to retrieve CT liabilities', $response->json());
-            throw new \Exception('Failed to retrieve corporation tax liabilities: ' . $response->body());
-
+            throw new \Exception('Failed to retrieve corporation tax liabilities: '.$response->body());
         } catch (\Exception $e) {
             $this->logError('CT liabilities error', ['error' => $e->getMessage()]);
             throw $e;
@@ -136,7 +133,7 @@ class HmrcMtdCorporationTaxService
     {
         try {
             $response = Http::withHeaders($this->getHeaders())
-                ->get($this->baseUrl . "/organisations/corporation-tax/{$utr}/payments", [
+                ->get($this->baseUrl."/organisations/corporation-tax/{$utr}/payments", [
                     'from' => $from,
                     'to' => $to,
                 ]);
@@ -146,8 +143,7 @@ class HmrcMtdCorporationTaxService
             }
 
             $this->logError('Failed to retrieve CT payments', $response->json());
-            throw new \Exception('Failed to retrieve corporation tax payments: ' . $response->body());
-
+            throw new \Exception('Failed to retrieve corporation tax payments: '.$response->body());
         } catch (\Exception $e) {
             $this->logError('CT payments error', ['error' => $e->getMessage()]);
             throw $e;
@@ -193,7 +189,7 @@ class HmrcMtdCorporationTaxService
     private function getHeaders(): array
     {
         return [
-            'Authorization' => 'Bearer ' . $this->authService->getAccessToken(),
+            'Authorization' => 'Bearer '.$this->authService->getAccessToken(),
             'Accept' => 'application/vnd.hmrc.1.0+json',
             'Content-Type' => 'application/json',
         ];

@@ -4,43 +4,41 @@ declare(strict_types=1);
 
 namespace App\Filament\App\Resources\SalesReceipts;
 
-use Filament\Schemas\Schema;
-use Filament\Actions\EditAction;
+use App\Filament\App\Resources\SalesReceipts\Pages\CreateSalesReceipt;
+use App\Filament\App\Resources\SalesReceipts\Pages\EditSalesReceipt;
+use App\Filament\App\Resources\SalesReceipts\Pages\ListSalesReceipts;
+use App\Models\SalesReceipt;
+use App\Models\TaxRate;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use App\Filament\App\Resources\SalesReceipts\Pages\ListSalesReceipts;
-use App\Filament\App\Resources\SalesReceipts\Pages\CreateSalesReceipt;
-use App\Filament\App\Resources\SalesReceipts\Pages\EditSalesReceipt;
-use Filament\Forms;
-use Filament\Tables;
-use App\Models\SalesReceipt;
-use App\Models\TaxRate;
-use Filament\Tables\Table;
-use Filament\Resources\Resource;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
 
 class SalesReceiptResource extends Resource
 {
     #[\Override]
     protected static ?string $model = SalesReceipt::class;
-    
+
     #[\Override]
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-receipt-percent';
-    
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-receipt-percent';
+
     #[\Override]
     protected static ?int $navigationSort = 5;
-    
+
     #[\Override]
-    protected static string | \UnitEnum | null $navigationGroup = 'Sales';
-    
+    protected static string|\UnitEnum|null $navigationGroup = 'Sales';
+
     #[\Override]
     protected static ?string $recordTitleAttribute = 'sales_receipt_number';
 
@@ -56,17 +54,17 @@ class SalesReceiptResource extends Resource
                             ->required()
                             ->searchable()
                             ->preload(),
-                            
+
                         TextInput::make('sales_receipt_number')
                             ->disabled()
                             ->dehydrated(false)
                             ->visible(fn ($record): bool => $record !== null),
-                            
+
                         DatePicker::make('sales_receipt_date')
                             ->label('Receipt Date')
                             ->required()
                             ->default(now()),
-                            
+
                         Select::make('payment_method')
                             ->options([
                                 'cash' => 'Cash',
@@ -78,16 +76,16 @@ class SalesReceiptResource extends Resource
                             ])
                             ->required()
                             ->default('cash'),
-                            
+
                         TextInput::make('reference_number')
                             ->label('Reference #'),
-                            
+
                         Select::make('deposit_to_account_id')
                             ->relationship('depositAccount', 'name')
                             ->label('Deposit To')
                             ->searchable()
                             ->preload(),
-                            
+
                         Select::make('tax_rate_id')
                             ->relationship('taxRate', 'name')
                             ->live()
@@ -100,7 +98,7 @@ class SalesReceiptResource extends Resource
                             }),
                     ])
                     ->columns(2),
-                    
+
                 Section::make('Line Items')
                     ->schema([
                         Repeater::make('items')
@@ -128,7 +126,7 @@ class SalesReceiptResource extends Resource
                             ->collapsible()
                             ->itemLabel(fn (array $state): ?string => $state['description'] ?? null),
                     ]),
-                    
+
                 Section::make('Totals')
                     ->schema([
                         TextInput::make('subtotal_amount')
@@ -136,13 +134,13 @@ class SalesReceiptResource extends Resource
                             ->disabled()
                             ->dehydrated(false)
                             ->prefix('$'),
-                            
+
                         TextInput::make('tax_amount')
                             ->numeric()
                             ->disabled()
                             ->dehydrated(false)
                             ->prefix('$'),
-                            
+
                         TextInput::make('total_amount')
                             ->numeric()
                             ->disabled()
@@ -150,7 +148,7 @@ class SalesReceiptResource extends Resource
                             ->prefix('$'),
                     ])
                     ->columns(3),
-                    
+
                 Section::make('Additional Information')
                     ->schema([
                         Select::make('status')
@@ -160,7 +158,7 @@ class SalesReceiptResource extends Resource
                             ])
                             ->default('completed')
                             ->required(),
-                            
+
                         Textarea::make('notes')
                             ->rows(3)
                             ->columnSpanFull(),
@@ -178,34 +176,34 @@ class SalesReceiptResource extends Resource
                     ->label('Receipt #')
                     ->searchable()
                     ->sortable(),
-                    
+
                 TextColumn::make('customer.customer_name')
                     ->label('Customer')
                     ->searchable()
                     ->sortable(),
-                    
+
                 TextColumn::make('sales_receipt_date')
                     ->label('Date')
                     ->date()
                     ->sortable(),
-                    
+
                 TextColumn::make('payment_method')
                     ->label('Payment Method')
                     ->formatStateUsing(fn (string $state): string => str_replace('_', ' ', ucwords($state, '_')))
                     ->sortable(),
-                    
+
                 TextColumn::make('total_amount')
                     ->label('Total')
                     ->money('USD')
                     ->sortable(),
-                    
+
                 TextColumn::make('status')
                     ->badge()
                     ->colors([
                         'success' => 'completed',
                         'danger' => 'void',
                     ]),
-                    
+
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

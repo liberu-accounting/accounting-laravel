@@ -4,41 +4,38 @@ declare(strict_types=1);
 
 namespace App\Filament\App\Resources\CreditMemos;
 
-use Filament\Schemas\Schema;
-use Filament\Actions\EditAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use App\Filament\App\Resources\CreditMemos\Pages\ListCreditMemos;
 use App\Filament\App\Resources\CreditMemos\Pages\CreateCreditMemo;
 use App\Filament\App\Resources\CreditMemos\Pages\EditCreditMemo;
-use Filament\Forms;
-use Filament\Tables;
+use App\Filament\App\Resources\CreditMemos\Pages\ListCreditMemos;
 use App\Models\CreditMemo;
-use App\Models\TaxRate;
-use Filament\Tables\Table;
-use Filament\Resources\Resource;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
 
 class CreditMemoResource extends Resource
 {
     #[\Override]
     protected static ?string $model = CreditMemo::class;
-    
+
     #[\Override]
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-receipt-percent';
-    
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-receipt-percent';
+
     #[\Override]
     protected static ?int $navigationSort = 4;
-    
+
     #[\Override]
-    protected static string | \UnitEnum | null $navigationGroup = 'Sales';
-    
+    protected static string|\UnitEnum|null $navigationGroup = 'Sales';
+
     #[\Override]
     protected static ?string $recordTitleAttribute = 'credit_memo_number';
 
@@ -52,21 +49,21 @@ class CreditMemoResource extends Resource
                     ->required()
                     ->searchable()
                     ->preload(),
-                    
+
                 Select::make('invoice_id')
                     ->relationship('invoice', 'invoice_number')
                     ->searchable()
                     ->preload(),
-                    
+
                 TextInput::make('credit_memo_number')
                     ->disabled()
                     ->dehydrated(false)
                     ->visible(fn ($record): bool => $record !== null),
-                    
+
                 DatePicker::make('credit_memo_date')
                     ->required()
                     ->default(now()),
-                    
+
                 Select::make('reason')
                     ->options([
                         'product_return' => 'Product Return',
@@ -74,11 +71,11 @@ class CreditMemoResource extends Resource
                         'discount' => 'Discount',
                         'other' => 'Other',
                     ]),
-                    
+
                 Select::make('tax_rate_id')
                     ->relationship('taxRate', 'name')
                     ->live(),
-                    
+
                 Repeater::make('items')
                     ->relationship()
                     ->schema([
@@ -98,27 +95,27 @@ class CreditMemoResource extends Resource
                     ->columns(4)
                     ->defaultItems(1)
                     ->collapsible(),
-                    
+
                 TextInput::make('subtotal_amount')
                     ->numeric()
                     ->disabled()
                     ->dehydrated(false),
-                    
+
                 TextInput::make('tax_amount')
                     ->numeric()
                     ->disabled()
                     ->dehydrated(false),
-                    
+
                 TextInput::make('total_amount')
                     ->numeric()
                     ->disabled()
                     ->dehydrated(false),
-                    
+
                 TextInput::make('amount_applied')
                     ->numeric()
                     ->disabled()
                     ->dehydrated(false),
-                    
+
                 Select::make('status')
                     ->options([
                         'draft' => 'Draft',
@@ -128,7 +125,7 @@ class CreditMemoResource extends Resource
                     ])
                     ->default('draft')
                     ->required(),
-                    
+
                 Textarea::make('notes')
                     ->rows(3)
                     ->columnSpanFull(),
@@ -143,33 +140,33 @@ class CreditMemoResource extends Resource
                 TextColumn::make('credit_memo_number')
                     ->searchable()
                     ->sortable(),
-                    
+
                 TextColumn::make('customer.customer_name')
                     ->label('Customer')
                     ->searchable()
                     ->sortable(),
-                    
+
                 TextColumn::make('invoice.invoice_number')
                     ->label('Invoice')
                     ->searchable()
                     ->sortable(),
-                    
+
                 TextColumn::make('credit_memo_date')
                     ->date()
                     ->sortable(),
-                    
+
                 TextColumn::make('total_amount')
                     ->money('USD')
                     ->sortable(),
-                    
+
                 TextColumn::make('amount_applied')
                     ->money('USD')
                     ->sortable(),
-                    
+
                 TextColumn::make('amount_remaining')
                     ->money('USD')
                     ->getStateUsing(fn ($record) => $record->amount_remaining),
-                    
+
                 TextColumn::make('status')
                     ->badge()
                     ->colors([
@@ -178,7 +175,7 @@ class CreditMemoResource extends Resource
                         'success' => 'applied',
                         'warning' => 'void',
                     ]),
-                    
+
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

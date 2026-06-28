@@ -15,7 +15,7 @@ class AccountModelTest extends TestCase
     public function test_account_normal_balance_set_automatically_for_asset(): void
     {
         $account = Account::factory()->create([
-            'account_type'   => 'asset',
+            'account_type' => 'asset',
             'normal_balance' => null,
         ]);
 
@@ -25,7 +25,7 @@ class AccountModelTest extends TestCase
     public function test_account_normal_balance_set_automatically_for_liability(): void
     {
         $account = Account::factory()->create([
-            'account_type'   => 'liability',
+            'account_type' => 'liability',
             'normal_balance' => null,
         ]);
 
@@ -35,7 +35,7 @@ class AccountModelTest extends TestCase
     public function test_account_normal_balance_set_automatically_for_expense(): void
     {
         $account = Account::factory()->create([
-            'account_type'   => 'expense',
+            'account_type' => 'expense',
             'normal_balance' => null,
         ]);
 
@@ -45,7 +45,7 @@ class AccountModelTest extends TestCase
     public function test_account_normal_balance_set_automatically_for_revenue(): void
     {
         $account = Account::factory()->create([
-            'account_type'   => 'revenue',
+            'account_type' => 'revenue',
             'normal_balance' => null,
         ]);
 

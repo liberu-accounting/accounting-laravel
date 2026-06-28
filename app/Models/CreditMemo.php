@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Traits\IsTenantModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Traits\IsTenantModel;
 
 class CreditMemo extends Model
 {
-    use IsTenantModel;
     use HasFactory, SoftDeletes;
+    use IsTenantModel;
 
     #[\Override]
     protected $primaryKey = 'credit_memo_id';
@@ -83,18 +83,18 @@ class CreditMemo extends Model
     // Business Logic Methods
     public function calculateTax()
     {
-        if (!$this->taxRate) {
+        if (! $this->taxRate) {
             return 0;
         }
 
         $baseAmount = $this->subtotal_amount;
         $previousTaxes = 0;
-        
+
         if ($this->taxRate->is_compound) {
             $nonCompoundTaxes = TaxRate::where('is_active', true)
                 ->where('is_compound', false)
                 ->get();
-                
+
             foreach ($nonCompoundTaxes as $tax) {
                 $previousTaxes += $tax->calculateTax($baseAmount);
             }
@@ -103,7 +103,7 @@ class CreditMemo extends Model
         $taxAmount = $this->taxRate->calculateTax($baseAmount, $previousTaxes);
         $this->tax_amount = $taxAmount;
         $this->total_amount = $this->subtotal_amount + $taxAmount;
-        
+
         return $taxAmount;
     }
 
@@ -121,7 +121,7 @@ class CreditMemo extends Model
         }
 
         $invoice = Invoice::find($invoiceId);
-        if (!$invoice) {
+        if (! $invoice) {
             throw new \Exception('Invoice not found.');
         }
 
@@ -138,10 +138,10 @@ class CreditMemo extends Model
 
         // Update amount applied
         $this->amount_applied = $this->applications()->sum('amount_applied');
-        
+
         // Update status
         $this->status = $this->amount_applied >= $this->total_amount ? 'applied' : 'open';
-        
+
         $this->save();
 
         return $application;
@@ -176,7 +176,7 @@ class CreditMemo extends Model
     protected static function boot()
     {
         parent::boot();
-        
+
         static::creating(function ($creditMemo): void {
             if (empty($creditMemo->credit_memo_number)) {
                 $creditMemo->credit_memo_number = static::generateCreditMemoNumber();
@@ -195,13 +195,13 @@ class CreditMemo extends Model
             ->orderBy('credit_memo_number', 'desc')
             ->first();
 
-        if (!$lastCreditMemo) {
+        if (! $lastCreditMemo) {
             $number = 1;
         } else {
             $parts = explode('-', (string) $lastCreditMemo->credit_memo_number);
-            $number = isset($parts[1]) ? ((int)$parts[1]) + 1 : 1;
+            $number = isset($parts[1]) ? ((int) $parts[1]) + 1 : 1;
         }
 
-        return $prefix . $year . '-' . str_pad($number, 4, '0', STR_PAD_LEFT);
+        return $prefix.$year.'-'.str_pad($number, 4, '0', STR_PAD_LEFT);
     }
 }

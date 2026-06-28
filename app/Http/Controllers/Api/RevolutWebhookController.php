@@ -5,18 +5,15 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\BankConnection;
 use App\Services\RevolutService;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Exception;
 
 class RevolutWebhookController extends Controller
 {
-    public function __construct(protected RevolutService $revolutService)
-    {
-    }
+    public function __construct(protected RevolutService $revolutService) {}
 
     /**
      * Handle incoming Revolut Business webhooks
@@ -27,7 +24,7 @@ class RevolutWebhookController extends Controller
             $rawBody = $request->getContent();
             $signature = $request->header('Revolut-Signature', '');
 
-            if (!$this->revolutService->verifyWebhookSignature($rawBody, $signature)) {
+            if (! $this->revolutService->verifyWebhookSignature($rawBody, $signature)) {
                 Log::warning('Revolut webhook signature verification failed', [
                     'ip' => $request->ip(),
                 ]);

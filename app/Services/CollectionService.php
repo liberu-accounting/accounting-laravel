@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Models\Customer;
-use App\Models\Invoice;
 use App\Notifications\CollectionNotification;
 use Carbon\Carbon;
 
@@ -21,7 +20,7 @@ class CollectionService
         foreach ($customers as $customer) {
             $customer->credit_hold = true;
             $customer->save();
-            
+
             if ($customer->email) {
                 $customer->notify(new CollectionNotification($customer));
             }
@@ -36,15 +35,15 @@ class CollectionService
                     ->orderBy('due_date');
             }])
             ->get()
-            ->map(fn($customer): array => [
+            ->map(fn ($customer): array => [
                 'customer_name' => $customer->customer_name,
                 'total_overdue' => $customer->invoices->sum('total_amount'),
                 'oldest_invoice_date' => $customer->invoices->min('due_date'),
                 'number_of_invoices' => $customer->invoices->count(),
                 'contact_info' => [
                     'email' => $customer->customer_email,
-                    'phone' => $customer->customer_phone
-                ]
+                    'phone' => $customer->customer_phone,
+                ],
             ]);
     }
 }

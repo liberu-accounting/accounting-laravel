@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Filament\App\Widgets;
 
-use Override;
-use Illuminate\Contracts\View\View;
-use Filament\Widgets\Widget;
 use App\Settings\GeneralSettings;
+use Filament\Widgets\Widget;
+use Illuminate\Contracts\View\View;
+use Override;
 
 class SocialLinksWidget extends Widget
 {
-    #[\Override]
+    #[Override]
     protected string $view = 'filament.app.widgets.social-links-widget';
 
     #[Override]

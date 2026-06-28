@@ -4,22 +4,19 @@ declare(strict_types=1);
 
 namespace App\Filament\App\Resources\TaxForms;
 
-use Filament\Schemas\Schema;
-use Filament\Forms\Components\TextInput;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\SelectFilter;
-use Filament\Actions\EditAction;
-use Filament\Actions\Action;
-use App\Filament\App\Resources\TaxForms\Pages\ListTaxForms;
 use App\Filament\App\Resources\TaxForms\Pages\CreateTaxForm;
 use App\Filament\App\Resources\TaxForms\Pages\EditTaxForm;
+use App\Filament\App\Resources\TaxForms\Pages\ListTaxForms;
 use App\Models\TaxForm;
-use Filament\Forms;
-use Filament\Resources\Resource;
-use Filament\Tables;
-use Filament\Tables\Table;
+use Filament\Actions\Action;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
-use App\Filament\App\Resources\TaxFormResource\Pages;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
 
 class TaxFormResource extends Resource
 {
@@ -27,7 +24,7 @@ class TaxFormResource extends Resource
     protected static ?string $model = TaxForm::class;
 
     #[\Override]
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document-text';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-document-text';
 
     #[\Override]
     public static function form(Schema $schema): Schema

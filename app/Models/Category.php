@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Traits\IsTenantModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Traits\IsTenantModel;
 
 class Category extends Model
 {
@@ -14,10 +14,10 @@ class Category extends Model
     use IsTenantModel;
 
     #[\Override]
-    protected $primaryKey='category_id';
+    protected $primaryKey = 'category_id';
 
     #[\Override]
-    protected $fillable=[
+    protected $fillable = [
         'name',
         'parent_id',
     ];

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Traits\IsTenantModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Traits\IsTenantModel;
 
 class InventoryTransaction extends Model
 {
@@ -23,13 +23,13 @@ class InventoryTransaction extends Model
         'quantity',
         'unit_price',
         'transaction_type',
-        'notes'
+        'notes',
     ];
 
     #[\Override]
     protected $casts = [
         'quantity' => 'integer',
-        'unit_price' => 'decimal:2'
+        'unit_price' => 'decimal:2',
     ];
 
     public function inventoryItem()

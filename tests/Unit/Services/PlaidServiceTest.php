@@ -18,12 +18,12 @@ class PlaidServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         Config::set('services.plaid.client_id', 'test_client_id');
         Config::set('services.plaid.secret', 'test_secret');
         Config::set('services.plaid.environment', 'sandbox');
-        
-        $this->service = new PlaidService();
+
+        $this->service = new PlaidService;
     }
 
     public function test_create_link_token_sends_correct_request(): void
@@ -38,8 +38,8 @@ class PlaidServiceTest extends TestCase
         $result = $this->service->createLinkToken(123, 'en');
 
         $this->assertEquals('link-sandbox-test-token', $result['link_token']);
-        
-        Http::assertSent(fn($request): bool => $request->url() === 'https://sandbox.plaid.com/link/token/create'
+
+        Http::assertSent(fn ($request): bool => $request->url() === 'https://sandbox.plaid.com/link/token/create'
             && $request['client_id'] === 'test_client_id'
             && $request['user']['client_user_id'] === '123'
             && $request['language'] === 'en');
@@ -58,8 +58,8 @@ class PlaidServiceTest extends TestCase
 
         $this->assertEquals('access-sandbox-test-token', $result['access_token']);
         $this->assertEquals('item-test-123', $result['item_id']);
-        
-        Http::assertSent(fn($request): bool => $request->url() === 'https://sandbox.plaid.com/item/public_token/exchange'
+
+        Http::assertSent(fn ($request): bool => $request->url() === 'https://sandbox.plaid.com/item/public_token/exchange'
             && $request['public_token'] === 'public-test-token');
     }
 
@@ -107,7 +107,7 @@ class PlaidServiceTest extends TestCase
 
         $this->assertCount(1, $result['added']);
         $this->assertEquals('new_cursor_123', $result['next_cursor']);
-        
+
         // Verify cursor was saved
         $connection->refresh();
         $this->assertEquals('new_cursor_123', $connection->plaid_cursor);
@@ -132,7 +132,7 @@ class PlaidServiceTest extends TestCase
 
         $this->service->syncTransactions($connection);
 
-        Http::assertSent(fn($request): bool => $request['cursor'] === 'existing_cursor');
+        Http::assertSent(fn ($request): bool => $request['cursor'] === 'existing_cursor');
 
         $connection->refresh();
         $this->assertEquals('updated_cursor', $connection->plaid_cursor);
@@ -171,15 +171,15 @@ class PlaidServiceTest extends TestCase
         $result = $this->service->removeItem('access-test-token');
 
         $this->assertTrue($result);
-        
-        Http::assertSent(fn($request): bool => $request->url() === 'https://sandbox.plaid.com/item/remove'
+
+        Http::assertSent(fn ($request): bool => $request->url() === 'https://sandbox.plaid.com/item/remove'
             && $request['access_token'] === 'access-test-token');
     }
 
     public function test_service_uses_correct_base_url_for_development(): void
     {
         Config::set('services.plaid.environment', 'development');
-        $service = new PlaidService();
+        $service = new PlaidService;
 
         Http::fake([
             'development.plaid.com/link/token/create' => Http::response([
@@ -189,13 +189,13 @@ class PlaidServiceTest extends TestCase
 
         $service->createLinkToken(123);
 
-        Http::assertSent(fn($request): bool => str_contains((string) $request->url(), 'development.plaid.com'));
+        Http::assertSent(fn ($request): bool => str_contains((string) $request->url(), 'development.plaid.com'));
     }
 
     public function test_service_uses_correct_base_url_for_production(): void
     {
         Config::set('services.plaid.environment', 'production');
-        $service = new PlaidService();
+        $service = new PlaidService;
 
         Http::fake([
             'production.plaid.com/link/token/create' => Http::response([
@@ -205,7 +205,7 @@ class PlaidServiceTest extends TestCase
 
         $service->createLinkToken(123);
 
-        Http::assertSent(fn($request): bool => str_contains((string) $request->url(), 'production.plaid.com'));
+        Http::assertSent(fn ($request): bool => str_contains((string) $request->url(), 'production.plaid.com'));
     }
 
     public function test_create_link_token_throws_exception_on_failure(): void
@@ -272,17 +272,17 @@ class PlaidServiceTest extends TestCase
 
         $this->service->getBalances('access-test-token', ['acc_123', 'acc_456']);
 
-        Http::assertSent(fn($request): bool => isset($request['options']['account_ids'])
+        Http::assertSent(fn ($request): bool => isset($request['options']['account_ids'])
             && $request['options']['account_ids'] === ['acc_123', 'acc_456']);
     }
 
     public function test_verify_webhook_signature_with_valid_signature(): void
     {
         Config::set('services.plaid.webhook_verification_key', 'test_secret_key');
-        
+
         $bodyJson = '{"webhook_type":"TRANSACTIONS","webhook_code":"SYNC_UPDATES_AVAILABLE"}';
         $signature = base64_encode(hash_hmac('sha256', $bodyJson, 'test_secret_key', true));
-        
+
         $result = $this->service->verifyWebhookSignature($bodyJson, [
             'Plaid-Verification' => $signature,
         ]);
@@ -293,9 +293,9 @@ class PlaidServiceTest extends TestCase
     public function test_verify_webhook_signature_with_invalid_signature(): void
     {
         Config::set('services.plaid.webhook_verification_key', 'test_secret_key');
-        
+
         $bodyJson = '{"webhook_type":"TRANSACTIONS"}';
-        
+
         $result = $this->service->verifyWebhookSignature($bodyJson, [
             'Plaid-Verification' => 'invalid_signature',
         ]);
@@ -306,9 +306,9 @@ class PlaidServiceTest extends TestCase
     public function test_verify_webhook_signature_without_verification_key(): void
     {
         Config::set('services.plaid.webhook_verification_key');
-        
+
         $bodyJson = '{"webhook_type":"TRANSACTIONS"}';
-        
+
         $result = $this->service->verifyWebhookSignature($bodyJson, [
             'Plaid-Verification' => 'some_signature',
         ]);
@@ -319,9 +319,9 @@ class PlaidServiceTest extends TestCase
     public function test_verify_webhook_signature_without_header(): void
     {
         Config::set('services.plaid.webhook_verification_key', 'test_secret_key');
-        
+
         $bodyJson = '{"webhook_type":"TRANSACTIONS"}';
-        
+
         $result = $this->service->verifyWebhookSignature($bodyJson, []);
 
         $this->assertFalse($result);

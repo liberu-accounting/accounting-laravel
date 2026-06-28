@@ -3,10 +3,10 @@
 declare(strict_types=1);
 
 use App\Http\Middleware\Authenticate;
-use App\Http\Middleware\SecurityHeaders;
 use App\Http\Middleware\EncryptCookies;
 use App\Http\Middleware\PreventRequestsDuringMaintenance;
 use App\Http\Middleware\RedirectIfAuthenticated;
+use App\Http\Middleware\SecurityHeaders;
 use App\Http\Middleware\TrimStrings;
 use App\Http\Middleware\TrustProxies;
 use App\Http\Middleware\ValidateSignature;
@@ -15,7 +15,7 @@ use Illuminate\Auth\Middleware\AuthenticateWithBasicAuth;
 use Illuminate\Auth\Middleware\Authorize;
 use Illuminate\Auth\Middleware\EnsureEmailIsVerified;
 use Illuminate\Auth\Middleware\RequirePassword;
-use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -24,11 +24,8 @@ use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Foundation\Http\Middleware\ValidatePostSize;
 use Illuminate\Http\Middleware\HandleCors;
 use Illuminate\Http\Middleware\SetCacheHeaders;
-use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Session\Middleware\AuthenticateSession;
-use Illuminate\Session\Middleware\StartSession;
-use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -51,8 +48,8 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->web(replace: [
-            \Illuminate\Cookie\Middleware\EncryptCookies::class => EncryptCookies::class,
-            \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class => VerifyCsrfToken::class,
+            Illuminate\Cookie\Middleware\EncryptCookies::class => EncryptCookies::class,
+            Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class => VerifyCsrfToken::class,
         ]);
 
         $middleware->api(prepend: [
@@ -76,7 +73,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions): void {
         //
     })
-    ->withSchedule(function (\Illuminate\Console\Scheduling\Schedule $schedule): void {
+    ->withSchedule(function (Schedule $schedule): void {
         $schedule->command('recurring:process')->daily();
         $schedule->command('invoices:send-reminders')->daily();
     })

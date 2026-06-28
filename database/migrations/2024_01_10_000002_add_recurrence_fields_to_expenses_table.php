@@ -27,7 +27,7 @@ return new class extends Migration
                 'recurrence_frequency',
                 'recurrence_start',
                 'recurrence_end',
-                'last_generated'
+                'last_generated',
             ]);
         });
     }

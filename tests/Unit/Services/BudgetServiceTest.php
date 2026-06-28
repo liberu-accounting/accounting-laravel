@@ -33,10 +33,10 @@ class BudgetServiceTest extends TestCase
     {
         $account = Account::factory()->create();
         Budget::factory()->create([
-            'account_id'     => $account->id,
+            'account_id' => $account->id,
             'planned_amount' => 1000,
-            'start_date'     => '2024-01-01',
-            'end_date'       => '2024-12-31',
+            'start_date' => '2024-01-01',
+            'end_date' => '2024-12-31',
         ]);
 
         $result = $this->service->getBudgetComparison('2024-01-01', '2024-12-31');

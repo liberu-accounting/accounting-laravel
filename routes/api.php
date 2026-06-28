@@ -1,12 +1,13 @@
 <?php
 
-use App\Http\Controllers\Api\TransactionController;
 use App\Http\Controllers\Api\PlaidController;
 use App\Http\Controllers\Api\PlaidWebhookController;
 use App\Http\Controllers\Api\RevolutController;
 use App\Http\Controllers\Api\RevolutWebhookController;
+use App\Http\Controllers\Api\TransactionController;
 use App\Http\Controllers\Api\WiseController;
 use App\Http\Controllers\Api\WiseWebhookController;
+use App\Services\ExchangeRateService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -22,11 +23,11 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware('auth:sanctum')->group(function (): void {
-    Route::get('/user', fn(Request $request) => $request->user());
+    Route::get('/user', fn (Request $request) => $request->user());
 
     Route::apiResource('transactions', TransactionController::class);
 
-    Route::get('/exchange-rates', fn() => app(App\Services\ExchangeRateService::class)->getLatestRates())->middleware('throttle:60,1');
+    Route::get('/exchange-rates', fn () => app(ExchangeRateService::class)->getLatestRates())->middleware('throttle:60,1');
 
     // Plaid API Routes
     Route::prefix('plaid')->middleware('throttle:60,1')->group(function (): void {

@@ -4,29 +4,25 @@ declare(strict_types=1);
 
 namespace App\Filament\App\Resources\ChartOfAccounts;
 
-use Filament\Schemas\Schema;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\Toggle;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\IndentedTextColumn;
-use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Filters\SelectFilter;
-use Filament\Actions\EditAction;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
-use App\Filament\App\Resources\ChartOfAccounts\Pages\ListChartOfAccounts;
 use App\Filament\App\Resources\ChartOfAccounts\Pages\CreateChartOfAccounts;
 use App\Filament\App\Resources\ChartOfAccounts\Pages\EditChartOfAccounts;
-use App\Filament\App\Resources\ChartOfAccountsResource\Pages;
+use App\Filament\App\Resources\ChartOfAccounts\Pages\ListChartOfAccounts;
 use App\Models\Account;
 use App\Models\AccountTemplate;
-use Filament\Forms;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\IndentedTextColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use Filament\Tables;
-use Illuminate\Database\Eloquent\Builder;
 
 class ChartOfAccountsResource extends Resource
 {
@@ -42,24 +38,24 @@ class ChartOfAccountsResource extends Resource
                     ->label('Industry Template')
                     ->options(AccountTemplate::pluck('name', 'id'))
                     ->live()
-                    ->visible(fn ($get): bool => !$get('parent_id')),
-                
+                    ->visible(fn ($get): bool => ! $get('parent_id')),
+
                 TextInput::make('account_number')
                     ->required()
                     ->numeric()
                     ->unique(ignoreRecord: true)
                     ->label('Account Number'),
-                
+
                 TextInput::make('account_name')
                     ->required()
                     ->maxLength(255)
                     ->label('Account Name'),
-                
+
                 Textarea::make('description')
                     ->maxLength(500)
                     ->rows(2)
                     ->label('Description'),
-                    
+
                 Select::make('account_type')
                     ->required()
                     ->live()
@@ -68,29 +64,28 @@ class ChartOfAccountsResource extends Resource
                         'liability' => 'Liability',
                         'equity' => 'Equity',
                         'revenue' => 'Revenue',
-                        'expense' => 'Expense'
+                        'expense' => 'Expense',
                     ])
                     ->label('Account Type'),
-                
+
                 Select::make('normal_balance')
                     ->required()
                     ->options([
                         'debit' => 'Debit',
                         'credit' => 'Credit',
                     ])
-                    ->default(fn ($get): string => 
-                        in_array($get('account_type'), ['asset', 'expense']) ? 'debit' : 'credit'
+                    ->default(fn ($get): string => in_array($get('account_type'), ['asset', 'expense']) ? 'debit' : 'credit'
                     )
                     ->label('Normal Balance'),
-                    
+
                 Select::make('parent_id')
                     ->label('Parent Account')
                     ->options(fn () => Account::whereNull('parent_id')
                         ->orderBy('account_number')
                         ->get()
-                        ->mapWithKeys(fn($account): array => [$account->id => $account->account_number . ' - ' . $account->account_name]))
+                        ->mapWithKeys(fn ($account): array => [$account->id => $account->account_number.' - '.$account->account_name]))
                     ->searchable(),
-                
+
                 TextInput::make('opening_balance')
                     ->numeric()
                     ->default(0)
@@ -98,7 +93,7 @@ class ChartOfAccountsResource extends Resource
                     ->prefix('$')
                     ->label('Opening Balance')
                     ->helperText('Initial balance for this account'),
-                    
+
                 TextInput::make('balance')
                     ->numeric()
                     ->disabled()
@@ -107,11 +102,11 @@ class ChartOfAccountsResource extends Resource
                     ->prefix('$')
                     ->label('Current Balance')
                     ->helperText('Updated automatically by posted journal entries'),
-                
+
                 Toggle::make('is_active')
                     ->default(true)
                     ->label('Active'),
-                
+
                 Toggle::make('allow_manual_entry')
                     ->default(true)
                     ->label('Allow Manual Journal Entries')
@@ -161,7 +156,7 @@ class ChartOfAccountsResource extends Resource
                         'liability' => 'Liability',
                         'equity' => 'Equity',
                         'revenue' => 'Revenue',
-                        'expense' => 'Expense'
+                        'expense' => 'Expense',
                     ]),
                 SelectFilter::make('is_active')
                     ->label('Status')

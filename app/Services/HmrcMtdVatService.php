@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Models\HmrcVatReturn;
 use App\Models\HmrcSubmission;
+use App\Models\HmrcVatReturn;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -26,7 +26,7 @@ class HmrcMtdVatService
     {
         try {
             $response = Http::withHeaders($this->getHeaders())
-                ->get($this->baseUrl . "/organisations/vat/{$vrn}/obligations", [
+                ->get($this->baseUrl."/organisations/vat/{$vrn}/obligations", [
                     'from' => $from,
                     'to' => $to,
                     'status' => 'O', // O = Open, F = Fulfilled
@@ -37,8 +37,7 @@ class HmrcMtdVatService
             }
 
             $this->logError('Failed to retrieve VAT obligations', $response->json());
-            throw new \Exception('Failed to retrieve VAT obligations: ' . $response->body());
-
+            throw new \Exception('Failed to retrieve VAT obligations: '.$response->body());
         } catch (\Exception $e) {
             $this->logError('VAT obligations error', ['error' => $e->getMessage()]);
             throw $e;
@@ -51,27 +50,27 @@ class HmrcMtdVatService
     public function submitVatReturn(HmrcVatReturn $vatReturn): array
     {
         $company = $vatReturn->company;
-        
-        if (!$company || !$company->hmrc_vat_number) {
+
+        if (! $company || ! $company->hmrc_vat_number) {
             throw new \Exception('Company does not have a VAT registration number');
         }
 
-        if (!$vatReturn->finalised) {
+        if (! $vatReturn->finalised) {
             throw new \Exception('VAT return must be finalised before submission');
         }
 
         try {
             $payload = $this->buildVatReturnPayload($vatReturn);
-            
+
             $response = Http::withHeaders($this->getHeaders())
                 ->post(
-                    $this->baseUrl . "/organisations/vat/{$company->hmrc_vat_number}/returns",
+                    $this->baseUrl."/organisations/vat/{$company->hmrc_vat_number}/returns",
                     $payload
                 );
 
             if ($response->successful()) {
                 $responseData = $response->json();
-                
+
                 // Create submission record
                 $submission = HmrcSubmission::create([
                     'company_id' => $company->company_id,
@@ -101,8 +100,7 @@ class HmrcMtdVatService
             }
 
             $this->logError('VAT return submission failed', $response->json());
-            throw new \Exception('Failed to submit VAT return: ' . $response->body());
-
+            throw new \Exception('Failed to submit VAT return: '.$response->body());
         } catch (\Exception $e) {
             $this->logError('VAT return submission error', ['error' => $e->getMessage()]);
             throw $e;
@@ -116,15 +114,14 @@ class HmrcMtdVatService
     {
         try {
             $response = Http::withHeaders($this->getHeaders())
-                ->get($this->baseUrl . "/organisations/vat/{$vrn}/returns/{$periodKey}");
+                ->get($this->baseUrl."/organisations/vat/{$vrn}/returns/{$periodKey}");
 
             if ($response->successful()) {
                 return $response->json();
             }
 
             $this->logError('Failed to retrieve VAT return', $response->json());
-            throw new \Exception('Failed to retrieve VAT return: ' . $response->body());
-
+            throw new \Exception('Failed to retrieve VAT return: '.$response->body());
         } catch (\Exception $e) {
             $this->logError('VAT return retrieval error', ['error' => $e->getMessage()]);
             throw $e;
@@ -138,7 +135,7 @@ class HmrcMtdVatService
     {
         try {
             $response = Http::withHeaders($this->getHeaders())
-                ->get($this->baseUrl . "/organisations/vat/{$vrn}/liabilities", [
+                ->get($this->baseUrl."/organisations/vat/{$vrn}/liabilities", [
                     'from' => $from,
                     'to' => $to,
                 ]);
@@ -148,8 +145,7 @@ class HmrcMtdVatService
             }
 
             $this->logError('Failed to retrieve VAT liabilities', $response->json());
-            throw new \Exception('Failed to retrieve VAT liabilities: ' . $response->body());
-
+            throw new \Exception('Failed to retrieve VAT liabilities: '.$response->body());
         } catch (\Exception $e) {
             $this->logError('VAT liabilities error', ['error' => $e->getMessage()]);
             throw $e;
@@ -163,7 +159,7 @@ class HmrcMtdVatService
     {
         try {
             $response = Http::withHeaders($this->getHeaders())
-                ->get($this->baseUrl . "/organisations/vat/{$vrn}/payments", [
+                ->get($this->baseUrl."/organisations/vat/{$vrn}/payments", [
                     'from' => $from,
                     'to' => $to,
                 ]);
@@ -173,8 +169,7 @@ class HmrcMtdVatService
             }
 
             $this->logError('Failed to retrieve VAT payments', $response->json());
-            throw new \Exception('Failed to retrieve VAT payments: ' . $response->body());
-
+            throw new \Exception('Failed to retrieve VAT payments: '.$response->body());
         } catch (\Exception $e) {
             $this->logError('VAT payments error', ['error' => $e->getMessage()]);
             throw $e;
@@ -223,7 +218,7 @@ class HmrcMtdVatService
     private function getHeaders(): array
     {
         return [
-            'Authorization' => 'Bearer ' . $this->authService->getAccessToken(),
+            'Authorization' => 'Bearer '.$this->authService->getAccessToken(),
             'Accept' => 'application/vnd.hmrc.1.0+json',
             'Content-Type' => 'application/json',
         ];

@@ -4,41 +4,39 @@ declare(strict_types=1);
 
 namespace App\Filament\App\Resources\Bills;
 
-use Filament\Schemas\Schema;
-use Filament\Actions\EditAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use App\Filament\App\Resources\Bills\Pages\ListBills;
 use App\Filament\App\Resources\Bills\Pages\CreateBill;
 use App\Filament\App\Resources\Bills\Pages\EditBill;
-use Filament\Forms;
-use Filament\Tables;
+use App\Filament\App\Resources\Bills\Pages\ListBills;
 use App\Models\Bill;
 use App\Models\TaxRate;
-use Filament\Tables\Table;
-use Filament\Resources\Resource;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
 
 class BillResource extends Resource
 {
     #[\Override]
     protected static ?string $model = Bill::class;
-    
+
     #[\Override]
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-receipt-refund';
-    
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-receipt-refund';
+
     #[\Override]
     protected static ?int $navigationSort = 3;
-    
+
     #[\Override]
-    protected static string | \UnitEnum | null $navigationGroup = 'Vendors';
-    
+    protected static string|\UnitEnum|null $navigationGroup = 'Vendors';
+
     #[\Override]
     protected static ?string $recordTitleAttribute = 'bill_number';
 
@@ -52,29 +50,29 @@ class BillResource extends Resource
                     ->required()
                     ->searchable()
                     ->preload(),
-                    
+
                 TextInput::make('bill_number')
                     ->disabled()
                     ->dehydrated(false)
                     ->visible(fn ($record): bool => $record !== null),
-                    
+
                 DatePicker::make('bill_date')
                     ->required()
                     ->default(now()),
-                    
+
                 DatePicker::make('due_date')
                     ->required()
                     ->minDate(fn ($get) => $get('bill_date'))
                     ->default(now()->addDays(30)),
-                    
+
                 Select::make('purchase_order_id')
                     ->relationship('purchaseOrder', 'po_number')
                     ->searchable()
                     ->preload(),
-                    
+
                 TextInput::make('reference_number')
                     ->label('Reference/PO #'),
-                    
+
                 Select::make('tax_rate_id')
                     ->relationship('taxRate', 'name')
                     ->live()
@@ -85,7 +83,7 @@ class BillResource extends Resource
                             $set('tax_amount', $taxAmount);
                         }
                     }),
-                    
+
                 Repeater::make('items')
                     ->relationship()
                     ->schema([
@@ -109,22 +107,22 @@ class BillResource extends Resource
                     ->columns(4)
                     ->defaultItems(1)
                     ->collapsible(),
-                    
+
                 TextInput::make('subtotal_amount')
                     ->numeric()
                     ->disabled()
                     ->dehydrated(false),
-                    
+
                 TextInput::make('tax_amount')
                     ->numeric()
                     ->disabled()
                     ->dehydrated(false),
-                    
+
                 TextInput::make('total_amount')
                     ->numeric()
                     ->disabled()
                     ->dehydrated(false),
-                    
+
                 Select::make('status')
                     ->options([
                         'draft' => 'Draft',
@@ -135,7 +133,7 @@ class BillResource extends Resource
                     ])
                     ->default('draft')
                     ->required(),
-                    
+
                 Textarea::make('notes')
                     ->rows(3)
                     ->columnSpanFull(),
@@ -150,28 +148,28 @@ class BillResource extends Resource
                 TextColumn::make('bill_number')
                     ->searchable()
                     ->sortable(),
-                    
+
                 TextColumn::make('vendor.vendor_first_name')
                     ->label('Vendor')
                     ->searchable()
                     ->sortable(),
-                    
+
                 TextColumn::make('bill_date')
                     ->date()
                     ->sortable(),
-                    
+
                 TextColumn::make('due_date')
                     ->date()
                     ->sortable(),
-                    
+
                 TextColumn::make('total_amount')
                     ->money('USD')
                     ->sortable(),
-                    
+
                 TextColumn::make('amount_paid')
                     ->money('USD')
                     ->sortable(),
-                    
+
                 TextColumn::make('payment_status')
                     ->badge()
                     ->colors([
@@ -179,7 +177,7 @@ class BillResource extends Resource
                         'warning' => 'partial',
                         'success' => 'paid',
                     ]),
-                    
+
                 TextColumn::make('status')
                     ->badge()
                     ->colors([
@@ -189,7 +187,7 @@ class BillResource extends Resource
                         'danger' => 'overdue',
                         'warning' => 'void',
                     ]),
-                    
+
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

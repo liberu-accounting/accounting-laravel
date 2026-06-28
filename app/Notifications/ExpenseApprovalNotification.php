@@ -7,8 +7,8 @@ namespace App\Notifications;
 use App\Models\Expense;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 
 class ExpenseApprovalNotification extends Notification implements ShouldQueue
 {
@@ -26,7 +26,7 @@ class ExpenseApprovalNotification extends Notification implements ShouldQueue
 
     public function toMail($notifiable): MailMessage
     {
-        $message = $this->status === 'approved' 
+        $message = $this->status === 'approved'
             ? 'Your expense has been approved.'
             : 'Your expense has been rejected.';
 
@@ -36,7 +36,7 @@ class ExpenseApprovalNotification extends Notification implements ShouldQueue
             ->line($message)
             ->line("Amount: {$this->expense->amount}")
             ->line("Description: {$this->expense->description}")
-            ->when($this->status === 'rejected', fn($mail) => $mail->line("Reason: {$this->expense->rejection_reason}"))
+            ->when($this->status === 'rejected', fn ($mail) => $mail->line("Reason: {$this->expense->rejection_reason}"))
             ->line("Date: {$this->expense->date->format('Y-m-d')}");
     }
 

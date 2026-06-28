@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Traits\IsTenantModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Traits\IsTenantModel;
 
 class JournalEntry extends Model
 {
@@ -43,7 +43,7 @@ class JournalEntry extends Model
         parent::boot();
 
         static::creating(function ($journalEntry): void {
-            if (!$journalEntry->entry_number) {
+            if (! $journalEntry->entry_number) {
                 $journalEntry->entry_number = static::generateEntryNumber();
             }
         });
@@ -85,20 +85,20 @@ class JournalEntry extends Model
             throw new \Exception('Journal entry is already posted.');
         }
 
-        if (!$this->isBalanced()) {
+        if (! $this->isBalanced()) {
             throw new \Exception('Journal entry must be balanced before posting.');
         }
 
         \DB::transaction(function (): void {
             foreach ($this->lines as $line) {
                 $account = $line->account;
-                
+
                 if ($account->normal_balance === 'debit') {
                     $account->balance += $line->debit_amount - $line->credit_amount;
                 } else {
                     $account->balance += $line->credit_amount - $line->debit_amount;
                 }
-                
+
                 $account->save();
             }
 
@@ -112,20 +112,20 @@ class JournalEntry extends Model
 
     public function reverse(): static
     {
-        if (!$this->is_posted) {
+        if (! $this->is_posted) {
             throw new \Exception('Cannot reverse an unposted journal entry.');
         }
 
         \DB::transaction(function (): void {
             foreach ($this->lines as $line) {
                 $account = $line->account;
-                
+
                 if ($account->normal_balance === 'debit') {
                     $account->balance -= $line->debit_amount - $line->credit_amount;
                 } else {
                     $account->balance -= $line->credit_amount - $line->debit_amount;
                 }
-                
+
                 $account->save();
             }
 

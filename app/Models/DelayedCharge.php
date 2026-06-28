@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Traits\IsTenantModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,11 +12,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Delayed Charge Model
- * 
+ *
  * Records future charges to be added to a customer's invoice later.
  * Delayed charges don't affect accounts receivable or income until converted to an invoice.
  * Useful for tracking billable work that will be invoiced in the future.
- * 
+ *
  * @property int $delayed_charge_id
  * @property int $customer_id
  * @property string $charge_date
@@ -26,12 +27,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int|null $invoice_id
  * @property string $status
  */
-use App\Traits\IsTenantModel;
-
 class DelayedCharge extends Model
 {
-    use IsTenantModel;
     use HasFactory, SoftDeletes;
+    use IsTenantModel;
 
     #[\Override]
     protected $primaryKey = 'delayed_charge_id';
@@ -71,7 +70,7 @@ class DelayedCharge extends Model
 
         static::saving(function ($charge): void {
             // Auto-calculate amount
-            if (!isset($charge->amount) || $charge->amount == 0) {
+            if (! isset($charge->amount) || $charge->amount == 0) {
                 $charge->amount = $charge->quantity * $charge->unit_price;
             }
         });

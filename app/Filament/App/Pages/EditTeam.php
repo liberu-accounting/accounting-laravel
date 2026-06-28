@@ -8,8 +8,8 @@ use App\Models\Team;
 use App\Models\User;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Schema;
 use Filament\Pages\Tenancy\EditTenantProfile;
+use Filament\Schemas\Schema;
 
 class EditTeam extends EditTenantProfile
 {
@@ -43,8 +43,8 @@ class EditTeam extends EditTenantProfile
         $this->validate();
 
         $team = Team::forceCreate([
-            'user_id'       => Filament::auth()->id(),
-            'name'          => $this->data['name'] ?? '',
+            'user_id' => Filament::auth()->id(),
+            'name' => $this->data['name'] ?? '',
             'personal_team' => false,
         ]);
 

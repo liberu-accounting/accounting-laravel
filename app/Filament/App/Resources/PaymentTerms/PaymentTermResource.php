@@ -4,25 +4,19 @@ declare(strict_types=1);
 
 namespace App\Filament\App\Resources\PaymentTerms;
 
-use Filament\Schemas\Schema;
-use Filament\Actions\EditAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use App\Filament\App\Resources\PaymentTerms\Pages\ListPaymentTerms;
 use App\Filament\App\Resources\PaymentTerms\Pages\CreatePaymentTerm;
 use App\Filament\App\Resources\PaymentTerms\Pages\EditPaymentTerm;
-use Filament\Forms;
-use Filament\Tables;
-use Filament\Tables\Table;
+use App\Filament\App\Resources\PaymentTerms\Pages\ListPaymentTerms;
 use App\Models\PaymentTerm;
-use Filament\Resources\Resource;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\Textarea;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\App\Resources\PaymentTermResource\Pages;
-use App\Filament\App\Resources\PaymentTermResource\RelationManagers;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 
 class PaymentTermResource extends Resource
 {
@@ -30,7 +24,7 @@ class PaymentTermResource extends Resource
     protected static ?string $model = PaymentTerm::class;
 
     #[\Override]
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';
 
     #[\Override]
     public static function form(Schema $schema): Schema

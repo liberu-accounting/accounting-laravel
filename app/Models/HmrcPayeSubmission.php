@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Traits\IsTenantModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Traits\IsTenantModel;
 
 class HmrcPayeSubmission extends Model
 {
@@ -80,7 +80,7 @@ class HmrcPayeSubmission extends Model
 
         foreach ($payrollRecords as $payroll) {
             $employee = $payroll->employee;
-            
+
             $employeeData[] = [
                 'employee_id' => $employee->id,
                 'name' => $employee->name,
@@ -106,7 +106,7 @@ class HmrcPayeSubmission extends Model
         $this->total_employee_ni = $totalEmployeeNi;
         $this->total_employer_ni = $totalEmployerNi;
         $this->total_student_loan = $totalStudentLoan;
-        
+
         $this->save();
     }
 
@@ -118,21 +118,21 @@ class HmrcPayeSubmission extends Model
         // Tax year format: "2023-24" -> returns 2024
         // Parse both parts to handle century changes
         [$startYear, $endYearSuffix] = explode('-', $this->tax_year);
-        
+
         $startYearInt = (int) $startYear;
         $endYearSuffixInt = (int) $endYearSuffix;
-        
+
         // Determine the century based on the start year
         $century = (int) floor($startYearInt / 100) * 100;
-        
+
         // End year is start year + 1, unless crossing century
         $endYear = $century + $endYearSuffixInt;
-        
+
         // If end year suffix is less than start year suffix, we've crossed a century
         if ($endYearSuffixInt < ($startYearInt % 100)) {
             $endYear += 100;
         }
-        
+
         return $endYear;
     }
 
@@ -144,7 +144,7 @@ class HmrcPayeSubmission extends Model
         if ($this->hmrcSubmission) {
             return $this->hmrcSubmission->status;
         }
-        
+
         return 'draft';
     }
 
@@ -153,7 +153,7 @@ class HmrcPayeSubmission extends Model
      */
     public function isEditable(): bool
     {
-        return !$this->hmrcSubmission || $this->hmrcSubmission->isEditable();
+        return ! $this->hmrcSubmission || $this->hmrcSubmission->isEditable();
     }
 
     /**
@@ -166,7 +166,7 @@ class HmrcPayeSubmission extends Model
         if ($this->hmrcSubmission && $this->hmrcSubmission->submitted_at) {
             return $this->hmrcSubmission->submitted_at->isAfter($this->payment_date);
         }
-        
+
         // If not yet submitted, check if payment date has passed
         return now()->isAfter($this->payment_date);
     }

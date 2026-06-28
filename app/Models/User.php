@@ -21,19 +21,19 @@ use Laravel\Jetstream\HasTeams;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable implements HasDefaultTenant, HasTenants, FilamentUser
+class User extends Authenticatable implements FilamentUser, HasDefaultTenant, HasTenants
 {
     use HasApiTokens;
     use HasFactory;
     use HasProfilePhoto {
         HasProfilePhoto::profilePhotoUrl as getPhotoUrl;
     }
-    use Notifiable;
-    use TwoFactorAuthenticatable;
     use HasRoles, HasTeams {
         HasTeams::teams insteadof HasRoles;
         HasRoles::teams as permissionTeams;
     }
+    use Notifiable;
+    use TwoFactorAuthenticatable;
 
     /**
      * The attributes that are mass assignable.
@@ -103,7 +103,7 @@ class User extends Authenticatable implements HasDefaultTenant, HasTenants, Fila
 
     public function canAccessTenant(Model $tenant): bool
     {
-        return true; //$this->ownedTeams->contains($tenant);
+        return true; // $this->ownedTeams->contains($tenant);
     }
 
     public function canAccessPanel(Panel $panel): bool

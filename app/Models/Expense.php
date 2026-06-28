@@ -4,16 +4,15 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Notifications\ExpenseApprovalNotification;
+use App\Traits\IsTenantModel;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Auth;
-use App\Notifications\ExpenseApprovalNotification;
-use App\Traits\IsTenantModel;
 
 class Expense extends Model
 {
-
     use IsTenantModel;
 
     #[\Override]
@@ -33,7 +32,7 @@ class Expense extends Model
         'recurrence_frequency',
         'recurrence_start',
         'recurrence_end',
-        'last_generated'
+        'last_generated',
     ];
 
     #[\Override]
@@ -46,7 +45,7 @@ class Expense extends Model
         'is_recurring' => 'boolean',
         'recurrence_start' => 'date',
         'recurrence_end' => 'date',
-        'last_generated' => 'date'
+        'last_generated' => 'date',
     ];
 
     public function user(): BelongsTo
@@ -102,12 +101,13 @@ class Expense extends Model
         if ($this->is_indirect) {
             return $this->amount * ($this->allocation_percentage / 100);
         }
+
         return $this->amount;
     }
 
     public function generateRecurring(): void
     {
-        if (!$this->is_recurring || !$this->shouldGenerateNew()) {
+        if (! $this->is_recurring || ! $this->shouldGenerateNew()) {
             return;
         }
 
@@ -127,14 +127,15 @@ class Expense extends Model
         if ($this->recurrence_end && $this->recurrence_end < now()) {
             return false;
         }
+
         return $this->getNextDate()->lte(now());
     }
 
     private function getNextDate(): Carbon
     {
         $lastDate = $this->last_generated ?? $this->recurrence_start;
-        
-        return match($this->recurrence_frequency) {
+
+        return match ($this->recurrence_frequency) {
             'daily' => $lastDate->addDay(),
             'weekly' => $lastDate->addWeek(),
             'monthly' => $lastDate->addMonth(),

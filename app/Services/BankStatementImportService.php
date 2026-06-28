@@ -6,13 +6,13 @@ namespace App\Services;
 
 use App\Models\BankStatement;
 use App\Models\Transaction;
+use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
-use Carbon\Carbon;
 
 class BankStatementImportService
 {
-    public function importFromCsv(string $filePath, BankStatement $bankStatement): Collection 
+    public function importFromCsv(string $filePath, BankStatement $bankStatement): Collection
     {
         $transactions = collect();
         $handle = fopen($filePath, 'r');
@@ -28,16 +28,17 @@ class BankStatementImportService
                     'amount' => $this->parseAmount($data[2]),
                     'account_id' => $bankStatement->account_id,
                     'bank_statement_id' => $bankStatement->id,
-                    'reconciled' => false
+                    'reconciled' => false,
                 ]);
-                
+
                 $transactions->push($transaction);
             } catch (\Exception $e) {
-                Log::error('Failed to import transaction: ' . $e->getMessage());
+                Log::error('Failed to import transaction: '.$e->getMessage());
             }
         }
 
         fclose($handle);
+
         return $transactions;
     }
 
@@ -49,17 +50,17 @@ class BankStatementImportService
         foreach ($ofx->BANKMSGSRSV1->STMTTRNRS->STMTRS->BANKTRANLIST->STMTTRN as $txn) {
             try {
                 $transaction = Transaction::create([
-                    'transaction_date' => $this->parseDate((string)$txn->DTPOSTED),
-                    'description' => (string)$txn->MEMO,
-                    'amount' => $this->parseAmount((string)$txn->TRNAMT),
+                    'transaction_date' => $this->parseDate((string) $txn->DTPOSTED),
+                    'description' => (string) $txn->MEMO,
+                    'amount' => $this->parseAmount((string) $txn->TRNAMT),
                     'account_id' => $bankStatement->account_id,
                     'bank_statement_id' => $bankStatement->id,
-                    'reconciled' => false
+                    'reconciled' => false,
                 ]);
-                
+
                 $transactions->push($transaction);
             } catch (\Exception $e) {
-                Log::error('Failed to import OFX transaction: ' . $e->getMessage());
+                Log::error('Failed to import OFX transaction: '.$e->getMessage());
             }
         }
 

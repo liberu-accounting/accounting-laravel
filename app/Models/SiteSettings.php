@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Traits\IsTenantModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Traits\IsTenantModel;
 
 class SiteSettings extends Model
 {
@@ -27,6 +27,6 @@ class SiteSettings extends Model
         'facebook',
         'twitter',
         'github',
-        'youtube'
+        'youtube',
     ];
 }

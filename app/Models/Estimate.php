@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Traits\IsTenantModel;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Traits\IsTenantModel;
 
 class Estimate extends Model
 {
-    use IsTenantModel;
     use HasFactory, SoftDeletes;
+    use IsTenantModel;
 
     #[\Override]
     protected $primaryKey = 'estimate_id';
@@ -77,37 +77,37 @@ class Estimate extends Model
     // Calculated Attributes
     public function getIsExpiredAttribute()
     {
-        if (!$this->expiration_date || $this->status === 'accepted') {
+        if (! $this->expiration_date || $this->status === 'accepted') {
             return false;
         }
-        
+
         return Carbon::now()->isAfter($this->expiration_date);
     }
 
     public function getDaysUntilExpirationAttribute(): ?float
     {
-        if (!$this->expiration_date) {
+        if (! $this->expiration_date) {
             return null;
         }
-        
+
         return Carbon::now()->diffInDays($this->expiration_date, false);
     }
 
     // Business Logic Methods
     public function calculateTax()
     {
-        if (!$this->taxRate) {
+        if (! $this->taxRate) {
             return 0;
         }
 
         $baseAmount = $this->subtotal_amount;
         $previousTaxes = 0;
-        
+
         if ($this->taxRate->is_compound) {
             $nonCompoundTaxes = TaxRate::where('is_active', true)
                 ->where('is_compound', false)
                 ->get();
-                
+
             foreach ($nonCompoundTaxes as $tax) {
                 $previousTaxes += $tax->calculateTax($baseAmount);
             }
@@ -116,7 +116,7 @@ class Estimate extends Model
         $taxAmount = $this->taxRate->calculateTax($baseAmount, $previousTaxes);
         $this->tax_amount = $taxAmount;
         $this->total_amount = $this->subtotal_amount + $taxAmount;
-        
+
         return $taxAmount;
     }
 
@@ -137,7 +137,7 @@ class Estimate extends Model
 
     public function markAsViewed(): void
     {
-        if (!$this->viewed_at) {
+        if (! $this->viewed_at) {
             $this->update([
                 'status' => 'viewed',
                 'viewed_at' => now(),
@@ -187,7 +187,7 @@ class Estimate extends Model
         // Copy items (Note: Invoice uses TimeEntry, not invoice items)
         // This would need to be adjusted based on actual invoice structure
         // For now, just link the estimate to the invoice
-        
+
         $this->update([
             'invoice_id' => $invoice->invoice_id,
         ]);
@@ -205,9 +205,9 @@ class Estimate extends Model
     public function scopeActive($query)
     {
         return $query->whereIn('status', ['draft', 'sent', 'viewed'])
-            ->where(function($q): void {
+            ->where(function ($q): void {
                 $q->whereNull('expiration_date')
-                  ->orWhere('expiration_date', '>=', now());
+                    ->orWhere('expiration_date', '>=', now());
             });
     }
 
@@ -221,7 +221,7 @@ class Estimate extends Model
     protected static function boot()
     {
         parent::boot();
-        
+
         static::creating(function ($estimate): void {
             if (empty($estimate->estimate_number)) {
                 $estimate->estimate_number = static::generateEstimateNumber();
@@ -233,9 +233,9 @@ class Estimate extends Model
 
         static::saving(function ($estimate): void {
             // Auto-expire if past expiration date
-            if ($estimate->expiration_date && 
+            if ($estimate->expiration_date &&
                 Carbon::now()->isAfter($estimate->expiration_date) &&
-                !in_array($estimate->status, ['accepted', 'declined', 'expired'])) {
+                ! in_array($estimate->status, ['accepted', 'declined', 'expired'])) {
                 $estimate->status = 'expired';
             }
         });
@@ -249,13 +249,13 @@ class Estimate extends Model
             ->orderBy('estimate_number', 'desc')
             ->first();
 
-        if (!$lastEstimate) {
+        if (! $lastEstimate) {
             $number = 1;
         } else {
             $parts = explode('-', (string) $lastEstimate->estimate_number);
-            $number = isset($parts[1]) ? ((int)$parts[1]) + 1 : 1;
+            $number = isset($parts[1]) ? ((int) $parts[1]) + 1 : 1;
         }
 
-        return $prefix . $year . '-' . str_pad($number, 4, '0', STR_PAD_LEFT);
+        return $prefix.$year.'-'.str_pad($number, 4, '0', STR_PAD_LEFT);
     }
 }

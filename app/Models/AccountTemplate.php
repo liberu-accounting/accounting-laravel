@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Traits\IsTenantModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Traits\IsTenantModel;
 
 class AccountTemplate extends Model
 {
@@ -17,11 +17,11 @@ class AccountTemplate extends Model
     protected $fillable = [
         'name',
         'industry_type',
-        'structure'
+        'structure',
     ];
 
     #[\Override]
     protected $casts = [
-        'structure' => 'array'
+        'structure' => 'array',
     ];
 }

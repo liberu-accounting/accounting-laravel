@@ -4,19 +4,16 @@ declare(strict_types=1);
 
 namespace App\Filament\Admin\Resources\AuditLogs;
 
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\SelectFilter;
-use Filament\Tables\Filters\Filter;
-use Filament\Forms\Components\DatePicker;
 use App\Filament\Admin\Resources\AuditLogs\Pages\ListAuditLogs;
 use App\Filament\Admin\Resources\AuditLogs\Pages\ViewAuditLog;
-use App\Filament\Admin\Resources\AuditLogResource\Pages;
 use App\Models\AuditLog;
 use App\Models\Invoice;
 use App\Models\Transaction;
-use Filament\Forms;
+use Filament\Forms\Components\DatePicker;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -24,11 +21,13 @@ class AuditLogResource extends Resource
 {
     #[\Override]
     protected static ?string $model = AuditLog::class;
+
     #[\Override]
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-clipboard-document-list';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-clipboard-document-list';
+
     #[\Override]
-    protected static string | \UnitEnum | null $navigationGroup = 'System';
-    
+    protected static string|\UnitEnum|null $navigationGroup = 'System';
+
     #[\Override]
     public static function getEloquentQuery(): Builder
     {
@@ -80,7 +79,7 @@ class AuditLogResource extends Resource
                         DatePicker::make('from'),
                         DatePicker::make('until'),
                     ])
-                    ->query(fn(Builder $query, array $data): Builder => $query
+                    ->query(fn (Builder $query, array $data): Builder => $query
                         ->when(
                             $data['from'],
                             fn (Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
@@ -88,7 +87,7 @@ class AuditLogResource extends Resource
                         ->when(
                             $data['until'],
                             fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
-                        ))
+                        )),
             ])
             ->defaultSort('created_at', 'desc');
     }
