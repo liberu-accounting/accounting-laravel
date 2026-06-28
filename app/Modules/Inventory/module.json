@@ -1,0 +1,9 @@
+{
+    "name": "Inventory",
+    "version": "1.0.0",
+    "description": "Stock tracking with FIFO/LIFO/average valuation and COGS posting.",
+    "dependencies": [],
+    "config": {
+        "enabled": true
+    }
+}
