@@ -101,15 +101,14 @@ before finalizing.
 - [x] `ReconciliationService::reconcileStatement()` — single source of truth for the reconciled rule (no unmatched + zero discrepancy)
 - [x] Test: balanced → reconciled, discrepancy → stays open (`ReconciliationWorkflowTest`, 2 tests)
 
-### R7 · Core REST endpoints `#15`
-- [ ] `/api` invoices (CRUD, Sanctum)
-- [ ] bills
-- [ ] estimates
-- [ ] journal entries
-- [ ] chart of accounts
-- [ ] general ledger
-- [ ] Apply existing rate-limit pattern
-- [ ] Tests per endpoint
+### R7 · Core REST endpoints `#15` — partial (branch `feat/r7-rest-endpoints`)
+- [x] chart of accounts (`/api/chart-of-accounts`, full CRUD, Sanctum, user-scoped)
+- [x] journal entries (`/api/journal-entries`, index/store/show/destroy; store rejects unbalanced lines)
+- [x] general ledger (`/api/general-ledger/trial-balance` + `/balances`, read-only)
+- [x] Apply existing rate-limit pattern (`throttle:60,1`)
+- [x] Tests per endpoint (`ChartOfAccountApiTest` 5, `JournalEntryApiTest` 5, `GeneralLedgerApiTest` 2)
+- [x] Fixed `GeneralLedgerService` null-currency crash + wrong `account_id` column in trial-balance/balances
+- [ ] invoices / bills / estimates — **deferred**: depend on R3's invoice fixes (str_pad boot bug, `invoice_number` column) + missing Bill/Estimate factories. Build once R3 (#786) merges to avoid duplicating it.
 
 ---
 
