@@ -42,9 +42,9 @@
 
 ### Modules
 - **Ledger** — general ledger with filterable, paginated transaction history
-- **Invoices** — customer and supplier invoicing with line-item detail
-- **Payroll** — employee pay-run management and payslip generation
-- **Inventory** — stock tracking integrated with cost-of-goods accounting
+- **Invoices** — customer and supplier invoicing with line-item detail and balanced ledger posting
+- **Payroll** — employee pay-run management and PDF payslip generation
+- **Inventory** — stock tracking with FIFO / LIFO / average-cost valuation and automatic cost-of-goods journal posting
 - **Fixed Assets** — asset register with straight-line and reducing-balance depreciation
 - **Bank Reconciliation** — transaction matching and reconciliation workflow
 - **HMRC / MTD** — Making Tax Digital VAT submission support
@@ -54,9 +54,9 @@
 ### Modern Developer Experience
 - **Filament 5** admin panel with rich resource pages, table filters and form components
 - **Livewire 4** for reactive UI without leaving the Laravel ecosystem
-- RESTful API layer with token-based authentication
+- RESTful API (Laravel Sanctum tokens, rate-limited) covering chart of accounts, journal entries, general-ledger reports, invoices, bills, estimates, transactions, and the bank/QBO integrations
 - Modular architecture — enable only the modules you need
-- Comprehensive test suite (Pest / PHPUnit) with Codecov coverage reporting
+- Comprehensive PHPUnit test suite with Codecov coverage reporting
 
 📖 **[Double-Entry Accounting Documentation](docs/DOUBLE_ENTRY_ACCOUNTING.md)**
 📖 **[HMRC / MTD Integration](docs/HMRC_INTEGRATION.md)**
