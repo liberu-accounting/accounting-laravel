@@ -17,7 +17,7 @@ class ConnectedAccountPolicy
      */
     public function viewAny(User $user): bool
     {
-        return true;
+        return $user->currentTeam !== null;
     }
 
     /**
@@ -33,7 +33,7 @@ class ConnectedAccountPolicy
      */
     public function create(User $user): bool
     {
-        return true;
+        return $user->currentTeam !== null;
     }
 
     /**

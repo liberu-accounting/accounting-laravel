@@ -25,10 +25,7 @@ class Customer extends Authenticatable
         'customer_email',
         'customer_phone',
         'customer_city',
-        'credit_limit',
-        'current_balance',
         'credit_hold',
-        'password',
     ];
 
     #[\Override]

@@ -21,7 +21,6 @@ class TeamInvitation extends JetstreamTeamInvitation
     #[\Override]
     protected $fillable = [
         'email',
-        'role',
     ];
 
     /**

@@ -15,19 +15,12 @@ class BankConnection extends Model
 
     #[\Override]
     protected $fillable = [
-        'user_id',
         'bank_id',
         'institution_name',
-        'credentials',
-        'plaid_access_token',
         'plaid_item_id',
         'plaid_institution_id',
         'plaid_cursor',
-        'revolut_access_token',
-        'revolut_refresh_token',
         'revolut_token_expires_at',
-        'wise_access_token',
-        'wise_refresh_token',
         'wise_token_expires_at',
         'status',
         'last_synced_at',
@@ -45,6 +38,15 @@ class BankConnection extends Model
         'wise_token_expires_at' => 'datetime',
         'last_synced_at' => 'datetime',
     ];
+
+    protected static function booted(): void
+    {
+        static::creating(function ($bankConnection): void {
+            if (empty($bankConnection->user_id) && auth()->check()) {
+                $bankConnection->user_id = auth()->id();
+            }
+        });
+    }
 
     public function user()
     {

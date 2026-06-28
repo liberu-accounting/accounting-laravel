@@ -16,12 +16,14 @@ class TransactionController extends Controller
     public function index(): AnonymousResourceCollection
     {
         return TransactionResource::collection(
-            Transaction::paginate(15)
+            Transaction::where('user_id', auth()->id())->paginate(15)
         );
     }
 
     public function show(Transaction $transaction): TransactionResource
     {
+        abort_unless($transaction->user_id === auth()->id(), 403);
+
         return new TransactionResource($transaction);
     }
 
@@ -34,6 +36,8 @@ class TransactionController extends Controller
             'description' => 'required|string',
         ]);
 
+        $validated['user_id'] = auth()->id();
+
         $transaction = Transaction::create($validated);
 
         return new TransactionResource($transaction);
@@ -41,6 +45,8 @@ class TransactionController extends Controller
 
     public function update(Request $request, Transaction $transaction): TransactionResource
     {
+        abort_unless($transaction->user_id === auth()->id(), 403);
+
         $validated = $request->validate([
             'account_id' => 'sometimes|exists:accounts,id',
             'amount' => 'sometimes|numeric',
@@ -55,6 +61,8 @@ class TransactionController extends Controller
 
     public function destroy(Transaction $transaction): Response
     {
+        abort_unless($transaction->user_id === auth()->id(), 403);
+
         $transaction->delete();
 
         return response()->noContent();
