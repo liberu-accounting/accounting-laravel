@@ -21,5 +21,12 @@ class Payment extends Model
         'invoice_id',
         'payment_date',
         'payment_amount',
+        'qbo_id',
+        'qbo_sync_token',
     ];
+
+    public function invoice()
+    {
+        return $this->belongsTo(Invoice::class, 'invoice_id');
+    }
 }
