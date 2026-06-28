@@ -26,6 +26,8 @@ use Illuminate\Http\Middleware\HandleCors;
 use Illuminate\Http\Middleware\SetCacheHeaders;
 use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Session\Middleware\AuthenticateSession;
+use Laravel\Sanctum\Http\Middleware\CheckAbilities;
+use Laravel\Sanctum\Http\Middleware\CheckForAnyAbility;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -57,6 +59,8 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->alias([
+            'abilities' => CheckAbilities::class,
+            'ability' => CheckForAnyAbility::class,
             'auth' => Authenticate::class,
             'auth.basic' => AuthenticateWithBasicAuth::class,
             'auth.session' => AuthenticateSession::class,

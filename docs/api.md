@@ -1,110 +1,38 @@
-
-
 # Accounting API Documentation
 
+The REST API is **versioned** under `/api/v1` and authenticated with **Laravel Sanctum** bearer tokens. Endpoints are **scoped by token abilities** — e.g. a token with `invoices:read` can list invoices but not create them, and cannot reach `bills:*` routes.
+
+## Machine-readable spec
+
+The canonical, always-current description is the OpenAPI document:
+
+```
+GET /api/v1/openapi.json
+```
+
+It lists every versioned endpoint with its required ability and is served without authentication (so docs/tooling can read it). Point Swagger UI / Redoc / Postman at that URL.
+
 ## Authentication
-This API uses Laravel Sanctum for authentication. To access the API endpoints, you need to:
 
-1. Create an API token through the dashboard
-2. Include the token in your requests:
-   ```
-   Authorization: Bearer <your-token>
-   ```
-
-## Rate Limiting
-API requests are limited to 60 per minute per user.
-
-## Endpoints
-
-### Transactions
-
-#### GET /api/transactions
-List all transactions (paginated)
-
-Response:
-```json
-{
-    "data": [
-        {
-            "id": 1,
-            "account_id": 1,
-            "amount": 1000.00,
-            "transaction_date": "2024-03-15",
-            "description": "Sample transaction",
-            "created_at": "2024-03-15T10:00:00Z",
-            "updated_at": "2024-03-15T10:00:00Z"
-        }
-    ],
-    "links": {
-        "first": "http://example.com/api/transactions?page=1",
-        "last": "http://example.com/api/transactions?page=1",
-        "prev": null,
-        "next": null
-    },
-    "meta": {
-        "current_page": 1,
-        "from": 1,
-        "last_page": 1,
-        "path": "http://example.com/api/transactions",
-        "per_page": 15,
-        "to": 1,
-        "total": 1
-    }
-}
+```
+Authorization: Bearer <token>
 ```
 
-#### GET /api/transactions/{id}
-Get a specific transaction
+Mint tokens with the abilities the client needs:
 
-Response:
-```json
-{
-    "data": {
-        "id": 1,
-        "account_id": 1,
-        "amount": 1000.00,
-        "transaction_date": "2024-03-15",
-        "description": "Sample transaction",
-        "created_at": "2024-03-15T10:00:00Z",
-        "updated_at": "2024-03-15T10:00:00Z"
-    }
-}
+```php
+$user->createToken('integration', ['invoices:read', 'invoices:write'])->plainTextToken;
 ```
 
-#### POST /api/transactions
-Create a new transaction
+Ability convention: `<resource>:read` for GET, `<resource>:write` for POST/PUT/DELETE. Resources: `invoices`, `bills`, `estimates`, `journal-entries`, `chart-of-accounts`, `general-ledger` (read-only).
 
-Required fields:
-- account_id: integer
-- amount: numeric
-- transaction_date: date
-- description: string
+## Versioning
 
-#### PUT /api/transactions/{id}
-Update an existing transaction
+- `/api/v1/*` — canonical, scoped endpoints.
+- The original unversioned paths (`/api/invoices`, …) remain as **back-compat aliases** (Sanctum-authenticated, not ability-scoped) and may be removed in a future major version.
 
-Optional fields:
-- account_id: integer
-- amount: numeric
-- transaction_date: date
-- description: string
+## Rate limits
 
-#### DELETE /api/transactions/{id}
-Delete a transaction
+`60 req/min` default; `30/min` for read-heavy bank fetches; `10/min` for sync operations. See `routes/api.php`.
 
-### Exchange Rates
-
-#### GET /api/exchange-rates
-Get latest exchange rates
-
-Response:
-```json
-{
-    "base": "USD",
-    "rates": {
-        "EUR": 0.92,
-        "GBP": 0.79,
-        "JPY": 110.86
-    },
-    "timestamp": "2024-03-15T10:00:00Z"
-}
+> Applying the per-verb ability convention to **all** v1 resources (currently fully applied to `invoices` and `bills`) is mechanical follow-up; the OpenAPI spec already documents the intended scope for each.
