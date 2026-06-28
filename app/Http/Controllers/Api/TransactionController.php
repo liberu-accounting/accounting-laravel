@@ -34,6 +34,8 @@ class TransactionController extends Controller
             'amount' => 'required|numeric',
             'transaction_date' => 'required|date',
             'description' => 'required|string',
+            'currency_id' => 'sometimes|nullable|exists:currencies,currency_id',
+            'exchange_rate' => 'sometimes|nullable|numeric',
         ]);
 
         $validated['user_id'] = auth()->id();
@@ -52,6 +54,8 @@ class TransactionController extends Controller
             'amount' => 'sometimes|numeric',
             'transaction_date' => 'sometimes|date',
             'description' => 'sometimes|string',
+            'currency_id' => 'sometimes|nullable|exists:currencies,currency_id',
+            'exchange_rate' => 'sometimes|nullable|numeric',
         ]);
 
         $transaction->update($validated);
