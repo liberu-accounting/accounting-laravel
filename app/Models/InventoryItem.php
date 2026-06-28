@@ -14,9 +14,6 @@ class InventoryItem extends Model
     use IsTenantModel;
 
     #[\Override]
-    protected $primaryKey = 'inventory_item_id';
-
-    #[\Override]
     protected $fillable = [
         'name',
         'sku',
@@ -26,12 +23,15 @@ class InventoryItem extends Model
         'reorder_point',
         'account_id',
         'category_id',
+        'valuation_method',
+        'average_cost',
         'is_active',
     ];
 
     #[\Override]
     protected $casts = [
         'unit_price' => 'decimal:2',
+        'average_cost' => 'decimal:2',
         'current_quantity' => 'integer',
         'reorder_point' => 'integer',
         'is_active' => 'boolean',
