@@ -50,7 +50,9 @@ class HmrcPayeSubmission extends Model
      */
     public function company(): BelongsTo
     {
-        return $this->belongsTo(Company::class);
+        // Company's primary key is `company_id`; pass keys explicitly so Laravel
+        // doesn't derive the wrong foreign key (`company_company_id`) and return null.
+        return $this->belongsTo(Company::class, 'company_id', 'company_id');
     }
 
     /**

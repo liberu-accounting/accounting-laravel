@@ -14,11 +14,11 @@ class CreateAssetsTable extends Migration
     public function up(): void
     {
         Schema::create('assets', function (Blueprint $table): void {
-            $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('name');
-            $table->decimal('value', 12, 2);
-            $table->date('acquired_at')->nullable();
+            // PK is asset_id to match App\Models\Asset::$primaryKey and the Filament AssetResource.
+            $table->id('asset_id');
+            $table->string('asset_name');
+            $table->decimal('asset_cost', 15, 2);
+            $table->integer('useful_life_years');
             $table->timestamps();
         });
     }
