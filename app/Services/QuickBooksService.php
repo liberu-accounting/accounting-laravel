@@ -8,6 +8,7 @@ use App\Models\Account;
 use App\Models\Bill;
 use App\Models\Customer;
 use App\Models\Invoice;
+use App\Models\Payment;
 use App\Models\QboConnection;
 use App\Models\Vendor;
 use Illuminate\Http\Client\PendingRequest;
@@ -20,8 +21,7 @@ use Illuminate\Support\Str;
  * Mirrors the PlaidService pattern: hand-rolled HTTP through the Laravel client,
  * config under services.qbo, encrypted tokens on QboConnection.
  *
- * Invoices, accounts and bills round-trip both directions. Payment mapping is the
- * remaining deferred entity — same client() pattern when it's needed.
+ * Invoices, accounts, bills and payments all round-trip both directions.
  */
 class QuickBooksService
 {
@@ -241,6 +241,71 @@ class QuickBooksService
         $connection->update(['last_synced_at' => now()]);
 
         return count($rows);
+    }
+
+    public function pushPayment(Payment $payment, QboConnection $connection): Payment
+    {
+        $invoice = Invoice::find($payment->invoice_id);
+
+        $payload = [
+            'TotalAmt' => (float) $payment->payment_amount,
+            'CustomerRef' => ['value' => (string) ($invoice?->customer_id ?? '1')],
+        ];
+
+        if ($invoice?->qbo_id) {
+            $payload['Line'] = [[
+                'Amount' => (float) $payment->payment_amount,
+                'LinkedTxn' => [['TxnId' => $invoice->qbo_id, 'TxnType' => 'Invoice']],
+            ]];
+        }
+
+        if ($payment->qbo_id) {
+            $payload['Id'] = $payment->qbo_id;
+            $payload['SyncToken'] = $payment->qbo_sync_token ?? '0';
+            $payload['sparse'] = true;
+        }
+
+        $body = $this->client($connection)->post('/payment', $payload)->throw()->json();
+
+        $payment->update([
+            'qbo_id' => $body['Payment']['Id'] ?? $payment->qbo_id,
+            'qbo_sync_token' => $body['Payment']['SyncToken'] ?? $payment->qbo_sync_token,
+        ]);
+
+        return $payment;
+    }
+
+    public function pullPayments(QboConnection $connection): int
+    {
+        $rows = $this->query($connection, 'select * from Payment')['Payment'] ?? [];
+
+        foreach ($rows as $row) {
+            Payment::updateOrCreate(
+                ['qbo_id' => $row['Id']],
+                [
+                    'invoice_id' => $this->resolvePaymentInvoiceId($row),
+                    'payment_amount' => $row['TotalAmt'] ?? 0,
+                    'payment_date' => $row['TxnDate'] ?? now()->toDateString(),
+                    'qbo_sync_token' => $row['SyncToken'] ?? null,
+                ],
+            );
+        }
+
+        $connection->update(['last_synced_at' => now()]);
+
+        return count($rows);
+    }
+
+    /**
+     * Map a QBO payment back to a local invoice via its LinkedTxn, by qbo_id.
+     *
+     * @param  array<string, mixed>  $row
+     */
+    private function resolvePaymentInvoiceId(array $row): int
+    {
+        $txnId = $row['Line'][0]['LinkedTxn'][0]['TxnId'] ?? null;
+
+        return (int) (Invoice::where('qbo_id', $txnId)->value('id') ?? 0);
     }
 
     /**
