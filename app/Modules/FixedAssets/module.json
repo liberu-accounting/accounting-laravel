@@ -1,0 +1,9 @@
+{
+    "name": "FixedAssets",
+    "version": "1.0.0",
+    "description": "Asset register with straight-line and reducing-balance depreciation.",
+    "dependencies": [],
+    "config": {
+        "enabled": true
+    }
+}

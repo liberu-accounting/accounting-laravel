@@ -8,6 +8,7 @@ use App\Filament\App\Resources\AssetAcquisitions\Pages\CreateAssetAcquisition;
 use App\Filament\App\Resources\AssetAcquisitions\Pages\EditAssetAcquisition;
 use App\Filament\App\Resources\AssetAcquisitions\Pages\ListAssetAcquisitions;
 use App\Models\AssetAcquisition;
+use App\Modules\FixedAssets\FixedAssetsModule;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -21,6 +22,19 @@ class AssetAcquisitionResource extends Resource
 {
     #[\Override]
     protected static ?string $model = AssetAcquisition::class;
+
+    // Gated by the FixedAssets module: disabling it removes this resource.
+    #[\Override]
+    public static function canAccess(): bool
+    {
+        return FixedAssetsModule::isActive();
+    }
+
+    #[\Override]
+    public static function shouldRegisterNavigation(): bool
+    {
+        return FixedAssetsModule::isActive();
+    }
 
     #[\Override]
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';
