@@ -33,6 +33,17 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'qbo' => [
+        'client_id' => env('QBO_CLIENT_ID'),
+        'client_secret' => env('QBO_CLIENT_SECRET'),
+        'environment' => env('QBO_ENVIRONMENT', 'sandbox'), // sandbox, production
+        'redirect_uri' => env('QBO_REDIRECT_URI'),
+        'authorization_url' => env('QBO_AUTHORIZATION_URL', 'https://appcenter.intuit.com/connect/oauth2'),
+        'token_url' => env('QBO_TOKEN_URL', 'https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer'),
+        'api_base_url' => env('QBO_API_BASE_URL', 'https://sandbox-quickbooks.api.intuit.com'),
+        'webhook_verifier_token' => env('QBO_WEBHOOK_VERIFIER_TOKEN'),
+    ],
+
     'plaid' => [
         'client_id' => env('PLAID_CLIENT_ID'),
         'secret' => env('PLAID_SECRET'),

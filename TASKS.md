@@ -40,20 +40,17 @@ before finalizing.
 ## P0 — README claim is false
 
 ### R1 · QuickBooks Online two-way sync `#13`
-- [ ] **DECISION**: build sync vs correct docs — resolve before any R1 task
-- **If build:**
-  - [ ] OAuth 2.0 connect flow (authorize, callback, store tokens)
-  - [ ] Token refresh + expiry handling
-  - [ ] `QuickBooksService` — push (app → QBO)
-  - [ ] `QuickBooksService` — pull (QBO → app)
-  - [ ] Entity mapping: accounts, invoices, bills, payments
-  - [ ] Sync trigger: webhook or poll
-  - [ ] `/api/qbo/*` routes (Sanctum-auth)
-  - [ ] Tests: round-trip invoice both directions
-- **If doc fix:**
-  - [ ] Drop "two-way sync" from `README.md`
-  - [ ] Reframe `docs/QUICKBOOKS_ONLINE_FUNCTIONALITY.md` as local feature parity
-- **Done when:** connected QBO round-trips an invoice w/ tests, OR docs no longer claim sync.
+**DECISION: build sync** (branch `feat/r1-quickbooks-sync`). Done — invoice round-trips both directions, 4 tests green.
+- [x] OAuth 2.0 connect flow (authorize, callback, store tokens)
+- [x] Token refresh + expiry handling
+- [x] `QuickBooksService` — push (app → QBO) `pushInvoice`
+- [x] `QuickBooksService` — pull (QBO → app) `pullInvoices`
+- [x] Entity mapping: invoices (incl. CustomerRef → local Customer)
+- [ ] Entity mapping: accounts, bills, payments — deferred (see ponytail note in service; follow-up)
+- [x] Sync trigger: webhook handler `QboWebhookController` (HMAC-verified) + manual sync route
+- [x] `/api/qbo/*` routes (Sanctum-auth) + public HMAC webhook
+- [x] Tests: round-trip invoice both directions (`QuickBooksSyncTest`, 4 tests)
+- **Done:** connected QBO round-trips an invoice with passing tests. README claim now backed.
 
 ---
 
