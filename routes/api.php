@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\EstimateController;
 use App\Http\Controllers\Api\GeneralLedgerController;
 use App\Http\Controllers\Api\InvoiceController;
 use App\Http\Controllers\Api\JournalEntryController;
+use App\Http\Controllers\Api\OpenApiController;
 use App\Http\Controllers\Api\PlaidController;
 use App\Http\Controllers\Api\PlaidWebhookController;
 use App\Http\Controllers\Api\QboController;
@@ -47,7 +48,31 @@ Route::middleware('auth:sanctum')->group(function (): void {
         Route::apiResource('estimates', EstimateController::class);
     });
 
+    // Versioned API (R13). Canonical paths under /v1, scoped by Sanctum token
+    // abilities (e.g. invoices:read / invoices:write). The unversioned routes
+    // above are kept as back-compat aliases.
+    Route::prefix('v1')->middleware('throttle:60,1')->group(function (): void {
+        // Read endpoints require the matching :read ability; writes require :write.
+        Route::get('invoices', [InvoiceController::class, 'index'])->middleware('ability:invoices:read');
+        Route::get('invoices/{invoice}', [InvoiceController::class, 'show'])->middleware('ability:invoices:read');
+        Route::post('invoices', [InvoiceController::class, 'store'])->middleware('ability:invoices:write');
+        Route::put('invoices/{invoice}', [InvoiceController::class, 'update'])->middleware('ability:invoices:write');
+        Route::delete('invoices/{invoice}', [InvoiceController::class, 'destroy'])->middleware('ability:invoices:write');
+
+        Route::get('bills', [BillController::class, 'index'])->middleware('ability:bills:read');
+        Route::get('bills/{bill}', [BillController::class, 'show'])->middleware('ability:bills:read');
+        Route::post('bills', [BillController::class, 'store'])->middleware('ability:bills:write');
+
+        Route::get('estimates', [EstimateController::class, 'index'])->middleware('ability:estimates:read');
+        Route::get('chart-of-accounts', [ChartOfAccountController::class, 'index'])->middleware('ability:chart-of-accounts:read');
+        Route::get('journal-entries', [JournalEntryController::class, 'index'])->middleware('ability:journal-entries:read');
+        Route::get('general-ledger/trial-balance', [GeneralLedgerController::class, 'trialBalance'])->middleware('ability:general-ledger:read');
+    });
+
     Route::get('/exchange-rates', fn () => app(ExchangeRateService::class)->getLatestRates())->middleware('throttle:60,1');
+
+    // OpenAPI spec for the versioned API (public — no token needed to read the docs).
+    Route::get('/v1/openapi.json', [OpenApiController::class, 'spec'])->withoutMiddleware('auth:sanctum');
 
     // Plaid API Routes
     Route::prefix('plaid')->middleware('throttle:60,1')->group(function (): void {
