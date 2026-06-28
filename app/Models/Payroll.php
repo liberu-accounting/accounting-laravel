@@ -49,12 +49,21 @@ class Payroll extends Model
 
     public function calculateNetSalary(): void
     {
-        $overtimePay = $this->overtime_hours * $this->overtime_rate;
-        $grossSalary = $this->base_salary + $overtimePay;
+        $grossSalary = $this->grossSalary();
 
         // Calculate tax deductions (example rate of 20%)
         $this->tax_deductions = $grossSalary * 0.20;
 
-        $this->net_salary = $grossSalary - $this->tax_deductions - $this->other_deductions;
+        $this->net_salary = $grossSalary - $this->tax_deductions - (float) $this->other_deductions;
+    }
+
+    public function grossSalary(): float
+    {
+        return (float) $this->base_salary + ((float) $this->overtime_hours * (float) $this->overtime_rate);
+    }
+
+    public function totalDeductions(): float
+    {
+        return (float) $this->tax_deductions + (float) $this->other_deductions;
     }
 }

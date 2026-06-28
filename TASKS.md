@@ -40,31 +40,28 @@ before finalizing.
 ## P0 — README claim is false
 
 ### R1 · QuickBooks Online two-way sync `#13`
-- [ ] **DECISION**: build sync vs correct docs — resolve before any R1 task
-- **If build:**
-  - [ ] OAuth 2.0 connect flow (authorize, callback, store tokens)
-  - [ ] Token refresh + expiry handling
-  - [ ] `QuickBooksService` — push (app → QBO)
-  - [ ] `QuickBooksService` — pull (QBO → app)
-  - [ ] Entity mapping: accounts, invoices, bills, payments
-  - [ ] Sync trigger: webhook or poll
-  - [ ] `/api/qbo/*` routes (Sanctum-auth)
-  - [ ] Tests: round-trip invoice both directions
-- **If doc fix:**
-  - [ ] Drop "two-way sync" from `README.md`
-  - [ ] Reframe `docs/QUICKBOOKS_ONLINE_FUNCTIONALITY.md` as local feature parity
-- **Done when:** connected QBO round-trips an invoice w/ tests, OR docs no longer claim sync.
+**DECISION: build sync** (branch `feat/r1-quickbooks-sync`). Done — invoice round-trips both directions, 4 tests green.
+- [x] OAuth 2.0 connect flow (authorize, callback, store tokens)
+- [x] Token refresh + expiry handling
+- [x] `QuickBooksService` — push (app → QBO) `pushInvoice`
+- [x] `QuickBooksService` — pull (QBO → app) `pullInvoices`
+- [x] Entity mapping: invoices (incl. CustomerRef → local Customer)
+- [ ] Entity mapping: accounts, bills, payments — deferred (see ponytail note in service; follow-up)
+- [x] Sync trigger: webhook handler `QboWebhookController` (HMAC-verified) + manual sync route
+- [x] `/api/qbo/*` routes (Sanctum-auth) + public HMAC webhook
+- [x] Tests: round-trip invoice both directions (`QuickBooksSyncTest`, 4 tests)
+- **Done:** connected QBO round-trips an invoice with passing tests. README claim now backed.
 
 ---
 
 ## P1 — Core accounting gaps
 
-### R2 · Account import/export `#5`
-- [ ] Add export action to `ChartOfAccountsResource` (CSV/Excel)
-- [ ] Add import action (header/bulk)
-- [ ] Validate on import: account type, parent ref, normal-balance
-- [ ] Pick lib: `league/csv` or `maatwebsite/excel`
-- [ ] Test: export → re-import to empty tenant, hierarchy + types preserved
+### R2 · Account import/export `#5` — done (branch `feat/r2-account-import-export`)
+- [x] Add export action to `ChartOfAccounts` list page (CSV download)
+- [x] Add import action (header action, CSV upload)
+- [x] Validate on import: account type, parent ref, normal-balance
+- [x] Lib: native `fputcsv`/`fgetcsv` — no new dependency (ponytail)
+- [x] Test: export → re-import to empty tenant, hierarchy + types preserved (`AccountCsvServiceTest`, 5 tests)
 
 ### R3 · Invoice line items `#7` — done (branch `feat/r3-invoice-line-items`)
 - [x] `InvoiceItem` model (mirror `BillItem`: qty, unit_price, amount, auto-calc + recalc hooks)
@@ -76,11 +73,12 @@ before finalizing.
 - [x] Test: line items, total roll-up, balanced JE (`InvoiceLineItemsTest`, 3 tests)
 - Fixed pre-existing `str_pad(int)` bug in `Invoice` boot (shared hook, all callers)
 
-### R4 · Payslip generation `#8`
-- [ ] `Payslip` model (or PDF service) — gross/deductions/net per employee
-- [ ] `dompdf` render
-- [ ] Download action on `PayrollResource`
-- [ ] Test: run pay-run → download PDF w/ gross, deductions, net
+### R4 · Payslip generation `#8` — done (branch `feat/r4-payslip-generation`)
+- [x] `PayslipService` (no separate model needed) — gross/deductions/net per employee
+- [x] `dompdf` render — installed `barryvdh/laravel-dompdf` (also unbreaks `Invoice::generatePDF`)
+- [x] Download action on `PayrollResource`
+- [x] Payroll `grossSalary()` + `totalDeductions()` helpers; `payslips.template` blade view
+- [x] Test: gross/deduction helpers, payslip HTML content, PDF bytes (`PayslipServiceTest`, 3 tests)
 
 ---
 

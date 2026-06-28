@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Api\PlaidController;
 use App\Http\Controllers\Api\PlaidWebhookController;
+use App\Http\Controllers\Api\QboController;
+use App\Http\Controllers\Api\QboWebhookController;
 use App\Http\Controllers\Api\RevolutController;
 use App\Http\Controllers\Api\RevolutWebhookController;
 use App\Http\Controllers\Api\TransactionController;
@@ -51,6 +53,15 @@ Route::middleware('auth:sanctum')->group(function (): void {
         Route::delete('/connections/{connection}', [RevolutController::class, 'removeConnection']);
     });
 
+    // QuickBooks Online API Routes
+    Route::prefix('qbo')->middleware('throttle:60,1')->group(function (): void {
+        Route::get('/connect', [QboController::class, 'connect']);
+        Route::get('/callback', [QboController::class, 'callback']);
+        Route::get('/connections', [QboController::class, 'listConnections']);
+        Route::post('/connections/{connection}/sync', [QboController::class, 'sync'])->middleware('throttle:10,1');
+        Route::delete('/connections/{connection}', [QboController::class, 'removeConnection']);
+    });
+
     // Wise API Routes
     Route::prefix('wise')->middleware('throttle:60,1')->group(function (): void {
         Route::get('/authorize', [WiseController::class, 'redirectToWise']);
@@ -73,3 +84,6 @@ Route::post('/webhooks/revolut', [RevolutWebhookController::class, 'handle']);
 
 // Wise Webhook (public endpoint, no auth required)
 Route::post('/webhooks/wise', [WiseWebhookController::class, 'handle']);
+
+// QBO Webhook (public endpoint, HMAC-verified — no Sanctum auth)
+Route::post('/webhooks/qbo', [QboWebhookController::class, 'handle']);

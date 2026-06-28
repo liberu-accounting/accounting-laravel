@@ -22,6 +22,7 @@ class InvoiceFactory extends Factory
     {
         return [
             'customer_id' => Customer::factory(),
+            'invoice_number' => 'INV-'.$this->faker->unique()->numberBetween(1000, 999999),
             'invoice_date' => now()->toDateString(),
             'due_date' => now()->addDays(30)->toDateString(),
             'total_amount' => $this->faker->randomFloat(2, 10, 5000),
