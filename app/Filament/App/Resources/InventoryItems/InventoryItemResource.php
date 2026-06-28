@@ -9,6 +9,7 @@ use App\Filament\App\Resources\InventoryItems\Pages\EditInventoryItem;
 use App\Filament\App\Resources\InventoryItems\Pages\ListInventoryItems;
 use App\Models\Account;
 use App\Models\InventoryItem;
+use App\Modules\Inventory\InventoryModule;
 use App\Services\InventoryMovementService;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
@@ -30,6 +31,20 @@ class InventoryItemResource extends Resource
 {
     #[\Override]
     protected static ?string $model = InventoryItem::class;
+
+    // Gated by the Inventory module: disabling the module removes this resource
+    // (access + navigation) without touching its code or data.
+    #[\Override]
+    public static function canAccess(): bool
+    {
+        return InventoryModule::isActive();
+    }
+
+    #[\Override]
+    public static function shouldRegisterNavigation(): bool
+    {
+        return InventoryModule::isActive();
+    }
 
     #[\Override]
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-cube';
