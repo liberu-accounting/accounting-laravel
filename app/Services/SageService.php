@@ -4,21 +4,23 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Models\Customer;
 use App\Models\Invoice;
 use App\Models\SageConnection;
+use App\Services\Concerns\RequestsProviderTokens;
+use App\Services\Concerns\ResolvesSyncedContacts;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Str;
 
 /**
- * Two-way sync with Sage Accounting via OAuth 2.0. Mirrors QuickBooksService /
- * XeroService. With three providers now sharing this shape, a common sync
- * contract is the natural next refactor (kept out of this PR to avoid touching
- * the two working integrations).
+ * Two-way sync with Sage Accounting via OAuth 2.0. Shares the OAuth token
+ * request and contact-resolution helpers with QBO/Xero via the Concerns traits;
+ * provider-specific endpoints/payloads stay here.
  */
 class SageService
 {
+    use RequestsProviderTokens;
+    use ResolvesSyncedContacts;
+
     /** @var array<string, mixed> */
     private array $cfg;
 
@@ -43,13 +45,11 @@ class SageService
      */
     public function handleCallback(int $userId, string $code): SageConnection
     {
-        $tokens = Http::asForm()
-            ->withBasicAuth($this->cfg['client_id'], $this->cfg['client_secret'])
-            ->post($this->cfg['token_url'], [
-                'grant_type' => 'authorization_code',
-                'code' => $code,
-                'redirect_uri' => $this->cfg['redirect_uri'],
-            ])->throw()->json();
+        $tokens = $this->requestProviderTokens($this->cfg, [
+            'grant_type' => 'authorization_code',
+            'code' => $code,
+            'redirect_uri' => $this->cfg['redirect_uri'],
+        ]);
 
         $businessId = Http::withToken($tokens['access_token'])
             ->acceptJson()
@@ -118,20 +118,6 @@ class SageService
 
     private function resolveCustomerId(?string $contactName): int
     {
-        $name = $contactName ?? 'Sage Customer';
-        $ref = Str::random(8);
-
-        $customer = Customer::firstOrCreate(
-            ['customer_name' => $name],
-            [
-                'customer_last_name' => '',
-                'customer_address' => 'Imported from Sage',
-                'customer_email' => Str::slug($name).'.'.$ref.'@sage.imported',
-                'customer_phone' => 'sage-'.$ref,
-                'customer_city' => 'Unknown',
-            ],
-        );
-
-        return (int) $customer->getKey();
+        return $this->syncedCustomerId($contactName ?? 'Sage Customer', 'sage');
     }
 }
