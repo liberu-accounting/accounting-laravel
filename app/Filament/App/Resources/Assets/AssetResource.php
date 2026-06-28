@@ -9,6 +9,7 @@ use App\Filament\App\Resources\Assets\Pages\DepreciationSchedulePage;
 use App\Filament\App\Resources\Assets\Pages\EditAsset;
 use App\Filament\App\Resources\Assets\Pages\ListAssets;
 use App\Models\Asset;
+use App\Modules\FixedAssets\FixedAssetsModule;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -26,6 +27,19 @@ class AssetResource extends Resource
 {
     #[\Override]
     protected static ?string $model = Asset::class;
+
+    // Gated by the FixedAssets module: disabling it removes this resource.
+    #[\Override]
+    public static function canAccess(): bool
+    {
+        return FixedAssetsModule::isActive();
+    }
+
+    #[\Override]
+    public static function shouldRegisterNavigation(): bool
+    {
+        return FixedAssetsModule::isActive();
+    }
 
     #[\Override]
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-cube';
