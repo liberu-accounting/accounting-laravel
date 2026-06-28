@@ -42,13 +42,15 @@ class AppPanelProvider extends PanelProvider
             ->default()
             ->id('app')
             ->path('app')
+            ->brandName('Liberu Accounting')
             ->login([AuthenticatedSessionController::class, 'create'])
             ->registration()
             ->passwordReset()
             ->emailVerification()
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->colors([
-                'primary' => Color::Gray,
+                'primary' => Color::Indigo,
+                'gray' => Color::Slate,
             ])
             ->userMenuItems([
                 MenuItem::make()
