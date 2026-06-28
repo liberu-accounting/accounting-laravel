@@ -9,6 +9,24 @@ use App\Models\Transaction;
 
 class ReconciliationService
 {
+    /**
+     * Run reconciliation and flip the statement's reconciled flag based on the
+     * outcome: reconciled only when the balance discrepancy is zero. Returns the
+     * reconcile() result with a `reconciled` boolean added.
+     */
+    public function reconcileStatement(BankStatement $bankStatement): array
+    {
+        $result = $this->reconcile($bankStatement);
+
+        $reconciled = (int) $result['unmatched_transactions'] === 0
+            && abs((float) $result['balance_discrepancy']) < 0.01;
+        $bankStatement->update(['reconciled' => $reconciled]);
+
+        $result['reconciled'] = $reconciled;
+
+        return $result;
+    }
+
     public function reconcile(BankStatement $bankStatement): array
     {
         $transactions = Transaction::where('account_id', $bankStatement->account_id)

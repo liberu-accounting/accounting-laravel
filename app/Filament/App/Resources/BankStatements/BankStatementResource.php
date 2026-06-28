@@ -235,15 +235,13 @@ class BankStatementResource extends Resource
                     ->modalDescription('This will attempt to match and reconcile all transactions for this statement.')
                     ->action(function (BankStatement $record): void {
                         $reconciliationService = app(ReconciliationService::class);
-                        $result = $reconciliationService->reconcile($record);
+                        $result = $reconciliationService->reconcileStatement($record);
 
-                        $matched = $result['matched_transactions']->count();
-                        $unmatched = $result['unmatched_transactions']->count();
+                        $matched = (int) $result['matched_transactions'];
+                        $unmatched = (int) $result['unmatched_transactions'];
                         $balanceDiscrepancy = abs((float) $result['balance_discrepancy']);
 
-                        if ($unmatched === 0 && $balanceDiscrepancy < 0.01) {
-                            $record->update(['reconciled' => true]);
-
+                        if ($result['reconciled']) {
                             Notification::make()
                                 ->title('Reconciliation Complete')
                                 ->body("All {$matched} transactions matched successfully!")
