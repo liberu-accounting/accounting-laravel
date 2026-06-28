@@ -38,8 +38,8 @@ class ExchangeRateService
 
                 ExchangeRate::updateOrCreate(
                     [
-                        'from_currency_id' => $defaultCurrency->id,
-                        'to_currency_id' => $currency->id,
+                        'from_currency_id' => $defaultCurrency->currency_id,
+                        'to_currency_id' => $currency->currency_id,
                         'date' => now()->toDateString(),
                     ],
                     ['rate' => $rate]
@@ -71,15 +71,15 @@ class ExchangeRateService
 
     public function getExchangeRate(Currency $fromCurrency, Currency $toCurrency): float|int|null
     {
-        $exchangeRate = ExchangeRate::where('from_currency_id', $fromCurrency->id)
-            ->where('to_currency_id', $toCurrency->id)
+        $exchangeRate = ExchangeRate::where('from_currency_id', $fromCurrency->currency_id)
+            ->where('to_currency_id', $toCurrency->currency_id)
             ->latest('date')
             ->first();
 
         if (! $exchangeRate) {
             $this->updateExchangeRates();
-            $exchangeRate = ExchangeRate::where('from_currency_id', $fromCurrency->id)
-                ->where('to_currency_id', $toCurrency->id)
+            $exchangeRate = ExchangeRate::where('from_currency_id', $fromCurrency->currency_id)
+                ->where('to_currency_id', $toCurrency->currency_id)
                 ->latest('date')
                 ->first();
         }
