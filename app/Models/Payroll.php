@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Services\PayrollTaxService;
 use App\Traits\IsTenantModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -49,12 +50,16 @@ class Payroll extends Model
 
     public function calculateNetSalary(): void
     {
-        $grossSalary = $this->grossSalary();
+        $gross = $this->grossSalary();
 
-        // Calculate tax deductions (example rate of 20%)
-        $this->tax_deductions = $grossSalary * 0.20;
+        $plan = ($this->employee?->has_student_loan) ? $this->employee->student_loan_plan : null;
+        $figures = app(PayrollTaxService::class)->compute($gross, '1257L', $plan);
 
-        $this->net_salary = $grossSalary - $this->tax_deductions - (float) $this->other_deductions;
+        // Statutory deductions from the employee: PAYE + employee NI + student loan.
+        // (Employer NI is an employer cost, not deducted from net.)
+        $this->tax_deductions = $figures['income_tax'] + $figures['employee_ni'] + $figures['student_loan'];
+
+        $this->net_salary = $gross - $this->tax_deductions - (float) $this->other_deductions;
     }
 
     public function grossSalary(): float

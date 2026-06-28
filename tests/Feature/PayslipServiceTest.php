@@ -26,16 +26,17 @@ class PayslipServiceTest extends TestCase
 
         $payroll = new Payroll([
             'employee_id' => $employee->id,
-            'base_salary' => 3000,
-            'overtime_hours' => 10,
-            'overtime_rate' => 20, // overtime pay = 200, gross = 3200
-            'other_deductions' => 100,
+            'base_salary' => 30000,   // annual gross drives the PAYE/NI engine
+            'overtime_hours' => 0,
+            'overtime_rate' => 0,
+            'other_deductions' => 0,
             'pay_period_start' => '2026-06-01',
             'pay_period_end' => '2026-06-30',
             'payment_date' => '2026-06-30',
             'payment_status' => 'paid',
         ]);
-        $payroll->calculateNetSalary(); // tax = 640, net = 3200 - 640 - 100 = 2460
+        // PAYE 3,486.00 + employee NI 1,394.40 = 4,880.40; net = 25,119.60
+        $payroll->calculateNetSalary();
         $payroll->save();
 
         return $payroll;
@@ -45,9 +46,9 @@ class PayslipServiceTest extends TestCase
     {
         $payroll = $this->payroll();
 
-        $this->assertEquals(3200.00, $payroll->grossSalary());
-        $this->assertEquals(740.00, $payroll->totalDeductions()); // 640 tax + 100 other
-        $this->assertEquals(2460.00, $payroll->net_salary);
+        $this->assertEquals(30000.00, $payroll->grossSalary());
+        $this->assertEquals(4880.40, $payroll->totalDeductions()); // PAYE 3,486 + EE NI 1,394.40
+        $this->assertEquals(25119.60, $payroll->net_salary);
     }
 
     public function test_payslip_html_shows_employee_gross_deductions_net(): void
@@ -57,9 +58,9 @@ class PayslipServiceTest extends TestCase
         $html = app(PayslipService::class)->html($payroll);
 
         $this->assertStringContainsString('Jane Doe', $html);
-        $this->assertStringContainsString('3,200.00', $html);  // gross
-        $this->assertStringContainsString('740.00', $html);    // total deductions
-        $this->assertStringContainsString('2,460.00', $html);  // net
+        $this->assertStringContainsString('30,000.00', $html);  // gross
+        $this->assertStringContainsString('4,880.40', $html);   // total deductions
+        $this->assertStringContainsString('25,119.60', $html);  // net
     }
 
     public function test_payslip_pdf_returns_bytes(): void
