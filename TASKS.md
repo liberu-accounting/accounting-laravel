@@ -117,12 +117,16 @@ before finalizing.
 
 ## P3 — Coverage
 
-### R8 · Test gaps `#12` `#17`
-- [ ] Inventory valuation/COGS tests
-- [ ] Asset depreciation schedule tests
-- [ ] HMRC PAYE/CT tests
-- [ ] Coverage for all R1–R7 deliverables
-- [ ] No core feature at 0 coverage
+### R8 · Test gaps `#12` `#17` — done (branch `feat/r8-coverage`)
+- [x] Inventory valuation/COGS tests (delivered in R5 — `InventoryValuationTest`)
+- [x] Asset depreciation schedule tests (`AssetDepreciationTest`, 3 — straight-line + reducing-balance + schedule)
+- [x] HMRC PAYE tests (`HmrcRtiPayeTest`, 2) + Corporation Tax tests (`HmrcCorporationTaxTest`, 2)
+- [x] Coverage for R1–R7 deliverables (each shipped with its own tests)
+- [x] No core feature at 0 coverage
+- Surfaced + fixed real bugs while testing:
+  - `assets` table migration mismatched the model (Asset was uncreatable) — schema corrected (PK `asset_id`, `asset_name`/`asset_cost`/`useful_life_years`) + dependent FKs
+  - `HmrcSubmission`/`HmrcCorporationTaxSubmission`/`HmrcPayeSubmission` `company()` used a bare `belongsTo` (Company PK is `company_id`) → relation always null → fixed
+  - `HmrcRtiPayeService` passed int `tax_month` to `SimpleXMLElement::addChild` (TypeError) → cast to string
 
 ---
 

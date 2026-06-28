@@ -177,7 +177,7 @@ class HmrcRtiPayeService
         // Employment
         $employment = $fps->addChild('Employment');
         $employment->addChild('TaxYear', $payeSubmission->tax_year);
-        $employment->addChild('TaxMonth', $payeSubmission->tax_month);
+        $employment->addChild('TaxMonth', (string) $payeSubmission->tax_month);
         $employment->addChild('PaymentDate', $payeSubmission->payment_date->format('Y-m-d'));
 
         // Employer

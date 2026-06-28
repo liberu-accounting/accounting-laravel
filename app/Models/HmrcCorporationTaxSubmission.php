@@ -53,7 +53,9 @@ class HmrcCorporationTaxSubmission extends Model
      */
     public function company(): BelongsTo
     {
-        return $this->belongsTo(Company::class);
+        // Company's primary key is company_id; without explicit keys Laravel
+        // derives company_company_id and the relation is always null.
+        return $this->belongsTo(Company::class, 'company_id', 'company_id');
     }
 
     /**
