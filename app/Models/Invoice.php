@@ -40,6 +40,7 @@ class Invoice extends Model
         'approved_at',
         'document_path',
         'notes',
+        'team_id',
     ];
 
     #[\Override]

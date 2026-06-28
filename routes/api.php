@@ -1,7 +1,10 @@
 <?php
 
+use App\Http\Controllers\Api\BillController;
 use App\Http\Controllers\Api\ChartOfAccountController;
+use App\Http\Controllers\Api\EstimateController;
 use App\Http\Controllers\Api\GeneralLedgerController;
+use App\Http\Controllers\Api\InvoiceController;
 use App\Http\Controllers\Api\JournalEntryController;
 use App\Http\Controllers\Api\PlaidController;
 use App\Http\Controllers\Api\PlaidWebhookController;
@@ -39,6 +42,9 @@ Route::middleware('auth:sanctum')->group(function (): void {
             ->only(['index', 'store', 'show', 'destroy']);
         Route::get('/general-ledger/trial-balance', [GeneralLedgerController::class, 'trialBalance']);
         Route::get('/general-ledger/balances', [GeneralLedgerController::class, 'balances']);
+        Route::apiResource('invoices', InvoiceController::class);
+        Route::apiResource('bills', BillController::class);
+        Route::apiResource('estimates', EstimateController::class);
     });
 
     Route::get('/exchange-rates', fn () => app(ExchangeRateService::class)->getLatestRates())->middleware('throttle:60,1');
