@@ -25,11 +25,15 @@ npm run dev                         # Vite HMR dev server
 ```
 
 ### Testing
+
+Tests are PHPUnit (`phpunit/phpunit ^13`, run via Artisan) — **not Pest**. Test classes extend `Tests\TestCase`; there is no `Pest.php`. Don't use `./vendor/bin/pest`.
+
 ```bash
-./vendor/bin/pest                   # Run all tests
-./vendor/bin/pest tests/Unit        # Run unit tests only
-./vendor/bin/pest tests/Feature     # Run feature tests only
-./vendor/bin/pest --filter=DoubleEntry  # Run a specific test
+php artisan test                    # Run all tests
+php artisan test tests/Unit         # Run unit tests only
+php artisan test tests/Feature      # Run feature tests only
+php artisan test --filter=DoubleEntry   # Run a specific test/class
+vendor/bin/phpunit tests/Unit/Foo.php   # Single file directly
 php artisan test --coverage         # With coverage report
 ```
 
