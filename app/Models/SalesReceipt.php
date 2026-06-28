@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Traits\IsTenantModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,10 +13,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Sales Receipt Model
- * 
+ *
  * Represents immediate payment transactions where the customer pays at the time of sale.
  * Unlike invoices, sales receipts record both the sale and payment simultaneously.
- * 
+ *
  * @property int $sales_receipt_id
  * @property int $customer_id
  * @property string $sales_receipt_number
@@ -29,8 +30,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string|null $notes
  * @property string $status
  */
-use App\Traits\IsTenantModel;
-
 class SalesReceipt extends Model
 {
     use IsTenantModel;

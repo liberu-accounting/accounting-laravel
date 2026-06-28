@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Listeners;
 
-use Illuminate\Mail\Events\MessageSent;
 use App\Models\EmailCampaign;
 use App\Models\Lead;
+use Illuminate\Mail\Events\MessageSent;
 
 class EmailTracker
 {

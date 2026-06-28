@@ -4,15 +4,16 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Traits\IsTenantModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Refund Receipt Item Model
- * 
+ *
  * Represents a line item on a refund receipt
- * 
+ *
  * @property int $item_id
  * @property int $refund_receipt_id
  * @property int|null $account_id
@@ -21,8 +22,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property decimal $unit_price
  * @property decimal $amount
  */
-use App\Traits\IsTenantModel;
-
 class RefundReceiptItem extends Model
 {
     use HasFactory;

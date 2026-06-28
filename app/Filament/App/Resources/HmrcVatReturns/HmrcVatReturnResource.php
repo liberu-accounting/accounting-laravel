@@ -4,24 +4,24 @@ declare(strict_types=1);
 
 namespace App\Filament\App\Resources\HmrcVatReturns;
 
-use App\Filament\App\Resources\HmrcVatReturns\Pages\ListHmrcVatReturns;
 use App\Filament\App\Resources\HmrcVatReturns\Pages\CreateHmrcVatReturn;
 use App\Filament\App\Resources\HmrcVatReturns\Pages\EditHmrcVatReturn;
+use App\Filament\App\Resources\HmrcVatReturns\Pages\ListHmrcVatReturns;
 use App\Models\HmrcVatReturn;
 use App\Services\HmrcMtdVatService;
-use Filament\Forms;
-use Filament\Resources\resource;
-use Filament\Schemas\Schema;
-use Filament\Tables;
-use Filament\Tables\Table;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Grid;
-use Filament\Notifications\Notification;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Forms;
+use Filament\Notifications\Notification;
+use Filament\Resources\resource;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
+use Filament\Tables;
+use Filament\Tables\Table;
 
 class HmrcVatReturnResource extends Resource
 {
@@ -62,7 +62,7 @@ class HmrcVatReturnResource extends Resource
                                     ->label('Due Date'),
                             ]),
                     ]),
-                
+
                 Section::make('VAT Amounts')
                     ->schema([
                         Grid::make(2)
@@ -103,7 +103,7 @@ class HmrcVatReturnResource extends Resource
                                     ->default(0),
                             ]),
                     ]),
-                
+
                 Section::make('Turnover Information')
                     ->schema([
                         Grid::make(2)
@@ -134,7 +134,7 @@ class HmrcVatReturnResource extends Resource
                                     ->default(0),
                             ]),
                     ]),
-                
+
                 Forms\Components\Toggle::make('finalised')
                     ->label('Finalised')
                     ->helperText('Mark as finalised to enable submission'),

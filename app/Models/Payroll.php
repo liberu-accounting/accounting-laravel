@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Traits\IsTenantModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Traits\IsTenantModel;
 
 class Payroll extends Model
 {
@@ -51,10 +51,10 @@ class Payroll extends Model
     {
         $overtimePay = $this->overtime_hours * $this->overtime_rate;
         $grossSalary = $this->base_salary + $overtimePay;
-        
+
         // Calculate tax deductions (example rate of 20%)
         $this->tax_deductions = $grossSalary * 0.20;
-        
+
         $this->net_salary = $grossSalary - $this->tax_deductions - $this->other_deductions;
     }
 }

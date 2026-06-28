@@ -12,7 +12,6 @@ use App\Listeners\SwitchTeam;
 use App\Models\Team;
 use Filament\Events\Auth\Registered;
 use Filament\Events\TenantSet;
-use Filament\Facades\Filament;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -85,7 +84,7 @@ class AppPanelProvider extends PanelProvider
                 Authenticate::class,
                 TeamsPermission::class,
             ]);
-            
+
 
         // if (Features::hasApiFeatures()) {
         //     $panel->userMenuItems([

@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Traits\IsTenantModel;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
-use App\Traits\IsTenantModel;
 
 class Invoice extends Model
 {
@@ -92,13 +92,13 @@ protected $casts = [
 
         $baseAmount = $this->total_amount;
         $previousTaxes = 0;
-        
+
         if ($this->taxRate->is_compound) {
             // Get all non-compound taxes first
             $nonCompoundTaxes = TaxRate::where('is_active', true)
                 ->where('is_compound', false)
                 ->get();
-                
+
             foreach ($nonCompoundTaxes as $tax) {
                 $previousTaxes += $tax->calculateTax($baseAmount);
             }
@@ -128,7 +128,7 @@ protected $casts = [
             'vendor' => $this->vendor,
             'tax_rate' => $this->taxRate,
         ];
-        
+
         $pdf = PDF::loadView('invoices.template', $data);
         return $pdf->download('invoice_' . $this->invoice_number . '.pdf');
     }
@@ -149,7 +149,7 @@ protected $casts = [
         $this->save();
     }
 
-    private function shouldGenerateNew(): bool 
+    private function shouldGenerateNew(): bool
     {
         if ($this->recurrence_end && $this->recurrence_end < now()) {
             return false;
@@ -160,7 +160,7 @@ protected $casts = [
     private function getNextDate(): Carbon
     {
         $lastDate = $this->last_generated ?? $this->recurrence_start;
-        
+
         return match($this->recurrence_frequency) {
             'daily' => $lastDate->addDay(),
             'weekly' => $lastDate->addWeek(),
@@ -202,7 +202,7 @@ protected $casts = [
     protected static function boot()
     {
         parent::boot();
-        
+
         static::creating(function ($invoice): void {
             if (empty($invoice->invoice_number)) {
                 $invoice->invoice_number = 'INV-' . str_pad(static::max('invoice_id') + 1, 6, '0', STR_PAD_LEFT);

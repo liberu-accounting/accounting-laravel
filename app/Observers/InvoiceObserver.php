@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Observers;
 
-use App\Models\Invoice;
 use App\Models\AuditLog;
+use App\Models\Invoice;
 use Illuminate\Support\Facades\Auth;
 
 class InvoiceObserver

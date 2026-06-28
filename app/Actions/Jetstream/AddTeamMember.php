@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Actions\Jetstream;
 
-use Illuminate\Contracts\Validation\Rule;
 use App\Models\Team;
 use App\Models\User;
 use Closure;
+use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Jetstream\Contracts\AddsTeamMembers;

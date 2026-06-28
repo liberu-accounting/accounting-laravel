@@ -4,32 +4,28 @@ declare(strict_types=1);
 
 namespace App\Filament\App\Resources\GeneralLedgerReports;
 
-use Filament\Schemas\Schema;
+use App\Filament\App\Resources\GeneralLedgerReportResource\Pages;
+use App\Filament\App\Resources\GeneralLedgerReports\Pages\CreateGeneralLedgerReport;
+use App\Filament\App\Resources\GeneralLedgerReports\Pages\EditGeneralLedgerReport;
+use App\Filament\App\Resources\GeneralLedgerReports\Pages\ListGeneralLedgerReports;
+use App\Filament\App\Resources\GeneralLedgerReports\Pages\ViewGeneralLedgerReport;
+use App\Models\GeneralLedgerReport;
+use Filament\Actions\Action;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\KeyValue;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
-use Filament\Actions\ViewAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\Action;
-use Filament\Actions\DeleteBulkAction;
-use App\Filament\App\Resources\GeneralLedgerReports\Pages\ListGeneralLedgerReports;
-use App\Filament\App\Resources\GeneralLedgerReports\Pages\CreateGeneralLedgerReport;
-use App\Filament\App\Resources\GeneralLedgerReports\Pages\ViewGeneralLedgerReport;
-use App\Filament\App\Resources\GeneralLedgerReports\Pages\EditGeneralLedgerReport;
-use App\Filament\App\Resources\GeneralLedgerReportResource\Pages;
-use App\Models\GeneralLedgerReport;
-use Filament\Forms;
-use Filament\Resources\Resource;
 use Filament\Tables\Table;
-use Filament\Tables;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class GeneralLedgerReportResource extends Resource
 {
@@ -109,7 +105,7 @@ class GeneralLedgerReportResource extends Resource
                 DeleteBulkAction::make(),
             ]);
     }
-    
+
     #[\Override]
     public static function getRelations(): array
     {
@@ -117,7 +113,7 @@ class GeneralLedgerReportResource extends Resource
             //
         ];
     }
-    
+
     #[\Override]
     public static function getPages(): array
     {
@@ -127,5 +123,5 @@ class GeneralLedgerReportResource extends Resource
             'view' => ViewGeneralLedgerReport::route('/{record}'),
             'edit' => EditGeneralLedgerReport::route('/{record}/edit'),
         ];
-    }    
+    }
 }

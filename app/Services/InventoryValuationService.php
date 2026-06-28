@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Models\InventoryCostLayer;
 use App\Models\InventoryItem;
 use App\Models\InventoryTransaction;
-use App\Models\InventoryCostLayer;
 use Illuminate\Support\Facades\DB;
 
 class InventoryValuationService
@@ -14,7 +14,7 @@ class InventoryValuationService
     public function calculateCostOfGoodsSold(InventoryTransaction $transaction): float|int|null
     {
         $item = $transaction->inventoryItem;
-        
+
         return match ($item->valuation_method) {
             'fifo' => $this->calculateFIFOCost($transaction),
             'lifo' => $this->calculateLIFOCost($transaction),
@@ -38,7 +38,7 @@ class InventoryValuationService
             $totalCost += $qtyFromLayer * $layer->unit_cost;
             $layer->quantity -= $qtyFromLayer;
             $layer->save();
-            
+
             $remainingQty -= $qtyFromLayer;
             if ($remainingQty <= 0) {
                 break;
@@ -63,7 +63,7 @@ class InventoryValuationService
             $totalCost += $qtyFromLayer * $layer->unit_cost;
             $layer->quantity -= $qtyFromLayer;
             $layer->save();
-            
+
             $remainingQty -= $qtyFromLayer;
             if ($remainingQty <= 0) {
                 break;
@@ -81,10 +81,10 @@ class InventoryValuationService
 
     public function updateAverageCost(InventoryItem $item, $purchaseQty, $purchaseCost): void
     {
-        $totalValue = ($item->current_quantity * $item->average_cost) + 
+        $totalValue = ($item->current_quantity * $item->average_cost) +
                      ($purchaseQty * $purchaseCost);
         $totalQty = $item->current_quantity + $purchaseQty;
-        
+
         $item->average_cost = $totalValue / $totalQty;
         $item->save();
     }

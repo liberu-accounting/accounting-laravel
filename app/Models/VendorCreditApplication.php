@@ -4,23 +4,22 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Traits\IsTenantModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Vendor Credit Application Model
- * 
+ *
  * Tracks the application of vendor credits to bills
- * 
+ *
  * @property int $application_id
  * @property int $vendor_credit_id
  * @property int $bill_id
  * @property decimal $amount_applied
  * @property date $application_date
  */
-use App\Traits\IsTenantModel;
-
 class VendorCreditApplication extends Model
 {
     use HasFactory;

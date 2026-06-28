@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Traits\IsTenantModel;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
-use App\Traits\IsTenantModel;
 
 class Bill extends Model
 {
@@ -95,7 +95,7 @@ class Bill extends Model
         if ($this->payment_status === 'paid' || !$this->due_date) {
             return 0;
         }
-        
+
         $daysOverdue = Carbon::now()->diffInDays($this->due_date, false);
         return $daysOverdue < 0 ? abs($daysOverdue) : 0;
     }
@@ -114,12 +114,12 @@ class Bill extends Model
 
         $baseAmount = $this->subtotal_amount;
         $previousTaxes = 0;
-        
+
         if ($this->taxRate->is_compound) {
             $nonCompoundTaxes = TaxRate::where('is_active', true)
                 ->where('is_compound', false)
                 ->get();
-                
+
             foreach ($nonCompoundTaxes as $tax) {
                 $previousTaxes += $tax->calculateTax($baseAmount);
             }
@@ -128,7 +128,7 @@ class Bill extends Model
         $taxAmount = $this->taxRate->calculateTax($baseAmount, $previousTaxes);
         $this->tax_amount = $taxAmount;
         $this->total_amount = $this->subtotal_amount + $taxAmount;
-        
+
         return $taxAmount;
     }
 
@@ -142,10 +142,10 @@ class Bill extends Model
     public function recordPayment(array $paymentData)
     {
         $payment = $this->payments()->create($paymentData);
-        
+
         // Update amount paid
         $this->amount_paid = $this->payments()->sum('amount');
-        
+
         // Update payment status
         if ($this->amount_paid >= $this->total_amount) {
             $this->payment_status = 'paid';
@@ -153,9 +153,9 @@ class Bill extends Model
         } elseif ($this->amount_paid > 0) {
             $this->payment_status = 'partial';
         }
-        
+
         $this->save();
-        
+
         return $payment;
     }
 
@@ -208,7 +208,7 @@ class Bill extends Model
     protected static function boot()
     {
         parent::boot();
-        
+
         static::creating(function ($bill): void {
             if (empty($bill->bill_number)) {
                 $bill->bill_number = static::generateBillNumber();

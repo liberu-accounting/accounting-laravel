@@ -8,6 +8,7 @@ use App\Models\BankConnection;
 use App\Models\BankFeedTransaction;
 use App\Models\Transaction;
 use App\Services\PlaidService;
+use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -15,7 +16,6 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Exception;
 
 class SyncPlaidTransactionsJob implements ShouldQueue
 {
@@ -137,7 +137,7 @@ class SyncPlaidTransactionsJob implements ShouldQueue
     protected function processPlaidTransaction(array $plaidTransaction, BankConnection $connection, bool $isUpdate = false): void
     {
         $transactionId = $plaidTransaction['transaction_id'];
-        
+
         // Find or create the transaction
         $transaction = Transaction::updateOrCreate(
             [
@@ -183,7 +183,7 @@ class SyncPlaidTransactionsJob implements ShouldQueue
     protected function categorizePlaidTransaction(array $plaidTransaction): string
     {
         $categories = $plaidTransaction['category'] ?? [];
-        
+
         if (empty($categories)) {
             return 'uncategorized';
         }

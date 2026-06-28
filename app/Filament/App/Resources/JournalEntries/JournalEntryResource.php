@@ -4,32 +4,28 @@ declare(strict_types=1);
 
 namespace App\Filament\App\Resources\JournalEntries;
 
-use App\Filament\App\Resources\JournalEntries\Pages\ListJournalEntries;
 use App\Filament\App\Resources\JournalEntries\Pages\CreateJournalEntry;
 use App\Filament\App\Resources\JournalEntries\Pages\EditJournalEntry;
-use App\Models\JournalEntry;
+use App\Filament\App\Resources\JournalEntries\Pages\ListJournalEntries;
 use App\Models\Account;
-use App\Rules\DoubleEntryValidator;
-use Filament\Forms;
-use Filament\Forms\Components\DatePicker;
-use Filament\Schemas\Components\Grid;
-use Filament\Forms\Components\Repeater;
-use Filament\Schemas\Components\Section;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Toggle;
-use Filament\Resources\Resource;
-use Filament\Schemas\Schema;
-use Filament\Tables;
-use Filament\Tables\Table;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Filters\SelectFilter;
+use App\Models\JournalEntry;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Resource;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
 use Illuminate\Support\HtmlString;
 
 class JournalEntryResource extends Resource
@@ -112,7 +108,7 @@ class JournalEntryResource extends Resource
                                             ->step('0.01')
                                             ->prefix('$')
                                             ->live()
-                                            ->afterStateUpdated(fn ($state, callable $set) => 
+                                            ->afterStateUpdated(fn ($state, callable $set) =>
                                                 $state > 0 ? $set('credit_amount', 0) : null
                                             )
                                             ->columnSpan(2),
@@ -123,7 +119,7 @@ class JournalEntryResource extends Resource
                                             ->step('0.01')
                                             ->prefix('$')
                                             ->live()
-                                            ->afterStateUpdated(fn ($state, callable $set) => 
+                                            ->afterStateUpdated(fn ($state, callable $set) =>
                                                 $state > 0 ? $set('debit_amount', 0) : null
                                             )
                                             ->columnSpan(2),
@@ -139,7 +135,7 @@ class JournalEntryResource extends Resource
                             ->addActionLabel('Add Line')
                             ->reorderable(false)
                             ->columnSpanFull(),
-                        
+
                         Grid::make(2)
                             ->schema([
                                 Placeholder::make('total_debits')

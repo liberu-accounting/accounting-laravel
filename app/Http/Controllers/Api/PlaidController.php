@@ -10,12 +10,12 @@ use App\Models\BankConnection;
 use App\Models\BankFeedTransaction;
 use App\Models\Transaction;
 use App\Services\PlaidService;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
-use Exception;
 
 class PlaidController extends Controller
 {
@@ -327,7 +327,7 @@ class PlaidController extends Controller
             try {
                 // Get balances from Plaid
                 $balanceData = $this->plaidService->getBalances($connection->plaid_access_token);
-                
+
                 $accounts = $balanceData['accounts'] ?? [];
                 $syncedAccounts = [];
 
@@ -391,7 +391,7 @@ class PlaidController extends Controller
     protected function processPlaidTransaction(array $plaidTransaction, BankConnection $connection, bool $isUpdate = false): void
     {
         $transactionId = $plaidTransaction['transaction_id'];
-        
+
         // Find or create the transaction
         $transaction = Transaction::updateOrCreate(
             [
@@ -437,7 +437,7 @@ class PlaidController extends Controller
     protected function categorizePlaidTransaction(array $plaidTransaction): string
     {
         $categories = $plaidTransaction['category'] ?? [];
-        
+
         if (empty($categories)) {
             return 'uncategorized';
         }

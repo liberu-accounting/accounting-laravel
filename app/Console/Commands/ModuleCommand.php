@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
-use Exception;
 use App\Modules\ModuleManager;
+use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 
@@ -219,7 +219,7 @@ class ModuleCommand extends Command
         $this->line("Version: {$info['version']}");
         $this->line("Description: {$info['description']}");
         $this->line("Status: " . ($info['enabled'] ? 'Enabled' : 'Disabled'));
-        
+
         if (!empty($info['dependencies'])) {
             $this->line("Dependencies: " . implode(', ', $info['dependencies']));
         }

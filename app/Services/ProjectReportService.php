@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Models\Project;
-use App\Models\Transaction;
-use Carbon\Carbon;
 
 class ProjectReportService
 {
@@ -37,7 +35,7 @@ class ProjectReportService
                 'indirect_costs' => $indirectCosts,
                 'total_costs' => $directCosts + $indirectCosts,
                 'gross_profit' => $revenue - ($directCosts + $indirectCosts),
-                'profit_margin' => $revenue > 0 ? 
+                'profit_margin' => $revenue > 0 ?
                     (($revenue - ($directCosts + $indirectCosts)) / $revenue) * 100 : 0
             ],
             'transactions' => $transactions->map(fn($t): array => [
@@ -77,7 +75,7 @@ class ProjectReportService
             'budget_amount' => $totalBudget,
             'actual_amount' => $actuals['summary']['total_costs'],
             'variance' => $totalBudget - $actuals['summary']['total_costs'],
-            'variance_percentage' => $totalBudget > 0 ? 
+            'variance_percentage' => $totalBudget > 0 ?
                 (($totalBudget - $actuals['summary']['total_costs']) / $totalBudget) * 100 : 0
         ];
     }

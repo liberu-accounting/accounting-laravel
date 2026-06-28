@@ -4,26 +4,22 @@ declare(strict_types=1);
 
 namespace App\Filament\App\Resources\Payments;
 
-use Filament\Schemas\Schema;
-use Filament\Forms\Components\Select;
-use Filament\Actions\EditAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use App\Filament\App\Resources\Payments\Pages\ListPayments;
-use App\Filament\App\Resources\Payments\Pages\CreatePayment;
-use App\Filament\App\Resources\Payments\Pages\EditPayment;
-use Filament\Forms;
-use Filament\Tables;
-use App\Models\Payment;
-use Filament\Tables\Table;
-use Filament\Resources\Resource;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\DatePicker;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\App\Resources\PaymentResource\Pages;
 use App\Filament\App\Resources\PaymentResource\RelationManagers;
+use App\Filament\App\Resources\Payments\Pages\CreatePayment;
+use App\Filament\App\Resources\Payments\Pages\EditPayment;
+use App\Filament\App\Resources\Payments\Pages\ListPayments;
+use App\Models\Payment;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 
 class PaymentResource extends Resource
 {

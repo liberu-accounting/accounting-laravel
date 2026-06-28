@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Models\HmrcVatReturn;
 use App\Models\HmrcSubmission;
+use App\Models\HmrcVatReturn;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -51,7 +51,7 @@ class HmrcMtdVatService
     public function submitVatReturn(HmrcVatReturn $vatReturn): array
     {
         $company = $vatReturn->company;
-        
+
         if (!$company || !$company->hmrc_vat_number) {
             throw new \Exception('Company does not have a VAT registration number');
         }
@@ -62,7 +62,7 @@ class HmrcMtdVatService
 
         try {
             $payload = $this->buildVatReturnPayload($vatReturn);
-            
+
             $response = Http::withHeaders($this->getHeaders())
                 ->post(
                     $this->baseUrl . "/organisations/vat/{$company->hmrc_vat_number}/returns",
@@ -71,7 +71,7 @@ class HmrcMtdVatService
 
             if ($response->successful()) {
                 $responseData = $response->json();
-                
+
                 // Create submission record
                 $submission = HmrcSubmission::create([
                     'company_id' => $company->company_id,

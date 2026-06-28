@@ -4,23 +4,21 @@ declare(strict_types=1);
 
 namespace App\Filament\App\Resources\Companies;
 
-use Filament\Schemas\Schema;
-use Filament\Actions\EditAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use App\Filament\App\Resources\Companies\Pages\ListCompanies;
 use App\Filament\App\Resources\Companies\Pages\CreateCompany;
 use App\Filament\App\Resources\Companies\Pages\EditCompany;
-use Filament\Forms;
-use Filament\Tables;
-use App\Models\Company;
-use Filament\Tables\Table;
-use Filament\Resources\Resource;
-use Filament\Forms\Components\FileUpload;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
-use Filament\Tables\Columns\ImageColumn;
+use App\Filament\App\Resources\Companies\Pages\ListCompanies;
 use App\Filament\App\Resources\CompanyResource\Pages;
+use App\Models\Company;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 
 class CompanyResource extends Resource
 {

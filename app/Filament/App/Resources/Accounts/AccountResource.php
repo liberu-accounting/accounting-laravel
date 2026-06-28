@@ -4,28 +4,23 @@ declare(strict_types=1);
 
 namespace App\Filament\App\Resources\Accounts;
 
-use Filament\Schemas\Schema;
-use Filament\Actions\EditAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use App\Filament\App\Resources\Accounts\Pages\ListAccounts;
-use App\Filament\App\Resources\Accounts\Pages\CreateAccount;
-use App\Filament\App\Resources\Accounts\Pages\EditAccount;
-use Filament\Forms;
-use Filament\Tables;
-use App\Models\Account;
-use App\Models\Category;
-use Filament\Tables\Table;
-use Filament\Resources\Resource;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Select;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Filament\App\Resources\AccountResource\Pages;
 use App\Filament\App\Resources\AccountResource\RelationManagers;
-use Faker\Provider\ar_EG\Text;
+use App\Filament\App\Resources\Accounts\Pages\CreateAccount;
+use App\Filament\App\Resources\Accounts\Pages\EditAccount;
+use App\Filament\App\Resources\Accounts\Pages\ListAccounts;
+use App\Models\Account;
+use App\Models\Category;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class AccountResource extends Resource
 {

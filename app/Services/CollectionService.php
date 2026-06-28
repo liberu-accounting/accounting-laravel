@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Models\Customer;
-use App\Models\Invoice;
 use App\Notifications\CollectionNotification;
 use Carbon\Carbon;
 
@@ -21,7 +20,7 @@ class CollectionService
         foreach ($customers as $customer) {
             $customer->credit_hold = true;
             $customer->save();
-            
+
             if ($customer->email) {
                 $customer->notify(new CollectionNotification($customer));
             }

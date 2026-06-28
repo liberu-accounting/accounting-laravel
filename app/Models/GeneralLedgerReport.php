@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use PDF;
+use App\Traits\IsTenantModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Traits\IsTenantModel;
+use PDF;
 
 class GeneralLedgerReport extends Model
 {
@@ -55,7 +55,7 @@ class GeneralLedgerReport extends Model
         $pdf = PDF::loadView('reports.general-ledger', [
             'report' => $this
         ]);
-        
+
         return $pdf->download($this->template_name . '.pdf');
     }
 }

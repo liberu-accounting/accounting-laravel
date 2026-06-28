@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Traits\IsTenantModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Traits\IsTenantModel;
 
 class CreditMemo extends Model
 {
@@ -89,12 +89,12 @@ class CreditMemo extends Model
 
         $baseAmount = $this->subtotal_amount;
         $previousTaxes = 0;
-        
+
         if ($this->taxRate->is_compound) {
             $nonCompoundTaxes = TaxRate::where('is_active', true)
                 ->where('is_compound', false)
                 ->get();
-                
+
             foreach ($nonCompoundTaxes as $tax) {
                 $previousTaxes += $tax->calculateTax($baseAmount);
             }
@@ -103,7 +103,7 @@ class CreditMemo extends Model
         $taxAmount = $this->taxRate->calculateTax($baseAmount, $previousTaxes);
         $this->tax_amount = $taxAmount;
         $this->total_amount = $this->subtotal_amount + $taxAmount;
-        
+
         return $taxAmount;
     }
 
@@ -138,10 +138,10 @@ class CreditMemo extends Model
 
         // Update amount applied
         $this->amount_applied = $this->applications()->sum('amount_applied');
-        
+
         // Update status
         $this->status = $this->amount_applied >= $this->total_amount ? 'applied' : 'open';
-        
+
         $this->save();
 
         return $application;
@@ -176,7 +176,7 @@ class CreditMemo extends Model
     protected static function boot()
     {
         parent::boot();
-        
+
         static::creating(function ($creditMemo): void {
             if (empty($creditMemo->credit_memo_number)) {
                 $creditMemo->credit_memo_number = static::generateCreditMemoNumber();

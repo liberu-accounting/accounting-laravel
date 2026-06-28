@@ -6,13 +6,13 @@ namespace App\Services;
 
 use App\Models\BankStatement;
 use App\Models\Transaction;
+use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
-use Carbon\Carbon;
 
 class BankStatementImportService
 {
-    public function importFromCsv(string $filePath, BankStatement $bankStatement): Collection 
+    public function importFromCsv(string $filePath, BankStatement $bankStatement): Collection
     {
         $transactions = collect();
         $handle = fopen($filePath, 'r');
@@ -30,7 +30,7 @@ class BankStatementImportService
                     'bank_statement_id' => $bankStatement->id,
                     'reconciled' => false
                 ]);
-                
+
                 $transactions->push($transaction);
             } catch (\Exception $e) {
                 Log::error('Failed to import transaction: ' . $e->getMessage());
@@ -56,7 +56,7 @@ class BankStatementImportService
                     'bank_statement_id' => $bankStatement->id,
                     'reconciled' => false
                 ]);
-                
+
                 $transactions->push($transaction);
             } catch (\Exception $e) {
                 Log::error('Failed to import OFX transaction: ' . $e->getMessage());

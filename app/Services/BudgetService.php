@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Models\Budget;
-use App\Models\Account;
-use Carbon\Carbon;
 
 class BudgetService
 {
@@ -39,14 +37,14 @@ class BudgetService
     {
         $account = $budget->account;
         $historicalData = $this->getHistoricalData($account);
-        
+
         // Simple moving average forecast
         $forecastAmount = $this->calculateMovingAverage($historicalData);
-        
+
         $budget->forecast_amount = $forecastAmount;
         $budget->forecast_method = 'moving_average';
         $budget->save();
-        
+
         return $forecastAmount;
     }
 

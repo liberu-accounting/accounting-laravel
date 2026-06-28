@@ -6,11 +6,11 @@ namespace App\Filament\App\Resources\BankConnections\Pages;
 
 use App\Filament\App\Resources\BankConnections\BankConnectionResource;
 use App\Services\PlaidService;
+use Exception;
 use Filament\Actions;
 use Filament\Actions\Action;
-use Filament\Resources\Pages\ViewRecord;
 use Filament\Notifications\Notification;
-use Exception;
+use Filament\Resources\Pages\ViewRecord;
 
 class ViewBankConnection extends ViewRecord
 {
@@ -22,7 +22,7 @@ class ViewBankConnection extends ViewRecord
     {
         return [
             Actions\EditAction::make(),
-            
+
             Action::make('sync_transactions')
                 ->label('Sync Transactions')
                 ->icon('heroicon-o-arrow-path')
@@ -32,11 +32,11 @@ class ViewBankConnection extends ViewRecord
                     try {
                         $plaidService = app(PlaidService::class);
                         $result = $plaidService->syncTransactions($this->record);
-                        
+
                         $addedCount = count($result['added'] ?? []);
                         $modifiedCount = count($result['modified'] ?? []);
                         $removedCount = count($result['removed'] ?? []);
-                        
+
                         Notification::make()
                             ->title('Transactions Synced Successfully')
                             ->body("Added: {$addedCount}, Modified: {$modifiedCount}, Removed: {$removedCount}")

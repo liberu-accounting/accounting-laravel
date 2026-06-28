@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Traits\IsTenantModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Traits\IsTenantModel;
 
 class TimeEntry extends Model
 {
@@ -16,7 +16,7 @@ class TimeEntry extends Model
     #[\Override]
     protected $fillable = [
         'customer_id',
-        'invoice_id', 
+        'invoice_id',
         'start_time',
         'end_time',
         'description',

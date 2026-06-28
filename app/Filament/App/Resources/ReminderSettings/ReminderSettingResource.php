@@ -4,20 +4,16 @@ declare(strict_types=1);
 
 namespace App\Filament\App\Resources\ReminderSettings;
 
-use Filament\Schemas\Schema;
-use App\Filament\App\Resources\ReminderSettings\Pages\ListReminderSettings;
 use App\Filament\App\Resources\ReminderSettings\Pages\EditReminderSetting;
+use App\Filament\App\Resources\ReminderSettings\Pages\ListReminderSettings;
 use App\Models\ReminderSetting;
-use Filament\Forms;
-use Filament\Resources\Resource;
-use Filament\Resources\Pages\EditRecord;
-use Filament\Resources\Pages\ListRecords;
-use Filament\Tables;
-use Filament\Tables\Table;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\ToggleColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
+use Filament\Tables\Table;
 
 class ReminderSettingResource extends Resource
 {
@@ -31,7 +27,7 @@ class ReminderSettingResource extends Resource
     protected static string | \UnitEnum | null $navigationGroup = 'Settings';
     #[\Override]
     protected static ?int $navigationSort = 1;
-    
+
     #[\Override]
     public static function getNavigationGroup(): ?string
     {
@@ -49,21 +45,21 @@ class ReminderSettingResource extends Resource
                     ->required()
                     ->minValue(1)
                     ->helperText('Number of days after invoice date before sending first reminder'),
-                
+
                 TextInput::make('reminder_frequency_days')
                     ->label('Days Between Reminders')
                     ->numeric()
                     ->required()
                     ->minValue(1)
                     ->helperText('Number of days to wait between reminders'),
-                
+
                 TextInput::make('max_reminders')
                     ->label('Maximum Number of Reminders')
                     ->numeric()
                     ->required()
                     ->minValue(1)
                     ->helperText('Maximum number of reminders to send per invoice'),
-                
+
                 Toggle::make('is_active')
                     ->label('Enable Reminders')
                     ->required()

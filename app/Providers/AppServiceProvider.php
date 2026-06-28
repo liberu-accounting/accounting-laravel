@@ -7,8 +7,11 @@ namespace App\Providers;
 use App\Models\User;
 use App\Modules\ModuleManager;
 use App\Modules\ModuleServiceProvider;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Validation\Rules\Password;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -28,9 +31,37 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         if (class_exists(\Laravel\Horizon\Horizon::class)) {
-            \Laravel\Horizon\Horizon::auth(fn($request) => Gate::check('viewHorizon', [$request->user()]));
+            \Laravel\Horizon\Horizon::auth(
+                static fn($request) => Gate::check('viewHorizon', [$request->user()]));
         }
 
-        Gate::define('viewHorizon', fn(User $user): bool => $user->hasRole('super_admin'));
+        Gate::define('viewHorizon', static fn(User $user): bool => $user->hasRole('super_admin'));
+        $this->configureModels();
+        $this->configureUrl();
+        $this->configurePassword();
+    }
+    private function configureModels(): void
+    {
+        Model::shouldBeStrict();
+        Model::unguard();
+        Model::automaticallyEagerLoadRelationships();
+    }
+    private function configureUrl(): void
+    {
+        if ($this->app->isProduction()) {
+            URL::forceScheme('https');
+        }
+    }
+    private function configurePassword(): void
+    {
+        Password::defaults(
+            static function () {
+                return Password::min(12)        // NIST 800-63B: minimum 12 characters
+                ->mixedCase()      // At least one uppercase and one lowercase
+                ->numbers()        // At least one digit
+                ->symbols()        // At least one symbol (@$!%*#?&)
+                ->uncompromised(); // Check against breach database
+            },
+        );
     }
 }

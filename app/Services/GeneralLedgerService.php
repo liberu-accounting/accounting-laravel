@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Models\Transaction;
 use App\Models\Account;
 use App\Models\Currency;
-use Illuminate\Support\Facades\DB;
+use App\Models\Transaction;
 
 class GeneralLedgerService
 {
@@ -27,7 +26,7 @@ class GeneralLedgerService
         ->get()
         ->map(function ($account) use ($displayCurrency): array {
             $balance = $account->getBalanceInCurrency($displayCurrency);
-            
+
             return [
                 'account_id' => $account->account_id,
                 'account_name' => $account->account_name,
@@ -49,7 +48,7 @@ class GeneralLedgerService
         ->get()
         ->map(function ($account) use ($displayCurrency): array {
             $balance = $account->getBalanceInCurrency($displayCurrency);
-            
+
             return [
                 'account_id' => $account->account_id,
                 'account_name' => $account->account_name,

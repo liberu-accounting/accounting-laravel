@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use App\Actions\Socialstream\CreateConnectedAccount;
-use App\Actions\Socialstream\CreateUserFromProvider;
 use App\Actions\Socialstream\CreateUserWithTeamsFromProvider;
 use App\Actions\Socialstream\HandleInvalidState;
 use App\Actions\Socialstream\ResolveSocialiteUser;

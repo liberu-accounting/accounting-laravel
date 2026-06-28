@@ -10,12 +10,12 @@ use App\Models\BankConnection;
 use App\Models\BankFeedTransaction;
 use App\Models\Transaction;
 use App\Services\WiseService;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use Exception;
 
 class WiseController extends Controller
 {

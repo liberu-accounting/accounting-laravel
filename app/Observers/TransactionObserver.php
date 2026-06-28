@@ -3,8 +3,8 @@
 declare(strict_types=1);
 namespace App\Observers;
 
-use App\Models\Transaction;
 use App\Models\AuditLog;
+use App\Models\Transaction;
 use Illuminate\Support\Facades\Auth;
 
 class TransactionObserver

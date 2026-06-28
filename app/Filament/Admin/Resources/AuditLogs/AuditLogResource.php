@@ -4,19 +4,17 @@ declare(strict_types=1);
 
 namespace App\Filament\Admin\Resources\AuditLogs;
 
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\SelectFilter;
-use Filament\Tables\Filters\Filter;
-use Filament\Forms\Components\DatePicker;
+use App\Filament\Admin\Resources\AuditLogResource\Pages;
 use App\Filament\Admin\Resources\AuditLogs\Pages\ListAuditLogs;
 use App\Filament\Admin\Resources\AuditLogs\Pages\ViewAuditLog;
-use App\Filament\Admin\Resources\AuditLogResource\Pages;
 use App\Models\AuditLog;
 use App\Models\Invoice;
 use App\Models\Transaction;
-use Filament\Forms;
+use Filament\Forms\Components\DatePicker;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -28,7 +26,7 @@ class AuditLogResource extends Resource
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-clipboard-document-list';
     #[\Override]
     protected static string | \UnitEnum | null $navigationGroup = 'System';
-    
+
     #[\Override]
     public static function getEloquentQuery(): Builder
     {

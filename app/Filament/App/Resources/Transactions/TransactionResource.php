@@ -4,35 +4,31 @@ declare(strict_types=1);
 
 namespace App\Filament\App\Resources\Transactions;
 
+use App\Filament\App\Resources\TransactionResource\Pages;
+use App\Filament\App\Resources\TransactionResource\RelationManagers;
+use App\Filament\App\Resources\Transactions\Pages\CreateTransaction;
+use App\Filament\App\Resources\Transactions\Pages\EditTransaction;
+use App\Filament\App\Resources\Transactions\Pages\ListTransactions;
+use App\Models\Currency;
+use App\Models\Transaction;
+use App\Rules\DoubleEntryValidator;
+use App\Services\ExchangeRateService;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ExportBulkAction;
 use Filament\Actions\ViewAction;
-use Filament\Schemas\Schema;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use App\Filament\App\Resources\Transactions\Pages\ListTransactions;
-use App\Filament\App\Resources\Transactions\Pages\CreateTransaction;
-use App\Filament\App\Resources\Transactions\Pages\EditTransaction;
-use Filament\Forms;
-use Filament\Tables;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use App\Models\Transaction;
-use App\Models\Currency;
-use Filament\Resources\Resource;
-use Filament\Forms\Components\Textarea;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\DatePicker;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Rules\DoubleEntryValidator;
-use App\Services\ExchangeRateService;
-use App\Filament\App\Resources\TransactionResource\Pages;
-use App\Filament\App\Resources\TransactionResource\RelationManagers;
 
 class TransactionResource extends Resource
 {
@@ -41,10 +37,10 @@ class TransactionResource extends Resource
 
     #[\Override]
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
-    
+
     #[\Override]
     protected static string | \UnitEnum | null $navigationGroup = 'Banking';
-    
+
     #[\Override]
     protected static ?int $navigationSort = 3;
 
@@ -112,7 +108,7 @@ class TransactionResource extends Resource
                     ->label('Discrepancy Notes'),
             ]);
     }
-    
+
     #[\Override]
     public static function table(Table $table): Table
     {

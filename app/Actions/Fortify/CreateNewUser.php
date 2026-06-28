@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace App\Actions\Fortify;
 
-use Illuminate\Validation\ValidationException;
-use Illuminate\Database\QueryException;
-use Spatie\Permission\Exceptions\RoleDoesNotExist;
 use App\Models\Team;
 use App\Models\User;
+use Exception;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
-use Exception;
+use Spatie\Permission\Exceptions\RoleDoesNotExist;
 
 class CreateNewUser implements CreatesNewUsers
 {
@@ -44,7 +44,7 @@ class CreateNewUser implements CreatesNewUsers
                 'role' => ['required', 'string', Rule::in(['tenant', 'buyer', 'seller', 'landlord', 'contractor'])],
             ])->validate();
 
-           
+
             $user = DB::transaction(fn() => tap(User::create([
                 'name'     => $input['name'],
                 'email'    => $input['email'],
@@ -70,7 +70,7 @@ class CreateNewUser implements CreatesNewUsers
                 'email' => $user->email,
                 'role' => $input['role'],
             ]);
-    
+
             return $user;
         } catch (ValidationException $e) {
             Log::error('User creation validation failed', [
@@ -101,12 +101,12 @@ class CreateNewUser implements CreatesNewUsers
             throw new Exception('An unexpected error occurred. Please try again later.', $e->getCode(), $e);
         }
     }
-    
+
     private function getDatabaseErrorMessage(QueryException $e): string
     {
         $errorCode = $e->getCode();
         $errorMessage = $e->getMessage();
-    
+
         if (str_contains($errorMessage, 'Duplicate entry')) {
             return 'A user with this email already exists. Please use a different email address.';
         } elseif ($errorCode == 1045) {
@@ -126,7 +126,7 @@ class CreateNewUser implements CreatesNewUsers
     protected function assignOrCreateTeam(User $user): Team
     {
         $team = Team::first();
-    
+
         $team->users()->attach($user);
         return $team;
     }

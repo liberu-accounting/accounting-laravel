@@ -4,27 +4,24 @@ declare(strict_types=1);
 
 namespace App\Filament\App\Resources\Assets;
 
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Schema;
-use Filament\Actions\EditAction;
+use App\Filament\App\Resources\AssetResource\Pages;
+use App\Filament\App\Resources\Assets\Pages\CreateAsset;
+use App\Filament\App\Resources\Assets\Pages\DepreciationSchedulePage;
+use App\Filament\App\Resources\Assets\Pages\EditAsset;
+use App\Filament\App\Resources\Assets\Pages\ListAssets;
+use App\Models\Asset;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use App\Filament\App\Resources\Assets\Pages\ListAssets;
-use App\Filament\App\Resources\Assets\Pages\CreateAsset;
-use App\Filament\App\Resources\Assets\Pages\EditAsset;
-use App\Filament\App\Resources\Assets\Pages\DepreciationSchedulePage;
-use Filament\Forms;
-use Filament\Tables;
-use App\Models\Asset;
-use Filament\Tables\Table;
-use Filament\Resources\Resource;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Toggle;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
-use App\Filament\App\Resources\AssetResource\Pages;
+use Filament\Tables\Table;
 
 class AssetResource extends Resource
 {

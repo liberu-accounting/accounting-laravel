@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Notifications\ExpenseApprovalNotification;
+use App\Traits\IsTenantModel;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Auth;
-use App\Notifications\ExpenseApprovalNotification;
-use App\Traits\IsTenantModel;
 
 class Expense extends Model
 {
@@ -133,7 +133,7 @@ class Expense extends Model
     private function getNextDate(): Carbon
     {
         $lastDate = $this->last_generated ?? $this->recurrence_start;
-        
+
         return match($this->recurrence_frequency) {
             'daily' => $lastDate->addDay(),
             'weekly' => $lastDate->addWeek(),

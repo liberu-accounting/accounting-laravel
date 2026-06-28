@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use App\Services\ExchangeRateService;
 use App\Traits\IsTenantModel;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Account extends Model
 {
@@ -47,8 +47,8 @@ class Account extends Model
         // Set normal_balance based on account_type if not provided
         static::creating(function ($account): void {
             if (!$account->normal_balance) {
-                $account->normal_balance = in_array($account->account_type, ['asset', 'expense']) 
-                    ? 'debit' 
+                $account->normal_balance = in_array($account->account_type, ['asset', 'expense'])
+                    ? 'debit'
                     : 'credit';
             }
         });
@@ -97,7 +97,7 @@ class Account extends Model
 
         $exchangeRateService = app(ExchangeRateService::class);
         $rate = $exchangeRateService->getExchangeRate($this->currency, $targetCurrency);
-        
+
         return $this->balance * $rate;
     }
 
@@ -113,11 +113,11 @@ class Account extends Model
     public function getCalculatedBalanceAttribute()
     {
         $balance = $this->balance;
-        
+
         foreach ($this->children as $child) {
             $balance += $child->calculated_balance;
         }
-        
+
         return $balance;
     }
 

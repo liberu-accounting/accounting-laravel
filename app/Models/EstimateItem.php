@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Traits\IsTenantModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Traits\IsTenantModel;
 
 class EstimateItem extends Model
 {
@@ -50,11 +50,11 @@ class EstimateItem extends Model
     public function calculateAmount(): int|float
     {
         $this->amount = $this->quantity * $this->unit_price;
-        
+
         if ($this->taxRate) {
             $this->tax_amount = $this->taxRate->calculateTax($this->amount);
         }
-        
+
         return $this->amount;
     }
 
@@ -63,7 +63,7 @@ class EstimateItem extends Model
     protected static function boot()
     {
         parent::boot();
-        
+
         static::saving(function ($item): void {
             if ($item->isDirty(['quantity', 'unit_price'])) {
                 $item->calculateAmount();

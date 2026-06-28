@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Traits\IsTenantModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Traits\IsTenantModel;
 
 class TaxRate extends Model
 {
@@ -38,10 +38,10 @@ class TaxRate extends Model
             return 0;
         }
 
-        $taxableAmount = $this->is_compound ? 
-            $amount + $previousTaxes : 
+        $taxableAmount = $this->is_compound ?
+            $amount + $previousTaxes :
             $amount;
-            
+
         return $taxableAmount * ($this->rate / 100);
     }
 

@@ -5,11 +5,9 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Models\BankConnection;
-use App\Models\BankFeedTransaction;
-use App\Models\Transaction;
+use Exception;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Exception;
 
 class RevolutService
 {

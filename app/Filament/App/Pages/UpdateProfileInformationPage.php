@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Filament\App\Pages;
 
 use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Schema;
 use Filament\Pages\Page;
+use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Auth;
 
 class UpdateProfileInformationPage extends Page

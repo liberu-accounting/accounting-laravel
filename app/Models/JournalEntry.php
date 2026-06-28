@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Traits\IsTenantModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Traits\IsTenantModel;
 
 class JournalEntry extends Model
 {
@@ -92,13 +92,13 @@ class JournalEntry extends Model
         \DB::transaction(function (): void {
             foreach ($this->lines as $line) {
                 $account = $line->account;
-                
+
                 if ($account->normal_balance === 'debit') {
                     $account->balance += $line->debit_amount - $line->credit_amount;
                 } else {
                     $account->balance += $line->credit_amount - $line->debit_amount;
                 }
-                
+
                 $account->save();
             }
 
@@ -119,13 +119,13 @@ class JournalEntry extends Model
         \DB::transaction(function (): void {
             foreach ($this->lines as $line) {
                 $account = $line->account;
-                
+
                 if ($account->normal_balance === 'debit') {
                     $account->balance -= $line->debit_amount - $line->credit_amount;
                 } else {
                     $account->balance -= $line->credit_amount - $line->debit_amount;
                 }
-                
+
                 $account->save();
             }
 

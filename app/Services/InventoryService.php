@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Models\InventoryItem;
-use App\Models\Transaction;
-use App\Models\InventoryTransaction;
 use App\Models\InventoryCostLayer;
+use App\Models\InventoryItem;
+use App\Models\InventoryTransaction;
+use App\Models\Transaction;
 
 class InventoryService
 {

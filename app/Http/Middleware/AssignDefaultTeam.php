@@ -6,7 +6,6 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Filament\Facades\Filament;
-use App\Models\Team;
 use Illuminate\Http\Request;
 
 class AssignDefaultTeam

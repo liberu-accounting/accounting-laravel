@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Models\BankConnection;
-use App\Models\Transaction;
+use Exception;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Exception;
 
 class PlaidService
 {
@@ -22,7 +21,7 @@ class PlaidService
         $this->clientId = config('services.plaid.client_id') ?? '';
         $this->secret = config('services.plaid.secret') ?? '';
         $this->environment = config('services.plaid.environment', 'sandbox') ?? 'sandbox';
-        
+
         // Set base URL based on environment
         $this->baseUrl = match($this->environment) {
             'production' => 'https://production.plaid.com',
@@ -63,7 +62,7 @@ class PlaidService
 
     /**
      * Create a link token for Plaid Link initialization
-     * 
+     *
      * @param int $userId User ID for Plaid identification
      * @param string|null $language Language code (default: 'en')
      * @param string|null $accessToken Existing access token for update mode (re-authentication)
@@ -187,16 +186,16 @@ class PlaidService
 
             $response = Http::timeout(30)
                 ->connectTimeout(10)
-                ->retry(2, 200, 
+                ->retry(2, 200,
                     // Only retry on 5xx errors or network issues, not 4xx
                     fn($exception, $request): bool => $exception instanceof \Illuminate\Http\Client\ConnectionException ||
-                       ($exception instanceof \Illuminate\Http\Client\RequestException && 
+                       ($exception instanceof \Illuminate\Http\Client\RequestException &&
                         $exception->response->status() >= 500))
                 ->post("{$this->baseUrl}/transactions/sync", $payload);
 
             if ($response->successful()) {
                 $data = $response->json();
-                
+
                 // Update cursor for next sync
                 if (isset($data['next_cursor'])) {
                     $connection->update([
@@ -225,7 +224,7 @@ class PlaidService
 
     /**
      * Get account information
-     * 
+     *
      * @param string $accessToken The access token (should already be decrypted if from model)
      */
     public function getAccounts(string $accessToken): array
@@ -252,7 +251,7 @@ class PlaidService
 
     /**
      * Get account balances with real-time balance information
-     * 
+     *
      * @param string $accessToken The access token (should already be decrypted if from model)
      * @param array|null $accountIds Optional array of specific account IDs to get balances for
      */
@@ -289,7 +288,7 @@ class PlaidService
 
     /**
      * Remove a Plaid item (disconnect bank)
-     * 
+     *
      * @param string $accessToken The access token (should already be decrypted if from model)
      */
     public function removeItem(string $accessToken): bool
@@ -316,7 +315,7 @@ class PlaidService
 
     /**
      * Verify webhook signature
-     * 
+     *
      * @param string $bodyJson The raw JSON body of the webhook request
      * @param array $headers The headers from the webhook request
      * @return bool True if signature is valid, false otherwise
@@ -324,30 +323,30 @@ class PlaidService
     public function verifyWebhookSignature(string $bodyJson, array $headers): bool
     {
         $verificationKey = config('services.plaid.webhook_verification_key');
-        
+
         // If no verification key is configured, log warning and reject
         if (empty($verificationKey)) {
             Log::warning('Plaid webhook verification key not configured - rejecting webhook');
             return false;
         }
-        
+
         // Get signature from headers (Plaid sends it as 'Plaid-Verification' header)
         $signature = $headers['plaid-verification'] ?? $headers['Plaid-Verification'] ?? null;
-        
+
         // Headers from $request->headers->all() return arrays; extract the first value
         if (is_array($signature)) {
             $signature = $signature[0] ?? null;
         }
-        
+
         if (empty($signature)) {
             Log::warning('Plaid webhook signature missing from headers');
             return false;
         }
-        
+
         // Compute HMAC-SHA256 signature
         $computedSignature = hash_hmac('sha256', $bodyJson, (string) $verificationKey, true);
         $computedSignatureBase64 = base64_encode($computedSignature);
-        
+
         // Use hash_equals for timing-safe comparison
         return hash_equals($computedSignatureBase64, $signature);
     }

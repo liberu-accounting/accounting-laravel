@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Actions\Fortify;
 
-use Illuminate\Validation\ValidationException;
 use App\Models\User;
+use Exception;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 use Laravel\Fortify\Contracts\UpdatesUserPasswords;
-use Exception;
 
 class UpdateUserPassword implements UpdatesUserPasswords
 {

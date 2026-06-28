@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Traits\IsTenantModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Traits\IsTenantModel;
 
 class HmrcCorporationTaxSubmission extends Model
 {
@@ -81,19 +81,19 @@ class HmrcCorporationTaxSubmission extends Model
 
         $this->turnover = $revenue;
         $this->total_profits = $revenue - $expenses;
-        
+
         // Apply tax computation (simplified - actual calculation would be more complex)
         $this->taxable_profits = $this->total_profits;
-        
+
         // Corporation tax rate (19% for UK as of 2024, varies by profit level)
         $taxRate = $this->getTaxRate();
         $this->corporation_tax_charged = $this->taxable_profits * $taxRate;
-        
+
         // Calculate marginal relief if applicable
         $this->marginal_relief = $this->calculateMarginalRelief();
-        
+
         $this->total_tax_payable = max(0, $this->corporation_tax_charged - $this->marginal_relief);
-        
+
         // Store detailed computation
         $this->computation_data = [
             'revenue' => $revenue,
@@ -101,7 +101,7 @@ class HmrcCorporationTaxSubmission extends Model
             'tax_rate' => $taxRate,
             'calculated_at' => now()->toIso8601String(),
         ];
-        
+
         $this->save();
     }
 
@@ -111,18 +111,18 @@ class HmrcCorporationTaxSubmission extends Model
     private function getTaxRate(): float
     {
         $rates = config('hmrc.corporation_tax.rates');
-        
+
         $smallProfitsThreshold = $rates['small_profits_threshold'];
         $marginalReliefThreshold = $rates['marginal_relief_threshold'];
         $smallProfitsRate = $rates['small_profits_rate'];
         $mainRate = $rates['main_rate'];
-        
+
         if ($this->taxable_profits <= $smallProfitsThreshold) {
             return $smallProfitsRate;
         } elseif ($this->taxable_profits > $marginalReliefThreshold) {
             return $mainRate;
         }
-        
+
         // Marginal relief band - use main rate
         return $mainRate;
     }
@@ -133,18 +133,18 @@ class HmrcCorporationTaxSubmission extends Model
     private function calculateMarginalRelief(): float
     {
         $rates = config('hmrc.corporation_tax.rates');
-        
+
         $smallProfitsThreshold = $rates['small_profits_threshold'];
         $marginalReliefThreshold = $rates['marginal_relief_threshold'];
         $fraction = $rates['marginal_relief_fraction'];
-        
+
         if ($this->taxable_profits <= $smallProfitsThreshold || $this->taxable_profits > $marginalReliefThreshold) {
             return 0;
         }
-        
+
         // Marginal relief formula
         $relief = ($marginalReliefThreshold - $this->taxable_profits) * $fraction;
-        
+
         return max(0, $relief);
     }
 
@@ -156,7 +156,7 @@ class HmrcCorporationTaxSubmission extends Model
         if ($this->hmrcSubmission) {
             return $this->hmrcSubmission->status;
         }
-        
+
         return 'draft';
     }
 
@@ -173,7 +173,7 @@ class HmrcCorporationTaxSubmission extends Model
      */
     public function isOverdue(): bool
     {
-        return now()->isAfter($this->filing_due_date) && 
+        return now()->isAfter($this->filing_due_date) &&
                (!$this->hmrcSubmission || !$this->hmrcSubmission->isSubmitted());
     }
 }

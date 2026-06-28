@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Traits\IsTenantModel;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Traits\IsTenantModel;
 
 class Estimate extends Model
 {
@@ -80,7 +80,7 @@ class Estimate extends Model
         if (!$this->expiration_date || $this->status === 'accepted') {
             return false;
         }
-        
+
         return Carbon::now()->isAfter($this->expiration_date);
     }
 
@@ -89,7 +89,7 @@ class Estimate extends Model
         if (!$this->expiration_date) {
             return null;
         }
-        
+
         return Carbon::now()->diffInDays($this->expiration_date, false);
     }
 
@@ -102,12 +102,12 @@ class Estimate extends Model
 
         $baseAmount = $this->subtotal_amount;
         $previousTaxes = 0;
-        
+
         if ($this->taxRate->is_compound) {
             $nonCompoundTaxes = TaxRate::where('is_active', true)
                 ->where('is_compound', false)
                 ->get();
-                
+
             foreach ($nonCompoundTaxes as $tax) {
                 $previousTaxes += $tax->calculateTax($baseAmount);
             }
@@ -116,7 +116,7 @@ class Estimate extends Model
         $taxAmount = $this->taxRate->calculateTax($baseAmount, $previousTaxes);
         $this->tax_amount = $taxAmount;
         $this->total_amount = $this->subtotal_amount + $taxAmount;
-        
+
         return $taxAmount;
     }
 
@@ -187,7 +187,7 @@ class Estimate extends Model
         // Copy items (Note: Invoice uses TimeEntry, not invoice items)
         // This would need to be adjusted based on actual invoice structure
         // For now, just link the estimate to the invoice
-        
+
         $this->update([
             'invoice_id' => $invoice->invoice_id,
         ]);
@@ -221,7 +221,7 @@ class Estimate extends Model
     protected static function boot()
     {
         parent::boot();
-        
+
         static::creating(function ($estimate): void {
             if (empty($estimate->estimate_number)) {
                 $estimate->estimate_number = static::generateEstimateNumber();
@@ -233,7 +233,7 @@ class Estimate extends Model
 
         static::saving(function ($estimate): void {
             // Auto-expire if past expiration date
-            if ($estimate->expiration_date && 
+            if ($estimate->expiration_date &&
                 Carbon::now()->isAfter($estimate->expiration_date) &&
                 !in_array($estimate->status, ['accepted', 'declined', 'expired'])) {
                 $estimate->status = 'expired';

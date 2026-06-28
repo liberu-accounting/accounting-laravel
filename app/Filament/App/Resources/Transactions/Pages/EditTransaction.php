@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace App\Filament\App\Resources\Transactions\Pages;
 
-use Filament\Actions\DeleteAction;
 use App\Filament\App\Resources\Transactions\TransactionResource;
-use Filament\Actions;
+use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 
 class EditTransaction extends EditRecord
