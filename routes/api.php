@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\QboController;
 use App\Http\Controllers\Api\QboWebhookController;
 use App\Http\Controllers\Api\RevolutController;
 use App\Http\Controllers\Api\RevolutWebhookController;
+use App\Http\Controllers\Api\SageController;
 use App\Http\Controllers\Api\TransactionController;
 use App\Http\Controllers\Api\WiseController;
 use App\Http\Controllers\Api\WiseWebhookController;
@@ -109,6 +110,13 @@ Route::middleware('auth:sanctum')->group(function (): void {
         Route::post('/connections/{connection}/pay', [RevolutController::class, 'sendPayment'])->middleware('throttle:30,1');
         Route::post('/connections/{connection}/bulk-pay', [RevolutController::class, 'sendBulkPayment'])->middleware('throttle:10,1');
         Route::delete('/connections/{connection}', [RevolutController::class, 'removeConnection']);
+    });
+
+    // Sage Accounting API Routes
+    Route::prefix('sage')->middleware('throttle:60,1')->group(function (): void {
+        Route::get('/connect', [SageController::class, 'connect']);
+        Route::get('/callback', [SageController::class, 'callback']);
+        Route::post('/connections/{connection}/sync', [SageController::class, 'sync'])->middleware('throttle:10,1');
     });
 
     // Xero API Routes

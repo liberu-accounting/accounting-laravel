@@ -33,6 +33,16 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'sage' => [
+        'client_id' => env('SAGE_CLIENT_ID'),
+        'client_secret' => env('SAGE_CLIENT_SECRET'),
+        'redirect_uri' => env('SAGE_REDIRECT_URI'),
+        'authorization_url' => env('SAGE_AUTHORIZATION_URL', 'https://www.sageone.com/oauth2/auth/central'),
+        'token_url' => env('SAGE_TOKEN_URL', 'https://oauth.accounting.sage.com/token'),
+        'businesses_url' => env('SAGE_BUSINESSES_URL', 'https://api.accounting.sage.com/v3.1/businesses'),
+        'api_base_url' => env('SAGE_API_BASE_URL', 'https://api.accounting.sage.com/v3.1'),
+    ],
+
     'xero' => [
         'client_id' => env('XERO_CLIENT_ID'),
         'client_secret' => env('XERO_CLIENT_SECRET'),
