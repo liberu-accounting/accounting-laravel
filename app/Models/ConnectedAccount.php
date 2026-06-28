@@ -14,16 +14,12 @@ class ConnectedAccount extends Model
 
     #[\Override]
     protected $fillable = [
-        'user_id',
         'provider',
         'provider_id',
         'name',
         'nickname',
         'email',
         'avatar_path',
-        'token',
-        'secret',
-        'refresh_token',
         'expires_at',
     ];
 
@@ -32,4 +28,13 @@ class ConnectedAccount extends Model
         'created_at' => 'datetime',
         'expires_at' => 'datetime',
     ];
+
+    protected static function booted(): void
+    {
+        static::creating(function ($connectedAccount): void {
+            if (empty($connectedAccount->user_id) && auth()->check()) {
+                $connectedAccount->user_id = auth()->id();
+            }
+        });
+    }
 }

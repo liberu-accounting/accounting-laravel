@@ -22,6 +22,7 @@ class TeamInvitationController extends Controller
 
         $user = User::firstOrCreate(['email' => $request->email], ['password' => bcrypt(Str::random(10))]);
         $team = Team::findOrFail($request->team_id);
+        abort_unless($team->hasUser(auth()->user()), 403);
 
         $invitationToken = Str::random(32);
         $user->invitations()->create([

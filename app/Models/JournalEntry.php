@@ -15,17 +15,11 @@ class JournalEntry extends Model
 
     #[\Override]
     protected $fillable = [
-        'user_id',
         'entry_number',
         'entry_date',
         'reference_number',
         'memo',
         'entry_type',
-        'is_approved',
-        'approved_by',
-        'approved_at',
-        'is_posted',
-        'posted_at',
     ];
 
     #[\Override]
@@ -43,6 +37,10 @@ class JournalEntry extends Model
         parent::boot();
 
         static::creating(function ($journalEntry): void {
+            if (empty($journalEntry->user_id) && auth()->check()) {
+                $journalEntry->user_id = auth()->id();
+            }
+
             if (! $journalEntry->entry_number) {
                 $journalEntry->entry_number = static::generateEntryNumber();
             }

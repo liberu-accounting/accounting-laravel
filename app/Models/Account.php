@@ -16,7 +16,6 @@ class Account extends Model
 
     #[\Override]
     protected $fillable = [
-        'user_id',
         'account_number',
         'account_name',
         'account_type',
@@ -44,8 +43,12 @@ class Account extends Model
     {
         parent::boot();
 
-        // Set normal_balance based on account_type if not provided
         static::creating(function ($account): void {
+            if (empty($account->user_id) && auth()->check()) {
+                $account->user_id = auth()->id();
+            }
+
+            // Set normal_balance based on account_type if not provided
             if (! $account->normal_balance) {
                 $account->normal_balance = in_array($account->account_type, ['asset', 'expense'])
                     ? 'debit'

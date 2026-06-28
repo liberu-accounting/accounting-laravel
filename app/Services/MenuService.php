@@ -39,11 +39,25 @@ class MenuService
                 });
 
                 return SpatieMenu::new()
-                    ->add(Link::to($item->url, $item->name)->addClass('relative group'))
+                    ->add(Link::to($this->safeUrl($item->url), e($item->name))->addClass('relative group'))
                     ->add($submenu->addClass('hidden group-hover:block'));
             }
 
-            return Link::to($item->url, $item->name);
+            return Link::to($this->safeUrl($item->url), e($item->name));
         });
+    }
+
+    // Spatie\Menu\Link renders text and href raw (see vendor render()), so escape
+    // the user-supplied name with e() and reject dangerous URL schemes here.
+    private function safeUrl(?string $url): string
+    {
+        $url = (string) $url;
+        $scheme = strtolower((string) parse_url($url, PHP_URL_SCHEME));
+
+        if (in_array($scheme, ['javascript', 'data', 'vbscript'], true)) {
+            return '#';
+        }
+
+        return e($url);
     }
 }
