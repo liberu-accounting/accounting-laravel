@@ -37,12 +37,14 @@ class AdminPanelProvider extends PanelProvider
         $panel
             ->id('admin')
             ->path('admin')
+            ->brandName('Liberu Accounting')
             ->login([AuthenticatedSessionController::class, 'create'])
             ->passwordReset()
             ->emailVerification()
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->colors([
-                'primary' => Color::Gray,
+                'primary' => Color::Indigo,
+                'gray' => Color::Slate,
             ])
             ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\\Filament\\Admin\\Resources')
             ->discoverPages(in: app_path('Filament/Admin/Pages'), for: 'App\\Filament\\Admin\\Pages')
