@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Models\Account;
+use App\Models\Bill;
 use App\Models\Customer;
 use App\Models\Invoice;
 use App\Models\QboConnection;
+use App\Models\Vendor;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
@@ -17,9 +20,8 @@ use Illuminate\Support\Str;
  * Mirrors the PlaidService pattern: hand-rolled HTTP through the Laravel client,
  * config under services.qbo, encrypted tokens on QboConnection.
  *
- * ponytail: Account and Bill/Payment mapping follow the same client() pattern as
- * pushInvoice/pullInvoices — add them when those round-trips are needed. R1's
- * acceptance gate is an invoice round-trip, so that is what ships verified first.
+ * Invoices, accounts and bills round-trip both directions. Payment mapping is the
+ * remaining deferred entity — same client() pattern when it's needed.
  */
 class QuickBooksService
 {
@@ -123,6 +125,153 @@ class QuickBooksService
         $connection->update(['last_synced_at' => now()]);
 
         return count($rows);
+    }
+
+    /** QBO Account.Classification → local account_type. */
+    private const QBO_CLASSIFICATION = [
+        'Asset' => 'asset',
+        'Liability' => 'liability',
+        'Equity' => 'equity',
+        'Revenue' => 'revenue',
+        'Expense' => 'expense',
+    ];
+
+    /** local account_type → QBO AccountType. */
+    private const QBO_ACCOUNT_TYPE = [
+        'asset' => 'Other Current Asset',
+        'liability' => 'Other Current Liability',
+        'equity' => 'Equity',
+        'revenue' => 'Income',
+        'income' => 'Income',
+        'expense' => 'Expense',
+    ];
+
+    public function pushAccount(Account $account, QboConnection $connection): Account
+    {
+        $payload = [
+            'Name' => $account->account_name,
+            'AccountType' => self::QBO_ACCOUNT_TYPE[$account->account_type] ?? 'Other Current Asset',
+        ];
+
+        if ($account->qbo_id) {
+            $payload['Id'] = $account->qbo_id;
+            $payload['SyncToken'] = $account->qbo_sync_token ?? '0';
+            $payload['sparse'] = true;
+        }
+
+        $body = $this->client($connection)->post('/account', $payload)->throw()->json();
+
+        $account->update([
+            'qbo_id' => $body['Account']['Id'] ?? $account->qbo_id,
+            'qbo_sync_token' => $body['Account']['SyncToken'] ?? $account->qbo_sync_token,
+        ]);
+
+        return $account;
+    }
+
+    public function pullAccounts(QboConnection $connection): int
+    {
+        $rows = $this->query($connection, 'select * from Account')['Account'] ?? [];
+
+        foreach ($rows as $row) {
+            Account::updateOrCreate(
+                ['qbo_id' => $row['Id']],
+                [
+                    'account_name' => $row['Name'] ?? ('QBO Account '.$row['Id']),
+                    'account_type' => self::QBO_CLASSIFICATION[$row['Classification'] ?? ''] ?? 'asset',
+                    'account_number' => isset($row['AcctNum']) && is_numeric($row['AcctNum'])
+                        ? (int) $row['AcctNum']
+                        : 9000 + (int) $row['Id'],
+                    'qbo_sync_token' => $row['SyncToken'] ?? null,
+                ],
+            );
+        }
+
+        $connection->update(['last_synced_at' => now()]);
+
+        return count($rows);
+    }
+
+    public function pushBill(Bill $bill, QboConnection $connection): Bill
+    {
+        $payload = [
+            'VendorRef' => ['value' => (string) $bill->vendor_id],
+            'Line' => [[
+                'Amount' => (float) $bill->total_amount,
+                'DetailType' => 'AccountBasedExpenseLineDetail',
+                'AccountBasedExpenseLineDetail' => [
+                    'AccountRef' => ['value' => (string) ($bill->items->first()->account_id ?? '1')],
+                ],
+            ]],
+        ];
+
+        if ($bill->qbo_id) {
+            $payload['Id'] = $bill->qbo_id;
+            $payload['SyncToken'] = $bill->qbo_sync_token ?? '0';
+            $payload['sparse'] = true;
+        }
+
+        $body = $this->client($connection)->post('/bill', $payload)->throw()->json();
+
+        $bill->update([
+            'qbo_id' => $body['Bill']['Id'] ?? $bill->qbo_id,
+            'qbo_sync_token' => $body['Bill']['SyncToken'] ?? $bill->qbo_sync_token,
+        ]);
+
+        return $bill;
+    }
+
+    public function pullBills(QboConnection $connection): int
+    {
+        $rows = $this->query($connection, 'select * from Bill')['Bill'] ?? [];
+
+        foreach ($rows as $row) {
+            Bill::updateOrCreate(
+                ['qbo_id' => $row['Id']],
+                [
+                    'vendor_id' => $this->resolveVendorId($row['VendorRef'] ?? null),
+                    'total_amount' => $row['TotalAmt'] ?? 0,
+                    'bill_date' => $row['TxnDate'] ?? now()->toDateString(),
+                    'due_date' => $row['DueDate'] ?? ($row['TxnDate'] ?? now()->toDateString()),
+                    'qbo_sync_token' => $row['SyncToken'] ?? null,
+                ],
+            );
+        }
+
+        $connection->update(['last_synced_at' => now()]);
+
+        return count($rows);
+    }
+
+    /**
+     * Run a QBO query and return the QueryResponse payload.
+     *
+     * @return array<string, mixed>
+     */
+    private function query(QboConnection $connection, string $query): array
+    {
+        return $this->client($connection)
+            ->get('/query', ['query' => $query])
+            ->throw()
+            ->json()['QueryResponse'] ?? [];
+    }
+
+    /**
+     * Map a QBO VendorRef onto a local vendor, creating one if unseen.
+     *
+     * @param  array<string, mixed>|null  $vendorRef
+     */
+    private function resolveVendorId(?array $vendorRef): int
+    {
+        $name = $vendorRef['name'] ?? ('QBO Vendor '.($vendorRef['value'] ?? 'Unknown'));
+        $ref = (string) ($vendorRef['value'] ?? Str::random(8));
+
+        $vendor = Vendor::firstOrCreate(
+            ['name' => $name],
+            ['email' => Str::slug($name).'.'.$ref.'@qbo.imported'],
+        );
+
+        return (int) $vendor->getKey();
     }
 
     /**
