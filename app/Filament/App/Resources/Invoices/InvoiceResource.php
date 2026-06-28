@@ -12,6 +12,7 @@ use App\Models\TaxRate;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -76,6 +77,27 @@ class InvoiceResource extends Resource
                         'failed' => 'Failed',
                     ])
                     ->required(),
+                Repeater::make('items')
+                    ->relationship('items')
+                    ->label('Line items')
+                    ->schema([
+                        TextInput::make('description')
+                            ->required(),
+                        Select::make('account_id')
+                            ->relationship('account', 'account_name')
+                            ->label('Revenue account')
+                            ->searchable(),
+                        TextInput::make('quantity')
+                            ->numeric()
+                            ->default(1)
+                            ->required(),
+                        TextInput::make('unit_price')
+                            ->numeric()
+                            ->required(),
+                    ])
+                    ->columns(4)
+                    ->defaultItems(1)
+                    ->columnSpanFull(),
                 Textarea::make('notes')
                     ->rows(3),
                 Toggle::make('is_recurring')

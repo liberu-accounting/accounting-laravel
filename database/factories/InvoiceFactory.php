@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
+use App\Models\Customer;
 use App\Models\Invoice;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -20,7 +21,7 @@ class InvoiceFactory extends Factory
     public function definition(): array
     {
         return [
-            'customer_id' => null,
+            'customer_id' => Customer::factory(),
             'invoice_number' => 'INV-'.$this->faker->unique()->numberBetween(1000, 999999),
             'invoice_date' => now()->toDateString(),
             'due_date' => now()->addDays(30)->toDateString(),

@@ -63,14 +63,15 @@ before finalizing.
 - [x] Lib: native `fputcsv`/`fgetcsv` — no new dependency (ponytail)
 - [x] Test: export → re-import to empty tenant, hierarchy + types preserved (`AccountCsvServiceTest`, 5 tests)
 
-### R3 · Invoice line items `#7`
-- [ ] `InvoiceItem` model (mirror `BillItem`: qty, unit_price, amount)
-- [ ] Migration `invoice_items`
-- [ ] `Invoice` hasMany `InvoiceItem`
-- [ ] Filament repeater on `InvoiceResource`
-- [ ] Total rolls up: invoice total = Σ(qty × unit_price)
-- [ ] Posts balanced journal entry
-- [ ] Test: N line items, total + balanced JE
+### R3 · Invoice line items `#7` — done (branch `feat/r3-invoice-line-items`)
+- [x] `InvoiceItem` model (mirror `BillItem`: qty, unit_price, amount, auto-calc + recalc hooks)
+- [x] Migration `invoice_items` (+ guarded `invoice_number` column the model expects)
+- [x] `Invoice` hasMany `InvoiceItem` + `calculateTotals()`
+- [x] Filament repeater on `InvoiceResource`
+- [x] Total rolls up: invoice total = Σ(qty × unit_price)
+- [x] Posts balanced journal entry (`InvoicePostingService`: debit AR, credit revenue per line)
+- [x] Test: line items, total roll-up, balanced JE (`InvoiceLineItemsTest`, 3 tests)
+- Fixed pre-existing `str_pad(int)` bug in `Invoice` boot (shared hook, all callers)
 
 ### R4 · Payslip generation `#8` — done (branch `feat/r4-payslip-generation`)
 - [x] `PayslipService` (no separate model needed) — gross/deductions/net per employee
