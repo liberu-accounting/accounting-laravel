@@ -36,6 +36,24 @@ class GeneralLedgerService
             });
     }
 
+    /**
+     * The configured reporting currency (config accounting.reporting_currency,
+     * by ISO code), or the default currency when unset.
+     */
+    public function reportingCurrency(): ?Currency
+    {
+        $code = config('accounting.reporting_currency');
+
+        if ($code) {
+            $currency = Currency::where('code', $code)->first();
+            if ($currency) {
+                return $currency;
+            }
+        }
+
+        return Currency::where('is_default', true)->first();
+    }
+
     public function getTrialBalance($date, ?Currency $displayCurrency = null)
     {
         if (! $displayCurrency instanceof Currency) {
