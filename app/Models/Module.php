@@ -20,9 +20,9 @@ class Module extends Model
     protected function casts(): array
     {
         return [
-            'enabled'      => 'boolean',
+            'enabled' => 'boolean',
             'dependencies' => 'array',
-            'config'       => 'array',
+            'config' => 'array',
         ];
     }
 

@@ -76,6 +76,7 @@ class InventoryValuationService
     private function calculateAverageCost(InventoryTransaction $transaction): int|float
     {
         $item = $transaction->inventoryItem;
+
         return $transaction->quantity * $item->average_cost;
     }
 

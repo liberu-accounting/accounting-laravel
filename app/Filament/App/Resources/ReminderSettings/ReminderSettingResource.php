@@ -19,12 +19,16 @@ class ReminderSettingResource extends Resource
 {
     #[\Override]
     protected static ?string $model = ReminderSetting::class;
+
     #[\Override]
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-bell';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-bell';
+
     #[\Override]
     protected static ?string $navigationLabel = 'Reminder Settings';
+
     #[\Override]
-    protected static string | \UnitEnum | null $navigationGroup = 'Settings';
+    protected static string|\UnitEnum|null $navigationGroup = 'Settings';
+
     #[\Override]
     protected static ?int $navigationSort = 1;
 

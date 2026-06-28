@@ -93,7 +93,7 @@ class HmrcVatReturn extends Model
             ->get()
             ->sum(
                 // If tax_amount exists, subtract it to get amount ex-VAT
-                fn($expense): int|float => $expense->amount - ($expense->tax_amount ?? 0));
+                fn ($expense): int|float => $expense->amount - ($expense->tax_amount ?? 0));
 
         $this->vat_due_sales = $salesVat;
         $this->vat_reclaimed = $purchasesVat;
@@ -124,6 +124,6 @@ class HmrcVatReturn extends Model
      */
     public function isEditable(): bool
     {
-        return !$this->finalised && (!$this->hmrcSubmission || $this->hmrcSubmission->isEditable());
+        return ! $this->finalised && (! $this->hmrcSubmission || $this->hmrcSubmission->isEditable());
     }
 }

@@ -7,7 +7,6 @@ namespace App\Filament\App\Resources\TimeEntries;
 use App\Filament\App\Resources\TimeEntries\Pages\CreateTimeEntry;
 use App\Filament\App\Resources\TimeEntries\Pages\EditTimeEntry;
 use App\Filament\App\Resources\TimeEntries\Pages\ListTimeEntries;
-use App\Filament\App\Resources\TimeEntryResource\Pages;
 use App\Models\TimeEntry;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
@@ -27,7 +26,7 @@ class TimeEntryResource extends Resource
     protected static ?string $model = TimeEntry::class;
 
     #[\Override]
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-clock';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-clock';
 
     #[\Override]
     public static function form(Schema $schema): Schema
@@ -50,8 +49,7 @@ class TimeEntryResource extends Resource
                     ->numeric()
                     ->required()
                     ->live()
-                    ->afterStateUpdated(fn ($state, callable $set, TimeEntry $record) =>
-                        $set('total_amount', $record->calculateTotalAmount())
+                    ->afterStateUpdated(fn ($state, callable $set, TimeEntry $record) => $set('total_amount', $record->calculateTotalAmount())
                     ),
                 TextInput::make('total_amount')
                     ->numeric()

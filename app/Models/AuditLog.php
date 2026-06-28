@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 class AuditLog extends Model
 {
     use IsTenantModel;
+
     #[\Override]
     protected $fillable = [
         'user_id',
@@ -21,7 +22,7 @@ class AuditLog extends Model
         'old_values',
         'new_values',
         'ip_address',
-        'user_agent'
+        'user_agent',
     ];
 
     #[\Override]

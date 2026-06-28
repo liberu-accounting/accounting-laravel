@@ -24,13 +24,13 @@ class Asset extends Model
         'depreciation_method',
         'salvage_value',
         'acquisition_date',
-        'is_active'
+        'is_active',
     ];
 
     #[\Override]
     protected $casts = [
         'acquisition_date' => 'date',
-        'is_active' => 'boolean'
+        'is_active' => 'boolean',
     ];
 
     public function assetAcquisitions()
@@ -69,7 +69,7 @@ class Asset extends Model
                 'depreciation_amount' => $annualDepreciation,
                 'accumulated_depreciation' => $annualDepreciation * $year,
                 'book_value' => max($currentValue, $this->salvage_value),
-                'calculation_date' => $startDate->copy()->addYears($year)
+                'calculation_date' => $startDate->copy()->addYears($year),
             ]);
         }
     }
@@ -95,7 +95,7 @@ class Asset extends Model
                 'depreciation_amount' => $depreciation,
                 'accumulated_depreciation' => $this->asset_cost - $currentValue,
                 'book_value' => $currentValue,
-                'calculation_date' => $startDate->copy()->addYears($year)
+                'calculation_date' => $startDate->copy()->addYears($year),
             ]);
         }
     }

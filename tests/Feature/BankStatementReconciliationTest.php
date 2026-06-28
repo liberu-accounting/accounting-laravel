@@ -2,29 +2,30 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
-use App\Models\BankStatement;
 use App\Models\Account;
+use App\Models\BankStatement;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Services\ReconciliationService;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Carbon\Carbon;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class BankStatementReconciliationTest extends TestCase
 {
     use RefreshDatabase;
 
     protected $user;
+
     protected $account;
 
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         $this->user = User::factory()->create();
         $this->actingAs($this->user);
-        
+
         // Create a test account
         $this->account = Account::create([
             'user_id' => $this->user->id,
@@ -38,6 +39,7 @@ class BankStatementReconciliationTest extends TestCase
             'allow_manual_entry' => true,
         ]);
     }
+
     public function test_bank_statement_can_be_created_with_balances(): void
     {
         $statement = BankStatement::create([
@@ -56,6 +58,7 @@ class BankStatementReconciliationTest extends TestCase
             'ending_balance' => 5500.00,
         ]);
     }
+
     public function test_bank_statement_has_account_relationship(): void
     {
         $statement = BankStatement::create([
@@ -69,6 +72,7 @@ class BankStatementReconciliationTest extends TestCase
         $this->assertInstanceOf(Account::class, $statement->account);
         $this->assertEquals($this->account->id, $statement->account_id);
     }
+
     public function test_reconciliation_service_can_match_transactions(): void
     {
         $statement = BankStatement::create([
@@ -110,7 +114,7 @@ class BankStatementReconciliationTest extends TestCase
             'reconciled' => false,
         ]);
 
-        $reconciliationService = new ReconciliationService();
+        $reconciliationService = new ReconciliationService;
         $result = $reconciliationService->reconcile($statement);
 
         $this->assertArrayHasKey('matched_transactions', $result);
@@ -118,6 +122,7 @@ class BankStatementReconciliationTest extends TestCase
         $this->assertArrayHasKey('discrepancies', $result);
         $this->assertArrayHasKey('balance_discrepancy', $result);
     }
+
     public function test_reconciliation_marks_matched_transactions_as_reconciled(): void
     {
         $statement = BankStatement::create([
@@ -158,15 +163,16 @@ class BankStatementReconciliationTest extends TestCase
             'reconciled' => false,
         ]);
 
-        $reconciliationService = new ReconciliationService();
+        $reconciliationService = new ReconciliationService;
         $reconciliationService->reconcile($statement);
 
         $transaction->refresh();
-        
+
         // Note: The reconciliation service marks transactions as reconciled
         // This test validates the reconciliation logic exists
         $this->assertNotNull($transaction->reconciled);
     }
+
     public function test_bank_statement_tracks_reconciliation_status(): void
     {
         $statement = BankStatement::create([
@@ -185,6 +191,7 @@ class BankStatementReconciliationTest extends TestCase
 
         $this->assertTrue($statement->reconciled);
     }
+
     public function test_bank_statement_can_have_multiple_transactions(): void
     {
         $statement = BankStatement::create([

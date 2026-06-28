@@ -29,8 +29,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class DelayedCharge extends Model
 {
-    use IsTenantModel;
     use HasFactory, SoftDeletes;
+    use IsTenantModel;
 
     #[\Override]
     protected $primaryKey = 'delayed_charge_id';
@@ -70,7 +70,7 @@ class DelayedCharge extends Model
 
         static::saving(function ($charge): void {
             // Auto-calculate amount
-            if (!isset($charge->amount) || $charge->amount == 0) {
+            if (! isset($charge->amount) || $charge->amount == 0) {
                 $charge->amount = $charge->quantity * $charge->unit_price;
             }
         });

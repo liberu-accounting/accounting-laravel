@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Filament\App\Resources\TaxForms;
 
-use App\Filament\App\Resources\TaxFormResource\Pages;
 use App\Filament\App\Resources\TaxForms\Pages\CreateTaxForm;
 use App\Filament\App\Resources\TaxForms\Pages\EditTaxForm;
 use App\Filament\App\Resources\TaxForms\Pages\ListTaxForms;
@@ -25,7 +24,7 @@ class TaxFormResource extends Resource
     protected static ?string $model = TaxForm::class;
 
     #[\Override]
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document-text';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-document-text';
 
     #[\Override]
     public static function form(Schema $schema): Schema

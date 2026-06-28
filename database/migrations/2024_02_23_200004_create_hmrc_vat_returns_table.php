@@ -30,7 +30,7 @@ return new class extends Migration
             $table->decimal('total_acquisitions', 15, 2)->default(0)->comment('Box 9: Total EC acquisitions');
             $table->boolean('finalised')->default(false);
             $table->timestamps();
-            
+
             $table->index(['company_id', 'period_from', 'period_to']);
         });
     }

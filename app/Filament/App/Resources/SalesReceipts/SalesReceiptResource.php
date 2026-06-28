@@ -31,13 +31,13 @@ class SalesReceiptResource extends Resource
     protected static ?string $model = SalesReceipt::class;
 
     #[\Override]
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-receipt-percent';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-receipt-percent';
 
     #[\Override]
     protected static ?int $navigationSort = 5;
 
     #[\Override]
-    protected static string | \UnitEnum | null $navigationGroup = 'Sales';
+    protected static string|\UnitEnum|null $navigationGroup = 'Sales';
 
     #[\Override]
     protected static ?string $recordTitleAttribute = 'sales_receipt_number';

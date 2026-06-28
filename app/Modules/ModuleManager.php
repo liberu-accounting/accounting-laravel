@@ -29,22 +29,22 @@ class ModuleManager
 
     public function enabled(): Collection
     {
-        return $this->modules->filter(fn(ModuleInterface $m): bool => $m->isEnabled());
+        return $this->modules->filter(fn (ModuleInterface $m): bool => $m->isEnabled());
     }
 
     public function disabled(): Collection
     {
-        return $this->modules->filter(fn(ModuleInterface $m): bool => ! $m->isEnabled());
+        return $this->modules->filter(fn (ModuleInterface $m): bool => ! $m->isEnabled());
     }
 
     public function get(string $name): ?ModuleInterface
     {
-        return $this->modules->first(fn(ModuleInterface $m): bool => $m->getName() === $name);
+        return $this->modules->first(fn (ModuleInterface $m): bool => $m->getName() === $name);
     }
 
     public function has(string $name): bool
     {
-        return $this->modules->contains(fn(ModuleInterface $m): bool => $m->getName() === $name);
+        return $this->modules->contains(fn (ModuleInterface $m): bool => $m->getName() === $name);
     }
 
     public function enable(string $name): bool
@@ -137,18 +137,18 @@ class ModuleManager
         }
 
         return [
-            'name'         => $module->getName(),
-            'version'      => $module->getVersion(),
-            'description'  => $module->getDescription(),
+            'name' => $module->getName(),
+            'version' => $module->getVersion(),
+            'description' => $module->getDescription(),
             'dependencies' => $module->getDependencies(),
-            'enabled'      => $module->isEnabled(),
-            'config'       => $module->getConfig(),
+            'enabled' => $module->isEnabled(),
+            'config' => $module->getConfig(),
         ];
     }
 
     public function getAllModulesInfo(): array
     {
-        return $this->modules->map(fn(ModuleInterface $m): array => $this->getModuleInfo($m->getName()))->values()->toArray();
+        return $this->modules->map(fn (ModuleInterface $m): array => $this->getModuleInfo($m->getName()))->values()->toArray();
     }
 
     public function clearCache(): void
@@ -192,8 +192,8 @@ class ModuleManager
         }
 
         return [
-            'healthy'  => empty($errors),
-            'errors'   => $errors,
+            'healthy' => empty($errors),
+            'errors' => $errors,
             'warnings' => $warnings,
         ];
     }
@@ -202,7 +202,7 @@ class ModuleManager
     {
         $cacheKey = config('modules.cache_key', 'app.modules');
         $cacheTtl = config('modules.cache_ttl', 3600);
-        $useCache  = config('modules.cache', true) && ! config('modules.development', false);
+        $useCache = config('modules.cache', true) && ! config('modules.development', false);
 
         if ($useCache && Cache::has($cacheKey)) {
             $cached = Cache::get($cacheKey);
@@ -303,7 +303,8 @@ class ModuleManager
                     try {
                         $record = Module::where('name', $this->getName())->first();
                         $this->enabled = $record ? (bool) $record->enabled : false;
-                    } catch (\Throwable) {}
+                    } catch (\Throwable) {
+                    }
                 }
 
                 public function getName(): string
@@ -370,10 +371,10 @@ class ModuleManager
             Module::updateOrCreate(
                 ['name' => $module->getName()],
                 [
-                    'version'      => $module->getVersion(),
-                    'description'  => $module->getDescription(),
+                    'version' => $module->getVersion(),
+                    'description' => $module->getDescription(),
                     'dependencies' => $module->getDependencies(),
-                    'config'       => $module->getConfig(),
+                    'config' => $module->getConfig(),
                 ]
             );
         } catch (\Throwable $e) {
@@ -385,11 +386,11 @@ class ModuleManager
     {
         try {
             $record = Module::firstOrNew(['name' => $module->getName()]);
-            $record->enabled     = $enabled;
-            $record->version     = $module->getVersion();
+            $record->enabled = $enabled;
+            $record->version = $module->getVersion();
             $record->description = $module->getDescription();
             $record->dependencies = $module->getDependencies();
-            $record->config      = $module->getConfig();
+            $record->config = $module->getConfig();
             $record->save();
         } catch (\Throwable $e) {
             Log::warning("Failed to persist state for module '{$module->getName()}': ".$e->getMessage());
@@ -411,7 +412,7 @@ class ModuleManager
     protected function hasDependents(string $moduleName): bool
     {
         return $this->enabled()->contains(
-            fn(ModuleInterface $m): bool => in_array($moduleName, $m->getDependencies()),
+            fn (ModuleInterface $m): bool => in_array($moduleName, $m->getDependencies()),
         );
     }
 

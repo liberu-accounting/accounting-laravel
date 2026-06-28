@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Filament\App\Resources\AssetAcquisitions;
 
-use App\Filament\App\Resources\AssetAcquisitionResource\Pages;
-use App\Filament\App\Resources\AssetAcquisitionResource\RelationManagers;
 use App\Filament\App\Resources\AssetAcquisitions\Pages\CreateAssetAcquisition;
 use App\Filament\App\Resources\AssetAcquisitions\Pages\EditAssetAcquisition;
 use App\Filament\App\Resources\AssetAcquisitions\Pages\ListAssetAcquisitions;
@@ -25,7 +23,7 @@ class AssetAcquisitionResource extends Resource
     protected static ?string $model = AssetAcquisition::class;
 
     #[\Override]
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';
 
     #[\Override]
     public static function form(Schema $schema): Schema

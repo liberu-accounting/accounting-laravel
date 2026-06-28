@@ -18,42 +18,42 @@ class Invoice extends Model
 
     // protected $primaryKey = "invoice_id";
 
-   #[\Override]
-   protected $fillable = [
-    "customer_id",
-    "vendor_id",
-    "invoice_number",
-    "invoice_date",
-    "due_date",
-    "total_amount",
-    "tax_amount",
-    "tax_rate_id",
-    "payment_status",
-    "is_recurring",
-    "recurrence_frequency",
-    "recurrence_start",
-    "recurrence_end",
-    "last_generated",
-    "approval_status",
-    "rejection_reason",
-    "approved_by",
-    "approved_at",
-    "document_path",
-    "notes",
-];
+    #[\Override]
+    protected $fillable = [
+        'customer_id',
+        'vendor_id',
+        'invoice_number',
+        'invoice_date',
+        'due_date',
+        'total_amount',
+        'tax_amount',
+        'tax_rate_id',
+        'payment_status',
+        'is_recurring',
+        'recurrence_frequency',
+        'recurrence_start',
+        'recurrence_end',
+        'last_generated',
+        'approval_status',
+        'rejection_reason',
+        'approved_by',
+        'approved_at',
+        'document_path',
+        'notes',
+    ];
 
-#[\Override]
-protected $casts = [
-    'total_amount' => 'decimal:2',
-    'tax_amount' => 'decimal:2',
-    'invoice_date' => 'date',
-    'due_date' => 'date',
-    'is_recurring' => 'boolean',
-    'recurrence_start' => 'date',
-    'recurrence_end' => 'date',
-    'last_generated' => 'date',
-    'approved_at' => 'datetime',
-];
+    #[\Override]
+    protected $casts = [
+        'total_amount' => 'decimal:2',
+        'tax_amount' => 'decimal:2',
+        'invoice_date' => 'date',
+        'due_date' => 'date',
+        'is_recurring' => 'boolean',
+        'recurrence_start' => 'date',
+        'recurrence_end' => 'date',
+        'last_generated' => 'date',
+        'approved_at' => 'datetime',
+    ];
 
     public function customer()
     {
@@ -69,6 +69,7 @@ protected $casts = [
     {
         return $this->belongsTo(User::class, 'approved_by');
     }
+
     public function taxRate()
     {
         return $this->belongsTo(TaxRate::class);
@@ -86,7 +87,7 @@ protected $casts = [
 
     public function calculateTax()
     {
-        if (!$this->taxRate) {
+        if (! $this->taxRate) {
             return 0;
         }
 
@@ -106,6 +107,7 @@ protected $casts = [
 
         $taxAmount = $this->taxRate->calculateTax($baseAmount, $previousTaxes);
         $this->tax_amount = $taxAmount;
+
         return $taxAmount;
     }
 
@@ -117,6 +119,7 @@ protected $casts = [
     public function calculateTotalFromTimeEntries()
     {
         $this->total_amount = $this->timeEntries->sum('total_amount');
+
         return $this->total_amount;
     }
 
@@ -129,13 +132,14 @@ protected $casts = [
             'tax_rate' => $this->taxRate,
         ];
 
-        $pdf = PDF::loadView('invoices.template', $data);
-        return $pdf->download('invoice_' . $this->invoice_number . '.pdf');
+        $pdf = Pdf::loadView('invoices.template', $data);
+
+        return $pdf->download('invoice_'.$this->invoice_number.'.pdf');
     }
 
     public function generateRecurring(): void
     {
-        if (!$this->is_recurring || !$this->shouldGenerateNew()) {
+        if (! $this->is_recurring || ! $this->shouldGenerateNew()) {
             return;
         }
 
@@ -154,6 +158,7 @@ protected $casts = [
         if ($this->recurrence_end && $this->recurrence_end < now()) {
             return false;
         }
+
         return $this->getNextDate()->lte(now());
     }
 
@@ -161,7 +166,7 @@ protected $casts = [
     {
         $lastDate = $this->last_generated ?? $this->recurrence_start;
 
-        return match($this->recurrence_frequency) {
+        return match ($this->recurrence_frequency) {
             'daily' => $lastDate->addDay(),
             'weekly' => $lastDate->addWeek(),
             'monthly' => $lastDate->addMonth(),
@@ -170,6 +175,7 @@ protected $casts = [
         };
 
     }
+
     public function approve(): void
     {
         $this->update([
@@ -205,7 +211,7 @@ protected $casts = [
 
         static::creating(function ($invoice): void {
             if (empty($invoice->invoice_number)) {
-                $invoice->invoice_number = 'INV-' . str_pad(static::max('invoice_id') + 1, 6, '0', STR_PAD_LEFT);
+                $invoice->invoice_number = 'INV-'.str_pad(static::max('invoice_id') + 1, 6, '0', STR_PAD_LEFT);
             }
             if (empty($invoice->approval_status)) {
                 $invoice->approval_status = 'pending';

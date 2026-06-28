@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Notifications;
 
+use App\Models\Customer;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -13,9 +14,7 @@ class CollectionNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public function __construct(protected \App\Models\Customer $customer)
-    {
-    }
+    public function __construct(protected Customer $customer) {}
 
     public function via($notifiable): array
     {
@@ -30,9 +29,9 @@ class CollectionNotification extends Notification implements ShouldQueue
 
         return (new MailMessage)
             ->subject('Important: Account Status Update')
-            ->greeting('Dear ' . $this->customer->customer_name)
+            ->greeting('Dear '.$this->customer->customer_name)
             ->line('Your account has been placed on credit hold due to overdue payments.')
-            ->line('Total amount overdue: $' . number_format($totalOverdue, 2))
+            ->line('Total amount overdue: $'.number_format($totalOverdue, 2))
             ->line('Please contact our collections department immediately to resolve this issue.')
             ->action('View Account', url('/account'))
             ->line('Thank you for your prompt attention to this matter.');

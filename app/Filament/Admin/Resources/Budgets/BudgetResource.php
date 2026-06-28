@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Filament\Admin\Resources\Budgets;
 
-use App\Filament\Admin\Resources\BudgetResource\Pages;
 use App\Filament\Admin\Resources\Budgets\Pages\CreateBudget;
 use App\Filament\Admin\Resources\Budgets\Pages\EditBudget;
 use App\Filament\Admin\Resources\Budgets\Pages\ListBudgets;
@@ -30,7 +29,7 @@ class BudgetResource extends Resource
     protected static ?string $model = Budget::class;
 
     #[\Override]
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-calculator';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-calculator';
 
     #[\Override]
     public static function form(Schema $schema): Schema
@@ -85,7 +84,7 @@ class BudgetResource extends Resource
                 DeleteAction::make(),
                 Action::make('generate_forecast')
                     ->action(function (Budget $record): void {
-                        $budgetService = new BudgetService();
+                        $budgetService = new BudgetService;
                         $budgetService->generateForecast($record);
                     })
                     ->requiresConfirmation()

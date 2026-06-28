@@ -12,8 +12,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Estimate extends Model
 {
-    use IsTenantModel;
     use HasFactory, SoftDeletes;
+    use IsTenantModel;
 
     #[\Override]
     protected $primaryKey = 'estimate_id';
@@ -77,7 +77,7 @@ class Estimate extends Model
     // Calculated Attributes
     public function getIsExpiredAttribute()
     {
-        if (!$this->expiration_date || $this->status === 'accepted') {
+        if (! $this->expiration_date || $this->status === 'accepted') {
             return false;
         }
 
@@ -86,7 +86,7 @@ class Estimate extends Model
 
     public function getDaysUntilExpirationAttribute(): ?float
     {
-        if (!$this->expiration_date) {
+        if (! $this->expiration_date) {
             return null;
         }
 
@@ -96,7 +96,7 @@ class Estimate extends Model
     // Business Logic Methods
     public function calculateTax()
     {
-        if (!$this->taxRate) {
+        if (! $this->taxRate) {
             return 0;
         }
 
@@ -137,7 +137,7 @@ class Estimate extends Model
 
     public function markAsViewed(): void
     {
-        if (!$this->viewed_at) {
+        if (! $this->viewed_at) {
             $this->update([
                 'status' => 'viewed',
                 'viewed_at' => now(),
@@ -205,9 +205,9 @@ class Estimate extends Model
     public function scopeActive($query)
     {
         return $query->whereIn('status', ['draft', 'sent', 'viewed'])
-            ->where(function($q): void {
+            ->where(function ($q): void {
                 $q->whereNull('expiration_date')
-                  ->orWhere('expiration_date', '>=', now());
+                    ->orWhere('expiration_date', '>=', now());
             });
     }
 
@@ -235,7 +235,7 @@ class Estimate extends Model
             // Auto-expire if past expiration date
             if ($estimate->expiration_date &&
                 Carbon::now()->isAfter($estimate->expiration_date) &&
-                !in_array($estimate->status, ['accepted', 'declined', 'expired'])) {
+                ! in_array($estimate->status, ['accepted', 'declined', 'expired'])) {
                 $estimate->status = 'expired';
             }
         });
@@ -249,13 +249,13 @@ class Estimate extends Model
             ->orderBy('estimate_number', 'desc')
             ->first();
 
-        if (!$lastEstimate) {
+        if (! $lastEstimate) {
             $number = 1;
         } else {
             $parts = explode('-', (string) $lastEstimate->estimate_number);
-            $number = isset($parts[1]) ? ((int)$parts[1]) + 1 : 1;
+            $number = isset($parts[1]) ? ((int) $parts[1]) + 1 : 1;
         }
 
-        return $prefix . $year . '-' . str_pad($number, 4, '0', STR_PAD_LEFT);
+        return $prefix.$year.'-'.str_pad($number, 4, '0', STR_PAD_LEFT);
     }
 }

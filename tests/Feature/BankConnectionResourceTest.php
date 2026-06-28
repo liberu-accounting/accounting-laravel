@@ -2,12 +2,11 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
 use App\Models\BankConnection;
 use App\Models\User;
-use App\Services\PlaidService;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Http;
+use Tests\TestCase;
 
 class BankConnectionResourceTest extends TestCase
 {
@@ -18,10 +17,11 @@ class BankConnectionResourceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         $this->user = User::factory()->create();
         $this->actingAs($this->user);
     }
+
     public function test_bank_connection_can_be_created(): void
     {
         $connection = BankConnection::create([
@@ -39,6 +39,7 @@ class BankConnectionResourceTest extends TestCase
             'status' => 'active',
         ]);
     }
+
     public function test_bank_connection_has_user_relationship(): void
     {
         $connection = BankConnection::factory()->create([
@@ -48,6 +49,7 @@ class BankConnectionResourceTest extends TestCase
         $this->assertInstanceOf(User::class, $connection->user);
         $this->assertEquals($this->user->id, $connection->user_id);
     }
+
     public function test_bank_connection_credentials_are_encrypted(): void
     {
         $connection = BankConnection::factory()->create([
@@ -58,10 +60,11 @@ class BankConnectionResourceTest extends TestCase
         // Check that credentials are encrypted in the database
         $rawConnection = \DB::table('bank_connections')->find($connection->id);
         $this->assertNotEquals(['password' => 'secret123'], $rawConnection->credentials);
-        
+
         // Check that credentials are decrypted when accessed through the model
         $this->assertEquals(['password' => 'secret123'], $connection->credentials);
     }
+
     public function test_bank_connection_plaid_access_token_is_encrypted(): void
     {
         $connection = BankConnection::factory()->create([
@@ -72,18 +75,20 @@ class BankConnectionResourceTest extends TestCase
         // Check that token is encrypted in the database
         $rawConnection = \DB::table('bank_connections')->find($connection->id);
         $this->assertNotEquals('access-sandbox-token-123', $rawConnection->plaid_access_token);
-        
+
         // Check that token is decrypted when accessed through the model
         $this->assertEquals('access-sandbox-token-123', $connection->plaid_access_token);
     }
+
     public function test_bank_connection_has_transactions_relationship(): void
     {
         $connection = BankConnection::factory()->create([
             'user_id' => $this->user->id,
         ]);
 
-        $this->assertInstanceOf(\Illuminate\Database\Eloquent\Collection::class, $connection->transactions);
+        $this->assertInstanceOf(Collection::class, $connection->transactions);
     }
+
     public function test_bank_connection_can_track_plaid_sync_status(): void
     {
         $connection = BankConnection::factory()->create([
@@ -105,6 +110,7 @@ class BankConnectionResourceTest extends TestCase
         $this->assertNotNull($connection->plaid_cursor);
         $this->assertNotNull($connection->last_synced_at);
     }
+
     public function test_bank_connection_supports_different_statuses(): void
     {
         $statuses = ['active', 'inactive', 'error', 'pending'];
@@ -118,6 +124,7 @@ class BankConnectionResourceTest extends TestCase
             $this->assertEquals($status, $connection->status);
         }
     }
+
     public function test_bank_connection_can_store_plaid_metadata(): void
     {
         $connection = BankConnection::factory()->create([
@@ -132,6 +139,7 @@ class BankConnectionResourceTest extends TestCase
         $this->assertEquals('ins_109508', $connection->plaid_institution_id);
         $this->assertEquals('Chase Bank', $connection->institution_name);
     }
+
     public function test_bank_connection_can_be_disconnected(): void
     {
         $connection = BankConnection::factory()->create([
@@ -151,7 +159,7 @@ class BankConnectionResourceTest extends TestCase
         ]);
 
         $connection->refresh();
-        
+
         $this->assertEquals('inactive', $connection->status);
         $this->assertNull($connection->plaid_access_token);
         $this->assertNull($connection->plaid_item_id);

@@ -12,9 +12,9 @@ return new class extends Migration
     {
         Schema::table('expenses', function (Blueprint $table): void {
             $table->foreignId('supplier_id')
-                  ->nullable()
-                  ->constrained('suppliers', 'supplier_id')
-                  ->nullOnDelete();
+                ->nullable()
+                ->constrained('suppliers', 'supplier_id')
+                ->nullOnDelete();
         });
     }
 

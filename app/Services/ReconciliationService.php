@@ -14,7 +14,7 @@ class ReconciliationService
         $transactions = Transaction::where('account_id', $bankStatement->account_id)
             ->whereBetween('transaction_date', [
                 $bankStatement->statement_date->startOfMonth(),
-                $bankStatement->statement_date->endOfMonth()
+                $bankStatement->statement_date->endOfMonth(),
             ])
             ->get();
 
@@ -42,7 +42,7 @@ class ReconciliationService
                 $discrepancies->push([
                     'type' => 'unmatched_transaction',
                     'date' => $transaction->transaction_date,
-                    'amount' => $transaction->amount
+                    'amount' => $transaction->amount,
                 ]);
             }
         }
@@ -55,7 +55,7 @@ class ReconciliationService
                 'type' => 'balance_mismatch',
                 'amount' => $balanceDiscrepancy,
                 'expected' => $bankStatement->ending_balance,
-                'actual' => $totalCredits - $totalDebits
+                'actual' => $totalCredits - $totalDebits,
             ]);
         }
 
@@ -65,7 +65,7 @@ class ReconciliationService
             'discrepancies' => $discrepancies,
             'total_credits' => $totalCredits,
             'total_debits' => $totalDebits,
-            'balance_discrepancy' => $balanceDiscrepancy
+            'balance_discrepancy' => $balanceDiscrepancy,
         ];
     }
 
@@ -85,7 +85,7 @@ class ReconciliationService
         $fuzzyMatch = $bankStatement->transactions()
             ->whereBetween('transaction_date', [
                 $transaction->transaction_date->subDays(2),
-                $transaction->transaction_date->addDays(2)
+                $transaction->transaction_date->addDays(2),
             ])
             ->where('amount', $transaction->amount)
             ->exists();

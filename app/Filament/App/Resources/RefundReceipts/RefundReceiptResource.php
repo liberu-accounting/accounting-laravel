@@ -30,13 +30,13 @@ class RefundReceiptResource extends Resource
     protected static ?string $model = RefundReceipt::class;
 
     #[\Override]
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-arrow-uturn-left';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-arrow-uturn-left';
 
     #[\Override]
     protected static ?int $navigationSort = 7;
 
     #[\Override]
-    protected static string | \UnitEnum | null $navigationGroup = 'Sales';
+    protected static string|\UnitEnum|null $navigationGroup = 'Sales';
 
     #[\Override]
     protected static ?string $recordTitleAttribute = 'refund_receipt_number';

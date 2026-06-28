@@ -26,7 +26,7 @@ return new class extends Migration
             $table->boolean('is_posted')->default(false);
             $table->timestamp('posted_at')->nullable();
             $table->timestamps();
-            
+
             $table->index('entry_date');
             $table->index('entry_type');
             $table->index('is_posted');

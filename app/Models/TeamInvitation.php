@@ -12,6 +12,7 @@ use Laravel\Jetstream\TeamInvitation as JetstreamTeamInvitation;
 class TeamInvitation extends JetstreamTeamInvitation
 {
     use IsTenantModel;
+
     /**
      * The attributes that are mass assignable.
      *

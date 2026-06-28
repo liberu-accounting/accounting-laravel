@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Filament\App\Resources\TaxRates;
 
-use App\Filament\App\Resources\TaxRateResource\Pages;
 use App\Filament\App\Resources\TaxRates\Pages\CreateTaxRate;
 use App\Filament\App\Resources\TaxRates\Pages\EditTaxRate;
 use App\Filament\App\Resources\TaxRates\Pages\ListTaxRates;
@@ -29,7 +28,7 @@ class TaxRateResource extends Resource
     protected static ?string $model = TaxRate::class;
 
     #[\Override]
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-calculator';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-calculator';
 
     #[\Override]
     public static function form(Schema $schema): Schema

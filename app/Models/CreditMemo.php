@@ -11,8 +11,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class CreditMemo extends Model
 {
-    use IsTenantModel;
     use HasFactory, SoftDeletes;
+    use IsTenantModel;
 
     #[\Override]
     protected $primaryKey = 'credit_memo_id';
@@ -83,7 +83,7 @@ class CreditMemo extends Model
     // Business Logic Methods
     public function calculateTax()
     {
-        if (!$this->taxRate) {
+        if (! $this->taxRate) {
             return 0;
         }
 
@@ -121,7 +121,7 @@ class CreditMemo extends Model
         }
 
         $invoice = Invoice::find($invoiceId);
-        if (!$invoice) {
+        if (! $invoice) {
             throw new \Exception('Invoice not found.');
         }
 
@@ -195,13 +195,13 @@ class CreditMemo extends Model
             ->orderBy('credit_memo_number', 'desc')
             ->first();
 
-        if (!$lastCreditMemo) {
+        if (! $lastCreditMemo) {
             $number = 1;
         } else {
             $parts = explode('-', (string) $lastCreditMemo->credit_memo_number);
-            $number = isset($parts[1]) ? ((int)$parts[1]) + 1 : 1;
+            $number = isset($parts[1]) ? ((int) $parts[1]) + 1 : 1;
         }
 
-        return $prefix . $year . '-' . str_pad($number, 4, '0', STR_PAD_LEFT);
+        return $prefix.$year.'-'.str_pad($number, 4, '0', STR_PAD_LEFT);
     }
 }

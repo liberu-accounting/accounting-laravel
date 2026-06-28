@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Filament\App\Resources\Accounts;
 
-use App\Filament\App\Resources\AccountResource\Pages;
-use App\Filament\App\Resources\AccountResource\RelationManagers;
 use App\Filament\App\Resources\Accounts\Pages\CreateAccount;
 use App\Filament\App\Resources\Accounts\Pages\EditAccount;
 use App\Filament\App\Resources\Accounts\Pages\ListAccounts;
@@ -28,7 +26,7 @@ class AccountResource extends Resource
     protected static ?string $model = Account::class;
 
     #[\Override]
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';
 
     #[\Override]
     public static function form(Schema $schema): Schema

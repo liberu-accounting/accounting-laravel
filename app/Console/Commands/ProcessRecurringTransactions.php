@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 namespace App\Console\Commands;
 
 use App\Models\Expense;
@@ -11,6 +12,7 @@ class ProcessRecurringTransactions extends Command
 {
     #[\Override]
     protected $signature = 'recurring:process';
+
     #[\Override]
     protected $description = 'Process all recurring invoices and expenses';
 

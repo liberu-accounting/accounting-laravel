@@ -16,16 +16,16 @@ class AccountTemplateSeeder extends Seeder
                 'structure' => [
                     'assets' => [
                         'current_assets' => ['cash', 'inventory', 'accounts_receivable'],
-                        'fixed_assets' => ['equipment', 'buildings']
+                        'fixed_assets' => ['equipment', 'buildings'],
                     ],
                     'liabilities' => [
                         'current_liabilities' => ['accounts_payable', 'short_term_loans'],
-                        'long_term_liabilities' => ['long_term_loans', 'mortgages']
+                        'long_term_liabilities' => ['long_term_loans', 'mortgages'],
                     ],
                     'equity' => ['owner_equity', 'retained_earnings'],
                     'revenue' => ['sales', 'other_income'],
-                    'expenses' => ['cost_of_goods_sold', 'operating_expenses', 'payroll']
-                ]
+                    'expenses' => ['cost_of_goods_sold', 'operating_expenses', 'payroll'],
+                ],
             ],
             [
                 'name' => 'Service Business',
@@ -33,16 +33,16 @@ class AccountTemplateSeeder extends Seeder
                 'structure' => [
                     'assets' => [
                         'current_assets' => ['cash', 'accounts_receivable'],
-                        'fixed_assets' => ['equipment', 'furniture']
+                        'fixed_assets' => ['equipment', 'furniture'],
                     ],
                     'liabilities' => [
                         'current_liabilities' => ['accounts_payable', 'taxes_payable'],
-                        'long_term_liabilities' => ['loans']
+                        'long_term_liabilities' => ['loans'],
                     ],
                     'equity' => ['owner_equity', 'retained_earnings'],
                     'revenue' => ['service_revenue', 'consulting_fees'],
-                    'expenses' => ['salaries', 'rent', 'utilities', 'supplies']
-                ]
+                    'expenses' => ['salaries', 'rent', 'utilities', 'supplies'],
+                ],
             ],
             [
                 'name' => 'Manufacturing',
@@ -50,17 +50,17 @@ class AccountTemplateSeeder extends Seeder
                 'structure' => [
                     'assets' => [
                         'current_assets' => ['cash', 'raw_materials', 'work_in_progress', 'finished_goods'],
-                        'fixed_assets' => ['machinery', 'factory_building']
+                        'fixed_assets' => ['machinery', 'factory_building'],
                     ],
                     'liabilities' => [
                         'current_liabilities' => ['accounts_payable', 'wages_payable'],
-                        'long_term_liabilities' => ['equipment_loans', 'mortgages']
+                        'long_term_liabilities' => ['equipment_loans', 'mortgages'],
                     ],
                     'equity' => ['owner_equity', 'retained_earnings'],
                     'revenue' => ['sales'],
-                    'expenses' => ['raw_materials', 'direct_labor', 'manufacturing_overhead', 'administrative']
-                ]
-            ]
+                    'expenses' => ['raw_materials', 'direct_labor', 'manufacturing_overhead', 'administrative'],
+                ],
+            ],
         ];
 
         foreach ($templates as $template) {

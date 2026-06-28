@@ -30,7 +30,7 @@ return new class extends Migration
                 'rejection_reason',
                 'approved_by',
                 'approved_at',
-                'document_path'
+                'document_path',
             ]);
         });
     }

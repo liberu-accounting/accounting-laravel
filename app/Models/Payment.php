@@ -14,12 +14,12 @@ class Payment extends Model
     use IsTenantModel;
 
     #[\Override]
-    protected $primaryKey = "payment_id";
+    protected $primaryKey = 'payment_id';
 
     #[\Override]
     protected $fillable = [
-        "invoice_id",
-        "payment_date",
-        "payment_amount",
+        'invoice_id',
+        'payment_date',
+        'payment_amount',
     ];
 }

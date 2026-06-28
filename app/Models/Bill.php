@@ -13,8 +13,8 @@ use Illuminate\Support\Facades\Auth;
 
 class Bill extends Model
 {
-    use IsTenantModel;
     use HasFactory, SoftDeletes;
+    use IsTenantModel;
 
     #[\Override]
     protected $primaryKey = 'bill_id';
@@ -92,11 +92,12 @@ class Bill extends Model
 
     public function getDaysOverdueAttribute(): int|float
     {
-        if ($this->payment_status === 'paid' || !$this->due_date) {
+        if ($this->payment_status === 'paid' || ! $this->due_date) {
             return 0;
         }
 
         $daysOverdue = Carbon::now()->diffInDays($this->due_date, false);
+
         return $daysOverdue < 0 ? abs($daysOverdue) : 0;
     }
 
@@ -108,7 +109,7 @@ class Bill extends Model
     // Business Logic Methods
     public function calculateTax()
     {
-        if (!$this->taxRate) {
+        if (! $this->taxRate) {
             return 0;
         }
 
@@ -240,14 +241,14 @@ class Bill extends Model
             ->orderBy('bill_number', 'desc')
             ->first();
 
-        if (!$lastBill) {
+        if (! $lastBill) {
             $number = 1;
         } else {
             // Extract number from bill_number (e.g., BILL2026-0001)
             $parts = explode('-', (string) $lastBill->bill_number);
-            $number = isset($parts[1]) ? ((int)$parts[1]) + 1 : 1;
+            $number = isset($parts[1]) ? ((int) $parts[1]) + 1 : 1;
         }
 
-        return $prefix . $year . '-' . str_pad($number, 4, '0', STR_PAD_LEFT);
+        return $prefix.$year.'-'.str_pad($number, 4, '0', STR_PAD_LEFT);
     }
 }

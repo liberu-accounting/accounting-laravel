@@ -28,13 +28,13 @@ class CreditMemoResource extends Resource
     protected static ?string $model = CreditMemo::class;
 
     #[\Override]
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-receipt-percent';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-receipt-percent';
 
     #[\Override]
     protected static ?int $navigationSort = 4;
 
     #[\Override]
-    protected static string | \UnitEnum | null $navigationGroup = 'Sales';
+    protected static string|\UnitEnum|null $navigationGroup = 'Sales';
 
     #[\Override]
     protected static ?string $recordTitleAttribute = 'credit_memo_number';

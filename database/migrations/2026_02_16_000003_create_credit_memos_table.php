@@ -25,7 +25,7 @@ return new class extends Migration
             $table->string('document_path')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            
+
             $table->index('customer_id');
             $table->index('invoice_id');
             $table->index('credit_memo_date');
@@ -42,7 +42,7 @@ return new class extends Migration
             $table->decimal('tax_amount', 15, 2)->default(0);
             $table->foreignId('tax_rate_id')->nullable()->constrained('tax_rates', 'tax_rate_id')->nullOnDelete();
             $table->timestamps();
-            
+
             $table->index('credit_memo_id');
         });
 
@@ -54,7 +54,7 @@ return new class extends Migration
             $table->date('application_date');
             $table->text('notes')->nullable();
             $table->timestamps();
-            
+
             $table->index('credit_memo_id');
             $table->index('invoice_id');
         });

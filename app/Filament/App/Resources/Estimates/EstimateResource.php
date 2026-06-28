@@ -29,13 +29,13 @@ class EstimateResource extends Resource
     protected static ?string $model = Estimate::class;
 
     #[\Override]
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document-duplicate';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-document-duplicate';
 
     #[\Override]
     protected static ?int $navigationSort = 2;
 
     #[\Override]
-    protected static string | \UnitEnum | null $navigationGroup = 'Sales';
+    protected static string|\UnitEnum|null $navigationGroup = 'Sales';
 
     #[\Override]
     protected static ?string $recordTitleAttribute = 'estimate_number';
@@ -183,7 +183,7 @@ class EstimateResource extends Resource
                 Action::make('convert_to_invoice')
                     ->label('Convert to Invoice')
                     ->icon('heroicon-o-arrow-right-circle')
-                    ->visible(fn ($record): bool => $record->status === 'accepted' && !$record->invoice_id)
+                    ->visible(fn ($record): bool => $record->status === 'accepted' && ! $record->invoice_id)
                     ->requiresConfirmation()
                     ->action(fn ($record) => $record->convertToInvoice()),
             ])

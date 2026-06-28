@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Filament\App\Resources\GeneralLedgerReports;
 
-use App\Filament\App\Resources\GeneralLedgerReportResource\Pages;
 use App\Filament\App\Resources\GeneralLedgerReports\Pages\CreateGeneralLedgerReport;
 use App\Filament\App\Resources\GeneralLedgerReports\Pages\EditGeneralLedgerReport;
 use App\Filament\App\Resources\GeneralLedgerReports\Pages\ListGeneralLedgerReports;
@@ -33,7 +32,7 @@ class GeneralLedgerReportResource extends Resource
     protected static ?string $model = GeneralLedgerReport::class;
 
     #[\Override]
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document-chart-bar';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-document-chart-bar';
 
     #[\Override]
     public static function form(Schema $schema): Schema

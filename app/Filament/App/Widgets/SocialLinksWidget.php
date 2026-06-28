@@ -11,7 +11,7 @@ use Override;
 
 class SocialLinksWidget extends Widget
 {
-    #[\Override]
+    #[Override]
     protected string $view = 'filament.app.widgets.social-links-widget';
 
     #[Override]

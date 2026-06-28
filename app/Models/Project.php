@@ -22,14 +22,14 @@ class Project extends Model
         'start_date',
         'end_date',
         'status',
-        'allocation_percentage'
+        'allocation_percentage',
     ];
 
     #[\Override]
     protected $casts = [
         'start_date' => 'date',
         'end_date' => 'date',
-        'allocation_percentage' => 'decimal:2'
+        'allocation_percentage' => 'decimal:2',
     ];
 
     public function transactions(): HasMany

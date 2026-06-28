@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Filament\Admin\Resources\AuditLogs;
 
-use App\Filament\Admin\Resources\AuditLogResource\Pages;
 use App\Filament\Admin\Resources\AuditLogs\Pages\ListAuditLogs;
 use App\Filament\Admin\Resources\AuditLogs\Pages\ViewAuditLog;
 use App\Models\AuditLog;
@@ -22,10 +21,12 @@ class AuditLogResource extends Resource
 {
     #[\Override]
     protected static ?string $model = AuditLog::class;
+
     #[\Override]
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-clipboard-document-list';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-clipboard-document-list';
+
     #[\Override]
-    protected static string | \UnitEnum | null $navigationGroup = 'System';
+    protected static string|\UnitEnum|null $navigationGroup = 'System';
 
     #[\Override]
     public static function getEloquentQuery(): Builder
@@ -78,7 +79,7 @@ class AuditLogResource extends Resource
                         DatePicker::make('from'),
                         DatePicker::make('until'),
                     ])
-                    ->query(fn(Builder $query, array $data): Builder => $query
+                    ->query(fn (Builder $query, array $data): Builder => $query
                         ->when(
                             $data['from'],
                             fn (Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
@@ -86,7 +87,7 @@ class AuditLogResource extends Resource
                         ->when(
                             $data['until'],
                             fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
-                        ))
+                        )),
             ])
             ->defaultSort('created_at', 'desc');
     }

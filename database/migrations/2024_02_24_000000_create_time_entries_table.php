@@ -10,19 +10,19 @@ return new class extends Migration
     {
         Schema::create('time_entries', function (Blueprint $table): void {
             $table->id();
-        
+
             $table->dateTime('start_time');
             $table->dateTime('end_time');
             $table->text('description');
             $table->decimal('hourly_rate', 10, 2);
             $table->decimal('total_amount', 10, 2);
 
-$table->foreignId('customer_id')->constrained()->onDelete('cascade');
-    $table->foreignId('invoice_id')->constrained()->onDelete('cascade');
-            
+            $table->foreignId('customer_id')->constrained()->onDelete('cascade');
+            $table->foreignId('invoice_id')->constrained()->onDelete('cascade');
+
             $table->timestamps();
 
-          });
+        });
     }
 
     public function down(): void

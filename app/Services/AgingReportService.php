@@ -13,20 +13,20 @@ class AgingReportService
     public function generateAgingReport(): Collection
     {
         $today = Carbon::now();
-        
+
         return Invoice::where('payment_status', 'pending')
             ->with('customer')
             ->get()
             ->groupBy('customer_id')
             ->map(function ($invoices) use ($today): array {
                 $customer = $invoices->first()->customer;
-                
+
                 $aging = [
                     'current' => 0,
                     '1_30' => 0,
                     '31_60' => 0,
                     '61_90' => 0,
-                    'over_90' => 0
+                    'over_90' => 0,
                 ];
 
                 foreach ($invoices as $invoice) {
@@ -52,7 +52,7 @@ class AgingReportService
                     'credit_limit' => $customer->credit_limit,
                     'current_balance' => $customer->current_balance,
                     'aging' => $aging,
-                    'total_due' => array_sum($aging)
+                    'total_due' => array_sum($aging),
                 ];
             });
     }

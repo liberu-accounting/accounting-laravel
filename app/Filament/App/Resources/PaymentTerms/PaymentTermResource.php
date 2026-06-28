@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Filament\App\Resources\PaymentTerms;
 
-use App\Filament\App\Resources\PaymentTermResource\Pages;
-use App\Filament\App\Resources\PaymentTermResource\RelationManagers;
 use App\Filament\App\Resources\PaymentTerms\Pages\CreatePaymentTerm;
 use App\Filament\App\Resources\PaymentTerms\Pages\EditPaymentTerm;
 use App\Filament\App\Resources\PaymentTerms\Pages\ListPaymentTerms;
@@ -26,7 +24,7 @@ class PaymentTermResource extends Resource
     protected static ?string $model = PaymentTerm::class;
 
     #[\Override]
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';
 
     #[\Override]
     public static function form(Schema $schema): Schema

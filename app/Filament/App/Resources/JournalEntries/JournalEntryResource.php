@@ -18,6 +18,7 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
@@ -40,7 +41,7 @@ class JournalEntryResource extends Resource
     protected static ?string $navigationLabel = 'Journal Entries';
 
     #[\Override]
-    protected static string | \UnitEnum | null $navigationGroup = 'Accounting';
+    protected static string|\UnitEnum|null $navigationGroup = 'Accounting';
 
     #[\Override]
     public static function form(Schema $schema): Schema
@@ -92,11 +93,11 @@ class JournalEntryResource extends Resource
                                     ->schema([
                                         Select::make('account_id')
                                             ->label('Account')
-                                            ->options(fn() => Account::where('is_active', true)
+                                            ->options(fn () => Account::where('is_active', true)
                                                 ->whereDoesntHave('children')
                                                 ->orderBy('account_number')
                                                 ->get()
-                                                ->mapWithKeys(fn($account): array => [$account->id => $account->account_number . ' - ' . $account->account_name]))
+                                                ->mapWithKeys(fn ($account): array => [$account->id => $account->account_number.' - '.$account->account_name]))
                                             ->required()
                                             ->searchable()
                                             ->preload()
@@ -108,8 +109,7 @@ class JournalEntryResource extends Resource
                                             ->step('0.01')
                                             ->prefix('$')
                                             ->live()
-                                            ->afterStateUpdated(fn ($state, callable $set) =>
-                                                $state > 0 ? $set('credit_amount', 0) : null
+                                            ->afterStateUpdated(fn ($state, callable $set) => $state > 0 ? $set('credit_amount', 0) : null
                                             )
                                             ->columnSpan(2),
                                         TextInput::make('credit_amount')
@@ -119,8 +119,7 @@ class JournalEntryResource extends Resource
                                             ->step('0.01')
                                             ->prefix('$')
                                             ->live()
-                                            ->afterStateUpdated(fn ($state, callable $set) =>
-                                                $state > 0 ? $set('debit_amount', 0) : null
+                                            ->afterStateUpdated(fn ($state, callable $set) => $state > 0 ? $set('debit_amount', 0) : null
                                             )
                                             ->columnSpan(2),
                                         TextInput::make('description')
@@ -140,27 +139,30 @@ class JournalEntryResource extends Resource
                             ->schema([
                                 Placeholder::make('total_debits')
                                     ->label('Total Debits')
-                                    ->content(function ($get): \Illuminate\Support\HtmlString {
+                                    ->content(function ($get): HtmlString {
                                         $lines = $get('lines') ?? [];
                                         $total = collect($lines)->sum('debit_amount');
-                                        return new HtmlString('<span class="text-lg font-bold">$' . number_format($total, 2) . '</span>');
+
+                                        return new HtmlString('<span class="text-lg font-bold">$'.number_format($total, 2).'</span>');
                                     }),
                                 Placeholder::make('total_credits')
                                     ->label('Total Credits')
-                                    ->content(function ($get): \Illuminate\Support\HtmlString {
+                                    ->content(function ($get): HtmlString {
                                         $lines = $get('lines') ?? [];
                                         $total = collect($lines)->sum('credit_amount');
-                                        return new HtmlString('<span class="text-lg font-bold">$' . number_format($total, 2) . '</span>');
+
+                                        return new HtmlString('<span class="text-lg font-bold">$'.number_format($total, 2).'</span>');
                                     }),
                                 Placeholder::make('balance')
                                     ->label('Difference')
-                                    ->content(function ($get): \Illuminate\Support\HtmlString {
+                                    ->content(function ($get): HtmlString {
                                         $lines = $get('lines') ?? [];
                                         $debits = collect($lines)->sum('debit_amount');
                                         $credits = collect($lines)->sum('credit_amount');
                                         $diff = $debits - $credits;
                                         $color = $diff == 0 ? 'text-green-600' : 'text-red-600';
-                                        return new HtmlString('<span class="text-lg font-bold ' . $color . '">$' . number_format($diff, 2) . '</span>');
+
+                                        return new HtmlString('<span class="text-lg font-bold '.$color.'">$'.number_format($diff, 2).'</span>');
                                     })
                                     ->columnSpanFull(),
                             ]),
@@ -234,16 +236,16 @@ class JournalEntryResource extends Resource
                     ->icon('heroicon-o-arrow-up-circle')
                     ->color('success')
                     ->requiresConfirmation()
-                    ->visible(fn ($record): bool => !$record->is_posted)
+                    ->visible(fn ($record): bool => ! $record->is_posted)
                     ->action(function ($record): void {
                         try {
                             $record->post();
-                            \Filament\Notifications\Notification::make()
+                            Notification::make()
                                 ->title('Journal entry posted successfully')
                                 ->success()
                                 ->send();
                         } catch (\Exception $e) {
-                            \Filament\Notifications\Notification::make()
+                            Notification::make()
                                 ->title('Error posting journal entry')
                                 ->body($e->getMessage())
                                 ->danger()
@@ -258,12 +260,12 @@ class JournalEntryResource extends Resource
                     ->action(function ($record): void {
                         try {
                             $record->reverse();
-                            \Filament\Notifications\Notification::make()
+                            Notification::make()
                                 ->title('Journal entry reversed successfully')
                                 ->success()
                                 ->send();
                         } catch (\Exception $e) {
-                            \Filament\Notifications\Notification::make()
+                            Notification::make()
                                 ->title('Error reversing journal entry')
                                 ->body($e->getMessage())
                                 ->danger()
@@ -271,7 +273,7 @@ class JournalEntryResource extends Resource
                         }
                     }),
                 DeleteAction::make()
-                    ->visible(fn ($record): bool => !$record->is_posted),
+                    ->visible(fn ($record): bool => ! $record->is_posted),
             ])
             ->defaultSort('entry_date', 'desc');
     }

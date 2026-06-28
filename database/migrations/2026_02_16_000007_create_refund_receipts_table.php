@@ -34,7 +34,7 @@ return new class extends Migration
             $table->foreign('sales_receipt_id')->references('sales_receipt_id')->on('sales_receipts')->onDelete('set null');
             $table->foreign('invoice_id')->references('id')->on('invoices')->onDelete('set null');
             $table->foreign('refund_from_account_id')->references('id')->on('accounts')->onDelete('set null');
-            
+
             $table->index('customer_id');
             $table->index('refund_date');
             $table->index('status');
@@ -51,7 +51,7 @@ return new class extends Migration
 
             $table->foreign('refund_receipt_id')->references('refund_receipt_id')->on('refund_receipts')->onDelete('cascade');
             $table->foreign('account_id')->references('id')->on('accounts')->onDelete('set null');
-            
+
             $table->index('refund_receipt_id');
         });
     }

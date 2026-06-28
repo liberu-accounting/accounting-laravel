@@ -13,6 +13,7 @@ class InvoiceScanner
     {
         $image = $this->convertToImage($file);
         $text = new TesseractOCR($image)->run();
+
         return $this->extractInvoiceData($text);
     }
 
@@ -22,13 +23,14 @@ class InvoiceScanner
             'invoice_number' => $this->extractInvoiceNumber($text),
             'amount' => $this->extractAmount($text),
             'date' => $this->extractDate($text),
-            'vendor_details' => $this->extractVendorDetails($text)
+            'vendor_details' => $this->extractVendorDetails($text),
         ];
     }
 
     protected function extractInvoiceNumber(string $text): ?string
     {
         preg_match('/invoice.?no.?\s*[:# ]+([\w-]+)/i', $text, $matches);
+
         return $matches[1] ?? null;
     }
 
@@ -38,12 +40,14 @@ class InvoiceScanner
         if (isset($matches[1])) {
             return (float) str_replace(['$', ','], '', $matches[1]);
         }
+
         return null;
     }
 
     protected function extractDate(string $text): ?string
     {
         preg_match('/date.?\s*[:# ]+([\d\/\-\.]+)/i', $text, $matches);
+
         return $matches[1] ?? null;
     }
 
@@ -58,12 +62,14 @@ class InvoiceScanner
     protected function extractVendorName(string $text): ?string
     {
         preg_match('/from:?\s*([^\n]+)/i', $text, $matches);
+
         return $matches[1] ?? null;
     }
 
     protected function extractTaxId(string $text): ?string
     {
         preg_match('/tax.?id.?\s*[:# ]+([\w\-]+)/i', $text, $matches);
+
         return $matches[1] ?? null;
     }
 

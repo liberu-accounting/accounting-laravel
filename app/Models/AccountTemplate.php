@@ -17,11 +17,11 @@ class AccountTemplate extends Model
     protected $fillable = [
         'name',
         'industry_type',
-        'structure'
+        'structure',
     ];
 
     #[\Override]
     protected $casts = [
-        'structure' => 'array'
+        'structure' => 'array',
     ];
 }

@@ -25,7 +25,7 @@ return new class extends Migration
             $table->timestamp('submitted_at')->nullable();
             $table->timestamp('accepted_at')->nullable();
             $table->timestamps();
-            
+
             $table->index(['company_id', 'submission_type']);
             $table->index('status');
         });

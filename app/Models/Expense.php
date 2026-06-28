@@ -13,7 +13,6 @@ use Illuminate\Support\Facades\Auth;
 
 class Expense extends Model
 {
-
     use IsTenantModel;
 
     #[\Override]
@@ -33,7 +32,7 @@ class Expense extends Model
         'recurrence_frequency',
         'recurrence_start',
         'recurrence_end',
-        'last_generated'
+        'last_generated',
     ];
 
     #[\Override]
@@ -46,7 +45,7 @@ class Expense extends Model
         'is_recurring' => 'boolean',
         'recurrence_start' => 'date',
         'recurrence_end' => 'date',
-        'last_generated' => 'date'
+        'last_generated' => 'date',
     ];
 
     public function user(): BelongsTo
@@ -102,12 +101,13 @@ class Expense extends Model
         if ($this->is_indirect) {
             return $this->amount * ($this->allocation_percentage / 100);
         }
+
         return $this->amount;
     }
 
     public function generateRecurring(): void
     {
-        if (!$this->is_recurring || !$this->shouldGenerateNew()) {
+        if (! $this->is_recurring || ! $this->shouldGenerateNew()) {
             return;
         }
 
@@ -127,6 +127,7 @@ class Expense extends Model
         if ($this->recurrence_end && $this->recurrence_end < now()) {
             return false;
         }
+
         return $this->getNextDate()->lte(now());
     }
 
@@ -134,7 +135,7 @@ class Expense extends Model
     {
         $lastDate = $this->last_generated ?? $this->recurrence_start;
 
-        return match($this->recurrence_frequency) {
+        return match ($this->recurrence_frequency) {
             'daily' => $lastDate->addDay(),
             'weekly' => $lastDate->addWeek(),
             'monthly' => $lastDate->addMonth(),

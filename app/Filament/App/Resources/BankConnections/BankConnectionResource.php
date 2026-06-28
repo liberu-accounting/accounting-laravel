@@ -37,7 +37,7 @@ class BankConnectionResource extends Resource
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-building-library';
 
     #[\Override]
-    protected static string | \UnitEnum | null $navigationGroup = 'Banking';
+    protected static string|\UnitEnum|null $navigationGroup = 'Banking';
 
     #[\Override]
     protected static ?int $navigationSort = 1;
@@ -92,7 +92,7 @@ class BankConnectionResource extends Resource
                             ->helperText('Last time transactions were synced from Plaid'),
                     ])->columns(2)
                     ->collapsible()
-                    ->collapsed(fn ($record): bool => !$record || !$record->plaid_item_id),
+                    ->collapsed(fn ($record): bool => ! $record || ! $record->plaid_item_id),
             ]);
     }
 

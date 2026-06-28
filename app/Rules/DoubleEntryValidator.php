@@ -8,9 +8,7 @@ use Illuminate\Contracts\Validation\Rule;
 
 class DoubleEntryValidator implements Rule
 {
-    public function __construct(protected $lines = null)
-    {
-    }
+    public function __construct(protected $lines = null) {}
 
     public function passes($attribute, $value)
     {
@@ -22,7 +20,7 @@ class DoubleEntryValidator implements Rule
             foreach ($this->lines as $line) {
                 $debit = is_array($line) ? ($line['debit_amount'] ?? 0) : ($line->debit_amount ?? 0);
                 $credit = is_array($line) ? ($line['credit_amount'] ?? 0) : ($line->credit_amount ?? 0);
-                
+
                 $totalDebits += floatval($debit);
                 $totalCredits += floatval($credit);
             }
@@ -34,7 +32,7 @@ class DoubleEntryValidator implements Rule
         // This validates that a single transaction has equal debit and credit
         $debitAmount = request()->input('debit_amount', 0);
         $creditAmount = request()->input('credit_amount', 0);
-        
+
         return bccomp((string) $debitAmount, (string) $creditAmount, 2) === 0;
     }
 

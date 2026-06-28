@@ -43,7 +43,7 @@ class JournalEntry extends Model
         parent::boot();
 
         static::creating(function ($journalEntry): void {
-            if (!$journalEntry->entry_number) {
+            if (! $journalEntry->entry_number) {
                 $journalEntry->entry_number = static::generateEntryNumber();
             }
         });
@@ -85,7 +85,7 @@ class JournalEntry extends Model
             throw new \Exception('Journal entry is already posted.');
         }
 
-        if (!$this->isBalanced()) {
+        if (! $this->isBalanced()) {
             throw new \Exception('Journal entry must be balanced before posting.');
         }
 
@@ -112,7 +112,7 @@ class JournalEntry extends Model
 
     public function reverse(): static
     {
-        if (!$this->is_posted) {
+        if (! $this->is_posted) {
             throw new \Exception('Cannot reverse an unposted journal entry.');
         }
 

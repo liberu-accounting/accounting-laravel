@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Filament\App\Resources\Tenants;
 
-use App\Filament\App\Resources\TenantResource\Pages;
-use App\Filament\App\Resources\TenantResource\RelationManagers;
 use App\Filament\App\Resources\Tenants\Pages\CreateTenant;
 use App\Filament\App\Resources\Tenants\Pages\EditTenant;
 use App\Filament\App\Resources\Tenants\Pages\ListTenants;
@@ -23,7 +21,7 @@ class TenantResource extends Resource
     protected static ?string $model = Tenant::class;
 
     #[\Override]
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';
 
     #[\Override]
     public static function form(Schema $schema): Schema

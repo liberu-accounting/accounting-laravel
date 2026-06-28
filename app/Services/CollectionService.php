@@ -35,15 +35,15 @@ class CollectionService
                     ->orderBy('due_date');
             }])
             ->get()
-            ->map(fn($customer): array => [
+            ->map(fn ($customer): array => [
                 'customer_name' => $customer->customer_name,
                 'total_overdue' => $customer->invoices->sum('total_amount'),
                 'oldest_invoice_date' => $customer->invoices->min('due_date'),
                 'number_of_invoices' => $customer->invoices->count(),
                 'contact_info' => [
                     'email' => $customer->customer_email,
-                    'phone' => $customer->customer_phone
-                ]
+                    'phone' => $customer->customer_phone,
+                ],
             ]);
     }
 }

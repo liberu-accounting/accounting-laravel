@@ -29,13 +29,13 @@ class BillResource extends Resource
     protected static ?string $model = Bill::class;
 
     #[\Override]
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-receipt-refund';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-receipt-refund';
 
     #[\Override]
     protected static ?int $navigationSort = 3;
 
     #[\Override]
-    protected static string | \UnitEnum | null $navigationGroup = 'Vendors';
+    protected static string|\UnitEnum|null $navigationGroup = 'Vendors';
 
     #[\Override]
     protected static ?string $recordTitleAttribute = 'bill_number';

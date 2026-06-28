@@ -31,13 +31,13 @@ class VendorCreditResource extends Resource
     protected static ?string $model = VendorCredit::class;
 
     #[\Override]
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-receipt-refund';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-receipt-refund';
 
     #[\Override]
     protected static ?int $navigationSort = 4;
 
     #[\Override]
-    protected static string | \UnitEnum | null $navigationGroup = 'Vendors';
+    protected static string|\UnitEnum|null $navigationGroup = 'Vendors';
 
     #[\Override]
     protected static ?string $recordTitleAttribute = 'vendor_credit_number';

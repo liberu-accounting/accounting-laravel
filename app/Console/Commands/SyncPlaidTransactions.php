@@ -32,8 +32,9 @@ class SyncPlaidTransactions extends Command
         $connectionId = $this->option('connection');
         $syncAll = $this->option('all');
 
-        if (!$connectionId && !$syncAll) {
+        if (! $connectionId && ! $syncAll) {
             $this->error('Please specify either --connection=ID or --all');
+
             return self::FAILURE;
         }
 
@@ -51,13 +52,15 @@ class SyncPlaidTransactions extends Command
     {
         $connection = BankConnection::find($connectionId);
 
-        if (!$connection) {
+        if (! $connection) {
             $this->error("Connection {$connectionId} not found");
+
             return self::FAILURE;
         }
 
         if ($connection->status !== 'active') {
             $this->warn("Connection {$connectionId} is not active (status: {$connection->status})");
+
             return self::FAILURE;
         }
 
@@ -65,6 +68,7 @@ class SyncPlaidTransactions extends Command
         SyncPlaidTransactionsJob::dispatch($connectionId);
 
         $this->info('Sync job dispatched successfully');
+
         return self::SUCCESS;
     }
 
@@ -79,6 +83,7 @@ class SyncPlaidTransactions extends Command
 
         if ($connections->isEmpty()) {
             $this->info('No active Plaid connections found');
+
             return self::SUCCESS;
         }
 

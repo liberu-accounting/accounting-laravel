@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Filament\App\Resources\Invoices;
 
-use App\Filament\App\Resources\InvoiceResource\Pages;
 use App\Filament\App\Resources\Invoices\Pages\CreateInvoice;
 use App\Filament\App\Resources\Invoices\Pages\EditInvoice;
 use App\Filament\App\Resources\Invoices\Pages\ListInvoices;
@@ -28,7 +27,7 @@ class InvoiceResource extends Resource
     protected static ?string $model = Invoice::class;
 
     #[\Override]
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document-text';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-document-text';
 
     #[\Override]
     public static function form(Schema $schema): Schema
@@ -132,7 +131,7 @@ class InvoiceResource extends Resource
                 Action::make('download')
                     ->icon('heroicon-o-document-download')
                     ->action(fn (Invoice $record) => response()->streamDownload(
-                        fn (): int => print($record->generatePDF()),
+                        fn (): int => print ($record->generatePDF()),
                         "invoice_{$record->invoice_number}.pdf"
                     )),
             ]);

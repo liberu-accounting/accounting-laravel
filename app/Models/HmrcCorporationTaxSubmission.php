@@ -165,7 +165,7 @@ class HmrcCorporationTaxSubmission extends Model
      */
     public function isEditable(): bool
     {
-        return !$this->hmrcSubmission || $this->hmrcSubmission->isEditable();
+        return ! $this->hmrcSubmission || $this->hmrcSubmission->isEditable();
     }
 
     /**
@@ -174,6 +174,6 @@ class HmrcCorporationTaxSubmission extends Model
     public function isOverdue(): bool
     {
         return now()->isAfter($this->filing_due_date) &&
-               (!$this->hmrcSubmission || !$this->hmrcSubmission->isSubmitted());
+               (! $this->hmrcSubmission || ! $this->hmrcSubmission->isSubmitted());
     }
 }

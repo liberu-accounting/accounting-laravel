@@ -14,12 +14,13 @@ class PlaidBalanceTest extends TestCase
     use RefreshDatabase;
 
     protected User $user;
+
     protected BankConnection $connection;
 
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         $this->user = User::factory()->create();
         $this->connection = BankConnection::factory()->create([
             'user_id' => $this->user->id,
@@ -143,7 +144,7 @@ class PlaidBalanceTest extends TestCase
     public function test_get_balances_prevents_unauthorized_access(): void
     {
         $otherUser = User::factory()->create();
-        
+
         $response = $this->actingAs($otherUser)
             ->getJson("/api/plaid/connections/{$this->connection->id}/balances");
 

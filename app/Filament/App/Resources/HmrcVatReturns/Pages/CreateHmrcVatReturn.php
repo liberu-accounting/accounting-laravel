@@ -17,13 +17,13 @@ class CreateHmrcVatReturn extends CreateRecord
     {
         // Ensure company_id is set
         $companyId = auth()->user()->currentTeam->company_id ?? null;
-        
-        if (!$companyId) {
+
+        if (! $companyId) {
             throw new \Exception('No company associated with current user/team');
         }
-        
+
         $data['company_id'] = $companyId;
-        
+
         return $data;
     }
 }

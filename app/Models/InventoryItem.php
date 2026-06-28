@@ -26,7 +26,7 @@ class InventoryItem extends Model
         'reorder_point',
         'account_id',
         'category_id',
-        'is_active'
+        'is_active',
     ];
 
     #[\Override]
@@ -34,7 +34,7 @@ class InventoryItem extends Model
         'unit_price' => 'decimal:2',
         'current_quantity' => 'integer',
         'reorder_point' => 'integer',
-        'is_active' => 'boolean'
+        'is_active' => 'boolean',
     ];
 
     public function account()

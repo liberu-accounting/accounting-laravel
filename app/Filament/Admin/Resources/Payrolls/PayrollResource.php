@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Filament\Admin\Resources\Payrolls;
 
-use App\Filament\Admin\Resources\PayrollResource\Pages;
 use App\Filament\Admin\Resources\Payrolls\Pages\CreatePayroll;
 use App\Filament\Admin\Resources\Payrolls\Pages\EditPayroll;
 use App\Filament\Admin\Resources\Payrolls\Pages\ListPayrolls;
@@ -27,9 +26,10 @@ class PayrollResource extends Resource
     protected static ?string $model = Payroll::class;
 
     #[\Override]
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-currency-dollar';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-currency-dollar';
+
     #[\Override]
-    protected static string | \UnitEnum | null $navigationGroup = 'HR';
+    protected static string|\UnitEnum|null $navigationGroup = 'HR';
 
     #[\Override]
     public static function form(Schema $schema): Schema

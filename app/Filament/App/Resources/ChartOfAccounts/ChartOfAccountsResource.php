@@ -7,7 +7,6 @@ namespace App\Filament\App\Resources\ChartOfAccounts;
 use App\Filament\App\Resources\ChartOfAccounts\Pages\CreateChartOfAccounts;
 use App\Filament\App\Resources\ChartOfAccounts\Pages\EditChartOfAccounts;
 use App\Filament\App\Resources\ChartOfAccounts\Pages\ListChartOfAccounts;
-use App\Filament\App\Resources\ChartOfAccountsResource\Pages;
 use App\Models\Account;
 use App\Models\AccountTemplate;
 use Filament\Actions\DeleteAction;
@@ -39,7 +38,7 @@ class ChartOfAccountsResource extends Resource
                     ->label('Industry Template')
                     ->options(AccountTemplate::pluck('name', 'id'))
                     ->live()
-                    ->visible(fn ($get): bool => !$get('parent_id')),
+                    ->visible(fn ($get): bool => ! $get('parent_id')),
 
                 TextInput::make('account_number')
                     ->required()
@@ -65,7 +64,7 @@ class ChartOfAccountsResource extends Resource
                         'liability' => 'Liability',
                         'equity' => 'Equity',
                         'revenue' => 'Revenue',
-                        'expense' => 'Expense'
+                        'expense' => 'Expense',
                     ])
                     ->label('Account Type'),
 
@@ -75,8 +74,7 @@ class ChartOfAccountsResource extends Resource
                         'debit' => 'Debit',
                         'credit' => 'Credit',
                     ])
-                    ->default(fn ($get): string =>
-                        in_array($get('account_type'), ['asset', 'expense']) ? 'debit' : 'credit'
+                    ->default(fn ($get): string => in_array($get('account_type'), ['asset', 'expense']) ? 'debit' : 'credit'
                     )
                     ->label('Normal Balance'),
 
@@ -85,7 +83,7 @@ class ChartOfAccountsResource extends Resource
                     ->options(fn () => Account::whereNull('parent_id')
                         ->orderBy('account_number')
                         ->get()
-                        ->mapWithKeys(fn($account): array => [$account->id => $account->account_number . ' - ' . $account->account_name]))
+                        ->mapWithKeys(fn ($account): array => [$account->id => $account->account_number.' - '.$account->account_name]))
                     ->searchable(),
 
                 TextInput::make('opening_balance')
@@ -158,7 +156,7 @@ class ChartOfAccountsResource extends Resource
                         'liability' => 'Liability',
                         'equity' => 'Equity',
                         'revenue' => 'Revenue',
-                        'expense' => 'Expense'
+                        'expense' => 'Expense',
                     ]),
                 SelectFilter::make('is_active')
                     ->label('Status')

@@ -59,7 +59,7 @@ class FinancialStatementServiceTest extends TestCase
         $result = $this->service->balanceSheet(Carbon::parse('2024-12-31'));
 
         $netAssets = ($result['assets']['total'] ?? 0) - ($result['liabilities']['total'] ?? 0);
-        $equity    = $result['equity']['total'] ?? 0;
+        $equity = $result['equity']['total'] ?? 0;
 
         $this->assertEqualsWithDelta($netAssets, $equity, 0.01);
     }

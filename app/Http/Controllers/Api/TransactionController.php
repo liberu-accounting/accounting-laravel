@@ -31,10 +31,11 @@ class TransactionController extends Controller
             'account_id' => 'required|exists:accounts,id',
             'amount' => 'required|numeric',
             'transaction_date' => 'required|date',
-            'description' => 'required|string'
+            'description' => 'required|string',
         ]);
 
         $transaction = Transaction::create($validated);
+
         return new TransactionResource($transaction);
     }
 
@@ -44,16 +45,18 @@ class TransactionController extends Controller
             'account_id' => 'sometimes|exists:accounts,id',
             'amount' => 'sometimes|numeric',
             'transaction_date' => 'sometimes|date',
-            'description' => 'sometimes|string'
+            'description' => 'sometimes|string',
         ]);
 
         $transaction->update($validated);
+
         return new TransactionResource($transaction);
     }
 
     public function destroy(Transaction $transaction): Response
     {
         $transaction->delete();
+
         return response()->noContent();
     }
 }

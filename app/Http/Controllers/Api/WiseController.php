@@ -19,9 +19,7 @@ use Illuminate\Support\Str;
 
 class WiseController extends Controller
 {
-    public function __construct(protected WiseService $wiseService)
-    {
-    }
+    public function __construct(protected WiseService $wiseService) {}
 
     /**
      * Redirect the user to Wise's OAuth authorization page
@@ -46,7 +44,7 @@ class WiseController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to generate authorization URL: ' . $e->getMessage(),
+                'message' => 'Failed to generate authorization URL: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -59,7 +57,7 @@ class WiseController extends Controller
         $code = $request->input('code');
         $state = $request->input('state');
 
-        if (!$code) {
+        if (! $code) {
             return response()->json([
                 'success' => false,
                 'message' => 'Authorization code missing',
@@ -68,7 +66,7 @@ class WiseController extends Controller
 
         // Verify OAuth state to prevent CSRF
         $sessionState = $request->session()->pull('wise_oauth_state');
-        if (!$sessionState || !hash_equals($sessionState, $state ?? '')) {
+        if (! $sessionState || ! hash_equals($sessionState, $state ?? '')) {
             Log::warning('Wise OAuth state mismatch', [
                 'user_id' => $request->user()?->id,
             ]);
@@ -117,7 +115,7 @@ class WiseController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to connect Wise account: ' . $e->getMessage(),
+                'message' => 'Failed to connect Wise account: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -193,10 +191,10 @@ class WiseController extends Controller
                         $accountBalance = BankAccountBalance::updateOrCreate(
                             [
                                 'bank_connection_id' => $connection->id,
-                                'plaid_account_id' => 'wise_' . $profileId . '_' . ($balance['id'] ?? $balance['currency']),
+                                'plaid_account_id' => 'wise_'.$profileId.'_'.($balance['id'] ?? $balance['currency']),
                             ],
                             [
-                                'account_name' => ($profile['type'] ?? 'personal') . ' - ' . ($balance['currency'] ?? ''),
+                                'account_name' => ($profile['type'] ?? 'personal').' - '.($balance['currency'] ?? ''),
                                 'account_type' => $profile['type'] ?? 'personal',
                                 'account_subtype' => null,
                                 'current_balance' => $balance['amount']['value'] ?? null,
@@ -237,7 +235,7 @@ class WiseController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to get accounts: ' . $e->getMessage(),
+                'message' => 'Failed to get accounts: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -308,7 +306,7 @@ class WiseController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to sync transactions: ' . $e->getMessage(),
+                'message' => 'Failed to sync transactions: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -340,7 +338,7 @@ class WiseController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to remove connection: ' . $e->getMessage(),
+                'message' => 'Failed to remove connection: '.$e->getMessage(),
             ], 500);
         }
     }

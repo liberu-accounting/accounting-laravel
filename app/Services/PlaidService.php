@@ -6,14 +6,19 @@ namespace App\Services;
 
 use App\Models\BankConnection;
 use Exception;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class PlaidService
 {
     protected string $clientId;
+
     protected string $secret;
+
     protected string $environment;
+
     protected string $baseUrl;
 
     public function __construct()
@@ -23,7 +28,7 @@ class PlaidService
         $this->environment = config('services.plaid.environment', 'sandbox') ?? 'sandbox';
 
         // Set base URL based on environment
-        $this->baseUrl = match($this->environment) {
+        $this->baseUrl = match ($this->environment) {
             'production' => 'https://production.plaid.com',
             'development' => 'https://development.plaid.com',
             default => 'https://sandbox.plaid.com',
@@ -63,9 +68,9 @@ class PlaidService
     /**
      * Create a link token for Plaid Link initialization
      *
-     * @param int $userId User ID for Plaid identification
-     * @param string|null $language Language code (default: 'en')
-     * @param string|null $accessToken Existing access token for update mode (re-authentication)
+     * @param  int  $userId  User ID for Plaid identification
+     * @param  string|null  $language  Language code (default: 'en')
+     * @param  string|null  $accessToken  Existing access token for update mode (re-authentication)
      * @return array Link token data including token and expiration
      */
     public function createLinkToken(int $userId, ?string $language = 'en', ?string $accessToken = null): array
@@ -103,7 +108,7 @@ class PlaidService
                 return $response->json();
             }
 
-            throw new Exception('Failed to create link token: ' . $response->body());
+            throw new Exception('Failed to create link token: '.$response->body());
         } catch (Exception $e) {
             Log::error('Plaid link token creation failed', [
                 'user_id' => $userId,
@@ -130,7 +135,7 @@ class PlaidService
                 return $response->json();
             }
 
-            throw new Exception('Failed to exchange public token: ' . $response->body());
+            throw new Exception('Failed to exchange public token: '.$response->body());
         } catch (Exception $e) {
             Log::error('Plaid public token exchange failed', [
                 'error' => $e->getMessage(),
@@ -156,7 +161,7 @@ class PlaidService
                 return $response->json();
             }
 
-            throw new Exception('Failed to get institution: ' . $response->body());
+            throw new Exception('Failed to get institution: '.$response->body());
         } catch (Exception $e) {
             Log::error('Plaid get institution failed', [
                 'institution_id' => $institutionId,
@@ -188,8 +193,8 @@ class PlaidService
                 ->connectTimeout(10)
                 ->retry(2, 200,
                     // Only retry on 5xx errors or network issues, not 4xx
-                    fn($exception, $request): bool => $exception instanceof \Illuminate\Http\Client\ConnectionException ||
-                       ($exception instanceof \Illuminate\Http\Client\RequestException &&
+                    fn ($exception, $request): bool => $exception instanceof ConnectionException ||
+                       ($exception instanceof RequestException &&
                         $exception->response->status() >= 500))
                 ->post("{$this->baseUrl}/transactions/sync", $payload);
 
@@ -212,7 +217,7 @@ class PlaidService
                 $this->handlePlaidError($response->json(), 'syncTransactions');
             }
 
-            throw new Exception('Failed to sync transactions: ' . $response->body());
+            throw new Exception('Failed to sync transactions: '.$response->body());
         } catch (Exception $e) {
             Log::error('Plaid transaction sync failed', [
                 'connection_id' => $connection->id,
@@ -225,7 +230,7 @@ class PlaidService
     /**
      * Get account information
      *
-     * @param string $accessToken The access token (should already be decrypted if from model)
+     * @param  string  $accessToken  The access token (should already be decrypted if from model)
      */
     public function getAccounts(string $accessToken): array
     {
@@ -240,7 +245,7 @@ class PlaidService
                 return $response->json();
             }
 
-            throw new Exception('Failed to get accounts: ' . $response->body());
+            throw new Exception('Failed to get accounts: '.$response->body());
         } catch (Exception $e) {
             Log::error('Plaid get accounts failed', [
                 'error' => $e->getMessage(),
@@ -252,8 +257,8 @@ class PlaidService
     /**
      * Get account balances with real-time balance information
      *
-     * @param string $accessToken The access token (should already be decrypted if from model)
-     * @param array|null $accountIds Optional array of specific account IDs to get balances for
+     * @param  string  $accessToken  The access token (should already be decrypted if from model)
+     * @param  array|null  $accountIds  Optional array of specific account IDs to get balances for
      */
     public function getBalances(string $accessToken, ?array $accountIds = null): array
     {
@@ -277,7 +282,7 @@ class PlaidService
                 return $response->json();
             }
 
-            throw new Exception('Failed to get balances: ' . $response->body());
+            throw new Exception('Failed to get balances: '.$response->body());
         } catch (Exception $e) {
             Log::error('Plaid get balances failed', [
                 'error' => $e->getMessage(),
@@ -289,7 +294,7 @@ class PlaidService
     /**
      * Remove a Plaid item (disconnect bank)
      *
-     * @param string $accessToken The access token (should already be decrypted if from model)
+     * @param  string  $accessToken  The access token (should already be decrypted if from model)
      */
     public function removeItem(string $accessToken): bool
     {
@@ -304,7 +309,7 @@ class PlaidService
                 return true;
             }
 
-            throw new Exception('Failed to remove item: ' . $response->body());
+            throw new Exception('Failed to remove item: '.$response->body());
         } catch (Exception $e) {
             Log::error('Plaid item removal failed', [
                 'error' => $e->getMessage(),
@@ -316,8 +321,8 @@ class PlaidService
     /**
      * Verify webhook signature
      *
-     * @param string $bodyJson The raw JSON body of the webhook request
-     * @param array $headers The headers from the webhook request
+     * @param  string  $bodyJson  The raw JSON body of the webhook request
+     * @param  array  $headers  The headers from the webhook request
      * @return bool True if signature is valid, false otherwise
      */
     public function verifyWebhookSignature(string $bodyJson, array $headers): bool
@@ -327,6 +332,7 @@ class PlaidService
         // If no verification key is configured, log warning and reject
         if (empty($verificationKey)) {
             Log::warning('Plaid webhook verification key not configured - rejecting webhook');
+
             return false;
         }
 
@@ -340,6 +346,7 @@ class PlaidService
 
         if (empty($signature)) {
             Log::warning('Plaid webhook signature missing from headers');
+
             return false;
         }
 

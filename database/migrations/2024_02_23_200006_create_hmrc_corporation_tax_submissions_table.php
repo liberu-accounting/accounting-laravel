@@ -28,7 +28,7 @@ return new class extends Migration
             $table->date('payment_due_date');
             $table->boolean('is_amended')->default(false);
             $table->timestamps();
-            
+
             $table->index(['company_id', 'accounting_period_start', 'accounting_period_end'], 'hmrc_corp_tax_company_period_index');
         });
     }

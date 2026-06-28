@@ -9,7 +9,6 @@ use Filament\Actions\EditAction;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -38,7 +37,7 @@ class ViewUser extends ViewRecord
                         ImageEntry::make('profile_photo_url')
                             ->label('Profile Photo')
                             ->circular()
-                            ->defaultImageUrl(fn ($record): string => 'https://ui-avatars.com/api/?name=' . urlencode((string) $record->name) . '&color=7F9CF5&background=EBF4FF')
+                            ->defaultImageUrl(fn ($record): string => 'https://ui-avatars.com/api/?name='.urlencode((string) $record->name).'&color=7F9CF5&background=EBF4FF')
                             ->columnSpanFull(),
 
                         TextEntry::make('name')

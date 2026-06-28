@@ -32,8 +32,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class VendorCredit extends Model
 {
-    use IsTenantModel;
     use HasFactory, SoftDeletes;
+    use IsTenantModel;
 
     #[\Override]
     protected $primaryKey = 'vendor_credit_id';
@@ -111,7 +111,8 @@ class VendorCredit extends Model
     {
         $lastCredit = self::orderBy('vendor_credit_id', 'desc')->first();
         $nextNumber = $lastCredit ? ((int) substr((string) $lastCredit->vendor_credit_number, 3)) + 1 : 1;
-        return 'VC-' . str_pad($nextNumber, 6, '0', STR_PAD_LEFT);
+
+        return 'VC-'.str_pad($nextNumber, 6, '0', STR_PAD_LEFT);
     }
 
     /**

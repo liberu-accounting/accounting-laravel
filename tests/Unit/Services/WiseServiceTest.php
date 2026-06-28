@@ -25,7 +25,7 @@ class WiseServiceTest extends TestCase
         Config::set('services.wise.redirect_uri', 'https://example.com/wise/callback');
         Config::set('services.wise.webhook_public_key', '');
 
-        $this->service = new WiseService();
+        $this->service = new WiseService;
     }
 
     public function test_get_authorization_url_returns_correct_url(): void
@@ -43,7 +43,7 @@ class WiseServiceTest extends TestCase
     public function test_get_authorization_url_uses_production_url_when_configured(): void
     {
         Config::set('services.wise.environment', 'production');
-        $service = new WiseService();
+        $service = new WiseService;
 
         $url = $service->getAuthorizationUrl('state');
 
@@ -68,7 +68,7 @@ class WiseServiceTest extends TestCase
         $this->assertEquals('test_refresh_token', $result['refresh_token']);
         $this->assertEquals(3600, $result['expires_in']);
 
-        Http::assertSent(fn($request): bool => str_contains((string) $request->url(), 'oauth/v2/token')
+        Http::assertSent(fn ($request): bool => str_contains((string) $request->url(), 'oauth/v2/token')
             && $request['grant_type'] === 'authorization_code'
             && $request['code'] === 'test_auth_code');
     }
@@ -99,7 +99,7 @@ class WiseServiceTest extends TestCase
 
         $this->assertEquals('new_access_token', $result['access_token']);
 
-        Http::assertSent(fn($request): bool => $request['grant_type'] === 'refresh_token'
+        Http::assertSent(fn ($request): bool => $request['grant_type'] === 'refresh_token'
             && $request['refresh_token'] === 'old_refresh_token');
     }
 
@@ -204,7 +204,7 @@ class WiseServiceTest extends TestCase
         $this->assertEquals(12345, $profiles[0]['id']);
         $this->assertEquals('personal', $profiles[0]['type']);
 
-        Http::assertSent(fn($request): bool => str_contains((string) $request->url(), '/v2/profiles')
+        Http::assertSent(fn ($request): bool => str_contains((string) $request->url(), '/v2/profiles')
             && $request->hasHeader('Authorization', 'Bearer valid_token'));
     }
 
@@ -310,7 +310,7 @@ class WiseServiceTest extends TestCase
         $this->assertCount(1, $transfers);
         $this->assertEquals(9001, $transfers[0]['id']);
 
-        Http::assertSent(fn($request): bool => str_contains((string) $request->url(), '/v1/transfers')
+        Http::assertSent(fn ($request): bool => str_contains((string) $request->url(), '/v1/transfers')
             && str_contains((string) $request->url(), 'createdDateStart=2026-01-01')
             && str_contains((string) $request->url(), 'createdDateEnd=2026-01-31'));
     }
@@ -329,7 +329,7 @@ class WiseServiceTest extends TestCase
 
         $this->service->getTransfers($connection, 12345, null, null, 5000);
 
-        Http::assertSent(fn($request): bool => str_contains((string) $request->url(), 'limit=100'));
+        Http::assertSent(fn ($request): bool => str_contains((string) $request->url(), 'limit=100'));
     }
 
     public function test_get_transfers_updates_last_synced_at(): void
@@ -354,7 +354,7 @@ class WiseServiceTest extends TestCase
     public function test_service_uses_production_base_url_when_configured(): void
     {
         Config::set('services.wise.environment', 'production');
-        $service = new WiseService();
+        $service = new WiseService;
 
         Http::fake([
             'api.transferwise.com/v2/profiles' => Http::response([], 200),
@@ -368,7 +368,7 @@ class WiseServiceTest extends TestCase
 
         $service->getProfiles($connection);
 
-        Http::assertSent(fn($request): bool => str_contains((string) $request->url(), 'api.transferwise.com'));
+        Http::assertSent(fn ($request): bool => str_contains((string) $request->url(), 'api.transferwise.com'));
     }
 
     public function test_verify_webhook_signature_with_missing_public_key(): void

@@ -24,7 +24,7 @@ class Vendor extends Model
         'address',
         'tax_id',
         'payment_terms',
-        'status'
+        'status',
     ];
 
     public function invoices()

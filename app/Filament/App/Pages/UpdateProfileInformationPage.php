@@ -7,6 +7,7 @@ namespace App\Filament\App\Pages;
 use Filament\Forms\Components\TextInput;
 use Filament\Pages\Page;
 use Filament\Schemas\Schema;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Auth;
 
 class UpdateProfileInformationPage extends Page
@@ -26,13 +27,14 @@ class UpdateProfileInformationPage extends Page
     #[\Override]
     protected static ?string $title = 'Profile';
 
-    public ?string $name  = null;
+    public ?string $name = null;
+
     public ?string $email = null;
 
     public function mount(): void
     {
         $this->form->fill([
-            'name'  => Auth::user()->name,
+            'name' => Auth::user()->name,
             'email' => Auth::user()->email,
         ]);
     }
@@ -55,7 +57,7 @@ class UpdateProfileInformationPage extends Page
         $state = $this->form->getState();
 
         Auth::user()->forceFill(array_filter([
-            'name'  => $state['name'] ?? null,
+            'name' => $state['name'] ?? null,
             'email' => $state['email'] ?? null,
         ]))->save();
 
@@ -63,7 +65,7 @@ class UpdateProfileInformationPage extends Page
     }
 
     #[\Override]
-    public function getHeading(): string|\Illuminate\Contracts\Support\Htmlable
+    public function getHeading(): string|Htmlable
     {
         return static::$title ?? '';
     }

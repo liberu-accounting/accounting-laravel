@@ -57,7 +57,7 @@ class SalesReceiptItem extends Model
 
         static::saving(function ($item): void {
             // Auto-calculate amount if not provided
-            if (!isset($item->amount) || $item->amount == 0) {
+            if (! isset($item->amount) || $item->amount == 0) {
                 $item->amount = $item->quantity * $item->unit_price;
             }
         });

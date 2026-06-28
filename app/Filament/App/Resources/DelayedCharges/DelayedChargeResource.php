@@ -29,13 +29,13 @@ class DelayedChargeResource extends Resource
     protected static ?string $model = DelayedCharge::class;
 
     #[\Override]
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-clock';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-clock';
 
     #[\Override]
     protected static ?int $navigationSort = 6;
 
     #[\Override]
-    protected static string | \UnitEnum | null $navigationGroup = 'Sales';
+    protected static string|\UnitEnum|null $navigationGroup = 'Sales';
 
     #[\Override]
     protected static ?string $recordTitleAttribute = 'description';

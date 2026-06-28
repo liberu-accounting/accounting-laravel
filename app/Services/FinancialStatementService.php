@@ -7,6 +7,7 @@ namespace App\Services;
 use App\Models\Account;
 use App\Models\JournalEntryLine;
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
 
 class FinancialStatementService
 {
@@ -161,10 +162,10 @@ class FinancialStatementService
     /**
      * Calculate account balances for given accounts and date range
      *
-     * @param \Illuminate\Support\Collection $accounts
-     * @param Carbon|null $startDate
-     * @param Carbon $endDate
-     * @return \Illuminate\Support\Collection
+     * @param  Collection  $accounts
+     * @param  Carbon|null  $startDate
+     * @param  Carbon  $endDate
+     * @return Collection
      */
     protected function calculateAccountsBalance($accounts, $startDate, $endDate)
     {
@@ -180,25 +181,25 @@ class FinancialStatementService
             ];
         })->filter(
             // Only show accounts with non-zero balances
-            fn($account): bool => abs((float) $account['balance']) > 0.01);
+            fn ($account): bool => abs((float) $account['balance']) > 0.01);
     }
 
     /**
      * Get account balance for a specific period
      *
-     * @param Carbon|null $startDate
+     * @param  Carbon|null  $startDate
      */
     protected function getAccountBalance(int $accountId, $startDate, Carbon $endDate): float
     {
         $account = Account::find($accountId);
-        if (!$account) {
+        if (! $account) {
             return 0;
         }
 
         $query = JournalEntryLine::where('account_id', $accountId)
             ->whereHas('journalEntry', function ($q) use ($startDate, $endDate): void {
                 $q->where('status', 'posted')
-                  ->where('entry_date', '<=', $endDate);
+                    ->where('entry_date', '<=', $endDate);
 
                 if ($startDate) {
                     $q->where('entry_date', '>=', $startDate);
@@ -216,7 +217,7 @@ class FinancialStatementService
         $balance = $normalBalanceIsDebit ? ($debits - $credits) : ($credits - $debits);
 
         // Add opening balance if no start date (balance sheet)
-        if (!$startDate && $account->opening_balance) {
+        if (! $startDate && $account->opening_balance) {
             $balance += $account->opening_balance;
         }
 
@@ -304,6 +305,6 @@ class FinancialStatementService
             ->orWhere('name', 'like', '%cash%')
             ->get();
 
-        return $cashAccounts->sum(fn($account): float => $this->getAccountBalance($account->id, null, $asOfDate));
+        return $cashAccounts->sum(fn ($account): float => $this->getAccountBalance($account->id, null, $asOfDate));
     }
 }

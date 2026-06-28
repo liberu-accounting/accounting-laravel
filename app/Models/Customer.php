@@ -11,8 +11,8 @@ use Illuminate\Notifications\Notifiable;
 
 class Customer extends Authenticatable
 {
-    use IsTenantModel;
     use HasFactory, Notifiable;
+    use IsTenantModel;
 
     // protected $primaryKey = 'customer_id';
     protected $guard = 'customer';

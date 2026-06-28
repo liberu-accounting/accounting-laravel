@@ -25,6 +25,6 @@ class PaymentTerm extends Model
 
     public function suppliers()
     {
-        return $this->hasMany(Supplier::class,  'payment_term_id');
+        return $this->hasMany(Supplier::class, 'payment_term_id');
     }
 }

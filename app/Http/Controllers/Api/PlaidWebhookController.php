@@ -15,9 +15,7 @@ use Illuminate\Support\Facades\Log;
 
 class PlaidWebhookController extends Controller
 {
-    public function __construct(protected PlaidService $plaidService)
-    {
-    }
+    public function __construct(protected PlaidService $plaidService) {}
 
     /**
      * Handle incoming Plaid webhooks
@@ -29,7 +27,7 @@ class PlaidWebhookController extends Controller
             $rawBody = $request->getContent();
 
             // Verify webhook signature
-            if (!$this->plaidService->verifyWebhookSignature($rawBody, $request->headers->all())) {
+            if (! $this->plaidService->verifyWebhookSignature($rawBody, $request->headers->all())) {
                 Log::warning('Plaid webhook signature verification failed', [
                     'ip' => $request->ip(),
                 ]);
@@ -89,11 +87,12 @@ class PlaidWebhookController extends Controller
 
         $connection = BankConnection::where('plaid_item_id', $itemId)->first();
 
-        if (!$connection) {
+        if (! $connection) {
             Log::warning('Bank connection not found for webhook', [
                 'item_id' => $itemId,
                 'webhook_code' => $webhookCode,
             ]);
+
             return;
         }
 
@@ -128,11 +127,12 @@ class PlaidWebhookController extends Controller
 
         $connection = BankConnection::where('plaid_item_id', $itemId)->first();
 
-        if (!$connection) {
+        if (! $connection) {
             Log::warning('Bank connection not found for item webhook', [
                 'item_id' => $itemId,
                 'webhook_code' => $webhookCode,
             ]);
+
             return;
         }
 
@@ -246,7 +246,7 @@ class PlaidWebhookController extends Controller
      */
     protected function handleItemError(BankConnection $connection, ?array $error): void
     {
-        if (!$error) {
+        if (! $error) {
             return;
         }
 

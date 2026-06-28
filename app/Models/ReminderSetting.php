@@ -18,7 +18,7 @@ class ReminderSetting extends Model
         'days_before_reminder',
         'reminder_frequency_days',
         'max_reminders',
-        'is_active'
+        'is_active',
     ];
 
     #[\Override]

@@ -57,6 +57,7 @@ class SyncPlaidTransactionsJob implements ShouldQueue
                     'connection_id' => $connection->id,
                     'status' => $connection->status,
                 ]);
+
                 return;
             }
 

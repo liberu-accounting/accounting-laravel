@@ -12,7 +12,7 @@ return new class extends Migration
     {
         Schema::table('invoices', function (Blueprint $table): void {
             $table->boolean('is_recurring')->default(false);
-            $table->string('recurrence_frequency')->nullable(); 
+            $table->string('recurrence_frequency')->nullable();
             $table->date('recurrence_start')->nullable();
             $table->date('recurrence_end')->nullable();
             $table->date('last_generated')->nullable();
@@ -24,10 +24,10 @@ return new class extends Migration
         Schema::table('invoices', function (Blueprint $table): void {
             $table->dropColumn([
                 'is_recurring',
-                'recurrence_frequency', 
+                'recurrence_frequency',
                 'recurrence_start',
                 'recurrence_end',
-                'last_generated'
+                'last_generated',
             ]);
         });
     }

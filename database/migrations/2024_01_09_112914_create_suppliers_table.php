@@ -24,7 +24,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign('payment_term_id')->references('payment_term_id')->on('payment_terms');
-        
+
         });
     }
 

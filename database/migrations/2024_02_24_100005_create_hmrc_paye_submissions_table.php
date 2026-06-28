@@ -29,7 +29,7 @@ return new class extends Migration
             $table->boolean('late_reason_provided')->default(false);
             $table->text('late_reason')->nullable();
             $table->timestamps();
-            
+
             $table->index(['company_id', 'tax_year', 'tax_month']);
         });
     }

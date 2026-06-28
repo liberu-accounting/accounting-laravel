@@ -10,7 +10,7 @@ class RecreateCustomerTaxRateTable extends Migration
 {
     public function up(): void
     {
-        if (!Schema::hasTable('customer_tax_rate')) {
+        if (! Schema::hasTable('customer_tax_rate')) {
             Schema::create('customer_tax_rate', function (Blueprint $table): void {
                 $table->id();
                 $table->unsignedBigInteger('customer_id')->nullable();
@@ -20,10 +20,10 @@ class RecreateCustomerTaxRateTable extends Migration
         }
 
         Schema::table('customer_tax_rate', function (Blueprint $table): void {
-            if (!Schema::hasColumn('customer_tax_rate', 'customer_id')) {
+            if (! Schema::hasColumn('customer_tax_rate', 'customer_id')) {
                 $table->unsignedBigInteger('customer_id')->nullable();
             }
-            if (!Schema::hasColumn('customer_tax_rate', 'tax_rate_id')) {
+            if (! Schema::hasColumn('customer_tax_rate', 'tax_rate_id')) {
                 $table->unsignedBigInteger('tax_rate_id')->nullable();
             }
         });

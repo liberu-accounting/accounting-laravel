@@ -7,8 +7,6 @@ namespace App\Filament\App\Resources\Categories;
 use App\Filament\App\Resources\Categories\Pages\CreateCategory;
 use App\Filament\App\Resources\Categories\Pages\EditCategory;
 use App\Filament\App\Resources\Categories\Pages\ListCategories;
-use App\Filament\App\Resources\CategoryResource\Pages;
-use App\Filament\App\Resources\CategoryResource\RelationManagers;
 use App\Models\Category;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
@@ -27,7 +25,7 @@ class CategoryResource extends Resource
     protected static ?string $model = Category::class;
 
     #[\Override]
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';
 
     #[\Override]
     public static function form(Schema $schema): Schema

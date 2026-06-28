@@ -17,6 +17,7 @@ use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Widgets;
+use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -51,9 +52,9 @@ class AdminPanelProvider extends PanelProvider
                 Pages\EditProfile::class,
                 // Pages\ApiTokenManagerPage::class,
             ])->widgets([
-                    Widgets\AccountWidget::class,
-                    // Widgets\FilamentInfoWidget::class,
-                ])
+                Widgets\AccountWidget::class,
+                // Widgets\FilamentInfoWidget::class,
+            ])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
@@ -69,9 +70,9 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
                 TeamsPermission::class,
             ])->plugins([
-                    FilamentShieldPlugin::make()
-                        ->navigationGroup('Administration')
-                ]);
+                FilamentShieldPlugin::make()
+                    ->navigationGroup('Administration'),
+            ]);
 
         // if (Features::hasApiFeatures()) {
         //     $panel->userMenuItems([
@@ -93,7 +94,7 @@ class AdminPanelProvider extends PanelProvider
                     MenuItem::make()
                         ->label('Team Settings')
                         ->icon('heroicon-o-cog-6-tooth')
-                        ->url(fn(): \Illuminate\Contracts\Routing\UrlGenerator|string => $this->shouldRegisterMenuItem()
+                        ->url(fn (): UrlGenerator|string => $this->shouldRegisterMenuItem()
                             ? url(Pages\EditTeam::getUrl())
                             : url($panel->getPath())),
                 ]);
@@ -117,6 +118,6 @@ class AdminPanelProvider extends PanelProvider
 
     public function shouldRegisterMenuItem(): bool
     {
-        return true; //auth()->user()?->hasVerifiedEmail() && Filament::hasTenancy() && Filament::getTenant();
+        return true; // auth()->user()?->hasVerifiedEmail() && Filament::hasTenancy() && Filament::getTenant();
     }
 }

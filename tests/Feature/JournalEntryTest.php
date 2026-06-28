@@ -2,11 +2,11 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
-use App\Models\JournalEntry;
 use App\Models\Account;
+use App\Models\JournalEntry;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class JournalEntryTest extends TestCase
 {
@@ -17,9 +17,9 @@ class JournalEntryTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         $this->user = User::factory()->create();
-        
+
         // Create test accounts
         Account::create([
             'user_id' => $this->user->id,
@@ -45,6 +45,7 @@ class JournalEntryTest extends TestCase
             'allow_manual_entry' => true,
         ]);
     }
+
     public function test_journal_entry_can_be_created_with_balanced_lines(): void
     {
         $journalEntry = JournalEntry::create([
@@ -88,6 +89,7 @@ class JournalEntryTest extends TestCase
             'credit_amount' => 500.00,
         ]);
     }
+
     public function test_posting_journal_entry_updates_account_balances(): void
     {
         $cashAccount = Account::where('account_number', 1010)->first();
@@ -123,6 +125,7 @@ class JournalEntryTest extends TestCase
         $this->assertEquals($initialCashBalance + 250.00, $cashAccount->balance);
         $this->assertEquals($initialRevenueBalance + 250.00, $revenueAccount->balance);
     }
+
     public function test_journal_entry_has_auto_generated_entry_number(): void
     {
         $journalEntry = JournalEntry::create([
@@ -134,6 +137,7 @@ class JournalEntryTest extends TestCase
         $this->assertNotNull($journalEntry->entry_number);
         $this->assertStringStartsWith('JE-', $journalEntry->entry_number);
     }
+
     public function test_journal_entry_supports_multiple_entry_types(): void
     {
         $types = ['general', 'adjusting', 'closing', 'reversing'];
@@ -148,6 +152,7 @@ class JournalEntryTest extends TestCase
             $this->assertEquals($type, $entry->entry_type);
         }
     }
+
     public function test_journal_entry_lines_can_have_descriptions(): void
     {
         $journalEntry = JournalEntry::create([

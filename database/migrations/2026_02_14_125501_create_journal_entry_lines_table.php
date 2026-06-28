@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('department')->nullable();
             $table->string('cost_center')->nullable();
             $table->timestamps();
-            
+
             $table->index('journal_entry_id');
             $table->index('account_id');
         });

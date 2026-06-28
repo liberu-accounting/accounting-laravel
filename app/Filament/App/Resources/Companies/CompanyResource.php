@@ -7,7 +7,6 @@ namespace App\Filament\App\Resources\Companies;
 use App\Filament\App\Resources\Companies\Pages\CreateCompany;
 use App\Filament\App\Resources\Companies\Pages\EditCompany;
 use App\Filament\App\Resources\Companies\Pages\ListCompanies;
-use App\Filament\App\Resources\CompanyResource\Pages;
 use App\Models\Company;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -24,12 +23,15 @@ class CompanyResource extends Resource
 {
     #[\Override]
     protected static ?string $model = Company::class;
+
     #[\Override]
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-building-office';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-building-office';
+
     #[\Override]
     protected static ?int $navigationSort = 3;
+
     #[\Override]
-    protected static string | \UnitEnum | null $navigationGroup = 'Settings';
+    protected static string|\UnitEnum|null $navigationGroup = 'Settings';
 
     #[\Override]
     public static function form(Schema $schema): Schema

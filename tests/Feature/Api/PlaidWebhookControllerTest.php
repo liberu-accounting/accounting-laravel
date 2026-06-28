@@ -5,7 +5,6 @@ namespace Tests\Feature\Api;
 use App\Jobs\SyncPlaidTransactionsJob;
 use App\Models\BankConnection;
 use App\Models\User;
-use App\Services\PlaidService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Queue;
@@ -16,14 +15,15 @@ class PlaidWebhookControllerTest extends TestCase
     use RefreshDatabase;
 
     protected User $user;
+
     protected BankConnection $connection;
 
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         Config::set('services.plaid.webhook_verification_key', 'test_verification_key');
-        
+
         $this->user = User::factory()->create();
         $this->connection = BankConnection::factory()->create([
             'user_id' => $this->user->id,
@@ -92,7 +92,7 @@ class PlaidWebhookControllerTest extends TestCase
             'Plaid-Verification' => $signature,
         ]);
 
-        Queue::assertPushed(SyncPlaidTransactionsJob::class, fn($job): bool => $job->connectionId === $this->connection->id);
+        Queue::assertPushed(SyncPlaidTransactionsJob::class, fn ($job): bool => $job->connectionId === $this->connection->id);
     }
 
     public function test_webhook_handles_item_error(): void

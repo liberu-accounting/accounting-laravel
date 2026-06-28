@@ -11,7 +11,7 @@ trait HasModuleHooks
     public function registerHook(string $hookName, callable $callback, int $priority = 10): void
     {
         $this->hooks[$hookName][] = ['callback' => $callback, 'priority' => $priority];
-        usort($this->hooks[$hookName], fn($a, $b) => $a['priority'] <=> $b['priority']);
+        usort($this->hooks[$hookName], fn ($a, $b) => $a['priority'] <=> $b['priority']);
     }
 
     public function executeHook(string $hookName, mixed ...$args): mixed

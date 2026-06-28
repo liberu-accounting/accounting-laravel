@@ -14,10 +14,10 @@ class Category extends Model
     use IsTenantModel;
 
     #[\Override]
-    protected $primaryKey='category_id';
+    protected $primaryKey = 'category_id';
 
     #[\Override]
-    protected $fillable=[
+    protected $fillable = [
         'name',
         'parent_id',
     ];

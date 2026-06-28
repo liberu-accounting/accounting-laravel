@@ -14,13 +14,13 @@ use Filament\Schemas\Schema;
 class ManageGeneralSettings extends SettingsPage
 {
     #[\Override]
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-cog-6-tooth';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-cog-6-tooth';
 
     #[\Override]
     protected static string $settings = GeneralSettings::class;
 
     #[\Override]
-    protected static string | \UnitEnum | null $navigationGroup = 'Settings';
+    protected static string|\UnitEnum|null $navigationGroup = 'Settings';
 
     #[\Override]
     protected static ?string $title = 'General Settings';

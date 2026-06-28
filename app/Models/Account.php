@@ -28,7 +28,7 @@ class Account extends Model
         'parent_id',
         'industry_type',
         'is_active',
-        'allow_manual_entry'
+        'allow_manual_entry',
     ];
 
     #[\Override]
@@ -46,7 +46,7 @@ class Account extends Model
 
         // Set normal_balance based on account_type if not provided
         static::creating(function ($account): void {
-            if (!$account->normal_balance) {
+            if (! $account->normal_balance) {
                 $account->normal_balance = in_array($account->account_type, ['asset', 'expense'])
                     ? 'debit'
                     : 'credit';
@@ -104,6 +104,7 @@ class Account extends Model
     public function getBalanceInDefaultCurrency()
     {
         $defaultCurrency = Currency::where('is_default', true)->first();
+
         return $this->getBalanceInCurrency($defaultCurrency);
     }
 
@@ -126,7 +127,7 @@ class Account extends Model
      */
     public function canAcceptEntries()
     {
-        if (!$this->allow_manual_entry) {
+        if (! $this->allow_manual_entry) {
             return false;
         }
 

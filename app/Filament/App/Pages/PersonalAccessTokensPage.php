@@ -14,10 +14,10 @@ class PersonalAccessTokensPage extends Page
     protected string $view = 'filament.pages.profile.personal-access-tokens';
 
     #[\Override]
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-key';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-key';
 
     #[\Override]
-    protected static string | \UnitEnum | null $navigationGroup = 'Account';
+    protected static string|\UnitEnum|null $navigationGroup = 'Account';
 
     #[\Override]
     protected static ?int $navigationSort = 3;

@@ -22,7 +22,7 @@ class PurchaseOrderItem extends Model
         'description',
         'quantity',
         'unit_price',
-        'total_price'
+        'total_price',
     ];
 
     #[\Override]

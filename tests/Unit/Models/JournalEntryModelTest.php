@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Unit\Models;
 
 use App\Models\JournalEntry;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -37,7 +38,7 @@ class JournalEntryModelTest extends TestCase
     {
         $entry = JournalEntry::factory()->create(['entry_date' => '2024-06-15']);
 
-        $this->assertInstanceOf(\Carbon\Carbon::class, $entry->entry_date);
+        $this->assertInstanceOf(Carbon::class, $entry->entry_date);
         $this->assertEquals('2024-06-15', $entry->entry_date->toDateString());
     }
 }

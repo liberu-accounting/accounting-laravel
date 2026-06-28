@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Filament\App\Resources\BankStatements;
 
-use App\Filament\App\Resources\BankStatementResource\Pages;
 use App\Filament\App\Resources\BankStatements\Pages\CreateBankStatement;
 use App\Filament\App\Resources\BankStatements\Pages\EditBankStatement;
 use App\Filament\App\Resources\BankStatements\Pages\ListBankStatements;
@@ -30,6 +29,8 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
 
 class BankStatementResource extends Resource
 {
@@ -37,10 +38,10 @@ class BankStatementResource extends Resource
     protected static ?string $model = BankStatement::class;
 
     #[\Override]
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document-text';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-document-text';
 
     #[\Override]
-    protected static string | \UnitEnum | null $navigationGroup = 'Banking';
+    protected static string|\UnitEnum|null $navigationGroup = 'Banking';
 
     #[\Override]
     protected static ?int $navigationSort = 2;
@@ -162,14 +163,14 @@ class BankStatementResource extends Resource
                         DatePicker::make('until')
                             ->label('Until'),
                     ])
-                    ->query(fn($query, array $data) => $query
+                    ->query(fn ($query, array $data) => $query
                         ->when(
                             $data['from'],
-                            fn($query) => $query->whereDate('statement_date', '>=', $data['from'])
+                            fn ($query) => $query->whereDate('statement_date', '>=', $data['from'])
                         )
                         ->when(
                             $data['until'],
-                            fn($query) => $query->whereDate('statement_date', '<=', $data['until'])
+                            fn ($query) => $query->whereDate('statement_date', '<=', $data['until'])
                         )),
 
                 Tables\Filters\TernaryFilter::make('reconciled')
@@ -198,11 +199,11 @@ class BankStatementResource extends Resource
                         $importService = app(BankStatementImportService::class);
 
                         if (isset($data['statement_file'])) {
-                            $path = storage_path('app/public/' . $data['statement_file']);
+                            $path = storage_path('app/public/'.$data['statement_file']);
                             $extension = pathinfo($path, PATHINFO_EXTENSION);
 
                             try {
-                                $transactions = match(strtolower($extension)) {
+                                $transactions = match (strtolower($extension)) {
                                     'csv' => $importService->importFromCsv($path, $record),
                                     'ofx' => $importService->importFromOfx($path, $record),
                                     'xls', 'xlsx' => $importService->importFromCsv($path, $record), // Excel can be converted to CSV
@@ -228,7 +229,7 @@ class BankStatementResource extends Resource
                     ->label('Reconcile')
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
-                    ->visible(fn (BankStatement $record): bool => $record->transactions()->exists() && !$record->reconciled)
+                    ->visible(fn (BankStatement $record): bool => $record->transactions()->exists() && ! $record->reconciled)
                     ->requiresConfirmation()
                     ->modalHeading('Reconcile Bank Statement')
                     ->modalDescription('This will attempt to match and reconcile all transactions for this statement.')
@@ -251,7 +252,7 @@ class BankStatementResource extends Resource
                         } else {
                             $message = "Matched: {$matched}, Unmatched: {$unmatched}";
                             if ($balanceDiscrepancy >= 0.01) {
-                                $message .= ", Balance discrepancy: $" . number_format($balanceDiscrepancy, 2);
+                                $message .= ', Balance discrepancy: $'.number_format($balanceDiscrepancy, 2);
                             }
 
                             Notification::make()
@@ -268,7 +269,7 @@ class BankStatementResource extends Resource
                     ->color('warning')
                     ->visible(fn (BankStatement $record) => $record->transactions()->exists())
                     ->modalHeading('Reconciliation Discrepancies')
-                    ->modalContent(function (BankStatement $record): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View {
+                    ->modalContent(function (BankStatement $record): Factory|View {
                         $reconciliationService = app(ReconciliationService::class);
                         $result = $reconciliationService->reconcile($record);
 

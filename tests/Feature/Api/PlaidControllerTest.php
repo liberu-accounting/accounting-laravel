@@ -4,7 +4,6 @@ namespace Tests\Feature\Api;
 
 use App\Models\BankConnection;
 use App\Models\User;
-use App\Services\PlaidService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
@@ -322,7 +321,8 @@ class PlaidControllerTest extends TestCase
         // Verify the HTTP request included redirect_uri
         Http::assertSent(function ($request): bool {
             $data = json_decode((string) $request->body(), true);
-            return isset($data['redirect_uri']) && 
+
+            return isset($data['redirect_uri']) &&
                    $data['redirect_uri'] === 'https://example.com/api/plaid/oauth-redirect';
         });
     }
@@ -356,7 +356,8 @@ class PlaidControllerTest extends TestCase
         // Verify the HTTP request included access_token for update mode
         Http::assertSent(function ($request): bool {
             $data = json_decode((string) $request->body(), true);
-            return isset($data['access_token']) && 
+
+            return isset($data['access_token']) &&
                    $data['access_token'] === 'access-test-token';
         });
     }

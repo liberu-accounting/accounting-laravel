@@ -27,6 +27,6 @@ class SiteSettings extends Model
         'facebook',
         'twitter',
         'github',
-        'youtube'
+        'youtube',
     ];
 }

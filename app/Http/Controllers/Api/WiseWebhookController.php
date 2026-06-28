@@ -13,9 +13,7 @@ use Illuminate\Support\Facades\Log;
 
 class WiseWebhookController extends Controller
 {
-    public function __construct(protected WiseService $wiseService)
-    {
-    }
+    public function __construct(protected WiseService $wiseService) {}
 
     /**
      * Handle incoming Wise webhooks
@@ -27,7 +25,7 @@ class WiseWebhookController extends Controller
             $signature = $request->header('X-Signature-SHA256', '');
             $publicKey = config('services.wise.webhook_public_key', '');
 
-            if (!$this->wiseService->verifyWebhookSignature($rawBody, $signature, $publicKey)) {
+            if (! $this->wiseService->verifyWebhookSignature($rawBody, $signature, $publicKey)) {
                 Log::warning('Wise webhook signature verification failed', [
                     'ip' => $request->ip(),
                 ]);

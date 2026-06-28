@@ -31,11 +31,11 @@ class Budget extends Model
 
     #[\Override]
     protected $casts = [
-        'start_date'      => 'date',
-        'end_date'        => 'date',
-        'planned_amount'  => 'decimal:2',
+        'start_date' => 'date',
+        'end_date' => 'date',
+        'planned_amount' => 'decimal:2',
         'forecast_amount' => 'decimal:2',
-        'is_approved'     => 'boolean',
+        'is_approved' => 'boolean',
     ];
 
     public function account(): BelongsTo

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('payment_terms', function (Blueprint $table): void {
             $table->unsignedBigInteger('payment_term_id', true);
             $table->string('payment_term_name');
-            $table->string('payment_term_description');   
+            $table->string('payment_term_description');
             $table->timestamps();
         });
     }

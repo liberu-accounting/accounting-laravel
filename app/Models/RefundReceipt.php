@@ -33,8 +33,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class RefundReceipt extends Model
 {
-    use IsTenantModel;
     use HasFactory, SoftDeletes;
+    use IsTenantModel;
 
     #[\Override]
     protected $primaryKey = 'refund_receipt_id';
@@ -89,7 +89,8 @@ class RefundReceipt extends Model
     {
         $lastRefund = self::orderBy('refund_receipt_id', 'desc')->first();
         $nextNumber = $lastRefund ? ((int) substr((string) $lastRefund->refund_receipt_number, 3)) + 1 : 1;
-        return 'RR-' . str_pad($nextNumber, 6, '0', STR_PAD_LEFT);
+
+        return 'RR-'.str_pad($nextNumber, 6, '0', STR_PAD_LEFT);
     }
 
     /**

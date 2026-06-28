@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Filament\App\Resources\PurchaseOrders;
 
-use App\Filament\App\Resources\PurchaseOrderResource\Pages;
 use App\Filament\App\Resources\PurchaseOrders\Pages\CreatePurchaseOrder;
 use App\Filament\App\Resources\PurchaseOrders\Pages\EditPurchaseOrder;
 use App\Filament\App\Resources\PurchaseOrders\Pages\ListPurchaseOrders;
@@ -31,7 +30,7 @@ class PurchaseOrderResource extends Resource
     protected static ?string $model = PurchaseOrder::class;
 
     #[\Override]
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-shopping-cart';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-shopping-cart';
 
     #[\Override]
     public static function form(Schema $schema): Schema

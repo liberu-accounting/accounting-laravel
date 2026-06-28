@@ -19,9 +19,7 @@ use Illuminate\Support\Str;
 
 class RevolutController extends Controller
 {
-    public function __construct(protected RevolutService $revolutService)
-    {
-    }
+    public function __construct(protected RevolutService $revolutService) {}
 
     /**
      * Redirect the user to Revolut's OAuth authorization page
@@ -46,7 +44,7 @@ class RevolutController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to generate authorization URL: ' . $e->getMessage(),
+                'message' => 'Failed to generate authorization URL: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -59,7 +57,7 @@ class RevolutController extends Controller
         $code = $request->input('code');
         $state = $request->input('state');
 
-        if (!$code) {
+        if (! $code) {
             return response()->json([
                 'success' => false,
                 'message' => 'Authorization code missing',
@@ -68,7 +66,7 @@ class RevolutController extends Controller
 
         // Verify OAuth state to prevent CSRF
         $sessionState = $request->session()->pull('revolut_oauth_state');
-        if (!$sessionState || !hash_equals($sessionState, $state ?? '')) {
+        if (! $sessionState || ! hash_equals($sessionState, $state ?? '')) {
             Log::warning('Revolut OAuth state mismatch', [
                 'user_id' => $request->user()?->id,
             ]);
@@ -117,7 +115,7 @@ class RevolutController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to connect Revolut account: ' . $e->getMessage(),
+                'message' => 'Failed to connect Revolut account: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -231,7 +229,7 @@ class RevolutController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to get accounts: ' . $e->getMessage(),
+                'message' => 'Failed to get accounts: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -293,7 +291,7 @@ class RevolutController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to sync transactions: ' . $e->getMessage(),
+                'message' => 'Failed to sync transactions: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -325,7 +323,7 @@ class RevolutController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to remove connection: ' . $e->getMessage(),
+                'message' => 'Failed to remove connection: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -377,7 +375,7 @@ class RevolutController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to send payment: ' . $e->getMessage(),
+                'message' => 'Failed to send payment: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -435,7 +433,7 @@ class RevolutController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to send bulk payment: ' . $e->getMessage(),
+                'message' => 'Failed to send bulk payment: '.$e->getMessage(),
             ], 500);
         }
     }

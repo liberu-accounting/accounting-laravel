@@ -20,12 +20,12 @@ class DepreciationCalculation extends Model
         'depreciation_amount',
         'accumulated_depreciation',
         'book_value',
-        'calculation_date'
+        'calculation_date',
     ];
 
     #[\Override]
     protected $casts = [
-        'calculation_date' => 'date'
+        'calculation_date' => 'date',
     ];
 
     public function asset()

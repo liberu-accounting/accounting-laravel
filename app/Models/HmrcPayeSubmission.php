@@ -153,7 +153,7 @@ class HmrcPayeSubmission extends Model
      */
     public function isEditable(): bool
     {
-        return !$this->hmrcSubmission || $this->hmrcSubmission->isEditable();
+        return ! $this->hmrcSubmission || $this->hmrcSubmission->isEditable();
     }
 
     /**

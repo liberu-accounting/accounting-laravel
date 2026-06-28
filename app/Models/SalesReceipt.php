@@ -32,8 +32,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class SalesReceipt extends Model
 {
-    use IsTenantModel;
     use HasFactory, SoftDeletes;
+    use IsTenantModel;
 
     #[\Override]
     protected $primaryKey = 'sales_receipt_id';
@@ -84,7 +84,8 @@ class SalesReceipt extends Model
     {
         $lastReceipt = self::orderBy('sales_receipt_id', 'desc')->first();
         $nextNumber = $lastReceipt ? ((int) substr((string) $lastReceipt->sales_receipt_number, 3)) + 1 : 1;
-        return 'SR-' . str_pad($nextNumber, 6, '0', STR_PAD_LEFT);
+
+        return 'SR-'.str_pad($nextNumber, 6, '0', STR_PAD_LEFT);
     }
 
     /**

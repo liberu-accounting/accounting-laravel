@@ -31,7 +31,7 @@ return new class extends Migration
             $table->text('rejection_reason')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            
+
             $table->index('vendor_id');
             $table->index('bill_date');
             $table->index('due_date');
@@ -50,7 +50,7 @@ return new class extends Migration
             $table->decimal('tax_amount', 15, 2)->default(0);
             $table->foreignId('tax_rate_id')->nullable()->constrained('tax_rates', 'tax_rate_id')->nullOnDelete();
             $table->timestamps();
-            
+
             $table->index('bill_id');
             $table->index('account_id');
         });
@@ -65,7 +65,7 @@ return new class extends Migration
             $table->foreignId('bank_account_id')->nullable()->constrained('bank_connections', 'id')->nullOnDelete();
             $table->text('notes')->nullable();
             $table->timestamps();
-            
+
             $table->index('bill_id');
             $table->index('payment_date');
         });

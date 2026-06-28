@@ -17,12 +17,12 @@ class BankFeedTransaction extends Model
     protected $fillable = [
         'transaction_id',
         'bank_connection_id',
-        'raw_data'
+        'raw_data',
     ];
 
     #[\Override]
     protected $casts = [
-        'raw_data' => 'json'
+        'raw_data' => 'json',
     ];
 
     public function transaction()

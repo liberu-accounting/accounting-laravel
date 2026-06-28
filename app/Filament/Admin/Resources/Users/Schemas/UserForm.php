@@ -58,7 +58,7 @@ class UserForm
                                             ->maxSize(2048)
                                             ->directory('profile-photos')
                                             ->columnSpanFull()
-                                            ->helperText('Upload a profile photo (max 2MB)')
+                                            ->helperText('Upload a profile photo (max 2MB)'),
                                     ]),
                             ]),
 

@@ -24,7 +24,8 @@ class CreateNewUser implements CreatesNewUsers
     /**
      * Validate and create a newly registered user.
      *
-     * @param array<string, string> $input
+     * @param  array<string, string>  $input
+     *
      * @throws ValidationException
      * @throws Exception
      */
@@ -32,7 +33,7 @@ class CreateNewUser implements CreatesNewUsers
     {
         try {
             Validator::make($input, [
-                'name'  => ['required', 'string', 'max:255'],
+                'name' => ['required', 'string', 'max:255'],
                 'email' => [
                     'required',
                     'string',
@@ -44,10 +45,9 @@ class CreateNewUser implements CreatesNewUsers
                 'role' => ['required', 'string', Rule::in(['tenant', 'buyer', 'seller', 'landlord', 'contractor'])],
             ])->validate();
 
-
-            $user = DB::transaction(fn() => tap(User::create([
-                'name'     => $input['name'],
-                'email'    => $input['email'],
+            $user = DB::transaction(fn () => tap(User::create([
+                'name' => $input['name'],
+                'email' => $input['email'],
                 'password' => Hash::make($input['password']),
             ]), function (User $user) use ($input): void {
                 $team = $this->assignOrCreateTeam($user);
@@ -114,7 +114,7 @@ class CreateNewUser implements CreatesNewUsers
         } elseif ($errorCode == 2002) {
             return 'Unable to connect to the database. Please try again later.';
         } else {
-            return 'A database error occurred. Please try again later. Error code: ' . $errorCode;
+            return 'A database error occurred. Please try again later. Error code: '.$errorCode;
         }
     }
 
@@ -128,6 +128,7 @@ class CreateNewUser implements CreatesNewUsers
         $team = Team::first();
 
         $team->users()->attach($user);
+
         return $team;
     }
 }

@@ -22,19 +22,19 @@ class TaxRate extends Model
         'rate',
         'description',
         'is_compound',
-        'is_active'
+        'is_active',
     ];
 
     #[\Override]
     protected $casts = [
         'rate' => 'float',
         'is_compound' => 'boolean',
-        'is_active' => 'boolean'
+        'is_active' => 'boolean',
     ];
 
     public function calculateTax($amount, $previousTaxes = 0): float|int
     {
-        if (!$this->is_active) {
+        if (! $this->is_active) {
             return 0;
         }
 

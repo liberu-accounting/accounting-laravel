@@ -24,7 +24,7 @@ class PurchaseOrder extends Model
         'expected_delivery_date',
         'total_amount',
         'status',
-        'notes'
+        'notes',
     ];
 
     #[\Override]
@@ -62,8 +62,8 @@ class PurchaseOrder extends Model
             ->orderBy('po_number', 'desc')
             ->first();
 
-        $number = $lastPo ? (int)substr((string) $lastPo->po_number, -4) + 1 : 1;
+        $number = $lastPo ? (int) substr((string) $lastPo->po_number, -4) + 1 : 1;
 
-        return $prefix . $year . str_pad($number, 4, '0', STR_PAD_LEFT);
+        return $prefix.$year.str_pad($number, 4, '0', STR_PAD_LEFT);
     }
 }

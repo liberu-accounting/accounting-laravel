@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Filament\App\Resources\Transactions;
 
-use App\Filament\App\Resources\TransactionResource\Pages;
-use App\Filament\App\Resources\TransactionResource\RelationManagers;
 use App\Filament\App\Resources\Transactions\Pages\CreateTransaction;
 use App\Filament\App\Resources\Transactions\Pages\EditTransaction;
 use App\Filament\App\Resources\Transactions\Pages\ListTransactions;
@@ -36,10 +34,10 @@ class TransactionResource extends Resource
     protected static ?string $model = Transaction::class;
 
     #[\Override]
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';
 
     #[\Override]
-    protected static string | \UnitEnum | null $navigationGroup = 'Banking';
+    protected static string|\UnitEnum|null $navigationGroup = 'Banking';
 
     #[\Override]
     protected static ?int $navigationSort = 3;
@@ -59,7 +57,7 @@ class TransactionResource extends Resource
                     ->numeric()
                     ->label('Amount')
                     ->required()
-                    ->rules(['required', new DoubleEntryValidator()])
+                    ->rules(['required', new DoubleEntryValidator])
                     ->step('0.01'),
                 Select::make('currency_id')
                     ->relationship('currency', 'code')
