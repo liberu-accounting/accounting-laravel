@@ -21,6 +21,8 @@ public_html/hot
 
 storage/*.key
 storage/rector/
+storage/phpstan/
+storage/infection/
 bootstrap/cache/*.php
 .env
 Homestead.yaml

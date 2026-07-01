@@ -9,6 +9,7 @@ use App\Models\JournalEntry;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 class JournalEntryController extends Controller
@@ -29,7 +30,9 @@ class JournalEntryController extends Controller
             'reference_number' => 'sometimes|nullable|string',
             'memo' => 'sometimes|nullable|string',
             'lines' => 'sometimes|array',
-            'lines.*.account_id' => 'required|exists:accounts,id',
+            // Scope account references to the acting user (accounts.user_id) so a
+            // caller can't post lines against another user's accounts (IDOR).
+            'lines.*.account_id' => ['required', Rule::exists('accounts', 'id')->where('user_id', $request->user()->id)],
             'lines.*.debit_amount' => 'sometimes|numeric|min:0',
             'lines.*.credit_amount' => 'sometimes|numeric|min:0',
             'lines.*.description' => 'sometimes|nullable|string',

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Providers\Filament;
 
 use App\Filament\App\Pages;
+use App\Http\Middleware\EnsureTwoFactorEnabled;
 use App\Http\Middleware\TeamsPermission;
 use App\Models\Team;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
@@ -70,6 +71,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
+                EnsureTwoFactorEnabled::class,
                 TeamsPermission::class,
             ])->plugins([
                 FilamentShieldPlugin::make()

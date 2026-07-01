@@ -24,6 +24,7 @@ class Team extends JetstreamTeam
     protected $fillable = [
         'name',
         'personal_team',
+        'books_locked_before',
     ];
 
     /**
@@ -48,6 +49,7 @@ class Team extends JetstreamTeam
     {
         return [
             'personal_team' => 'boolean',
+            'books_locked_before' => 'date',
         ];
     }
 

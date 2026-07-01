@@ -10,17 +10,17 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class FinancialDashboard extends BaseWidget
 {
-    #[\Override]
-    protected static ?string $pollingInterval = '15s';
+    protected ?string $pollingInterval = '15s';
 
-    #[\Override]
     protected static bool $isLazy = true;
 
     #[\Override]
     protected function getStats(): array
     {
-        $ledgerService = new GeneralLedgerService;
-        $metrics = $ledgerService->getKeyMetrics();
+        // Resolve via the container: GeneralLedgerService needs ExchangeRateService
+        // injected, so `new` would fatal at runtime.
+        /** @var array{revenue: float, expenses: float, netIncome: float, revenueChart: array<float>, expensesChart: array<float>, netIncomeChart: array<float>} $metrics */
+        $metrics = app(GeneralLedgerService::class)->getKeyMetrics();
 
         return [
             Stat::make('Total Revenue', '$'.number_format($metrics['revenue'], 2))
