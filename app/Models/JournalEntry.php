@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Concerns\Approvable;
 use App\Traits\IsTenantModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -11,6 +12,7 @@ use Illuminate\Support\Carbon;
 
 class JournalEntry extends Model
 {
+    use Approvable;
     use HasFactory;
     use IsTenantModel;
 
@@ -21,6 +23,8 @@ class JournalEntry extends Model
         'reference_number',
         'memo',
         'entry_type',
+        'approval_status',
+        'rejection_reason',
     ];
 
     #[\Override]
@@ -90,6 +94,11 @@ class JournalEntry extends Model
     public function lines()
     {
         return $this->hasMany(JournalEntryLine::class);
+    }
+
+    public function approvalAmount(): float
+    {
+        return (float) $this->lines()->sum('debit_amount');
     }
 
     public function getTotalDebitsAttribute()

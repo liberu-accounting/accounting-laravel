@@ -277,6 +277,12 @@ parameters:
 			path: app/Filament/Admin/Resources/Expenses/ExpenseResource.php
 
 		-
+			message: '#^Parameter \#1 \$reason of method App\\Models\\Expense\:\:reject\(\) expects string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Filament/Admin/Resources/Expenses/ExpenseResource.php
+
+		-
 			message: '#^Trying to invoke mixed but it''s not a callable\.$#'
 			identifier: callable.nonCallable
 			count: 6
@@ -3055,7 +3061,19 @@ parameters:
 			path: app/Models/Bill.php
 
 		-
+			message: '#^Cannot cast mixed to int\.$#'
+			identifier: cast.int
+			count: 1
+			path: app/Models/Bill.php
+
+		-
 			message: '#^Class App\\Models\\Bill uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Bill.php
+
+		-
+			message: '#^Method App\\Models\\Bill\:\:approvalRequest\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\MorphOne does not specify its types\: TRelatedModel, TDeclaringModel$#'
 			identifier: missingType.generics
 			count: 1
 			path: app/Models/Bill.php
@@ -3099,12 +3117,6 @@ parameters:
 		-
 			message: '#^Method App\\Models\\Bill\:\:recordPayment\(\) has parameter \$paymentData with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 1
-			path: app/Models/Bill.php
-
-		-
-			message: '#^Method App\\Models\\Bill\:\:reject\(\) has parameter \$reason with no type specified\.$#'
-			identifier: missingType.parameter
 			count: 1
 			path: app/Models/Bill.php
 
@@ -4405,6 +4417,18 @@ parameters:
 			path: app/Models/Expense.php
 
 		-
+			message: '#^Cannot cast mixed to int\.$#'
+			identifier: cast.int
+			count: 1
+			path: app/Models/Expense.php
+
+		-
+			message: '#^Method App\\Models\\Expense\:\:approvalRequest\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\MorphOne does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Expense.php
+
+		-
 			message: '#^Method App\\Models\\Expense\:\:approver\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
 			identifier: missingType.generics
 			count: 1
@@ -4431,12 +4455,6 @@ parameters:
 		-
 			message: '#^Method App\\Models\\Expense\:\:project\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
 			identifier: missingType.generics
-			count: 1
-			path: app/Models/Expense.php
-
-		-
-			message: '#^Method App\\Models\\Expense\:\:reject\(\) has parameter \$reason with no type specified\.$#'
-			identifier: missingType.parameter
 			count: 1
 			path: app/Models/Expense.php
 
@@ -4953,7 +4971,7 @@ parameters:
 		-
 			message: '#^Cannot cast mixed to int\.$#'
 			identifier: cast.int
-			count: 1
+			count: 2
 			path: app/Models/Invoice.php
 
 		-
@@ -4971,6 +4989,12 @@ parameters:
 		-
 			message: '#^Instantiated class App\\Models\\InvoiceRejected not found\.$#'
 			identifier: class.notFound
+			count: 1
+			path: app/Models/Invoice.php
+
+		-
+			message: '#^Method App\\Models\\Invoice\:\:approvalRequest\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\MorphOne does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
 			count: 1
 			path: app/Models/Invoice.php
 
@@ -5025,12 +5049,6 @@ parameters:
 		-
 			message: '#^Method App\\Models\\Invoice\:\:items\(\) has no return type specified\.$#'
 			identifier: missingType.return
-			count: 1
-			path: app/Models/Invoice.php
-
-		-
-			message: '#^Method App\\Models\\Invoice\:\:reject\(\) has parameter \$reason with no type specified\.$#'
-			identifier: missingType.parameter
 			count: 1
 			path: app/Models/Invoice.php
 
@@ -5169,7 +5187,19 @@ parameters:
 		-
 			message: '#^Cannot call method sum\(\) on mixed\.$#'
 			identifier: method.nonObject
-			count: 2
+			count: 3
+			path: app/Models/JournalEntry.php
+
+		-
+			message: '#^Cannot cast mixed to float\.$#'
+			identifier: cast.double
+			count: 1
+			path: app/Models/JournalEntry.php
+
+		-
+			message: '#^Cannot cast mixed to int\.$#'
+			identifier: cast.int
+			count: 1
 			path: app/Models/JournalEntry.php
 
 		-
@@ -5180,6 +5210,12 @@ parameters:
 
 		-
 			message: '#^Class App\\Models\\JournalEntry uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/JournalEntry.php
+
+		-
+			message: '#^Method App\\Models\\JournalEntry\:\:approvalRequest\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\MorphOne does not specify its types\: TRelatedModel, TDeclaringModel$#'
 			identifier: missingType.generics
 			count: 1
 			path: app/Models/JournalEntry.php

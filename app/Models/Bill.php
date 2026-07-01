@@ -4,15 +4,16 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Concerns\Approvable;
 use App\Traits\IsTenantModel;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Auth;
 
 class Bill extends Model
 {
+    use Approvable;
     use HasFactory, SoftDeletes;
     use IsTenantModel;
 
@@ -161,24 +162,21 @@ class Bill extends Model
         return $payment;
     }
 
-    public function approve(): void
+    public function approvalAmount(): float
     {
-        $this->update([
-            'approval_status' => 'approved',
-            'approved_by' => Auth::id(),
-            'approved_at' => now(),
-            'status' => 'open',
-        ]);
+        return (float) $this->total_amount;
     }
 
-    public function reject($reason): void
+    public function approve(): void
     {
-        $this->update([
-            'approval_status' => 'rejected',
-            'rejection_reason' => $reason,
-            'approved_by' => Auth::id(),
-            'approved_at' => now(),
-        ]);
+        // Bill-specific side effect (existing behavior): approving reopens the bill.
+        $this->status = 'open';
+        $this->markApproved();
+    }
+
+    public function reject(?string $reason): void
+    {
+        $this->markRejected($reason);
     }
 
     public function markAsVoid(): void
