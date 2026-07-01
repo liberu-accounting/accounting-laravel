@@ -2497,6 +2497,30 @@ parameters:
 			path: app/Http/Resources/TransactionResource.php
 
 		-
+			message: '#^Cannot access property \$fallback_role on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Jobs/EscalateApprovalsJob.php
+
+		-
+			message: '#^Cannot access property \$rule on Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Jobs/EscalateApprovalsJob.php
+
+		-
+			message: '#^Cannot access property \$team_id on Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Jobs/EscalateApprovalsJob.php
+
+		-
+			message: '#^Cannot cast mixed to int\.$#'
+			identifier: cast.int
+			count: 1
+			path: app/Jobs/EscalateApprovalsJob.php
+
+		-
 			message: '#^Access to an undefined property App\\Models\\Transaction\:\:\$id\.$#'
 			identifier: property.notFound
 			count: 1
