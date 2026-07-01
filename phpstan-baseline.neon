@@ -1183,9 +1183,15 @@ parameters:
 			path: app/Http/Controllers/Api/BillController.php
 
 		-
-			message: '#^Cannot access property \$id on App\\Models\\User\|null\.$#'
+			message: '#^Access to an undefined property App\\Models\\Account\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Api/ChartOfAccountController.php
+
+		-
+			message: '#^Cannot access property \$current_team_id on App\\Models\\User\|null\.$#'
 			identifier: property.nonObject
-			count: 4
+			count: 3
 			path: app/Http/Controllers/Api/ChartOfAccountController.php
 
 		-
@@ -1195,13 +1201,13 @@ parameters:
 			path: app/Http/Controllers/Api/ChartOfAccountController.php
 
 		-
-			message: '#^Parameter \#1 \$attributes of method Illuminate\\Database\\Eloquent\\Model\:\:update\(\) expects array\<string, mixed\>, mixed given\.$#'
+			message: '#^Parameter \#1 \$attributes of class App\\Models\\Account constructor expects array\<string, mixed\>, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: app/Http/Controllers/Api/ChartOfAccountController.php
 
 		-
-			message: '#^Parameter \#1 \$attributes of static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Account\>\:\:create\(\) expects array\<string, mixed\>, mixed given\.$#'
+			message: '#^Parameter \#1 \$attributes of method Illuminate\\Database\\Eloquent\\Model\:\:update\(\) expects array\<string, mixed\>, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: app/Http/Controllers/Api/ChartOfAccountController.php
@@ -1297,6 +1303,12 @@ parameters:
 			path: app/Http/Controllers/Api/InvoiceController.php
 
 		-
+			message: '#^Access to an undefined property App\\Models\\JournalEntry\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Http/Controllers/Api/JournalEntryController.php
+
+		-
 			message: '#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\.$#'
 			identifier: foreach.nonIterable
 			count: 1
@@ -1333,9 +1345,15 @@ parameters:
 			path: app/Http/Controllers/Api/JournalEntryController.php
 
 		-
-			message: '#^Cannot access property \$id on App\\Models\\User\|null\.$#'
+			message: '#^Cannot access property \$current_team_id on App\\Models\\User\|null\.$#'
 			identifier: property.nonObject
 			count: 4
+			path: app/Http/Controllers/Api/JournalEntryController.php
+
+		-
+			message: '#^Cannot access property \$id on App\\Models\\User\|null\.$#'
+			identifier: property.nonObject
+			count: 1
 			path: app/Http/Controllers/Api/JournalEntryController.php
 
 		-
@@ -1357,8 +1375,14 @@ parameters:
 			path: app/Http/Controllers/Api/JournalEntryController.php
 
 		-
-			message: '#^Parameter \#1 \$attributes of static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\JournalEntry\>\:\:create\(\) expects array\<string, mixed\>, mixed given\.$#'
+			message: '#^Parameter \#1 \$attributes of class App\\Models\\JournalEntry constructor expects array\<string, mixed\>, mixed given\.$#'
 			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Api/JournalEntryController.php
+
+		-
+			message: '#^Property App\\Models\\JournalEntry\:\:\$user_id \(int\<0, max\>\) does not accept int\.$#'
+			identifier: assign.propertyType
 			count: 1
 			path: app/Http/Controllers/Api/JournalEntryController.php
 
@@ -1885,8 +1909,26 @@ parameters:
 			path: app/Http/Controllers/Api/SageController.php
 
 		-
-			message: '#^Cannot access offset ''user_id'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
+			message: '#^Access to an undefined property App\\Models\\Transaction\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Http/Controllers/Api/TransactionController.php
+
+		-
+			message: '#^Cannot access property \$current_team_id on App\\Models\\User\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Http/Controllers/Api/TransactionController.php
+
+		-
+			message: '#^Cannot access property \$id on App\\Models\\User\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Http/Controllers/Api/TransactionController.php
+
+		-
+			message: '#^Parameter \#1 \$attributes of class App\\Models\\Transaction constructor expects array\<string, mixed\>, mixed given\.$#'
+			identifier: argument.type
 			count: 1
 			path: app/Http/Controllers/Api/TransactionController.php
 
@@ -1897,8 +1939,8 @@ parameters:
 			path: app/Http/Controllers/Api/TransactionController.php
 
 		-
-			message: '#^Parameter \#1 \$attributes of static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Transaction\>\:\:create\(\) expects array\<string, mixed\>, mixed given\.$#'
-			identifier: argument.type
+			message: '#^Property App\\Models\\Transaction\:\:\$user_id \(int\<0, max\>\|null\) does not accept int\.$#'
+			identifier: assign.propertyType
 			count: 1
 			path: app/Http/Controllers/Api/TransactionController.php
 
@@ -2449,13 +2491,13 @@ parameters:
 			path: app/Http/Resources/TransactionResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Http\\Resources\\TransactionResource\:\:\$id\.$#'
+			message: '#^Access to an undefined property App\\Http\\Resources\\TransactionResource\:\:\$transaction_date\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Resources/TransactionResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Http\\Resources\\TransactionResource\:\:\$transaction_date\.$#'
+			message: '#^Access to an undefined property App\\Http\\Resources\\TransactionResource\:\:\$transaction_id\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Resources/TransactionResource.php
