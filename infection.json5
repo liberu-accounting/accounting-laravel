@@ -1,0 +1,19 @@
+{
+  // Requires: composer require --dev infection/infection
+  $schema: "vendor/infection/infection/resources/schema.json",
+  source: {
+    directories: ["app"],
+  },
+  mutators: {
+    "@default": true,
+  },
+  testFramework: "phpunit",
+  // ponytail: thresholds start deliberately low — ratchet BOTH up as coverage
+  // improves (e.g. +5 each green run) until they stop being a rubber stamp.
+  minMsi: 60,
+  minCoveredMsi: 80,
+  tmpDir: "storage/infection",
+  logs: {
+    text: "storage/logs/infection.log",
+  },
+}

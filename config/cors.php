@@ -21,7 +21,9 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['*'],
+    // Comma-separated allow-list via env; defaults to '*' so dev isn't broken.
+    // Credentials are off (see supports_credentials), so '*' stays low-risk.
+    'allowed_origins' => explode(',', (string) env('CORS_ALLOWED_ORIGINS', '*')),
 
     'allowed_origins_patterns' => [],
 

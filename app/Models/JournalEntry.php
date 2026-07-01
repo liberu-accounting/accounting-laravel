@@ -7,6 +7,7 @@ namespace App\Models;
 use App\Traits\IsTenantModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 
 class JournalEntry extends Model
 {
@@ -43,6 +44,30 @@ class JournalEntry extends Model
 
             if (! $journalEntry->entry_number) {
                 $journalEntry->entry_number = static::generateEntryNumber();
+            }
+        });
+
+        // Period close: block any save (create/edit/post/reverse all route through save())
+        // touching a date before the owning team's lock. No lock set = no-op, existing flows untouched.
+        // ponytail: per-team lock; pure line edits via $entry->lines()->create() don't touch the parent
+        // so they skip this guard — acceptable because posted entries are already immutable. Upgrade path:
+        // add a JournalEntryLine saving() guard if line-level backdating ever becomes possible.
+        static::saving(function (JournalEntry $journalEntry): void {
+            // currentTeam() is a loose Jetstream relation (bare Model), so narrow to Team.
+            // books_locked_before is a nullable date; normalise to Carbon so the compare
+            // and format are type-safe. entry_date is a non-null date cast.
+            $team = $journalEntry->team ?? auth()->user()?->currentTeam;
+            $lock = $team instanceof Team && $team->books_locked_before
+                ? Carbon::parse($team->books_locked_before)
+                : null;
+            $entryDate = $journalEntry->entry_date;
+
+            if ($lock && $entryDate->lt($lock)) {
+                throw new \DomainException(sprintf(
+                    'Cannot save journal entry dated %s: the books are closed before %s.',
+                    $entryDate->toDateString(),
+                    $lock->toDateString(),
+                ));
             }
         });
     }

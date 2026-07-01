@@ -29,10 +29,11 @@ class SecurityHeaders
         );
 
         if (app()->isProduction()) {
-            $nonce = base64_encode(random_bytes(16));
+            // ponytail: nonce was minted but never shared with Blade, so it
+            // protected nothing. Rely on 'self' instead of faking a nonce.
             $csp = implode('; ', [
                 "default-src 'self'",
-                "script-src 'self' 'nonce-{$nonce}'",
+                "script-src 'self'",
                 "style-src 'self' 'unsafe-inline'",
                 "img-src 'self' data: https:",
                 "font-src 'self' data:",

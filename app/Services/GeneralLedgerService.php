@@ -18,9 +18,11 @@ class GeneralLedgerService
             $displayCurrency = Currency::where('is_default', true)->first();
         }
 
-        return Account::with(['transactions' => function ($query) use ($startDate, $endDate): void {
-            $query->whereBetween('transaction_date', [$startDate, $endDate]);
-        }])
+        // ponytail: tenant-scope by user_id (accounts carry no team_id yet); replace with team scope when team_id lands. Null auth = empty set (safe, no leak).
+        return Account::where('user_id', auth()->id())
+            ->with(['transactions' => function ($query) use ($startDate, $endDate): void {
+                $query->whereBetween('transaction_date', [$startDate, $endDate]);
+            }])
             ->get()
             ->map(function ($account) use ($displayCurrency): array {
                 $balance = $displayCurrency instanceof Currency
@@ -60,9 +62,11 @@ class GeneralLedgerService
             $displayCurrency = Currency::where('is_default', true)->first();
         }
 
-        return Account::with(['transactions' => function ($query) use ($date): void {
-            $query->where('transaction_date', '<=', $date);
-        }])
+        // ponytail: tenant-scope by user_id — see getAccountBalances note.
+        return Account::where('user_id', auth()->id())
+            ->with(['transactions' => function ($query) use ($date): void {
+                $query->where('transaction_date', '<=', $date);
+            }])
             ->get()
             ->map(function ($account) use ($displayCurrency): array {
                 $balance = $displayCurrency instanceof Currency
@@ -99,28 +103,28 @@ class GeneralLedgerService
 
         // Get current month revenue
         $revenue = Transaction::whereHas('account', function ($query): void {
-            $query->where('account_type', 'revenue');
+            $query->where('account_type', 'revenue')->where('user_id', auth()->id());
         })
             ->whereBetween('transaction_date', [$startDate, $endDate])
             ->sum('amount');
 
         // Get previous month revenue for comparison
         $previousRevenue = Transaction::whereHas('account', function ($query): void {
-            $query->where('account_type', 'revenue');
+            $query->where('account_type', 'revenue')->where('user_id', auth()->id());
         })
             ->whereBetween('transaction_date', [$previousStartDate, $previousEndDate])
             ->sum('amount');
 
         // Get current month expenses
         $expenses = Transaction::whereHas('account', function ($query): void {
-            $query->where('account_type', 'expense');
+            $query->where('account_type', 'expense')->where('user_id', auth()->id());
         })
             ->whereBetween('transaction_date', [$startDate, $endDate])
             ->sum('amount');
 
         // Get previous month expenses for comparison
         $previousExpenses = Transaction::whereHas('account', function ($query): void {
-            $query->where('account_type', 'expense');
+            $query->where('account_type', 'expense')->where('user_id', auth()->id());
         })
             ->whereBetween('transaction_date', [$previousStartDate, $previousEndDate])
             ->sum('amount');
@@ -162,7 +166,7 @@ class GeneralLedgerService
             $currentDate = (clone $startDate)->addDays($i);
 
             $amount = Transaction::whereHas('account', function ($query) use ($accountType): void {
-                $query->where('account_type', $accountType);
+                $query->where('account_type', $accountType)->where('user_id', auth()->id());
             })
                 ->whereDate('transaction_date', $currentDate)
                 ->sum('amount');

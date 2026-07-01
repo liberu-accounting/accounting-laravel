@@ -6,9 +6,11 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Estimate;
+use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Validation\Rule;
 
 class EstimateController extends Controller
 {
@@ -21,8 +23,15 @@ class EstimateController extends Controller
 
     public function store(Request $request): JsonResponse
     {
+        $teamId = $request->user()->current_team_id;
+
+        // Scope customer reference to the acting user's team (customers have no
+        // user_id column) so a caller can't reference another tenant's OWNED customer.
+        // NULL team_id = unowned (app creates them unassigned) and stays referenceable.
+        // ponytail: team-or-null; tighten to strict team once records get team_id on create.
         $validated = $request->validate([
-            'customer_id' => 'required|exists:customers,id',
+            'customer_id' => ['required', Rule::exists('customers', 'id')
+                ->where(fn (Builder $q) => $q->where('team_id', $teamId)->orWhereNull('team_id'))],
             'estimate_date' => 'required|date',
             'expiration_date' => 'sometimes|nullable|date',
             'subtotal_amount' => 'sometimes|numeric',
@@ -33,7 +42,7 @@ class EstimateController extends Controller
             'terms' => 'sometimes|nullable|string',
         ]);
 
-        $validated['team_id'] = $request->user()->current_team_id;
+        $validated['team_id'] = $teamId;
 
         $estimate = Estimate::create($validated);
 
@@ -51,8 +60,11 @@ class EstimateController extends Controller
     {
         $this->authorizeTeam($request, $estimate);
 
+        $teamId = $request->user()->current_team_id;
+
         $validated = $request->validate([
-            'customer_id' => 'sometimes|exists:customers,id',
+            'customer_id' => ['sometimes', Rule::exists('customers', 'id')
+                ->where(fn (Builder $q) => $q->where('team_id', $teamId)->orWhereNull('team_id'))],
             'estimate_date' => 'sometimes|date',
             'expiration_date' => 'sometimes|nullable|date',
             'total_amount' => 'sometimes|numeric',

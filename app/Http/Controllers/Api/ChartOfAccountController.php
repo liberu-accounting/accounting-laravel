@@ -9,6 +9,7 @@ use App\Models\Account;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Validation\Rule;
 
 class ChartOfAccountController extends Controller
 {
@@ -23,14 +24,19 @@ class ChartOfAccountController extends Controller
 
     public function store(Request $request): JsonResponse
     {
+        $userId = $request->user()->id;
+
+        // Scope account references/uniqueness to the acting user (accounts.user_id):
+        // parent_id can't point at another user's account (IDOR), and account_number
+        // is unique per-tenant rather than global.
         $validated = $request->validate([
-            'account_number' => 'required|integer|unique:accounts,account_number',
+            'account_number' => ['required', 'integer', Rule::unique('accounts', 'account_number')->where('user_id', $userId)],
             'account_name' => 'required|string',
             'account_type' => 'required|in:'.self::TYPES,
             'normal_balance' => 'sometimes|in:debit,credit',
             'opening_balance' => 'sometimes|numeric',
             'description' => 'sometimes|nullable|string',
-            'parent_id' => 'sometimes|nullable|exists:accounts,id',
+            'parent_id' => ['sometimes', 'nullable', Rule::exists('accounts', 'id')->where('user_id', $userId)],
             'is_active' => 'sometimes|boolean',
         ]);
 
@@ -50,14 +56,16 @@ class ChartOfAccountController extends Controller
     {
         $this->authorizeOwner($request, $chartOfAccount);
 
+        $userId = $request->user()->id;
+
         $validated = $request->validate([
-            'account_number' => 'sometimes|integer|unique:accounts,account_number,'.$chartOfAccount->id,
+            'account_number' => ['sometimes', 'integer', Rule::unique('accounts', 'account_number')->where('user_id', $userId)->ignore($chartOfAccount->id)],
             'account_name' => 'sometimes|string',
             'account_type' => 'sometimes|in:'.self::TYPES,
             'normal_balance' => 'sometimes|in:debit,credit',
             'opening_balance' => 'sometimes|numeric',
             'description' => 'sometimes|nullable|string',
-            'parent_id' => 'sometimes|nullable|exists:accounts,id',
+            'parent_id' => ['sometimes', 'nullable', Rule::exists('accounts', 'id')->where('user_id', $userId)],
             'is_active' => 'sometimes|boolean',
         ]);
 

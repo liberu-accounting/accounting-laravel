@@ -1,0 +1,21 @@
+includes:
+    # Laravel-aware rules (Eloquent magic, facades, container). Requires:
+    #   composer require --dev larastan/larastan
+    - vendor/larastan/larastan/extension.neon
+    # Pre-existing errors are frozen here so CI is green day one and only
+    # NEW code is gated. Regenerate after a large cleanup, never hand-edit:
+    #   vendor/bin/phpstan analyse --generate-baseline
+    - phpstan-baseline.neon
+
+parameters:
+    level: max
+    paths:
+        - app
+        - config
+        - database
+        - routes
+    excludePaths:
+        - bootstrap/cache/*
+        - storage/*
+    # Static analysis cache lives outside the repo tree.
+    tmpDir: storage/phpstan
