@@ -43,9 +43,14 @@ class Account extends Model
     {
         parent::boot();
 
-        static::creating(function ($account): void {
+        static::creating(function (Account $account): void {
             if (empty($account->user_id) && auth()->check()) {
                 $account->user_id = auth()->id();
+            }
+
+            // ponytail: stamp tenant team on non-Filament creates (Filament stamps panel creates itself); additive, leaves DB default when tenantless.
+            if (empty($account->team_id) && ($team = auth()->user()?->currentTeam) !== null) {
+                $account->team_id = $team->getKey();
             }
 
             // Set normal_balance based on account_type if not provided
