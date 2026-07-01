@@ -38,8 +38,8 @@ class PlaidController extends Controller
             if ($connectionId) {
                 $connection = BankConnection::find($connectionId);
 
-                // Verify ownership
-                if (! $connection || $connection->user_id !== $user->id) {
+                // Verify team ownership (connections are team-shared)
+                if (! $connection || $connection->team_id !== ($user->current_team_id ?? -1)) {
                     return response()->json([
                         'success' => false,
                         'message' => 'Connection not found or unauthorized',
@@ -99,6 +99,7 @@ class PlaidController extends Controller
             // Create bank connection
             $connection = BankConnection::create([
                 'user_id' => $user->id,
+                'team_id' => $user->current_team_id,
                 'bank_id' => $request->institution_id,
                 'institution_name' => $request->institution_name,
                 'plaid_access_token' => $tokenData['access_token'],
@@ -141,7 +142,7 @@ class PlaidController extends Controller
         try {
             $user = $request->user();
 
-            $connections = BankConnection::where('user_id', $user->id)
+            $connections = BankConnection::where('team_id', $user->current_team_id ?? -1)
                 ->select([
                     'id',
                     'institution_name',
@@ -177,8 +178,8 @@ class PlaidController extends Controller
     public function syncTransactions(Request $request, BankConnection $connection): JsonResponse
     {
         try {
-            // Verify ownership
-            if ($connection->user_id !== $request->user()->id) {
+            // Verify team ownership (connections are team-shared)
+            if ($connection->team_id !== ($request->user()->current_team_id ?? -1)) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Unauthorized',
@@ -257,8 +258,8 @@ class PlaidController extends Controller
     public function removeConnection(Request $request, BankConnection $connection): JsonResponse
     {
         try {
-            // Verify ownership
-            if ($connection->user_id !== $request->user()->id) {
+            // Verify team ownership (connections are team-shared)
+            if ($connection->team_id !== ($request->user()->current_team_id ?? -1)) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Unauthorized',
@@ -305,8 +306,8 @@ class PlaidController extends Controller
     public function getBalances(Request $request, BankConnection $connection): JsonResponse
     {
         try {
-            // Verify ownership
-            if ($connection->user_id !== $request->user()->id) {
+            // Verify team ownership (connections are team-shared)
+            if ($connection->team_id !== ($request->user()->current_team_id ?? -1)) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Unauthorized',

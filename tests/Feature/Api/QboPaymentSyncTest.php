@@ -10,6 +10,7 @@ use App\Models\Payment;
 use App\Models\QboConnection;
 use App\Models\User;
 use App\Services\QuickBooksService;
+use App\Services\TeamManagementService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
@@ -24,6 +25,8 @@ class QboPaymentSyncTest extends TestCase
     {
         parent::setUp();
         $this->user = User::factory()->create();
+        app(TeamManagementService::class)->createPersonalTeamForUser($this->user);
+        $this->user = $this->user->fresh();
 
         config()->set('services.qbo', [
             'client_id' => 'test_client_id',
@@ -41,6 +44,7 @@ class QboPaymentSyncTest extends TestCase
     {
         return QboConnection::create([
             'user_id' => $this->user->id,
+            'team_id' => $this->user->current_team_id,
             'realm_id' => '4620816365',
             'access_token' => 'access-test-token',
             'refresh_token' => 'refresh-test-token',

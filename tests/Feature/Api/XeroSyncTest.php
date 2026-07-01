@@ -8,6 +8,7 @@ use App\Models\Customer;
 use App\Models\Invoice;
 use App\Models\User;
 use App\Models\XeroConnection;
+use App\Services\TeamManagementService;
 use App\Services\XeroService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
@@ -23,6 +24,8 @@ class XeroSyncTest extends TestCase
     {
         parent::setUp();
         $this->user = User::factory()->create();
+        app(TeamManagementService::class)->createPersonalTeamForUser($this->user);
+        $this->user = $this->user->fresh();
 
         config()->set('services.xero', [
             'client_id' => 'test_client',
@@ -39,6 +42,7 @@ class XeroSyncTest extends TestCase
     {
         return XeroConnection::create([
             'user_id' => $this->user->id,
+            'team_id' => $this->user->current_team_id,
             'tenant_id' => 'tenant-123',
             'access_token' => 'access-token',
             'refresh_token' => 'refresh-token',
@@ -71,7 +75,7 @@ class XeroSyncTest extends TestCase
         $response = $this->actingAs($this->user)->getJson('/api/xero/callback?code=authcode');
 
         $response->assertOk();
-        $this->assertDatabaseHas('xero_connections', ['user_id' => $this->user->id, 'tenant_id' => 'tenant-xyz', 'status' => 'active']);
+        $this->assertDatabaseHas('xero_connections', ['user_id' => $this->user->id, 'team_id' => $this->user->current_team_id, 'tenant_id' => 'tenant-xyz', 'status' => 'active']);
     }
 
     public function test_push_invoice_stores_remote_id(): void

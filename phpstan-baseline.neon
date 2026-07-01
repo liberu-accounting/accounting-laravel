@@ -1423,13 +1423,19 @@ parameters:
 			path: app/Http/Controllers/Api/OpenApiController.php
 
 		-
+			message: '#^Access to an undefined property App\\Models\\BankConnection\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Http/Controllers/Api/PlaidController.php
+
+		-
 			message: '#^Access to an undefined property App\\Models\\BankConnection\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\BankConnection\>\:\:\$plaid_access_token\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Controllers/Api/PlaidController.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\BankConnection\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\BankConnection\>\:\:\$user_id\.$#'
+			message: '#^Access to an undefined property App\\Models\\BankConnection\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\BankConnection\>\:\:\$team_id\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Controllers/Api/PlaidController.php
@@ -1507,9 +1513,15 @@ parameters:
 			path: app/Http/Controllers/Api/PlaidController.php
 
 		-
+			message: '#^Cannot access property \$current_team_id on App\\Models\\User\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Http/Controllers/Api/PlaidController.php
+
+		-
 			message: '#^Cannot access property \$id on App\\Models\\User\|null\.$#'
 			identifier: property.nonObject
-			count: 10
+			count: 5
 			path: app/Http/Controllers/Api/PlaidController.php
 
 		-
@@ -1645,9 +1657,15 @@ parameters:
 			path: app/Http/Controllers/Api/QboController.php
 
 		-
+			message: '#^Cannot access property \$current_team_id on App\\Models\\User\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Http/Controllers/Api/QboController.php
+
+		-
 			message: '#^Cannot access property \$id on App\\Models\\User\|null\.$#'
 			identifier: property.nonObject
-			count: 4
+			count: 1
 			path: app/Http/Controllers/Api/QboController.php
 
 		-
@@ -1667,6 +1685,12 @@ parameters:
 			identifier: cast.string
 			count: 1
 			path: app/Http/Controllers/Api/QboWebhookController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\BankConnection\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 5
+			path: app/Http/Controllers/Api/RevolutController.php
 
 		-
 			message: '#^Access to an undefined property App\\Models\\Transaction\:\:\$id\.$#'
@@ -1723,9 +1747,15 @@ parameters:
 			path: app/Http/Controllers/Api/RevolutController.php
 
 		-
+			message: '#^Cannot access property \$current_team_id on App\\Models\\User\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Http/Controllers/Api/RevolutController.php
+
+		-
 			message: '#^Cannot access property \$id on App\\Models\\User\|null\.$#'
 			identifier: property.nonObject
-			count: 9
+			count: 3
 			path: app/Http/Controllers/Api/RevolutController.php
 
 		-
@@ -1855,9 +1885,15 @@ parameters:
 			path: app/Http/Controllers/Api/SageController.php
 
 		-
+			message: '#^Cannot access property \$current_team_id on App\\Models\\User\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Http/Controllers/Api/SageController.php
+
+		-
 			message: '#^Cannot access property \$id on App\\Models\\User\|null\.$#'
 			identifier: property.nonObject
-			count: 2
+			count: 1
 			path: app/Http/Controllers/Api/SageController.php
 
 		-
@@ -1901,6 +1937,12 @@ parameters:
 			identifier: assign.propertyType
 			count: 1
 			path: app/Http/Controllers/Api/TransactionController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\BankConnection\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Http/Controllers/Api/WiseController.php
 
 		-
 			message: '#^Access to an undefined property App\\Models\\Transaction\:\:\$id\.$#'
@@ -1957,9 +1999,15 @@ parameters:
 			path: app/Http/Controllers/Api/WiseController.php
 
 		-
+			message: '#^Cannot access property \$current_team_id on App\\Models\\User\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Http/Controllers/Api/WiseController.php
+
+		-
 			message: '#^Cannot access property \$id on App\\Models\\User\|null\.$#'
 			identifier: property.nonObject
-			count: 7
+			count: 3
 			path: app/Http/Controllers/Api/WiseController.php
 
 		-
@@ -2101,9 +2149,15 @@ parameters:
 			path: app/Http/Controllers/Api/XeroController.php
 
 		-
+			message: '#^Cannot access property \$current_team_id on App\\Models\\User\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Http/Controllers/Api/XeroController.php
+
+		-
 			message: '#^Cannot access property \$id on App\\Models\\User\|null\.$#'
 			identifier: property.nonObject
-			count: 2
+			count: 1
 			path: app/Http/Controllers/Api/XeroController.php
 
 		-
@@ -2219,42 +2273,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: app/Http/Controllers/TeamInvitationController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Middleware/AssignDefaultTeam.php
-
-		-
-			message: '#^Cannot access property \$current_team_id on App\\Models\\User\|null\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Http/Middleware/AssignDefaultTeam.php
-
-		-
-			message: '#^Cannot access property \$name on App\\Models\\User\|null\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Http/Middleware/AssignDefaultTeam.php
-
-		-
-			message: '#^Cannot call method ownedTeams\(\) on App\\Models\\User\|null\.$#'
-			identifier: method.nonObject
-			count: 2
-			path: app/Http/Middleware/AssignDefaultTeam.php
-
-		-
-			message: '#^Cannot call method save\(\) on App\\Models\\User\|null\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Http/Middleware/AssignDefaultTeam.php
-
-		-
-			message: '#^Method App\\Http\\Middleware\\AssignDefaultTeam\:\:handle\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Http/Middleware/AssignDefaultTeam.php
 
 		-
 			message: '#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\.$#'
@@ -3339,12 +3357,6 @@ parameters:
 		-
 			message: '#^Method App\\Models\\Category\:\:parent\(\) has no return type specified\.$#'
 			identifier: missingType.return
-			count: 1
-			path: app/Models/Category.php
-
-		-
-			message: '#^Method App\\Models\\Category\:\:team\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
-			identifier: missingType.generics
 			count: 1
 			path: app/Models/Category.php
 
@@ -5283,12 +5295,6 @@ parameters:
 		-
 			message: '#^Method App\\Models\\PaymentTerm\:\:suppliers\(\) has no return type specified\.$#'
 			identifier: missingType.return
-			count: 1
-			path: app/Models/PaymentTerm.php
-
-		-
-			message: '#^Method App\\Models\\PaymentTerm\:\:team\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
-			identifier: missingType.generics
 			count: 1
 			path: app/Models/PaymentTerm.php
 

@@ -4,6 +4,7 @@ namespace Tests\Feature\Api;
 
 use App\Models\BankConnection;
 use App\Models\User;
+use App\Services\TeamManagementService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
@@ -18,6 +19,8 @@ class PlaidControllerTest extends TestCase
     {
         parent::setUp();
         $this->user = User::factory()->create();
+        app(TeamManagementService::class)->createPersonalTeamForUser($this->user);
+        $this->user = $this->user->fresh();
     }
 
     public function test_create_link_token_returns_successful_response(): void
@@ -99,6 +102,7 @@ class PlaidControllerTest extends TestCase
 
         $this->assertDatabaseHas('bank_connections', [
             'user_id' => $this->user->id,
+            'team_id' => $this->user->current_team_id,
             'institution_name' => 'Test Bank',
             'plaid_item_id' => 'item-test-123',
             'status' => 'active',
@@ -121,16 +125,17 @@ class PlaidControllerTest extends TestCase
             ]);
     }
 
-    public function test_list_connections_returns_user_connections(): void
+    public function test_list_connections_returns_team_connections(): void
     {
         BankConnection::factory()->count(3)->create([
-            'user_id' => $this->user->id,
+            'team_id' => $this->user->current_team_id,
         ]);
 
-        // Create connections for another user (should not be returned)
+        // Create connections for another team (should not be returned)
         $otherUser = User::factory()->create();
+        app(TeamManagementService::class)->createPersonalTeamForUser($otherUser);
         BankConnection::factory()->count(2)->create([
-            'user_id' => $otherUser->id,
+            'team_id' => $otherUser->fresh()->current_team_id,
         ]);
 
         $response = $this->actingAs($this->user)
@@ -154,7 +159,7 @@ class PlaidControllerTest extends TestCase
     public function test_sync_transactions_syncs_from_plaid(): void
     {
         $connection = BankConnection::factory()->create([
-            'user_id' => $this->user->id,
+            'team_id' => $this->user->current_team_id,
             'plaid_access_token' => 'access-test-token',
             'status' => 'active',
         ]);
@@ -208,11 +213,12 @@ class PlaidControllerTest extends TestCase
         ]);
     }
 
-    public function test_sync_transactions_prevents_unauthorized_access(): void
+    public function test_sync_transactions_prevents_cross_team_access(): void
     {
         $otherUser = User::factory()->create();
+        app(TeamManagementService::class)->createPersonalTeamForUser($otherUser);
         $connection = BankConnection::factory()->create([
-            'user_id' => $otherUser->id,
+            'team_id' => $otherUser->fresh()->current_team_id,
         ]);
 
         $response = $this->actingAs($this->user)
@@ -228,7 +234,7 @@ class PlaidControllerTest extends TestCase
     public function test_sync_transactions_rejects_inactive_connection(): void
     {
         $connection = BankConnection::factory()->create([
-            'user_id' => $this->user->id,
+            'team_id' => $this->user->current_team_id,
             'status' => 'disconnected',
         ]);
 
@@ -245,7 +251,7 @@ class PlaidControllerTest extends TestCase
     public function test_remove_connection_disconnects_bank(): void
     {
         $connection = BankConnection::factory()->create([
-            'user_id' => $this->user->id,
+            'team_id' => $this->user->current_team_id,
             'plaid_access_token' => 'access-test-token',
             'status' => 'active',
         ]);
@@ -271,11 +277,12 @@ class PlaidControllerTest extends TestCase
         ]);
     }
 
-    public function test_remove_connection_prevents_unauthorized_access(): void
+    public function test_remove_connection_prevents_cross_team_access(): void
     {
         $otherUser = User::factory()->create();
+        app(TeamManagementService::class)->createPersonalTeamForUser($otherUser);
         $connection = BankConnection::factory()->create([
-            'user_id' => $otherUser->id,
+            'team_id' => $otherUser->fresh()->current_team_id,
         ]);
 
         $response = $this->actingAs($this->user)
@@ -330,7 +337,7 @@ class PlaidControllerTest extends TestCase
     public function test_create_link_token_supports_update_mode_for_reauthentication(): void
     {
         $connection = BankConnection::factory()->create([
-            'user_id' => $this->user->id,
+            'team_id' => $this->user->current_team_id,
             'plaid_access_token' => 'access-test-token',
             'status' => 'requires_reauth',
         ]);
@@ -362,11 +369,12 @@ class PlaidControllerTest extends TestCase
         });
     }
 
-    public function test_create_link_token_update_mode_rejects_unauthorized_connection(): void
+    public function test_create_link_token_update_mode_rejects_cross_team_connection(): void
     {
         $otherUser = User::factory()->create();
+        app(TeamManagementService::class)->createPersonalTeamForUser($otherUser);
         $connection = BankConnection::factory()->create([
-            'user_id' => $otherUser->id,
+            'team_id' => $otherUser->fresh()->current_team_id,
         ]);
 
         $response = $this->actingAs($this->user)

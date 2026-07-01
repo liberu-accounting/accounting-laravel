@@ -28,12 +28,16 @@ class XeroController extends Controller
 
         $connection = $this->xero->handleCallback((int) $request->user()->id, $validated['code']);
 
+        // Connections are team-shared: stamp the acting team (no creating hook does it).
+        $connection->team_id = $request->user()->current_team_id;
+        $connection->save();
+
         return response()->json(['success' => true, 'tenant_id' => $connection->tenant_id]);
     }
 
     public function sync(Request $request, XeroConnection $connection): JsonResponse
     {
-        abort_unless($connection->user_id === $request->user()->id, 403);
+        abort_unless($connection->team_id === ($request->user()->current_team_id ?? -1), 403);
 
         return response()->json(['success' => true, 'invoices_synced' => $this->xero->pullInvoices($connection)]);
     }
