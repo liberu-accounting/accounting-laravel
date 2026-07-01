@@ -37,9 +37,14 @@ class JournalEntry extends Model
     {
         parent::boot();
 
-        static::creating(function ($journalEntry): void {
+        static::creating(function (JournalEntry $journalEntry): void {
             if (empty($journalEntry->user_id) && auth()->check()) {
                 $journalEntry->user_id = auth()->id();
+            }
+
+            // ponytail: stamp tenant team on non-Filament creates (Filament stamps panel creates itself); additive, leaves DB default when tenantless.
+            if (empty($journalEntry->team_id) && ($team = auth()->user()?->currentTeam) !== null) {
+                $journalEntry->team_id = $team->getKey();
             }
 
             if (! $journalEntry->entry_number) {

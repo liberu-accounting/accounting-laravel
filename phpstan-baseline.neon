@@ -2539,20 +2539,8 @@ parameters:
 			path: app/Jobs/SyncPlaidTransactionsJob.php
 
 		-
-			message: '#^Call to method assignUserToDefaultTeam\(\) on an unknown class App\\Services\\TeamManagementService\.$#'
-			identifier: class.notFound
-			count: 1
-			path: app/Listeners/CreatePersonalTeam.php
-
-		-
-			message: '#^Parameter \$teamManagementService of method App\\Listeners\\CreatePersonalTeam\:\:__construct\(\) has invalid type App\\Services\\TeamManagementService\.$#'
-			identifier: class.notFound
-			count: 1
-			path: app/Listeners/CreatePersonalTeam.php
-
-		-
-			message: '#^Property App\\Listeners\\CreatePersonalTeam\:\:\$teamManagementService has unknown class App\\Services\\TeamManagementService as its type\.$#'
-			identifier: class.notFound
+			message: '#^Parameter \#1 \$user of method App\\Services\\TeamManagementService\:\:assignUserToDefaultTeam\(\) expects App\\Models\\User, Illuminate\\Contracts\\Auth\\Authenticatable given\.$#'
+			identifier: argument.type
 			count: 1
 			path: app/Listeners/CreatePersonalTeam.php
 
@@ -2593,6 +2581,12 @@ parameters:
 			path: app/Models/Account.php
 
 		-
+			message: '#^Access to an undefined property App\\Models\\Account\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Account.php
+
+		-
 			message: '#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\.$#'
 			identifier: foreach.nonIterable
 			count: 1
@@ -2601,12 +2595,6 @@ parameters:
 		-
 			message: '#^Binary operation "\+\=" between float\|int\|numeric\-string and mixed results in an error\.$#'
 			identifier: assignOp.invalid
-			count: 1
-			path: app/Models/Account.php
-
-		-
-			message: '#^Cannot access property \$account_type on mixed\.$#'
-			identifier: property.nonObject
 			count: 1
 			path: app/Models/Account.php
 
@@ -2620,18 +2608,6 @@ parameters:
 			message: '#^Cannot access property \$currency_id on mixed\.$#'
 			identifier: property.nonObject
 			count: 1
-			path: app/Models/Account.php
-
-		-
-			message: '#^Cannot access property \$normal_balance on mixed\.$#'
-			identifier: property.nonObject
-			count: 2
-			path: app/Models/Account.php
-
-		-
-			message: '#^Cannot access property \$user_id on mixed\.$#'
-			identifier: property.nonObject
-			count: 2
 			path: app/Models/Account.php
 
 		-
@@ -2719,6 +2695,12 @@ parameters:
 			path: app/Models/Account.php
 
 		-
+			message: '#^Negated boolean expression is always false\.$#'
+			identifier: booleanNot.alwaysFalse
+			count: 1
+			path: app/Models/Account.php
+
+		-
 			message: '#^Parameter \#1 \$fromCurrency of method App\\Services\\ExchangeRateService\:\:getExchangeRate\(\) expects App\\Models\\Currency, mixed given\.$#'
 			identifier: argument.type
 			count: 1
@@ -2727,6 +2709,12 @@ parameters:
 		-
 			message: '#^Parameter \#1 \$targetCurrency of method App\\Models\\Account\:\:getBalanceInCurrency\(\) expects App\\Models\\Currency, App\\Models\\Currency\|null given\.$#'
 			identifier: argument.type
+			count: 1
+			path: app/Models/Account.php
+
+		-
+			message: '#^Property App\\Models\\Account\:\:\$user_id \(int\<0, max\>\|null\) does not accept int\|string\|null\.$#'
+			identifier: assign.propertyType
 			count: 1
 			path: app/Models/Account.php
 
@@ -2863,9 +2851,9 @@ parameters:
 			path: app/Models/BankAccountBalance.php
 
 		-
-			message: '#^Cannot access property \$user_id on mixed\.$#'
-			identifier: property.nonObject
-			count: 2
+			message: '#^Access to an undefined property App\\Models\\BankConnection\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 1
 			path: app/Models/BankConnection.php
 
 		-
@@ -2901,6 +2889,12 @@ parameters:
 		-
 			message: '#^Method App\\Models\\BankConnection\:\:user\(\) has no return type specified\.$#'
 			identifier: missingType.return
+			count: 1
+			path: app/Models/BankConnection.php
+
+		-
+			message: '#^Property App\\Models\\BankConnection\:\:\$user_id \(int\<0, max\>\) does not accept int\|string\|null\.$#'
+			identifier: assign.propertyType
 			count: 1
 			path: app/Models/BankConnection.php
 
@@ -5131,6 +5125,12 @@ parameters:
 			path: app/Models/JournalEntry.php
 
 		-
+			message: '#^Access to an undefined property App\\Models\\JournalEntry\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/JournalEntry.php
+
+		-
 			message: '#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\.$#'
 			identifier: foreach.nonIterable
 			count: 2
@@ -5179,19 +5179,7 @@ parameters:
 			path: app/Models/JournalEntry.php
 
 		-
-			message: '#^Cannot access property \$entry_number on mixed\.$#'
-			identifier: property.nonObject
-			count: 2
-			path: app/Models/JournalEntry.php
-
-		-
 			message: '#^Cannot access property \$normal_balance on mixed\.$#'
-			identifier: property.nonObject
-			count: 2
-			path: app/Models/JournalEntry.php
-
-		-
-			message: '#^Cannot access property \$user_id on mixed\.$#'
 			identifier: property.nonObject
 			count: 2
 			path: app/Models/JournalEntry.php
@@ -5265,6 +5253,12 @@ parameters:
 		-
 			message: '#^Parameter \#2 \$num2 of function bccomp expects numeric\-string, string given\.$#'
 			identifier: argument.type
+			count: 1
+			path: app/Models/JournalEntry.php
+
+		-
+			message: '#^Property App\\Models\\JournalEntry\:\:\$user_id \(int\<0, max\>\) does not accept int\|string\|null\.$#'
+			identifier: assign.propertyType
 			count: 1
 			path: app/Models/JournalEntry.php
 
@@ -5941,38 +5935,8 @@ parameters:
 			path: app/Models/Supplier.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\Invoice\:\:\$taxRate\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Models/TaxForm.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Invoice\:\:\$tax_amount\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Models/TaxForm.php
-
-		-
 			message: '#^Access to an undefined property App\\Models\\TaxForm\:\:\$customer\.$#'
 			identifier: property.notFound
-			count: 1
-			path: app/Models/TaxForm.php
-
-		-
-			message: '#^Binary operation "\+\=" between \(float\|int\) and mixed results in an error\.$#'
-			identifier: assignOp.invalid
-			count: 1
-			path: app/Models/TaxForm.php
-
-		-
-			message: '#^Cannot access property \$name on mixed\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/TaxForm.php
-
-		-
-			message: '#^Cannot access property \$rate on mixed\.$#'
-			identifier: property.nonObject
 			count: 1
 			path: app/Models/TaxForm.php
 
@@ -6004,12 +5968,6 @@ parameters:
 			message: '#^Method App\\Models\\TaxForm\:\:team\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
 			identifier: missingType.generics
 			count: 1
-			path: app/Models/TaxForm.php
-
-		-
-			message: '#^Possibly invalid array key type mixed\.$#'
-			identifier: offsetAccess.invalidOffset
-			count: 3
 			path: app/Models/TaxForm.php
 
 		-
@@ -6147,11 +6105,17 @@ parameters:
 		-
 			message: '#^Access to an undefined property App\\Models\\Transaction\:\:\$currency\.$#'
 			identifier: property.notFound
-			count: 1
+			count: 2
 			path: app/Models/Transaction.php
 
 		-
 			message: '#^Access to an undefined property App\\Models\\Transaction\:\:\$inventoryTransactions\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Transaction.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Transaction\:\:\$team_id\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Models/Transaction.php
@@ -6169,24 +6133,6 @@ parameters:
 			path: app/Models/Transaction.php
 
 		-
-			message: '#^Cannot access property \$currency on mixed\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Models/Transaction.php
-
-		-
-			message: '#^Cannot access property \$currency_id on mixed\.$#'
-			identifier: property.nonObject
-			count: 2
-			path: app/Models/Transaction.php
-
-		-
-			message: '#^Cannot access property \$exchange_rate on mixed\.$#'
-			identifier: property.nonObject
-			count: 3
-			path: app/Models/Transaction.php
-
-		-
 			message: '#^Cannot access property \$inventoryItem on mixed\.$#'
 			identifier: property.nonObject
 			count: 1
@@ -6196,12 +6142,6 @@ parameters:
 			message: '#^Cannot access property \$quantity on mixed\.$#'
 			identifier: property.nonObject
 			count: 1
-			path: app/Models/Transaction.php
-
-		-
-			message: '#^Cannot access property \$user_id on mixed\.$#'
-			identifier: property.nonObject
-			count: 2
 			path: app/Models/Transaction.php
 
 		-
@@ -6285,6 +6225,12 @@ parameters:
 		-
 			message: '#^Parameter \#1 \$targetCurrency of method App\\Models\\Transaction\:\:getAmountInCurrency\(\) expects App\\Models\\Currency, App\\Models\\Currency\|null given\.$#'
 			identifier: argument.type
+			count: 1
+			path: app/Models/Transaction.php
+
+		-
+			message: '#^Property App\\Models\\Transaction\:\:\$user_id \(int\<0, max\>\|null\) does not accept int\|string\|null\.$#'
+			identifier: assign.propertyType
 			count: 1
 			path: app/Models/Transaction.php
 

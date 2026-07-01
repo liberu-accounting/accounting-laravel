@@ -41,9 +41,14 @@ class BankConnection extends Model
 
     protected static function booted(): void
     {
-        static::creating(function ($bankConnection): void {
+        static::creating(function (BankConnection $bankConnection): void {
             if (empty($bankConnection->user_id) && auth()->check()) {
                 $bankConnection->user_id = auth()->id();
+            }
+
+            // ponytail: stamp tenant team on non-Filament creates (Filament stamps panel creates itself); additive, leaves DB default when tenantless.
+            if (empty($bankConnection->team_id) && ($team = auth()->user()?->currentTeam) !== null) {
+                $bankConnection->team_id = $team->getKey();
             }
         });
     }

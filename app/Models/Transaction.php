@@ -54,9 +54,14 @@ class Transaction extends Model
     {
         parent::boot();
 
-        static::creating(function ($transaction): void {
+        static::creating(function (Transaction $transaction): void {
             if (empty($transaction->user_id) && auth()->check()) {
                 $transaction->user_id = auth()->id();
+            }
+
+            // ponytail: stamp tenant team on non-Filament creates (Filament stamps panel creates itself); additive, leaves DB default when tenantless.
+            if (empty($transaction->team_id) && ($team = auth()->user()?->currentTeam) !== null) {
+                $transaction->team_id = $team->getKey();
             }
 
             if (! $transaction->exchange_rate) {
