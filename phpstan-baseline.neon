@@ -7099,6 +7099,72 @@ parameters:
 			path: app/Modules/Support/ExternalModuleLoader.php
 
 		-
+			message: '#^Cannot access property \$approvable_id on Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: app/Notifications/ApprovalRequestedNotification.php
+
+		-
+			message: '#^Cannot access property \$approvable_type on Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: app/Notifications/ApprovalRequestedNotification.php
+
+		-
+			message: '#^Cannot access property \$name on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Notifications/ApprovalRequestedNotification.php
+
+		-
+			message: '#^Method App\\Notifications\\ApprovalRequestedNotification\:\:toArray\(\) has parameter \$notifiable with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Notifications/ApprovalRequestedNotification.php
+
+		-
+			message: '#^Method App\\Notifications\\ApprovalRequestedNotification\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Notifications/ApprovalRequestedNotification.php
+
+		-
+			message: '#^Method App\\Notifications\\ApprovalRequestedNotification\:\:toMail\(\) has parameter \$notifiable with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Notifications/ApprovalRequestedNotification.php
+
+		-
+			message: '#^Method App\\Notifications\\ApprovalRequestedNotification\:\:via\(\) has parameter \$notifiable with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Notifications/ApprovalRequestedNotification.php
+
+		-
+			message: '#^Method App\\Notifications\\ApprovalRequestedNotification\:\:via\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Notifications/ApprovalRequestedNotification.php
+
+		-
+			message: '#^Part \$notifiable\-\>name \(mixed\) of encapsed string cannot be cast to string\.$#'
+			identifier: encapsedStringPart.nonString
+			count: 1
+			path: app/Notifications/ApprovalRequestedNotification.php
+
+		-
+			message: '#^Part \$this\-\>step\-\>request\-\>approvable_id \(mixed\) of encapsed string cannot be cast to string\.$#'
+			identifier: encapsedStringPart.nonString
+			count: 1
+			path: app/Notifications/ApprovalRequestedNotification.php
+
+		-
+			message: '#^Part \$this\-\>step\-\>request\-\>approvable_type \(mixed\) of encapsed string cannot be cast to string\.$#'
+			identifier: encapsedStringPart.nonString
+			count: 1
+			path: app/Notifications/ApprovalRequestedNotification.php
+
+		-
 			message: '#^Cannot call method sum\(\) on mixed\.$#'
 			identifier: method.nonObject
 			count: 1
