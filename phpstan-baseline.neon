@@ -2743,6 +2743,36 @@ parameters:
 			path: app/Models/AccountTemplate.php
 
 		-
+			message: '#^Method App\\Models\\ApprovalRequest\:\:approvable\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\MorphTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/ApprovalRequest.php
+
+		-
+			message: '#^Method App\\Models\\ApprovalRequest\:\:rule\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/ApprovalRequest.php
+
+		-
+			message: '#^Method App\\Models\\ApprovalRequest\:\:steps\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/ApprovalRequest.php
+
+		-
+			message: '#^Method App\\Models\\ApprovalStep\:\:decider\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/ApprovalStep.php
+
+		-
+			message: '#^Method App\\Models\\ApprovalStep\:\:request\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/ApprovalStep.php
+
+		-
 			message: '#^Cannot call method copy\(\) on Carbon\\Carbon\|null\.$#'
 			identifier: method.nonObject
 			count: 2
