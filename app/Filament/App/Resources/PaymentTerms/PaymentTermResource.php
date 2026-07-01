@@ -23,6 +23,9 @@ class PaymentTermResource extends Resource
     #[\Override]
     protected static ?string $model = PaymentTerm::class;
 
+    // PaymentTerm is a global (shared) model — opt out of Filament team tenancy.
+    protected static bool $isScopedToTenant = false;
+
     #[\Override]
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';
 

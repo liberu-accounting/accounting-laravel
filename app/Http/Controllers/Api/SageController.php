@@ -28,12 +28,16 @@ class SageController extends Controller
 
         $connection = $this->sage->handleCallback((int) $request->user()->id, $validated['code']);
 
+        // Connections are team-shared: stamp the acting team (no creating hook does it).
+        $connection->team_id = $request->user()->current_team_id;
+        $connection->save();
+
         return response()->json(['success' => true, 'business_id' => $connection->business_id]);
     }
 
     public function sync(Request $request, SageConnection $connection): JsonResponse
     {
-        abort_unless($connection->user_id === $request->user()->id, 403);
+        abort_unless($connection->team_id === ($request->user()->current_team_id ?? -1), 403);
 
         return response()->json(['success' => true, 'invoices_synced' => $this->sage->pullInvoices($connection)]);
     }

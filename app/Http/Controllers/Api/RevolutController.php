@@ -84,6 +84,7 @@ class RevolutController extends Controller
 
             $connection = BankConnection::create([
                 'user_id' => $user->id,
+                'team_id' => $user->current_team_id,
                 'bank_id' => 'revolut',
                 'institution_name' => 'Revolut Business',
                 'revolut_access_token' => $tokenData['access_token'],
@@ -128,7 +129,7 @@ class RevolutController extends Controller
         try {
             $user = $request->user();
 
-            $connections = BankConnection::where('user_id', $user->id)
+            $connections = BankConnection::where('team_id', $user->current_team_id ?? -1)
                 ->where('bank_id', 'revolut')
                 ->select([
                     'id',
@@ -164,7 +165,7 @@ class RevolutController extends Controller
     public function getAccounts(Request $request, BankConnection $connection): JsonResponse
     {
         try {
-            if ($connection->user_id !== $request->user()->id) {
+            if ($connection->team_id !== ($request->user()->current_team_id ?? -1)) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Unauthorized',
@@ -240,7 +241,7 @@ class RevolutController extends Controller
     public function syncTransactions(Request $request, BankConnection $connection): JsonResponse
     {
         try {
-            if ($connection->user_id !== $request->user()->id) {
+            if ($connection->team_id !== ($request->user()->current_team_id ?? -1)) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Unauthorized',
@@ -302,7 +303,7 @@ class RevolutController extends Controller
     public function removeConnection(Request $request, BankConnection $connection): JsonResponse
     {
         try {
-            if ($connection->user_id !== $request->user()->id) {
+            if ($connection->team_id !== ($request->user()->current_team_id ?? -1)) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Unauthorized',
@@ -344,7 +345,7 @@ class RevolutController extends Controller
         ]);
 
         try {
-            if ($connection->user_id !== $request->user()->id) {
+            if ($connection->team_id !== ($request->user()->current_team_id ?? -1)) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Unauthorized',
@@ -399,7 +400,7 @@ class RevolutController extends Controller
         ]);
 
         try {
-            if ($connection->user_id !== $request->user()->id) {
+            if ($connection->team_id !== ($request->user()->current_team_id ?? -1)) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Unauthorized',

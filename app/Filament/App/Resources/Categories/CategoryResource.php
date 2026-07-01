@@ -24,6 +24,9 @@ class CategoryResource extends Resource
     #[\Override]
     protected static ?string $model = Category::class;
 
+    // Category is a global (shared) model — opt out of Filament team tenancy.
+    protected static bool $isScopedToTenant = false;
+
     #[\Override]
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';
 

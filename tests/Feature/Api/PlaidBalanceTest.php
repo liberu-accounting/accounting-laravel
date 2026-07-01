@@ -5,6 +5,7 @@ namespace Tests\Feature\Api;
 use App\Models\BankAccountBalance;
 use App\Models\BankConnection;
 use App\Models\User;
+use App\Services\TeamManagementService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
@@ -22,8 +23,10 @@ class PlaidBalanceTest extends TestCase
         parent::setUp();
 
         $this->user = User::factory()->create();
+        app(TeamManagementService::class)->createPersonalTeamForUser($this->user);
+        $this->user = $this->user->fresh();
         $this->connection = BankConnection::factory()->create([
-            'user_id' => $this->user->id,
+            'team_id' => $this->user->current_team_id,
             'plaid_access_token' => 'access-test-token',
             'status' => 'active',
         ]);
@@ -141,11 +144,12 @@ class PlaidBalanceTest extends TestCase
         $this->assertEquals(1450.00, $existingBalance->available_balance);
     }
 
-    public function test_get_balances_prevents_unauthorized_access(): void
+    public function test_get_balances_prevents_cross_team_access(): void
     {
         $otherUser = User::factory()->create();
+        app(TeamManagementService::class)->createPersonalTeamForUser($otherUser);
 
-        $response = $this->actingAs($otherUser)
+        $response = $this->actingAs($otherUser->fresh())
             ->getJson("/api/plaid/connections/{$this->connection->id}/balances");
 
         $response->assertStatus(403)

@@ -9,6 +9,7 @@ use App\Models\Invoice;
 use App\Models\SageConnection;
 use App\Models\User;
 use App\Services\SageService;
+use App\Services\TeamManagementService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
@@ -23,6 +24,8 @@ class SageSyncTest extends TestCase
     {
         parent::setUp();
         $this->user = User::factory()->create();
+        app(TeamManagementService::class)->createPersonalTeamForUser($this->user);
+        $this->user = $this->user->fresh();
 
         config()->set('services.sage', [
             'client_id' => 'test_client',
@@ -39,6 +42,7 @@ class SageSyncTest extends TestCase
     {
         return SageConnection::create([
             'user_id' => $this->user->id,
+            'team_id' => $this->user->current_team_id,
             'business_id' => 'biz-123',
             'access_token' => 'at',
             'refresh_token' => 'rt',
@@ -71,7 +75,7 @@ class SageSyncTest extends TestCase
         $response = $this->actingAs($this->user)->getJson('/api/sage/callback?code=authcode');
 
         $response->assertOk();
-        $this->assertDatabaseHas('sage_connections', ['user_id' => $this->user->id, 'business_id' => 'biz-xyz', 'status' => 'active']);
+        $this->assertDatabaseHas('sage_connections', ['user_id' => $this->user->id, 'team_id' => $this->user->current_team_id, 'business_id' => 'biz-xyz', 'status' => 'active']);
     }
 
     public function test_push_invoice_stores_remote_id(): void
