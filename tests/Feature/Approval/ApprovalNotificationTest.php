@@ -55,9 +55,15 @@ class ApprovalNotificationTest extends TestCase
             'status' => ApprovalStep::STATUS_PENDING,
         ]);
 
+        // A manager on a SECOND team must never be notified for this team's step.
+        $otherTeam = app(TeamManagementService::class)->createPersonalTeamForUser(User::factory()->create());
+        $otherTeamManager = User::factory()->create(['current_team_id' => $otherTeam->getKey()]);
+        $otherTeamManager->assignRole('manager');
+
         ApprovalRequestedNotification::dispatchToRole($step, $teamId);
 
         Notification::assertSentTo($manager, ApprovalRequestedNotification::class);
         Notification::assertNotSentTo($other, ApprovalRequestedNotification::class);
+        Notification::assertNotSentTo($otherTeamManager, ApprovalRequestedNotification::class);
     }
 }

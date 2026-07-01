@@ -24,7 +24,26 @@ trait Approvable
 
     public function submitForApproval(): void
     {
-        $teamId = (int) ($this->team_id ?? auth()->user()?->current_team_id);
+        // Idempotency: never spawn a second parallel chain for a document already
+        // under approval. Query directly (not via latestOfMany).
+        $alreadyPending = ApprovalRequest::query()
+            ->where('approvable_type', $this->getMorphClass())
+            ->where('approvable_id', $this->getKey())
+            ->where('status', ApprovalRequest::STATUS_PENDING)
+            ->exists();
+
+        if ($alreadyPending) {
+            return;
+        }
+
+        // The document's own team is authoritative. Fail closed on a missing team —
+        // do NOT fall back to the auth team and do NOT silently auto-approve.
+        $teamId = (int) $this->team_id;
+
+        if ($teamId <= 0) {
+            throw new \RuntimeException('Cannot submit for approval: document has no team.');
+        }
+
         $type = class_basename($this);
         $rule = ApprovalRule::matchFor($type, $this->approvalAmount(), $teamId);
 

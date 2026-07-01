@@ -15,6 +15,26 @@ class ApprovalService
 {
     public function canAct(ApprovalStep $step, User $user): bool
     {
+        $request = $step->request;
+
+        // Request must still be open — blocks acting on a rejected/approved request
+        // (e.g. resurrecting a leftover step after a sibling was rejected).
+        if ($request->status !== ApprovalRequest::STATUS_PENDING) {
+            return false;
+        }
+
+        // Only the current step is actionable — enforces sequential order.
+        // (An escalated step is still the current step, so this holds for it.)
+        if ($step->position !== $request->current_step) {
+            return false;
+        }
+
+        // Team boundary: Shield roles are global here, so authority is scoped by the
+        // acting user's current team matching the request's team. No cross-team approval.
+        if ((int) $request->team_id !== (int) $user->current_team_id) {
+            return false;
+        }
+
         if (! in_array($step->status, [ApprovalStep::STATUS_PENDING, ApprovalStep::STATUS_ESCALATED], true)) {
             return false;
         }
@@ -23,7 +43,7 @@ class ApprovalService
             return true;
         }
 
-        $fallback = $step->request->rule->fallback_role;
+        $fallback = $request->rule->fallback_role;
 
         return $step->status === ApprovalStep::STATUS_ESCALATED && $fallback && $user->hasRole($fallback);
     }
@@ -59,6 +79,14 @@ class ApprovalService
             $step->forceFill(['status' => ApprovalStep::STATUS_REJECTED, 'decided_by' => $user->getKey(), 'decided_at' => now(), 'reason' => $reason])->save();
             $request = $step->request;
             $request->forceFill(['status' => ApprovalRequest::STATUS_REJECTED])->save();
+
+            // Defense in depth: leave no leftover actionable steps behind that could
+            // flip the document back to 'approved' after a rejection.
+            $request->steps()
+                ->whereKeyNot($step->getKey())
+                ->whereIn('status', [ApprovalStep::STATUS_PENDING, ApprovalStep::STATUS_ESCALATED])
+                ->update(['status' => ApprovalStep::STATUS_REJECTED]);
+
             $request->approvable->markRejected($reason);
         });
     }

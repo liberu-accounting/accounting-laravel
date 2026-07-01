@@ -3013,6 +3013,12 @@ parameters:
 			path: app/Models/Bill.php
 
 		-
+			message: '#^Access to an undefined property App\\Models\\Bill\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Bill.php
+
+		-
 			message: '#^Binary operation "\+" between numeric\-string and mixed results in an error\.$#'
 			identifier: binaryOp.invalid
 			count: 1
@@ -4405,6 +4411,12 @@ parameters:
 			path: app/Models/Expense.php
 
 		-
+			message: '#^Access to an undefined property App\\Models\\Expense\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Expense.php
+
+		-
 			message: '#^Binary operation "/" between mixed and 100 results in an error\.$#'
 			identifier: binaryOp.invalid
 			count: 1
@@ -4915,6 +4927,12 @@ parameters:
 			path: app/Models/Invoice.php
 
 		-
+			message: '#^Access to an undefined property App\\Models\\Invoice\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Invoice.php
+
+		-
 			message: '#^Access to an undefined property App\\Models\\Invoice\:\:\$timeEntries\.$#'
 			identifier: property.notFound
 			count: 1
@@ -5145,7 +5163,7 @@ parameters:
 		-
 			message: '#^Access to an undefined property App\\Models\\JournalEntry\:\:\$team_id\.$#'
 			identifier: property.notFound
-			count: 1
+			count: 2
 			path: app/Models/JournalEntry.php
 
 		-
@@ -7753,6 +7771,12 @@ parameters:
 			path: app/Services/ApprovalService.php
 
 		-
+			message: '#^Cannot access property \$current_step on Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Services/ApprovalService.php
+
+		-
 			message: '#^Cannot access property \$deadline_days on mixed\.$#'
 			identifier: property.nonObject
 			count: 2
@@ -7771,9 +7795,15 @@ parameters:
 			path: app/Services/ApprovalService.php
 
 		-
-			message: '#^Cannot access property \$team_id on Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			message: '#^Cannot access property \$status on Illuminate\\Database\\Eloquent\\Model\|null\.$#'
 			identifier: property.nonObject
 			count: 1
+			path: app/Services/ApprovalService.php
+
+		-
+			message: '#^Cannot access property \$team_id on Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: property.nonObject
+			count: 2
 			path: app/Services/ApprovalService.php
 
 		-
@@ -7809,6 +7839,12 @@ parameters:
 		-
 			message: '#^Cannot call method steps\(\) on Illuminate\\Database\\Eloquent\\Model\|null\.$#'
 			identifier: method.nonObject
+			count: 2
+			path: app/Services/ApprovalService.php
+
+		-
+			message: '#^Cannot call method update\(\) on mixed\.$#'
+			identifier: method.nonObject
 			count: 1
 			path: app/Services/ApprovalService.php
 
@@ -7819,9 +7855,21 @@ parameters:
 			path: app/Services/ApprovalService.php
 
 		-
+			message: '#^Cannot call method whereIn\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Services/ApprovalService.php
+
+		-
+			message: '#^Cannot call method whereKeyNot\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Services/ApprovalService.php
+
+		-
 			message: '#^Cannot cast mixed to int\.$#'
 			identifier: cast.int
-			count: 1
+			count: 2
 			path: app/Services/ApprovalService.php
 
 		-
