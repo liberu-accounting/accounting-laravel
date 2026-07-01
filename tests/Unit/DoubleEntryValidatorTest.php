@@ -75,4 +75,36 @@ class DoubleEntryValidatorTest extends TestCase
         $this->assertStringContainsString('Total debits must equal total credits', $message);
         $this->assertStringContainsString('double-entry accounting', $message);
     }
+
+    public function test_legacy_branch_passes_for_balanced_request_amounts(): void
+    {
+        // lines === null -> legacy branch reads request() input
+        request()->merge(['debit_amount' => 250.00, 'credit_amount' => 250.00]);
+
+        $validator = new DoubleEntryValidator();
+
+        $this->assertTrue($validator->passes('debit_amount', 250.00));
+    }
+
+    public function test_legacy_branch_fails_for_unbalanced_request_amounts(): void
+    {
+        request()->merge(['debit_amount' => 250.00, 'credit_amount' => 100.00]);
+
+        $validator = new DoubleEntryValidator();
+
+        $this->assertFalse($validator->passes('debit_amount', 250.00));
+    }
+
+    public function test_lines_missing_keys_fall_back_to_zero(): void
+    {
+        // Each line omits one key, exercising the `?? 0` fallback; totals stay balanced.
+        $lines = [
+            ['credit_amount' => 100.00], // debit_amount missing -> 0
+            ['debit_amount' => 100.00],  // credit_amount missing -> 0
+        ];
+
+        $validator = new DoubleEntryValidator($lines);
+
+        $this->assertTrue($validator->passes('lines', $lines));
+    }
 }
