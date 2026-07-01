@@ -30,15 +30,4 @@ class TaxFormTest extends TestCase
 
         $this->assertSame([], $form->tax_summary);
     }
-
-    public function test_calculate_totals_is_unreachable_on_current_schema(): void
-    {
-        // calculateTotals() reads $invoice->tax_amount and $invoice->taxRate
-        // (via tax_rate_id) to build total_tax_withheld and the per-rate
-        // tax_summary. The migrated `invoices` table has neither `tax_amount`
-        // nor `tax_rate_id` columns, and with strict attribute checking on,
-        // resolving $invoice->taxRate throws MissingAttributeException for
-        // tax_rate_id — so the whole method blows up before it can sum anything.
-        $this->markTestSkipped('BUG: invoices table has no tax_amount/tax_rate_id columns; TaxForm::calculateTotals() throws MissingAttributeException (tax_rate_id) and cannot run.');
-    }
 }
