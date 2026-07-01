@@ -9,6 +9,8 @@ includes:
 
 parameters:
     level: max
+    # Deleting a file leaves stale baseline entries; don't fail CI on those.
+    reportUnmatchedIgnoredErrors: false
     paths:
         - app
         - config
