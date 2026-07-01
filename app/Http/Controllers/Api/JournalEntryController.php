@@ -16,7 +16,9 @@ class JournalEntryController extends Controller
 {
     public function index(Request $request): LengthAwarePaginator
     {
-        return JournalEntry::where('user_id', $request->user()->id)
+        // Tenant-scope by team. Null current team -> -1 sentinel = empty result
+        // (never IS NULL, which would leak unassigned rows).
+        return JournalEntry::where('team_id', $request->user()->current_team_id ?? -1)
             ->with('lines')
             ->latest()
             ->paginate(25);
@@ -30,9 +32,9 @@ class JournalEntryController extends Controller
             'reference_number' => 'sometimes|nullable|string',
             'memo' => 'sometimes|nullable|string',
             'lines' => 'sometimes|array',
-            // Scope account references to the acting user (accounts.user_id) so a
-            // caller can't post lines against another user's accounts (IDOR).
-            'lines.*.account_id' => ['required', Rule::exists('accounts', 'id')->where('user_id', $request->user()->id)],
+            // Scope account references to the acting team (accounts.team_id) so a
+            // caller can't post lines against another team's accounts (IDOR).
+            'lines.*.account_id' => ['required', Rule::exists('accounts', 'id')->where('team_id', $request->user()->current_team_id)],
             'lines.*.debit_amount' => 'sometimes|numeric|min:0',
             'lines.*.credit_amount' => 'sometimes|numeric|min:0',
             'lines.*.description' => 'sometimes|nullable|string',
@@ -52,7 +54,11 @@ class JournalEntryController extends Controller
             }
         }
 
-        $entry = JournalEntry::create($validated);
+        // Stamp both: keep user_id for authorship, team_id is the tenant boundary.
+        $entry = new JournalEntry($validated);
+        $entry->user_id = $request->user()->id;
+        $entry->team_id = $request->user()->current_team_id;
+        $entry->save();
 
         foreach ($lines as $line) {
             $entry->lines()->create([
@@ -68,14 +74,14 @@ class JournalEntryController extends Controller
 
     public function show(Request $request, JournalEntry $journalEntry): JsonResponse
     {
-        abort_unless($journalEntry->user_id === $request->user()->id, 403);
+        abort_unless($journalEntry->team_id === $request->user()->current_team_id, 403);
 
         return response()->json($journalEntry->load('lines'));
     }
 
     public function destroy(Request $request, JournalEntry $journalEntry): JsonResponse
     {
-        abort_unless($journalEntry->user_id === $request->user()->id, 403);
+        abort_unless($journalEntry->team_id === $request->user()->current_team_id, 403);
         abort_if($journalEntry->is_posted, 422, 'Posted entries cannot be deleted; reverse them instead.');
 
         $journalEntry->delete();

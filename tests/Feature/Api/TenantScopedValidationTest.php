@@ -15,7 +15,7 @@ use Tests\TestCase;
 /**
  * IDOR guard: reference-validation (exists rules) must be scoped to the acting
  * tenant so user B cannot reference user A's records.
- *  - accounts are owned via accounts.user_id
+ *  - accounts are tenant-scoped via accounts.team_id
  *  - customers / vendors have no user_id column; team_id is the tenant boundary
  */
 class TenantScopedValidationTest extends TestCase
@@ -49,12 +49,12 @@ class TenantScopedValidationTest extends TestCase
         return $team->id;
     }
 
-    // --- JournalEntry: lines.*.account_id scoped to user_id ---
+    // --- JournalEntry: lines.*.account_id scoped to team_id ---
 
-    public function test_journal_entry_rejects_another_users_account(): void
+    public function test_journal_entry_rejects_another_teams_account(): void
     {
-        $foreign = Account::factory()->create(['user_id' => $this->userA->id, 'normal_balance' => 'debit']);
-        $mine = Account::factory()->create(['user_id' => $this->userB->id, 'normal_balance' => 'credit']);
+        $foreign = Account::factory()->create(['team_id' => $this->teamA, 'normal_balance' => 'debit']);
+        $mine = Account::factory()->create(['team_id' => $this->teamB, 'normal_balance' => 'credit']);
 
         $this->actingAs($this->userB)->postJson('/api/journal-entries', [
             'entry_date' => '2026-06-01',
@@ -67,8 +67,8 @@ class TenantScopedValidationTest extends TestCase
 
     public function test_journal_entry_accepts_own_accounts(): void
     {
-        $debit = Account::factory()->create(['user_id' => $this->userB->id, 'normal_balance' => 'debit']);
-        $credit = Account::factory()->create(['user_id' => $this->userB->id, 'normal_balance' => 'credit']);
+        $debit = Account::factory()->create(['team_id' => $this->teamB, 'normal_balance' => 'debit']);
+        $credit = Account::factory()->create(['team_id' => $this->teamB, 'normal_balance' => 'credit']);
 
         $this->actingAs($this->userB)->postJson('/api/journal-entries', [
             'entry_date' => '2026-06-01',
