@@ -277,6 +277,12 @@ parameters:
 			path: app/Filament/Admin/Resources/Expenses/ExpenseResource.php
 
 		-
+			message: '#^Parameter \#1 \$reason of method App\\Models\\Expense\:\:reject\(\) expects string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Filament/Admin/Resources/Expenses/ExpenseResource.php
+
+		-
 			message: '#^Trying to invoke mixed but it''s not a callable\.$#'
 			identifier: callable.nonCallable
 			count: 6
@@ -2491,6 +2497,30 @@ parameters:
 			path: app/Http/Resources/TransactionResource.php
 
 		-
+			message: '#^Cannot access property \$fallback_role on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Jobs/EscalateApprovalsJob.php
+
+		-
+			message: '#^Cannot access property \$rule on Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Jobs/EscalateApprovalsJob.php
+
+		-
+			message: '#^Cannot access property \$team_id on Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Jobs/EscalateApprovalsJob.php
+
+		-
+			message: '#^Cannot cast mixed to int\.$#'
+			identifier: cast.int
+			count: 1
+			path: app/Jobs/EscalateApprovalsJob.php
+
+		-
 			message: '#^Access to an undefined property App\\Models\\Transaction\:\:\$id\.$#'
 			identifier: property.notFound
 			count: 1
@@ -2743,6 +2773,36 @@ parameters:
 			path: app/Models/AccountTemplate.php
 
 		-
+			message: '#^Method App\\Models\\ApprovalRequest\:\:approvable\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\MorphTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/ApprovalRequest.php
+
+		-
+			message: '#^Method App\\Models\\ApprovalRequest\:\:rule\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/ApprovalRequest.php
+
+		-
+			message: '#^Method App\\Models\\ApprovalRequest\:\:steps\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/ApprovalRequest.php
+
+		-
+			message: '#^Method App\\Models\\ApprovalStep\:\:decider\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/ApprovalStep.php
+
+		-
+			message: '#^Method App\\Models\\ApprovalStep\:\:request\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/ApprovalStep.php
+
+		-
 			message: '#^Cannot call method copy\(\) on Carbon\\Carbon\|null\.$#'
 			identifier: method.nonObject
 			count: 2
@@ -2953,6 +3013,12 @@ parameters:
 			path: app/Models/Bill.php
 
 		-
+			message: '#^Access to an undefined property App\\Models\\Bill\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Bill.php
+
+		-
 			message: '#^Binary operation "\+" between numeric\-string and mixed results in an error\.$#'
 			identifier: binaryOp.invalid
 			count: 1
@@ -3025,7 +3091,19 @@ parameters:
 			path: app/Models/Bill.php
 
 		-
+			message: '#^Cannot cast mixed to int\.$#'
+			identifier: cast.int
+			count: 1
+			path: app/Models/Bill.php
+
+		-
 			message: '#^Class App\\Models\\Bill uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Bill.php
+
+		-
+			message: '#^Method App\\Models\\Bill\:\:approvalRequest\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\MorphOne does not specify its types\: TRelatedModel, TDeclaringModel$#'
 			identifier: missingType.generics
 			count: 1
 			path: app/Models/Bill.php
@@ -3069,12 +3147,6 @@ parameters:
 		-
 			message: '#^Method App\\Models\\Bill\:\:recordPayment\(\) has parameter \$paymentData with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 1
-			path: app/Models/Bill.php
-
-		-
-			message: '#^Method App\\Models\\Bill\:\:reject\(\) has parameter \$reason with no type specified\.$#'
-			identifier: missingType.parameter
 			count: 1
 			path: app/Models/Bill.php
 
@@ -4339,6 +4411,12 @@ parameters:
 			path: app/Models/Expense.php
 
 		-
+			message: '#^Access to an undefined property App\\Models\\Expense\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Expense.php
+
+		-
 			message: '#^Binary operation "/" between mixed and 100 results in an error\.$#'
 			identifier: binaryOp.invalid
 			count: 1
@@ -4375,6 +4453,18 @@ parameters:
 			path: app/Models/Expense.php
 
 		-
+			message: '#^Cannot cast mixed to int\.$#'
+			identifier: cast.int
+			count: 1
+			path: app/Models/Expense.php
+
+		-
+			message: '#^Method App\\Models\\Expense\:\:approvalRequest\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\MorphOne does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Expense.php
+
+		-
 			message: '#^Method App\\Models\\Expense\:\:approver\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
 			identifier: missingType.generics
 			count: 1
@@ -4401,12 +4491,6 @@ parameters:
 		-
 			message: '#^Method App\\Models\\Expense\:\:project\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
 			identifier: missingType.generics
-			count: 1
-			path: app/Models/Expense.php
-
-		-
-			message: '#^Method App\\Models\\Expense\:\:reject\(\) has parameter \$reason with no type specified\.$#'
-			identifier: missingType.parameter
 			count: 1
 			path: app/Models/Expense.php
 
@@ -4843,6 +4927,12 @@ parameters:
 			path: app/Models/Invoice.php
 
 		-
+			message: '#^Access to an undefined property App\\Models\\Invoice\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Invoice.php
+
+		-
 			message: '#^Access to an undefined property App\\Models\\Invoice\:\:\$timeEntries\.$#'
 			identifier: property.notFound
 			count: 1
@@ -4923,7 +5013,7 @@ parameters:
 		-
 			message: '#^Cannot cast mixed to int\.$#'
 			identifier: cast.int
-			count: 1
+			count: 2
 			path: app/Models/Invoice.php
 
 		-
@@ -4941,6 +5031,12 @@ parameters:
 		-
 			message: '#^Instantiated class App\\Models\\InvoiceRejected not found\.$#'
 			identifier: class.notFound
+			count: 1
+			path: app/Models/Invoice.php
+
+		-
+			message: '#^Method App\\Models\\Invoice\:\:approvalRequest\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\MorphOne does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
 			count: 1
 			path: app/Models/Invoice.php
 
@@ -4995,12 +5091,6 @@ parameters:
 		-
 			message: '#^Method App\\Models\\Invoice\:\:items\(\) has no return type specified\.$#'
 			identifier: missingType.return
-			count: 1
-			path: app/Models/Invoice.php
-
-		-
-			message: '#^Method App\\Models\\Invoice\:\:reject\(\) has parameter \$reason with no type specified\.$#'
-			identifier: missingType.parameter
 			count: 1
 			path: app/Models/Invoice.php
 
@@ -5073,7 +5163,7 @@ parameters:
 		-
 			message: '#^Access to an undefined property App\\Models\\JournalEntry\:\:\$team_id\.$#'
 			identifier: property.notFound
-			count: 1
+			count: 2
 			path: app/Models/JournalEntry.php
 
 		-
@@ -5139,7 +5229,19 @@ parameters:
 		-
 			message: '#^Cannot call method sum\(\) on mixed\.$#'
 			identifier: method.nonObject
-			count: 2
+			count: 3
+			path: app/Models/JournalEntry.php
+
+		-
+			message: '#^Cannot cast mixed to float\.$#'
+			identifier: cast.double
+			count: 1
+			path: app/Models/JournalEntry.php
+
+		-
+			message: '#^Cannot cast mixed to int\.$#'
+			identifier: cast.int
+			count: 1
 			path: app/Models/JournalEntry.php
 
 		-
@@ -5150,6 +5252,12 @@ parameters:
 
 		-
 			message: '#^Class App\\Models\\JournalEntry uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/JournalEntry.php
+
+		-
+			message: '#^Method App\\Models\\JournalEntry\:\:approvalRequest\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\MorphOne does not specify its types\: TRelatedModel, TDeclaringModel$#'
 			identifier: missingType.generics
 			count: 1
 			path: app/Models/JournalEntry.php
@@ -7069,6 +7177,72 @@ parameters:
 			path: app/Modules/Support/ExternalModuleLoader.php
 
 		-
+			message: '#^Cannot access property \$approvable_id on Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: app/Notifications/ApprovalRequestedNotification.php
+
+		-
+			message: '#^Cannot access property \$approvable_type on Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: app/Notifications/ApprovalRequestedNotification.php
+
+		-
+			message: '#^Cannot access property \$name on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Notifications/ApprovalRequestedNotification.php
+
+		-
+			message: '#^Method App\\Notifications\\ApprovalRequestedNotification\:\:toArray\(\) has parameter \$notifiable with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Notifications/ApprovalRequestedNotification.php
+
+		-
+			message: '#^Method App\\Notifications\\ApprovalRequestedNotification\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Notifications/ApprovalRequestedNotification.php
+
+		-
+			message: '#^Method App\\Notifications\\ApprovalRequestedNotification\:\:toMail\(\) has parameter \$notifiable with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Notifications/ApprovalRequestedNotification.php
+
+		-
+			message: '#^Method App\\Notifications\\ApprovalRequestedNotification\:\:via\(\) has parameter \$notifiable with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Notifications/ApprovalRequestedNotification.php
+
+		-
+			message: '#^Method App\\Notifications\\ApprovalRequestedNotification\:\:via\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Notifications/ApprovalRequestedNotification.php
+
+		-
+			message: '#^Part \$notifiable\-\>name \(mixed\) of encapsed string cannot be cast to string\.$#'
+			identifier: encapsedStringPart.nonString
+			count: 1
+			path: app/Notifications/ApprovalRequestedNotification.php
+
+		-
+			message: '#^Part \$this\-\>step\-\>request\-\>approvable_id \(mixed\) of encapsed string cannot be cast to string\.$#'
+			identifier: encapsedStringPart.nonString
+			count: 1
+			path: app/Notifications/ApprovalRequestedNotification.php
+
+		-
+			message: '#^Part \$this\-\>step\-\>request\-\>approvable_type \(mixed\) of encapsed string cannot be cast to string\.$#'
+			identifier: encapsedStringPart.nonString
+			count: 1
+			path: app/Notifications/ApprovalRequestedNotification.php
+
+		-
 			message: '#^Cannot call method sum\(\) on mixed\.$#'
 			identifier: method.nonObject
 			count: 1
@@ -7589,6 +7763,126 @@ parameters:
 			identifier: method.unresolvableReturnType
 			count: 1
 			path: app/Services/AgingReportService.php
+
+		-
+			message: '#^Cannot access property \$approvable on Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: app/Services/ApprovalService.php
+
+		-
+			message: '#^Cannot access property \$current_step on Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Services/ApprovalService.php
+
+		-
+			message: '#^Cannot access property \$deadline_days on mixed\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: app/Services/ApprovalService.php
+
+		-
+			message: '#^Cannot access property \$fallback_role on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Services/ApprovalService.php
+
+		-
+			message: '#^Cannot access property \$rule on Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: app/Services/ApprovalService.php
+
+		-
+			message: '#^Cannot access property \$status on Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Services/ApprovalService.php
+
+		-
+			message: '#^Cannot access property \$team_id on Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: app/Services/ApprovalService.php
+
+		-
+			message: '#^Cannot call method first\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Services/ApprovalService.php
+
+		-
+			message: '#^Cannot call method forceFill\(\) on Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: method.nonObject
+			count: 3
+			path: app/Services/ApprovalService.php
+
+		-
+			message: '#^Cannot call method markApproved\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Services/ApprovalService.php
+
+		-
+			message: '#^Cannot call method markRejected\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Services/ApprovalService.php
+
+		-
+			message: '#^Cannot call method orderBy\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Services/ApprovalService.php
+
+		-
+			message: '#^Cannot call method steps\(\) on Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: method.nonObject
+			count: 2
+			path: app/Services/ApprovalService.php
+
+		-
+			message: '#^Cannot call method update\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Services/ApprovalService.php
+
+		-
+			message: '#^Cannot call method where\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Services/ApprovalService.php
+
+		-
+			message: '#^Cannot call method whereIn\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Services/ApprovalService.php
+
+		-
+			message: '#^Cannot call method whereKeyNot\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Services/ApprovalService.php
+
+		-
+			message: '#^Cannot cast mixed to int\.$#'
+			identifier: cast.int
+			count: 2
+			path: app/Services/ApprovalService.php
+
+		-
+			message: '#^Parameter \#1 \$roles of method App\\Models\\User\:\:hasRole\(\) expects array\|BackedEnum\|Illuminate\\Support\\Collection\|int\|Spatie\\Permission\\Contracts\\Role\|string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Services/ApprovalService.php
+
+		-
+			message: '#^Parameter \#1 \$value of method Carbon\\Carbon\:\:addDays\(\) expects float\|int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Services/ApprovalService.php
 
 		-
 			message: '#^Access to an undefined property App\\Models\\Transaction\:\:\$id\.$#'

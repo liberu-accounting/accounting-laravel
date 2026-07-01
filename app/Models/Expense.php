@@ -4,15 +4,16 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Concerns\Approvable;
 use App\Notifications\ExpenseApprovalNotification;
 use App\Traits\IsTenantModel;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Facades\Auth;
 
 class Expense extends Model
 {
+    use Approvable;
     use IsTenantModel;
 
     #[\Override]
@@ -68,25 +69,21 @@ class Expense extends Model
         return $this->belongsTo(CostCenter::class);
     }
 
+    public function approvalAmount(): float
+    {
+        return (float) $this->amount;
+    }
+
     public function approve(): void
     {
-        $this->update([
-            'approval_status' => 'approved',
-            'approved_by' => Auth::id(),
-            'approved_at' => now(),
-        ]);
+        $this->markApproved();
 
         $this->user->notify(new ExpenseApprovalNotification($this, 'approved'));
     }
 
-    public function reject($reason): void
+    public function reject(?string $reason): void
     {
-        $this->update([
-            'approval_status' => 'rejected',
-            'rejection_reason' => $reason,
-            'approved_by' => Auth::id(),
-            'approved_at' => now(),
-        ]);
+        $this->markRejected($reason);
 
         $this->user->notify(new ExpenseApprovalNotification($this, 'rejected'));
     }

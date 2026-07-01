@@ -4,15 +4,16 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Concerns\Approvable;
 use App\Traits\IsTenantModel;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Auth;
 
 class Invoice extends Model
 {
+    use Approvable;
     use HasFactory;
     use IsTenantModel;
 
@@ -219,26 +220,24 @@ class Invoice extends Model
 
     }
 
+    public function approvalAmount(): float
+    {
+        return (float) $this->total_amount;
+    }
+
     public function approve(): void
     {
-        $this->update([
-            'approval_status' => 'approved',
-            'approved_by' => Auth::id(),
-            'approved_at' => now(),
-        ]);
+        $this->markApproved();
 
+        // Back-compat: pre-existing consumer event, kept firing alongside ApprovableApproved.
         event(new InvoiceApproved($this));
     }
 
-    public function reject($reason): void
+    public function reject(?string $reason): void
     {
-        $this->update([
-            'approval_status' => 'rejected',
-            'rejection_reason' => $reason,
-            'approved_by' => Auth::id(),
-            'approved_at' => now(),
-        ]);
+        $this->markRejected($reason);
 
+        // Back-compat: pre-existing consumer event, kept firing alongside ApprovableRejected.
         event(new InvoiceRejected($this));
     }
 
