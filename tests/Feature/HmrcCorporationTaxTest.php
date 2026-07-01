@@ -83,4 +83,82 @@ class HmrcCorporationTaxTest extends TestCase
 
         $this->service->submitComputation($this->submissionFor($company));
     }
+
+    public function test_submit_computation_throws_on_http_failure(): void
+    {
+        $company = Company::factory()->create(['hmrc_corporation_tax_utr' => '1234567890']);
+        $ct = $this->submissionFor($company);
+
+        Http::fake([
+            '*/organisations/corporation-tax/*/computations' => Http::response(['code' => 'SERVER_ERROR'], 500),
+        ]);
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Failed to submit corporation tax computation');
+
+        $this->service->submitComputation($ct);
+    }
+
+    public function test_get_obligations_returns_json_on_success(): void
+    {
+        Http::fake([
+            '*/organisations/corporation-tax/*/obligations*' => Http::response(['obligations' => []], 200),
+        ]);
+
+        $this->assertArrayHasKey('obligations', $this->service->getObligations('1234567890', '2025-04-01', '2026-03-31'));
+    }
+
+    public function test_get_obligations_throws_on_failure(): void
+    {
+        Http::fake([
+            '*/organisations/corporation-tax/*/obligations*' => Http::response([], 500),
+        ]);
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Failed to retrieve corporation tax obligations');
+
+        $this->service->getObligations('1234567890', '2025-04-01', '2026-03-31');
+    }
+
+    public function test_get_liabilities_returns_json_on_success(): void
+    {
+        Http::fake([
+            '*/organisations/corporation-tax/*/liabilities*' => Http::response(['liabilities' => []], 200),
+        ]);
+
+        $this->assertArrayHasKey('liabilities', $this->service->getLiabilities('1234567890', '2025-04-01', '2026-03-31'));
+    }
+
+    public function test_get_liabilities_throws_on_failure(): void
+    {
+        Http::fake([
+            '*/organisations/corporation-tax/*/liabilities*' => Http::response([], 500),
+        ]);
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Failed to retrieve corporation tax liabilities');
+
+        $this->service->getLiabilities('1234567890', '2025-04-01', '2026-03-31');
+    }
+
+    public function test_get_payments_returns_json_on_success(): void
+    {
+        Http::fake([
+            '*/organisations/corporation-tax/*/payments*' => Http::response(['payments' => []], 200),
+        ]);
+
+        $this->assertArrayHasKey('payments', $this->service->getPayments('1234567890', '2025-04-01', '2026-03-31'));
+    }
+
+    public function test_get_payments_throws_on_failure(): void
+    {
+        Http::fake([
+            '*/organisations/corporation-tax/*/payments*' => Http::response([], 500),
+        ]);
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Failed to retrieve corporation tax payments');
+
+        $this->service->getPayments('1234567890', '2025-04-01', '2026-03-31');
+    }
 }

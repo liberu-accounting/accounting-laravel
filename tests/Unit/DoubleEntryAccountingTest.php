@@ -278,7 +278,7 @@ class DoubleEntryAccountingTest extends TestCase
         $this->assertNotEquals($entry1->entry_number, $entry2->entry_number);
     }
 
-    public function account_can_check_if_it_accepts_entries(): void
+    public function test_account_can_check_if_it_accepts_entries(): void
     {
         // Active account with no children should accept entries
         $this->assertTrue($this->cashAccount->canAcceptEntries());
@@ -308,7 +308,7 @@ class DoubleEntryAccountingTest extends TestCase
         $this->assertFalse($this->cashAccount->canAcceptEntries());
     }
 
-    public function account_normal_balance_is_set_automatically(): void
+    public function test_account_normal_balance_is_set_automatically(): void
     {
         $assetAccount = Account::create([
             'user_id' => $this->user->id,
@@ -331,5 +331,236 @@ class DoubleEntryAccountingTest extends TestCase
         ]);
 
         $this->assertEquals('credit', $liabilityAccount->normal_balance);
+    }
+
+    public function test_reverse_throws_on_unposted_entry(): void
+    {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Cannot reverse an unposted journal entry');
+
+        $journalEntry = JournalEntry::create([
+            'user_id' => $this->user->id,
+            'entry_date' => now(),
+            'entry_type' => 'general',
+        ]);
+
+        JournalEntryLine::create([
+            'journal_entry_id' => $journalEntry->id,
+            'account_id' => $this->cashAccount->id,
+            'debit_amount' => 100.00,
+            'credit_amount' => 0.00,
+        ]);
+
+        JournalEntryLine::create([
+            'journal_entry_id' => $journalEntry->id,
+            'account_id' => $this->revenueAccount->id,
+            'debit_amount' => 0.00,
+            'credit_amount' => 100.00,
+        ]);
+
+        $journalEntry->reverse();
+    }
+
+    public function test_post_decreases_balances_on_reverse_direction_entries(): void
+    {
+        // Credit a debit-normal account and debit a credit-normal account:
+        // both should DECREASE (exercises the subtraction arms of post()).
+        $journalEntry = JournalEntry::create([
+            'user_id' => $this->user->id,
+            'entry_date' => now(),
+            'entry_type' => 'general',
+        ]);
+
+        // Credit cash (debit-normal): balance -= 200
+        JournalEntryLine::create([
+            'journal_entry_id' => $journalEntry->id,
+            'account_id' => $this->cashAccount->id,
+            'debit_amount' => 0.00,
+            'credit_amount' => 200.00,
+        ]);
+
+        // Debit revenue (credit-normal): balance -= 200
+        JournalEntryLine::create([
+            'journal_entry_id' => $journalEntry->id,
+            'account_id' => $this->revenueAccount->id,
+            'debit_amount' => 200.00,
+            'credit_amount' => 0.00,
+        ]);
+
+        $journalEntry->post();
+
+        $this->cashAccount->refresh();
+        $this->revenueAccount->refresh();
+
+        $this->assertEquals(800.00, $this->cashAccount->balance);   // 1000 - 200
+        $this->assertEquals(-200.00, $this->revenueAccount->balance); // 0 - 200
+    }
+
+    public function test_post_line_with_both_debit_and_credit_uses_net_effect(): void
+    {
+        $journalEntry = JournalEntry::create([
+            'user_id' => $this->user->id,
+            'entry_date' => now(),
+            'entry_type' => 'general',
+        ]);
+
+        // Cash line carries BOTH debit and credit: nets +300 (500 - 200)
+        JournalEntryLine::create([
+            'journal_entry_id' => $journalEntry->id,
+            'account_id' => $this->cashAccount->id,
+            'debit_amount' => 500.00,
+            'credit_amount' => 200.00,
+        ]);
+
+        // Revenue credit 300 keeps it balanced (debits 500 == credits 200 + 300)
+        JournalEntryLine::create([
+            'journal_entry_id' => $journalEntry->id,
+            'account_id' => $this->revenueAccount->id,
+            'debit_amount' => 0.00,
+            'credit_amount' => 300.00,
+        ]);
+
+        $this->assertTrue($journalEntry->isBalanced());
+
+        $journalEntry->post();
+
+        $this->cashAccount->refresh();
+        $this->revenueAccount->refresh();
+
+        $this->assertEquals(1300.00, $this->cashAccount->balance);  // 1000 + (500 - 200)
+        $this->assertEquals(300.00, $this->revenueAccount->balance); // 0 + 300
+    }
+
+    public function test_is_balanced_treats_sub_cent_difference_as_balanced(): void
+    {
+        $journalEntry = JournalEntry::create([
+            'user_id' => $this->user->id,
+            'entry_date' => now(),
+            'entry_type' => 'general',
+        ]);
+
+        JournalEntryLine::create([
+            'journal_entry_id' => $journalEntry->id,
+            'account_id' => $this->cashAccount->id,
+            'debit_amount' => 100.001,
+            'credit_amount' => 0.00,
+        ]);
+
+        JournalEntryLine::create([
+            'journal_entry_id' => $journalEntry->id,
+            'account_id' => $this->revenueAccount->id,
+            'debit_amount' => 0.00,
+            'credit_amount' => 100.00,
+        ]);
+
+        // isBalanced() compares with bccomp(..., 2), so the sub-cent tail is ignored.
+        $this->assertTrue($journalEntry->isBalanced());
+    }
+
+    public function test_generate_entry_number_produces_sequential_formatted_numbers(): void
+    {
+        $year = date('Y');
+
+        $entry1 = JournalEntry::create([
+            'user_id' => $this->user->id,
+            'entry_date' => now(),
+            'entry_type' => 'general',
+        ]);
+
+        $entry2 = JournalEntry::create([
+            'user_id' => $this->user->id,
+            'entry_date' => now(),
+            'entry_type' => 'general',
+        ]);
+
+        $this->assertEquals("JE-{$year}-000001", $entry1->entry_number);
+        $this->assertEquals("JE-{$year}-000002", $entry2->entry_number);
+    }
+
+    public function test_entry_number_is_not_overwritten_when_supplied(): void
+    {
+        $entry = JournalEntry::create([
+            'user_id' => $this->user->id,
+            'entry_number' => 'CUSTOM-0001',
+            'entry_date' => now(),
+            'entry_type' => 'general',
+        ]);
+
+        $this->assertEquals('CUSTOM-0001', $entry->entry_number);
+        $this->assertEquals('CUSTOM-0001', $entry->fresh()->entry_number);
+    }
+
+    public function test_user_id_is_auto_set_from_authenticated_user(): void
+    {
+        $this->actingAs($this->user);
+
+        // No user_id supplied: boot creating should fill it from auth()->id()
+        $entry = JournalEntry::create([
+            'entry_date' => now(),
+            'entry_type' => 'general',
+        ]);
+
+        $this->assertEquals($this->user->id, $entry->user_id);
+        $this->assertEquals($this->user->id, $entry->fresh()->user_id);
+    }
+
+    public function test_is_balanced_with_negative_amounts(): void
+    {
+        $journalEntry = JournalEntry::create([
+            'user_id' => $this->user->id,
+            'entry_date' => now(),
+            'entry_type' => 'general',
+        ]);
+
+        JournalEntryLine::create([
+            'journal_entry_id' => $journalEntry->id,
+            'account_id' => $this->cashAccount->id,
+            'debit_amount' => -50.00,
+            'credit_amount' => 0.00,
+        ]);
+
+        JournalEntryLine::create([
+            'journal_entry_id' => $journalEntry->id,
+            'account_id' => $this->revenueAccount->id,
+            'debit_amount' => 0.00,
+            'credit_amount' => -50.00,
+        ]);
+
+        $this->assertTrue($journalEntry->isBalanced());
+        $this->assertEquals(-50.00, $journalEntry->total_debits);
+        $this->assertEquals(-50.00, $journalEntry->total_credits);
+    }
+
+    public function test_post_with_negative_amounts_adjusts_balances(): void
+    {
+        $journalEntry = JournalEntry::create([
+            'user_id' => $this->user->id,
+            'entry_date' => now(),
+            'entry_type' => 'general',
+        ]);
+
+        JournalEntryLine::create([
+            'journal_entry_id' => $journalEntry->id,
+            'account_id' => $this->cashAccount->id,
+            'debit_amount' => -50.00,
+            'credit_amount' => 0.00,
+        ]);
+
+        JournalEntryLine::create([
+            'journal_entry_id' => $journalEntry->id,
+            'account_id' => $this->revenueAccount->id,
+            'debit_amount' => 0.00,
+            'credit_amount' => -50.00,
+        ]);
+
+        $journalEntry->post();
+
+        $this->cashAccount->refresh();
+        $this->revenueAccount->refresh();
+
+        // Cash (debit-normal): 1000 + (-50 - 0) = 950
+        $this->assertEquals(950.00, $this->cashAccount->balance);
+        // Revenue (credit-normal): 0 + (-50 - 0) = -50
+        $this->assertEquals(-50.00, $this->revenueAccount->balance);
     }
 }
