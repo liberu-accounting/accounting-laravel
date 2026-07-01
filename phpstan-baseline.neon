@@ -151,12 +151,6 @@ parameters:
 			path: app/Actions/Socialstream/UpdateConnectedAccount.php
 
 		-
-			message: '#^Call to an undefined method App\\Models\\Invoice\:\:calculateLateFee\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Console/Commands/CalculateLateFees.php
-
-		-
 			message: '#^Cannot call method getDescription\(\) on mixed\.$#'
 			identifier: method.nonObject
 			count: 1
@@ -773,42 +767,6 @@ parameters:
 			identifier: callable.nonCallable
 			count: 1
 			path: app/Filament/App/Resources/Estimates/EstimateResource.php
-
-		-
-			message: '#^Binary operation "\.\=" between mixed and '' \(Copy\)'' results in an error\.$#'
-			identifier: assignOp.invalid
-			count: 1
-			path: app/Filament/App/Resources/GeneralLedgerReports/GeneralLedgerReportResource.php
-
-		-
-			message: '#^Cannot access property \$template_name on mixed\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Filament/App/Resources/GeneralLedgerReports/GeneralLedgerReportResource.php
-
-		-
-			message: '#^Cannot call method generatePdf\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Filament/App/Resources/GeneralLedgerReports/GeneralLedgerReportResource.php
-
-		-
-			message: '#^Cannot call method replicate\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Filament/App/Resources/GeneralLedgerReports/GeneralLedgerReportResource.php
-
-		-
-			message: '#^Cannot call method save\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Filament/App/Resources/GeneralLedgerReports/GeneralLedgerReportResource.php
-
-		-
-			message: '#^Trying to invoke mixed but it''s not a callable\.$#'
-			identifier: callable.nonCallable
-			count: 4
-			path: app/Filament/App/Resources/GeneralLedgerReports/GeneralLedgerReportResource.php
 
 		-
 			message: '#^Cannot access property \$status on mixed\.$#'
@@ -2767,30 +2725,6 @@ parameters:
 			path: app/Models/AccountTemplate.php
 
 		-
-			message: '#^Method App\\Models\\AccountTemplate\:\:team\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
-			identifier: missingType.generics
-			count: 1
-			path: app/Models/AccountTemplate.php
-
-		-
-			message: '#^Method App\\Models\\Activation\:\:team\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
-			identifier: missingType.generics
-			count: 1
-			path: app/Models/Activation.php
-
-		-
-			message: '#^PHPDoc type array of property App\\Models\\Activation\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
-			identifier: property.phpDocType
-			count: 1
-			path: app/Models/Activation.php
-
-		-
-			message: '#^Property App\\Models\\Activation\:\:\$fillable type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Models/Activation.php
-
-		-
 			message: '#^Cannot call method copy\(\) on Carbon\\Carbon\|null\.$#'
 			identifier: method.nonObject
 			count: 2
@@ -3907,12 +3841,6 @@ parameters:
 			path: app/Models/Currency.php
 
 		-
-			message: '#^Method App\\Models\\Currency\:\:team\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
-			identifier: missingType.generics
-			count: 1
-			path: app/Models/Currency.php
-
-		-
 			message: '#^Method App\\Models\\Currency\:\:transactions\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -4381,12 +4309,6 @@ parameters:
 			path: app/Models/ExchangeRate.php
 
 		-
-			message: '#^Method App\\Models\\ExchangeRate\:\:team\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
-			identifier: missingType.generics
-			count: 1
-			path: app/Models/ExchangeRate.php
-
-		-
 			message: '#^Method App\\Models\\ExchangeRate\:\:toCurrency\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -4487,36 +4409,6 @@ parameters:
 			identifier: missingType.generics
 			count: 1
 			path: app/Models/Expense.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\GeneralLedgerReport\:\:\$template_name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Models/GeneralLedgerReport.php
-
-		-
-			message: '#^Binary operation "\." between mixed and ''\.pdf'' results in an error\.$#'
-			identifier: binaryOp.invalid
-			count: 1
-			path: app/Models/GeneralLedgerReport.php
-
-		-
-			message: '#^Class App\\Models\\GeneralLedgerReport uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
-			identifier: missingType.generics
-			count: 1
-			path: app/Models/GeneralLedgerReport.php
-
-		-
-			message: '#^Method App\\Models\\GeneralLedgerReport\:\:generatePdf\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/GeneralLedgerReport.php
-
-		-
-			message: '#^Method App\\Models\\GeneralLedgerReport\:\:team\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
-			identifier: missingType.generics
-			count: 1
-			path: app/Models/GeneralLedgerReport.php
 
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$status\.$#'
@@ -5939,12 +5831,6 @@ parameters:
 			identifier: class.notFound
 			count: 1
 			path: app/Models/SalesReceiptItem.php
-
-		-
-			message: '#^Method App\\Models\\SiteConfig\:\:team\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
-			identifier: missingType.generics
-			count: 1
-			path: app/Models/SiteConfig.php
 
 		-
 			message: '#^Class App\\Models\\SiteSettings uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'

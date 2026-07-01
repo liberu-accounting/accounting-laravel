@@ -88,7 +88,11 @@ The core invariant: every posted `JournalEntry` must have equal debits and credi
 
 ### Multi-Tenancy via Teams
 
-The `IsTenantModel` trait (used on most models) automatically scopes Eloquent queries to the current team. Filament panels are also scoped by team. `TeamServiceProvider` bootstraps this. The `User` model carefully merges `HasRoles` (Spatie) and `HasTeams` (Jetstream) to avoid method conflicts.
+Team is the tenant. **`IsTenantModel` does NOT add a global scope** — it only defines the `team()` belongsTo relationship that Filament's `->tenant(Team::class)` uses. So tenant isolation is enforced in two places, not by the trait:
+- **Filament panels** auto-scope every resource query by `team_id` and stamp it on create (via `->tenant(Team::class, ownershipRelationship: 'team')` in the panel providers).
+- **API controllers / services** scope explicitly: `where('team_id', $request->user()->current_team_id ?? -1)` (the `-1` sentinel returns empty for a tenantless caller instead of leaking `team_id IS NULL` rows). Model `creating` hooks stamp `team_id` on non-Filament create paths.
+
+`team_id` is backfilled for existing rows by the `teams:backfill-tenancy` command. Global reference models (e.g. `Currency`, `ExchangeRate`) are deliberately NOT tenant-scoped. The `User` model carefully merges `HasRoles` (Spatie) and `HasTeams` (Jetstream) to avoid method conflicts.
 
 ### Service Layer
 

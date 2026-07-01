@@ -95,6 +95,34 @@ class Invoice extends Model
         $this->save();
     }
 
+    /**
+     * Compute and persist this invoice's late fee, returning the amount charged.
+     *
+     * // ponytail: flat percentage of total_amount, charged once the due date plus
+     * // grace period has fully passed; recompute overwrites (idempotent — the command
+     * // reruns, so accumulating would double-charge). No daily accrual / compounding —
+     * // add that only if a real late-fee spec ever calls for it.
+     */
+    public function calculateLateFee(): float
+    {
+        if ($this->payment_status === 'paid' || $this->due_date === null) {
+            return 0.0;
+        }
+
+        $overdueAfter = $this->due_date->copy()->addDays((int) $this->grace_period_days);
+
+        if (today()->lte($overdueAfter)) {
+            return 0.0;
+        }
+
+        $fee = round((float) $this->total_amount * (float) $this->late_fee_percentage / 100, 2);
+
+        $this->late_fee_amount = $fee;
+        $this->save();
+
+        return $fee;
+    }
+
     public function creditMemos()
     {
         return $this->hasMany(CreditMemo::class, 'invoice_id');
