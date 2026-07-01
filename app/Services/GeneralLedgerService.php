@@ -12,14 +12,25 @@ class GeneralLedgerService
 {
     public function __construct(protected ExchangeRateService $exchangeRateService) {}
 
+    /**
+     * The acting user's current team, or -1 when there is none — a sentinel that
+     * matches no row (team ids are positive), so a tenantless call returns empty
+     * rather than leaking every unassigned (team_id IS NULL) row.
+     */
+    private function scopedTeamId(): int
+    {
+        // GL is only reached in authenticated contexts (Sanctum API, Filament panel).
+        return auth()->user()->current_team_id ?? -1;
+    }
+
     public function getAccountBalances($startDate, $endDate, ?Currency $displayCurrency = null)
     {
         if (! $displayCurrency instanceof Currency) {
             $displayCurrency = Currency::where('is_default', true)->first();
         }
 
-        // ponytail: tenant-scope by user_id (accounts carry no team_id yet); replace with team scope when team_id lands. Null auth = empty set (safe, no leak).
-        return Account::where('user_id', auth()->id())
+        // Tenant-scope by team. Null current team -> -1 sentinel = empty result.
+        return Account::where('team_id', $this->scopedTeamId())
             ->with(['transactions' => function ($query) use ($startDate, $endDate): void {
                 $query->whereBetween('transaction_date', [$startDate, $endDate]);
             }])
@@ -62,8 +73,8 @@ class GeneralLedgerService
             $displayCurrency = Currency::where('is_default', true)->first();
         }
 
-        // ponytail: tenant-scope by user_id — see getAccountBalances note.
-        return Account::where('user_id', auth()->id())
+        // Tenant-scope by team — see getAccountBalances note.
+        return Account::where('team_id', $this->scopedTeamId())
             ->with(['transactions' => function ($query) use ($date): void {
                 $query->where('transaction_date', '<=', $date);
             }])
@@ -103,28 +114,28 @@ class GeneralLedgerService
 
         // Get current month revenue
         $revenue = Transaction::whereHas('account', function ($query): void {
-            $query->where('account_type', 'revenue')->where('user_id', auth()->id());
+            $query->where('account_type', 'revenue')->where('team_id', $this->scopedTeamId());
         })
             ->whereBetween('transaction_date', [$startDate, $endDate])
             ->sum('amount');
 
         // Get previous month revenue for comparison
         $previousRevenue = Transaction::whereHas('account', function ($query): void {
-            $query->where('account_type', 'revenue')->where('user_id', auth()->id());
+            $query->where('account_type', 'revenue')->where('team_id', $this->scopedTeamId());
         })
             ->whereBetween('transaction_date', [$previousStartDate, $previousEndDate])
             ->sum('amount');
 
         // Get current month expenses
         $expenses = Transaction::whereHas('account', function ($query): void {
-            $query->where('account_type', 'expense')->where('user_id', auth()->id());
+            $query->where('account_type', 'expense')->where('team_id', $this->scopedTeamId());
         })
             ->whereBetween('transaction_date', [$startDate, $endDate])
             ->sum('amount');
 
         // Get previous month expenses for comparison
         $previousExpenses = Transaction::whereHas('account', function ($query): void {
-            $query->where('account_type', 'expense')->where('user_id', auth()->id());
+            $query->where('account_type', 'expense')->where('team_id', $this->scopedTeamId());
         })
             ->whereBetween('transaction_date', [$previousStartDate, $previousEndDate])
             ->sum('amount');
@@ -166,7 +177,7 @@ class GeneralLedgerService
             $currentDate = (clone $startDate)->addDays($i);
 
             $amount = Transaction::whereHas('account', function ($query) use ($accountType): void {
-                $query->where('account_type', $accountType)->where('user_id', auth()->id());
+                $query->where('account_type', $accountType)->where('team_id', $this->scopedTeamId());
             })
                 ->whereDate('transaction_date', $currentDate)
                 ->sum('amount');

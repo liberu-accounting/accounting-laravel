@@ -6,6 +6,7 @@ namespace Tests\Feature\Api;
 
 use App\Models\Account;
 use App\Models\User;
+use App\Services\TeamManagementService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -19,6 +20,8 @@ class GeneralLedgerApiTest extends TestCase
     {
         parent::setUp();
         $this->user = User::factory()->create();
+        app(TeamManagementService::class)->createPersonalTeamForUser($this->user);
+        $this->user->refresh();
     }
 
     public function test_trial_balance_requires_authentication(): void
@@ -28,7 +31,7 @@ class GeneralLedgerApiTest extends TestCase
 
     public function test_trial_balance_returns_rows(): void
     {
-        Account::factory()->create(['user_id' => $this->user->id, 'account_type' => 'asset', 'normal_balance' => 'debit', 'balance' => 500]);
+        Account::factory()->create(['team_id' => $this->user->current_team_id, 'account_type' => 'asset', 'normal_balance' => 'debit', 'balance' => 500]);
 
         $response = $this->actingAs($this->user)->getJson('/api/general-ledger/trial-balance');
 
