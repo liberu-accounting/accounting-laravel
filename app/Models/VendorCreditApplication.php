@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Traits\IsTenantModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -23,7 +22,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class VendorCreditApplication extends Model
 {
     use HasFactory;
-    use IsTenantModel;
 
     #[\Override]
     protected $primaryKey = 'application_id';

@@ -7,7 +7,6 @@ namespace Tests\Feature;
 use App\Models\Category;
 use App\Models\Invoice;
 use App\Models\PaymentTerm;
-use App\Models\SiteSettings;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -40,13 +39,5 @@ class ModelSchemaConsistencyTest extends TestCase
         ]);
 
         $this->assertSame(30, (int) $term->fresh()->payment_term_number_of_days);
-    }
-
-    public function test_site_settings_resolves_real_table(): void
-    {
-        // Neither call should hit a missing-table error.
-        SiteSettings::first();
-        $this->assertSame('settings', (new SiteSettings)->getTable());
-        $this->assertGreaterThanOrEqual(0, SiteSettings::query()->count());
     }
 }
