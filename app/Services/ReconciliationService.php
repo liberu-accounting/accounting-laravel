@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Models\BankStatement;
+use App\Models\ReconciliationRule;
 use App\Models\Transaction;
+use Illuminate\Support\Collection;
 
 class ReconciliationService
 {
@@ -42,6 +44,14 @@ class ReconciliationService
         $unmatchedTransactions = collect();
         $discrepancies = collect();
 
+        // Service layer: IsTenantModel is inert here, so scope rules to the
+        // statement's team explicitly. Ordered by priority (lower first).
+        $rules = ReconciliationRule::query()
+            ->where('is_active', true)
+            ->where('team_id', $bankStatement->team_id)
+            ->orderBy('priority')
+            ->get();
+
         foreach ($transactions as $transaction) {
             $amount = (float) $transaction->amount;
             if ($amount > 0) {
@@ -50,7 +60,9 @@ class ReconciliationService
                 $totalDebits += abs($amount);
             }
 
-            $matched = $this->findMatch($transaction, $bankStatement);
+            // User-defined rules take precedence; fall back to the built-in heuristic.
+            $matched = $this->applyRules($rules, $transaction)
+                || $this->findMatch($transaction, $bankStatement);
 
             if ($matched) {
                 $matchedTransactions->push($transaction);
@@ -109,5 +121,47 @@ class ReconciliationService
             ->exists();
 
         return $fuzzyMatch;
+    }
+
+    /**
+     * First active rule whose condition matches assigns its account to the
+     * transaction (posting/debit side, so the bank account_id used by
+     * reconcile() is untouched) and reports a match.
+     *
+     * @param  Collection<int, ReconciliationRule>  $rules
+     */
+    private function applyRules(Collection $rules, Transaction $transaction): bool
+    {
+        foreach ($rules as $rule) {
+            if ($this->ruleMatches($rule, $transaction)) {
+                if ($rule->action_account_id !== null) {
+                    $transaction->debit_account_id = $rule->action_account_id;
+                }
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function ruleMatches(ReconciliationRule $rule, Transaction $transaction): bool
+    {
+        $field = match ($rule->match_field) {
+            'amount' => (string) $transaction->amount,
+            'reference' => (string) $transaction->external_id,
+            default => (string) $transaction->description, // description
+        };
+
+        return match ($rule->match_operator) {
+            'contains' => $rule->match_value !== ''
+                && stripos($field, (string) $rule->match_value) !== false,
+            'equals' => $rule->match_field === 'amount'
+                ? abs((float) $transaction->amount - (float) $rule->match_value) < 0.001
+                : $field === (string) $rule->match_value,
+            'between' => (float) $transaction->amount >= (float) $rule->match_value
+                && (float) $transaction->amount <= (float) $rule->match_value_secondary,
+            default => false,
+        };
     }
 }
