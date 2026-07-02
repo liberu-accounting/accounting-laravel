@@ -5263,6 +5263,24 @@ parameters:
 			path: app/Models/QboConnection.php
 
 		-
+			message: '#^Class App\\Models\\ReconciliationRule uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/ReconciliationRule.php
+
+		-
+			message: '#^Method App\\Models\\ReconciliationRule\:\:actionAccount\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/ReconciliationRule.php
+
+		-
+			message: '#^Method App\\Models\\ReconciliationRule\:\:team\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/ReconciliationRule.php
+
+		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$subtotal_amount\.$#'
 			identifier: property.notFound
 			count: 1
@@ -7465,6 +7483,24 @@ parameters:
 			path: app/Services/BankStatementImportService.php
 
 		-
+			message: '#^Cannot call method xpath\(\) on SimpleXMLElement\|false\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Services/BankStatementImportService.php
+
+		-
+			message: '#^Method App\\Services\\BankStatementImportService\:\:createQifTransaction\(\) has parameter \$transactions with generic class Illuminate\\Support\\Collection but does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Services/BankStatementImportService.php
+
+		-
+			message: '#^Method App\\Services\\BankStatementImportService\:\:importFromCamt\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Services/BankStatementImportService.php
+
+		-
 			message: '#^Method App\\Services\\BankStatementImportService\:\:importFromCsv\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
 			identifier: missingType.generics
 			count: 1
@@ -7472,6 +7508,12 @@ parameters:
 
 		-
 			message: '#^Method App\\Services\\BankStatementImportService\:\:importFromOfx\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Services/BankStatementImportService.php
+
+		-
+			message: '#^Method App\\Services\\BankStatementImportService\:\:importFromQif\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
 			identifier: missingType.generics
 			count: 1
 			path: app/Services/BankStatementImportService.php
@@ -7491,13 +7533,19 @@ parameters:
 		-
 			message: '#^Parameter \#1 \$stream of function fclose expects resource, resource\|false given\.$#'
 			identifier: argument.type
-			count: 1
+			count: 2
 			path: app/Services/BankStatementImportService.php
 
 		-
 			message: '#^Parameter \#1 \$stream of function fgetcsv expects resource, resource\|false given\.$#'
 			identifier: argument.type
 			count: 2
+			path: app/Services/BankStatementImportService.php
+
+		-
+			message: '#^Parameter \#1 \$stream of function fgets expects resource, resource\|false given\.$#'
+			identifier: argument.type
+			count: 1
 			path: app/Services/BankStatementImportService.php
 
 		-

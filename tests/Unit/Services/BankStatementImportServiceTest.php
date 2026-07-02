@@ -172,4 +172,78 @@ XML;
         $this->assertEquals(-42.50, (float) $second->amount);
         $this->assertSame('Refund', $second->description);
     }
+
+    // Case 13: importFromQif parses `^`-terminated records; T sign is preserved (credit + debit).
+    public function test_import_from_qif_parses_records_with_signed_amounts(): void
+    {
+        $statement = $this->statement();
+        $qif = "!Type:Bank\n"
+            ."D06/15/2024\nT500.00\nPPaycheck\nMSalary\nN1001\n^\n"
+            ."D6/16'24\nT-42.50\nPGrocery Store\n^\n";
+        $path = $this->tempFile($qif);
+
+        $result = $this->service()->importFromQif($path, $statement);
+
+        $this->assertInstanceOf(Collection::class, $result);
+        $this->assertCount(2, $result);
+        $this->assertSame(2, Transaction::where('bank_statement_id', $statement->id)->count());
+
+        $credit = $result->first();
+        $this->assertEquals('2024-06-15', $credit->transaction_date->format('Y-m-d'));
+        $this->assertEquals(500.00, (float) $credit->amount);      // deposit stays positive
+        $this->assertSame('Paycheck', $credit->description);        // payee wins over memo
+        $this->assertSame($statement->account_id, $credit->account_id);
+        $this->assertFalse($credit->fresh()->reconciled);
+
+        $debit = $result->last();
+        $this->assertEquals('2024-06-16', $debit->transaction_date->format('Y-m-d')); // apostrophe year normalised
+        $this->assertEquals(-42.50, (float) $debit->amount);        // withdrawal stays negative
+        $this->assertSame('Grocery Store', $debit->description);
+    }
+
+    // Case 14: importFromCamt reads Ntry entries; CdtDbtInd drives the sign (CRDT + / DBIT −).
+    public function test_import_from_camt_parses_entries_with_credit_debit_signs(): void
+    {
+        $statement = $this->statement();
+        $camt = <<<'XML'
+<?xml version="1.0" encoding="UTF-8"?>
+<Document xmlns="urn:iso:std:iso:20022:tech:xsd:camt.053.001.02">
+  <BkToCstmrStmt>
+    <Stmt>
+      <Ntry>
+        <Amt Ccy="EUR">500.00</Amt>
+        <CdtDbtInd>CRDT</CdtDbtInd>
+        <BookgDt><Dt>2024-06-15</Dt></BookgDt>
+        <NtryDtls><TxDtls><RmtInf><Ustrd>Incoming payment</Ustrd></RmtInf></TxDtls></NtryDtls>
+      </Ntry>
+      <Ntry>
+        <Amt Ccy="EUR">42.50</Amt>
+        <CdtDbtInd>DBIT</CdtDbtInd>
+        <BookgDt><Dt>2024-06-16</Dt></BookgDt>
+        <AddtlNtryInf>Card purchase</AddtlNtryInf>
+      </Ntry>
+    </Stmt>
+  </BkToCstmrStmt>
+</Document>
+XML;
+        $path = $this->tempFile($camt);
+
+        $result = $this->service()->importFromCamt($path, $statement);
+
+        $this->assertInstanceOf(Collection::class, $result);
+        $this->assertCount(2, $result);
+        $this->assertSame(2, Transaction::where('bank_statement_id', $statement->id)->count());
+
+        $credit = $result->first();
+        $this->assertEquals('2024-06-15', $credit->transaction_date->format('Y-m-d'));
+        $this->assertEquals(500.00, (float) $credit->amount);       // CRDT → positive
+        $this->assertSame('Incoming payment', $credit->description); // RmtInf/Ustrd
+        $this->assertSame($statement->account_id, $credit->account_id);
+        $this->assertFalse($credit->fresh()->reconciled);
+
+        $debit = $result->last();
+        $this->assertEquals('2024-06-16', $debit->transaction_date->format('Y-m-d'));
+        $this->assertEquals(-42.50, (float) $debit->amount);        // DBIT → negative
+        $this->assertSame('Card purchase', $debit->description);     // AddtlNtryInf fallback
+    }
 }
