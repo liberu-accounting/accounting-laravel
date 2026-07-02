@@ -26,8 +26,6 @@ class Invoice extends Model
         'invoice_date',
         'due_date',
         'total_amount',
-        'tax_amount',
-        'tax_rate_id',
         'payment_status',
         'is_recurring',
         'recurrence_frequency',
@@ -46,7 +44,6 @@ class Invoice extends Model
     #[\Override]
     protected $casts = [
         'total_amount' => 'decimal:2',
-        'tax_amount' => 'decimal:2',
         'invoice_date' => 'date',
         'due_date' => 'date',
         'is_recurring' => 'boolean',
@@ -69,11 +66,6 @@ class Invoice extends Model
     public function approver()
     {
         return $this->belongsTo(User::class, 'approved_by');
-    }
-
-    public function taxRate()
-    {
-        return $this->belongsTo(TaxRate::class);
     }
 
     public function timeEntries()
@@ -128,35 +120,14 @@ class Invoice extends Model
         return $this->hasMany(CreditMemo::class, 'invoice_id');
     }
 
-    public function calculateTax()
+    // ponytail: invoice-level tax removed — the live `invoices` table has no
+    // tax_amount / tax_rate_id columns, so the old calculateTax() was silently
+    // inert (it early-returned on the always-null taxRate relation). Tax lives in
+    // exactly ONE place now: per-line on invoice_items (InvoiceItem::calculateAmount
+    // + its tax_amount column). getTotalWithTax() sums that line-item tax.
+    public function getTotalWithTax(): float
     {
-        if (! $this->taxRate) {
-            return 0;
-        }
-
-        $baseAmount = $this->total_amount;
-        $previousTaxes = 0;
-
-        if ($this->taxRate->is_compound) {
-            // Get all non-compound taxes first
-            $nonCompoundTaxes = TaxRate::where('is_active', true)
-                ->where('is_compound', false)
-                ->get();
-
-            foreach ($nonCompoundTaxes as $tax) {
-                $previousTaxes += $tax->calculateTax($baseAmount);
-            }
-        }
-
-        $taxAmount = $this->taxRate->calculateTax($baseAmount, $previousTaxes);
-        $this->tax_amount = $taxAmount;
-
-        return $taxAmount;
-    }
-
-    public function getTotalWithTax(): float|int|array
-    {
-        return $this->total_amount + $this->tax_amount;
+        return (float) $this->total_amount + (float) $this->items()->sum('tax_amount');
     }
 
     public function calculateTotalFromTimeEntries()
@@ -172,7 +143,6 @@ class Invoice extends Model
             'invoice' => $this,
             'customer' => $this->customer,
             'vendor' => $this->vendor,
-            'tax_rate' => $this->taxRate,
         ];
 
         $pdf = Pdf::loadView('invoices.template', $data);
