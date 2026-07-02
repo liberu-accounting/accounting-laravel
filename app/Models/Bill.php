@@ -62,7 +62,9 @@ class Bill extends Model
 
     public function taxRate()
     {
-        return $this->belongsTo(TaxRate::class);
+        // Explicit keys: TaxRate's PK is tax_rate_id, so Laravel's guessed FK
+        // (tax_rate_tax_rate_id) is wrong and would always resolve to null.
+        return $this->belongsTo(TaxRate::class, 'tax_rate_id', 'tax_rate_id');
     }
 
     public function purchaseOrder()

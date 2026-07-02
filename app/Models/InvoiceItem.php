@@ -49,12 +49,18 @@ class InvoiceItem extends Model
 
     public function taxRate(): BelongsTo
     {
-        return $this->belongsTo(TaxRate::class);
+        // Explicit keys: TaxRate's PK is tax_rate_id, so Laravel's guessed FK
+        // (tax_rate_tax_rate_id) is wrong and would always resolve to null.
+        return $this->belongsTo(TaxRate::class, 'tax_rate_id', 'tax_rate_id');
     }
 
     public function calculateAmount(): float
     {
         $this->amount = (float) $this->quantity * (float) $this->unit_price;
+
+        if ($this->taxRate) {
+            $this->tax_amount = $this->taxRate->calculateTax($this->amount);
+        }
 
         return (float) $this->amount;
     }

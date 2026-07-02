@@ -3187,12 +3187,6 @@ parameters:
 			path: app/Models/BillItem.php
 
 		-
-			message: '#^Method App\\Models\\BillItem\:\:calculateAmount\(\) should return float\|int but returns string\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Models/BillItem.php
-
-		-
 			message: '#^Method App\\Models\\BillItem\:\:taxRate\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -3703,12 +3697,6 @@ parameters:
 			path: app/Models/CreditMemoItem.php
 
 		-
-			message: '#^Method App\\Models\\CreditMemoItem\:\:calculateAmount\(\) should return float\|int but returns string\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Models/CreditMemoItem.php
-
-		-
 			message: '#^Method App\\Models\\CreditMemoItem\:\:creditMemo\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -4167,12 +4155,6 @@ parameters:
 		-
 			message: '#^Class App\\Models\\EstimateItem uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
 			identifier: missingType.generics
-			count: 1
-			path: app/Models/EstimateItem.php
-
-		-
-			message: '#^Method App\\Models\\EstimateItem\:\:calculateAmount\(\) should return float\|int but returns string\.$#'
-			identifier: return.type
 			count: 1
 			path: app/Models/EstimateItem.php
 
@@ -4859,6 +4841,12 @@ parameters:
 			identifier: missingType.return
 			count: 1
 			path: app/Models/Invoice.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:calculateTax\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Models/InvoiceItem.php
 
 		-
 			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:calculateTotals\(\)\.$#'
@@ -5735,18 +5723,6 @@ parameters:
 			identifier: missingType.generics
 			count: 1
 			path: app/Models/TaxForm.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\TaxRate\:\:\$is_active\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Models/TaxRate.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\TaxRate\:\:\$is_compound\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Models/TaxRate.php
 
 		-
 			message: '#^Binary operation "\*" between mixed and float results in an error\.$#'
