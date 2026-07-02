@@ -13,6 +13,11 @@ class SiteSettings extends Model
     use HasFactory;
     use IsTenantModel;
 
+    // ponytail: real table is `settings` (see create_site_settings_table migration);
+    // Eloquent would otherwise pluralize to the non-existent `site_settings`.
+    #[\Override]
+    protected $table = 'settings';
+
     #[\Override]
     protected $fillable = [
         'name',

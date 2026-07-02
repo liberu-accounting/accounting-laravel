@@ -11,8 +11,9 @@ class Category extends Model
 {
     use HasFactory;
 
-    #[\Override]
-    protected $primaryKey = 'category_id';
+    // ponytail: primaryKey defaults to `id` — the table is created with $table->id()
+    // and every external FK (inventory_items, expenses) constrains against categories.id,
+    // so the old `category_id` override was fictional and broke parent()/children().
 
     #[\Override]
     protected $fillable = [

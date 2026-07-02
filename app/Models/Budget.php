@@ -25,7 +25,6 @@ class Budget extends Model
         'forecast_amount',
         'forecast_method',
         'is_approved',
-        'category',
     ];
 
     #[\Override]
