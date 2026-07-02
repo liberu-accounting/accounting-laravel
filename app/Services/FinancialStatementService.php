@@ -12,24 +12,45 @@ use Illuminate\Support\Collection;
 class FinancialStatementService
 {
     /**
+     * The acting user's current team, or -1 when there is none — a sentinel that
+     * matches no row (team ids are positive), so a tenantless call returns empty
+     * rather than leaking every unassigned (team_id IS NULL) row.
+     *
+     * Mirrors GeneralLedgerService::scopedTeamId(); statements are only produced
+     * in authenticated contexts (Sanctum API, Filament panel).
+     */
+    private function scopedTeamId(): int
+    {
+        return auth()->user()->current_team_id ?? -1;
+    }
+
+    /**
      * Generate Profit & Loss (Income Statement) for a given period
      */
     public function profitAndLoss(Carbon $startDate, Carbon $endDate): array
     {
+        $teamId = $this->scopedTeamId();
+
         // Get revenue accounts (income)
-        $revenueAccounts = Account::where('type', 'revenue')
-            ->orderBy('code')
+        $revenueAccounts = Account::where('team_id', $teamId)
+            ->where('account_type', 'revenue')
+            ->orderBy('account_number')
             ->get();
 
         // Get expense accounts
-        $expenseAccounts = Account::where('type', 'expense')
-            ->orderBy('code')
+        $expenseAccounts = Account::where('team_id', $teamId)
+            ->where('account_type', 'expense')
+            ->orderBy('account_number')
             ->get();
 
-        // Get cost of goods sold accounts
-        $cogsAccounts = Account::where('type', 'cost_of_goods_sold')
-            ->orWhere('name', 'like', '%cost of goods%')
-            ->orderBy('code')
+        // Get cost of goods sold accounts (nested OR keeps the team_id filter from
+        // being short-circuited by the name match — AND binds tighter than OR).
+        $cogsAccounts = Account::where('team_id', $teamId)
+            ->where(function ($query): void {
+                $query->where('account_type', 'cost_of_goods_sold')
+                    ->orWhere('account_name', 'like', '%cost of goods%');
+            })
+            ->orderBy('account_number')
             ->get();
 
         // Calculate balances for each account
@@ -71,19 +92,24 @@ class FinancialStatementService
      */
     public function balanceSheet(Carbon $asOfDate): array
     {
+        $teamId = $this->scopedTeamId();
+
         // Get asset accounts
-        $assetAccounts = Account::whereIn('type', ['asset', 'bank', 'current_asset', 'fixed_asset', 'other_asset'])
-            ->orderBy('code')
+        $assetAccounts = Account::where('team_id', $teamId)
+            ->whereIn('account_type', ['asset', 'bank', 'current_asset', 'fixed_asset', 'other_asset'])
+            ->orderBy('account_number')
             ->get();
 
         // Get liability accounts
-        $liabilityAccounts = Account::whereIn('type', ['liability', 'current_liability', 'long_term_liability'])
-            ->orderBy('code')
+        $liabilityAccounts = Account::where('team_id', $teamId)
+            ->whereIn('account_type', ['liability', 'current_liability', 'long_term_liability'])
+            ->orderBy('account_number')
             ->get();
 
         // Get equity accounts
-        $equityAccounts = Account::where('type', 'equity')
-            ->orderBy('code')
+        $equityAccounts = Account::where('team_id', $teamId)
+            ->where('account_type', 'equity')
+            ->orderBy('account_number')
             ->get();
 
         // Calculate balances as of date
@@ -174,9 +200,9 @@ class FinancialStatementService
 
             return [
                 'id' => $account->id,
-                'code' => $account->code,
-                'name' => $account->name,
-                'type' => $account->type,
+                'code' => $account->account_number,
+                'name' => $account->account_name,
+                'type' => $account->account_type,
                 'balance' => $balance,
             ];
         })->filter(
@@ -198,7 +224,7 @@ class FinancialStatementService
 
         $query = JournalEntryLine::where('account_id', $accountId)
             ->whereHas('journalEntry', function ($q) use ($startDate, $endDate): void {
-                $q->where('status', 'posted')
+                $q->where('is_posted', true)
                     ->where('entry_date', '<=', $endDate);
 
                 if ($startDate) {
@@ -206,13 +232,13 @@ class FinancialStatementService
                 }
             });
 
-        $debits = $query->sum('debit');
-        $credits = $query->sum('credit');
+        $debits = $query->sum('debit_amount');
+        $credits = $query->sum('credit_amount');
 
         // Calculate balance based on account type
         // Assets and Expenses: Debit increases, Credit decreases
         // Liabilities, Equity, Revenue: Credit increases, Debit decreases
-        $normalBalanceIsDebit = in_array($account->type, ['asset', 'expense', 'bank', 'current_asset', 'fixed_asset', 'other_asset', 'cost_of_goods_sold']);
+        $normalBalanceIsDebit = in_array($account->account_type, ['asset', 'expense', 'bank', 'current_asset', 'fixed_asset', 'other_asset', 'cost_of_goods_sold']);
 
         $balance = $normalBalanceIsDebit ? ($debits - $credits) : ($credits - $debits);
 
@@ -301,8 +327,11 @@ class FinancialStatementService
      */
     protected function getCashBalance(Carbon $asOfDate): float
     {
-        $cashAccounts = Account::whereIn('type', ['bank', 'cash'])
-            ->orWhere('name', 'like', '%cash%')
+        $cashAccounts = Account::where('team_id', $this->scopedTeamId())
+            ->where(function ($query): void {
+                $query->whereIn('account_type', ['bank', 'cash'])
+                    ->orWhere('account_name', 'like', '%cash%');
+            })
             ->get();
 
         return $cashAccounts->sum(fn ($account): float => $this->getAccountBalance($account->id, null, $asOfDate));

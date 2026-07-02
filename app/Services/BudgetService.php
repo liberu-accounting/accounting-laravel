@@ -9,10 +9,26 @@ use App\Models\Transaction;
 
 class BudgetService
 {
+    /**
+     * The acting user's current team, or -1 when there is none — a sentinel that
+     * matches no row (team ids are positive), so a tenantless call returns empty
+     * rather than leaking every unassigned (team_id IS NULL) row. Mirrors
+     * GeneralLedgerService::scopedTeamId().
+     */
+    private function scopedTeamId(): int
+    {
+        return auth()->user()->current_team_id ?? -1;
+    }
+
     public function getBudgetComparison($startDate, $endDate)
     {
-        $budgets = Budget::whereBetween('start_date', [$startDate, $endDate])
-            ->orWhereBetween('end_date', [$startDate, $endDate])
+        // Tenant-scope by team; nested OR keeps the team_id filter from being
+        // short-circuited by the date match (AND binds tighter than OR).
+        $budgets = Budget::where('team_id', $this->scopedTeamId())
+            ->where(function ($query) use ($startDate, $endDate): void {
+                $query->whereBetween('start_date', [$startDate, $endDate])
+                    ->orWhereBetween('end_date', [$startDate, $endDate]);
+            })
             ->get();
 
         return $budgets->map(function ($budget): array {

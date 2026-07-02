@@ -13,6 +13,16 @@ class InventoryService
 {
     public function __construct(protected InventoryValuationService $valuationService) {}
 
+    /**
+     * Acting user's current team, or -1 (matches no row — team ids are positive)
+     * so a tenantless caller gets an empty result instead of leaking every
+     * team's items via team_id IS NULL. Mirrors GeneralLedgerService.
+     */
+    private function scopedTeamId(): int
+    {
+        return auth()->user()?->current_team_id ?? -1;
+    }
+
     public function createInventoryTransaction(
         Transaction $transaction,
         InventoryItem $item,
@@ -51,21 +61,24 @@ class InventoryService
 
     public function checkLowStock()
     {
-        return InventoryItem::where('is_active', true)
+        return InventoryItem::where('team_id', $this->scopedTeamId())
+            ->where('is_active', true)
             ->where('current_quantity', '<=', 'reorder_point')
             ->get();
     }
 
     public function getInventoryValue()
     {
-        return InventoryItem::where('is_active', true)
+        return InventoryItem::where('team_id', $this->scopedTeamId())
+            ->where('is_active', true)
             ->get()
             ->sum(fn (InventoryItem $item) => $this->valuationService->getInventoryValuation($item));
     }
 
     public function getInventoryReport()
     {
-        return InventoryItem::where('is_active', true)
+        return InventoryItem::where('team_id', $this->scopedTeamId())
+            ->where('is_active', true)
             ->get()
             ->map(fn (InventoryItem $item): array => [
                 'id' => $item->id,

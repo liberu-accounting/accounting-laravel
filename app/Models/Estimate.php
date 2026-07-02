@@ -107,7 +107,8 @@ class Estimate extends Model
         $previousTaxes = 0;
 
         if ($this->taxRate->is_compound) {
-            $nonCompoundTaxes = TaxRate::where('is_active', true)
+            $nonCompoundTaxes = TaxRate::where('team_id', $this->team_id)
+                ->where('is_active', true)
                 ->where('is_compound', false)
                 ->get();
 
