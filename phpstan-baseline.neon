@@ -2941,6 +2941,12 @@ parameters:
 			path: app/Models/Bill.php
 
 		-
+			message: '#^Access to an undefined property App\\Models\\Bill\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Bill.php
+
+		-
 			message: '#^Binary operation "\+" between numeric\-string and mixed results in an error\.$#'
 			identifier: binaryOp.invalid
 			count: 1
@@ -3398,6 +3404,12 @@ parameters:
 
 		-
 			message: '#^Access to an undefined property App\\Models\\CreditMemo\:\:\$taxRate\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/CreditMemo.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\CreditMemo\:\:\$team_id\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Models/CreditMemo.php
@@ -3926,6 +3938,12 @@ parameters:
 
 		-
 			message: '#^Access to an undefined property App\\Models\\Estimate\:\:\$taxRate\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Estimate.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Estimate\:\:\$team_id\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Models/Estimate.php
@@ -7825,12 +7843,6 @@ parameters:
 			path: app/Services/ExchangeRateService.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\Account\:\:\$type\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/FinancialStatementService.php
-
-		-
 			message: '#^Binary operation "\+" between \(array\|float\|int\) and mixed results in an error\.$#'
 			identifier: binaryOp.invalid
 			count: 1
@@ -7855,7 +7867,19 @@ parameters:
 			path: app/Services/FinancialStatementService.php
 
 		-
-			message: '#^Cannot access property \$code on mixed\.$#'
+			message: '#^Cannot access property \$account_name on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Services/FinancialStatementService.php
+
+		-
+			message: '#^Cannot access property \$account_number on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Services/FinancialStatementService.php
+
+		-
+			message: '#^Cannot access property \$account_type on mixed\.$#'
 			identifier: property.nonObject
 			count: 1
 			path: app/Services/FinancialStatementService.php
@@ -7864,18 +7888,6 @@ parameters:
 			message: '#^Cannot access property \$id on mixed\.$#'
 			identifier: property.nonObject
 			count: 2
-			path: app/Services/FinancialStatementService.php
-
-		-
-			message: '#^Cannot access property \$name on mixed\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Services/FinancialStatementService.php
-
-		-
-			message: '#^Cannot access property \$type on mixed\.$#'
-			identifier: property.nonObject
-			count: 1
 			path: app/Services/FinancialStatementService.php
 
 		-
@@ -8697,6 +8709,12 @@ parameters:
 		-
 			message: '#^Method App\\Services\\InventoryService\:\:getInventoryValue\(\) has no return type specified\.$#'
 			identifier: missingType.return
+			count: 1
+			path: app/Services/InventoryService.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>current_team_id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
 			count: 1
 			path: app/Services/InventoryService.php
 
