@@ -8,7 +8,6 @@ use App\Filament\App\Resources\Invoices\Pages\CreateInvoice;
 use App\Filament\App\Resources\Invoices\Pages\EditInvoice;
 use App\Filament\App\Resources\Invoices\Pages\ListInvoices;
 use App\Models\Invoice;
-use App\Models\TaxRate;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
@@ -46,30 +45,11 @@ class InvoiceResource extends Resource
                 DatePicker::make('invoice_date')
                     ->required(),
                 DatePicker::make('due_date'),
+                // ponytail: invoice-level tax fields removed — tax lives per-line on
+                // invoice_items (see the "items" repeater below), not on the invoice.
                 TextInput::make('total_amount')
                     ->numeric()
-                    ->required()
-                    ->live()
-                    ->afterStateUpdated(function ($state, callable $set, $get): void {
-                        if ($get('tax_rate_id')) {
-                            $taxRate = TaxRate::find($get('tax_rate_id'));
-                            $taxAmount = $state * ($taxRate->rate / 100);
-                            $set('tax_amount', $taxAmount);
-                        }
-                    }),
-                Select::make('tax_rate_id')
-                    ->relationship('taxRate', 'name')
-                    ->live()
-                    ->afterStateUpdated(function ($state, callable $set, $get): void {
-                        if ($state && $get('total_amount')) {
-                            $taxRate = TaxRate::find($state);
-                            $taxAmount = $get('total_amount') * ($taxRate->rate / 100);
-                            $set('tax_amount', $taxAmount);
-                        }
-                    }),
-                TextInput::make('tax_amount')
-                    ->numeric()
-                    ->disabled(),
+                    ->required(),
                 Select::make('payment_status')
                     ->options([
                         'pending' => 'Pending',

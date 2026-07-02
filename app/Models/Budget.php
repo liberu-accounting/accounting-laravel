@@ -18,7 +18,6 @@ class Budget extends Model
     protected $fillable = [
         'account_id',
         'project_id',
-        'cost_center_id',
         'start_date',
         'end_date',
         'planned_amount',
@@ -48,11 +47,6 @@ class Budget extends Model
         return $this->belongsTo(Project::class);
     }
 
-    public function costCenter(): BelongsTo
-    {
-        return $this->belongsTo(CostCenter::class);
-    }
-
     public function getVarianceAttribute(): float|int
     {
         return ($this->forecast_amount ?? 0) - ($this->planned_amount ?? 0);
@@ -73,10 +67,6 @@ class Budget extends Model
 
         if ($this->project_id) {
             $query->where('project_id', $this->project_id);
-        }
-
-        if ($this->cost_center_id) {
-            $query->where('cost_center_id', $this->cost_center_id);
         }
 
         return $query->sum('amount');
