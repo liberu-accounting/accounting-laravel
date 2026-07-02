@@ -25,7 +25,6 @@ class Expense extends Model
         'approved_by',
         'approved_at',
         'project_id',
-        'cost_center_id',
         'is_indirect',
         'allocation_percentage',
         'is_recurring',
@@ -61,11 +60,6 @@ class Expense extends Model
     public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class);
-    }
-
-    public function costCenter(): BelongsTo
-    {
-        return $this->belongsTo(CostCenter::class);
     }
 
     public function approve(): void
