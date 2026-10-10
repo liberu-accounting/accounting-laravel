@@ -1,0 +1,49 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Liberu\Accounting\EmployeeExpensesApi\EmployeeExpensesApiServiceProvider\Models;
+
+use Liberu\Accounting\EmployeeExpensesApi\EmployeeExpensesApiServiceProvider\Traits\IsTenantModel;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+/**
+ * @property int $id
+ * @property string $name
+ * @property string|null $national_insurance_number
+ * @property bool $has_student_loan
+ * @property string|null $student_loan_plan
+ */
+class Employee extends Model
+{
+    use HasFactory;
+    use IsTenantModel;
+
+    #[\Override]
+    protected $fillable = [
+        'name',
+        'email',
+        'position',
+        'hire_date',
+        'tax_id',
+        'national_insurance_number',
+        'starter_declaration',
+        'p45_issue_date',
+        'has_student_loan',
+        'student_loan_plan',
+    ];
+
+    #[\Override]
+    protected $casts = [
+        'hire_date' => 'date',
+        'p45_issue_date' => 'date',
+        'has_student_loan' => 'boolean',
+    ];
+
+    public function payrolls(): HasMany
+    {
+        return $this->hasMany(Payroll::class);
+    }
+}

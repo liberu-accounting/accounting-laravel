@@ -1,0 +1,59 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Liberu\Foundation\ApplicationCore\ApplicationCoreServiceProvider\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
+
+/**
+ * Vendor Credit Application Model
+ *
+ * Tracks the application of vendor credits to bills
+ *
+ * @property int $application_id
+ * @property int $vendor_credit_id
+ * @property int $bill_id
+ * @property float|string $amount_applied
+ * @property Carbon $application_date
+ */
+class VendorCreditApplication extends Model
+{
+    use HasFactory;
+
+    #[\Override]
+    protected $primaryKey = 'application_id';
+
+    #[\Override]
+    protected $fillable = [
+        'vendor_credit_id',
+        'bill_id',
+        'amount_applied',
+        'application_date',
+    ];
+
+    #[\Override]
+    protected $casts = [
+        'amount_applied' => 'decimal:2',
+        'application_date' => 'date',
+    ];
+
+    /**
+     * Get the vendor credit
+     */
+    public function vendorCredit(): BelongsTo
+    {
+        return $this->belongsTo(VendorCredit::class, 'vendor_credit_id', 'vendor_credit_id');
+    }
+
+    /**
+     * Get the bill
+     */
+    public function bill(): BelongsTo
+    {
+        return $this->belongsTo(Bill::class, 'bill_id', 'bill_id');
+    }
+}

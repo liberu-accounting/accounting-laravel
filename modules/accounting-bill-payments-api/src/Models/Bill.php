@@ -1,0 +1,324 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Liberu\Accounting\BillPaymentsApi\BillPaymentsApiServiceProvider\Models;
+
+use Liberu\Accounting\BillPaymentsApi\BillPaymentsApiServiceProvider\Concerns\Approvable;
+use Liberu\Accounting\BillPaymentsApi\BillPaymentsApiServiceProvider\Concerns\HasDocuments;
+use Liberu\Accounting\BillPaymentsApi\BillPaymentsApiServiceProvider\Concerns\Recurring;
+use Liberu\Accounting\BillPaymentsApi\BillPaymentsApiServiceProvider\Contracts\ApprovableRecord;
+use Liberu\Accounting\BillPaymentsApi\BillPaymentsApiServiceProvider\Contracts\Documentable;
+use Liberu\Accounting\BillPaymentsApi\BillPaymentsApiServiceProvider\Traits\IsTenantModel;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Collection;
+
+/**
+ * @property int|null $team_id
+ * @property string|null $payment_status
+ * @property \Illuminate\Support\Carbon|null $due_date
+ * @property-read TaxRate|null $taxRate
+ * @property-read Collection<int, BillItem> $items
+ * @property string|null $xero_id
+ * @property string|null $sage_id
+ * @property-read Vendor|null $vendor
+ */
+class Bill extends Model implements ApprovableRecord, Documentable
+{
+    use Approvable;
+    use HasDocuments;
+    use HasFactory, SoftDeletes;
+    use IsTenantModel;
+    use Recurring;
+
+    #[\Override]
+    protected $primaryKey = 'bill_id';
+
+    #[\Override]
+    protected $fillable = [
+        'vendor_id',
+        'bill_number',
+        'bill_date',
+        'due_date',
+        'subtotal_amount',
+        'tax_amount',
+        'total_amount',
+        'amount_paid',
+        'tax_rate_id',
+        'status',
+        'payment_status',
+        'purchase_order_id',
+        'reference_number',
+        'notes',
+        'document_path',
+        'approved_by',
+        'approved_at',
+        'approval_status',
+        'rejection_reason',
+        'team_id',
+        'is_recurring',
+        'recurrence_frequency',
+        'recurrence_start',
+        'recurrence_end',
+        'last_generated',
+        'qbo_id',
+        'qbo_sync_token',
+        'xero_id',
+        'sage_id',
+    ];
+
+    #[\Override]
+    protected $casts = [
+        'bill_date' => 'date',
+        'due_date' => 'date',
+        'subtotal_amount' => 'decimal:2',
+        'tax_amount' => 'decimal:2',
+        'total_amount' => 'decimal:2',
+        'amount_paid' => 'decimal:2',
+        'approved_at' => 'datetime',
+        'is_recurring' => 'boolean',
+        'recurrence_start' => 'date',
+        'recurrence_end' => 'date',
+        'last_generated' => 'date',
+    ];
+
+    // Recurrence hooks (App\Concerns\Recurring)
+    protected function recurringNumberColumn(): ?string
+    {
+        return 'bill_number';
+    }
+
+    protected function recurringItemsRelation(): ?string
+    {
+        return 'items';
+    }
+
+    /**
+     * @return array<string, mixed>
+     *
+     * status='draft' holds for a current-period occurrence; the `saving` hook
+     * deliberately escalates it to 'overdue' for back-dated catch-up bills whose
+     * due_date is already past (a bill dated months ago genuinely is overdue).
+     */
+    protected function recurringDraftAttributes(): array
+    {
+        return [
+            'payment_status' => 'unpaid',
+            'status' => 'draft',
+            'approval_status' => 'pending',
+            'approved_by' => null,
+            'approved_at' => null,
+            'amount_paid' => 0,
+        ];
+    }
+
+    protected function recurringDateColumns(Carbon $date): array
+    {
+        return [
+            'bill_date' => $date->copy(),
+            'due_date' => $date->copy()->addDays(30),
+        ];
+    }
+
+    // Relationships
+    public function vendor()
+    {
+        return $this->belongsTo(Vendor::class, 'vendor_id', 'vendor_id');
+    }
+
+    public function taxRate()
+    {
+        // Explicit keys: TaxRate's PK is tax_rate_id, so Laravel's guessed FK
+        // (tax_rate_tax_rate_id) is wrong and would always resolve to null.
+        return $this->belongsTo(TaxRate::class, 'tax_rate_id', 'tax_rate_id');
+    }
+
+    public function purchaseOrder()
+    {
+        return $this->belongsTo(PurchaseOrder::class, 'purchase_order_id', 'purchase_order_id');
+    }
+
+    public function items()
+    {
+        return $this->hasMany(BillItem::class, 'bill_id', 'bill_id');
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(BillPayment::class, 'bill_id', 'bill_id');
+    }
+
+    public function approver()
+    {
+        return $this->belongsTo(User::class, 'approved_by');
+    }
+
+    // Calculated Attributes
+    public function getAmountDueAttribute(): int|float
+    {
+        return $this->total_amount - $this->amount_paid;
+    }
+
+    public function getDaysOverdueAttribute(): int|float
+    {
+        if ($this->payment_status === 'paid' || ! $this->due_date) {
+            return 0;
+        }
+
+        $daysOverdue = Carbon::now()->diffInDays($this->due_date, false);
+
+        return $daysOverdue < 0 ? abs($daysOverdue) : 0;
+    }
+
+    public function getIsOverdueAttribute(): bool
+    {
+        return $this->days_overdue > 0;
+    }
+
+    // Business Logic Methods
+    public function calculateTax()
+    {
+        if (! $this->taxRate) {
+            return 0;
+        }
+
+        $baseAmount = $this->subtotal_amount;
+        $previousTaxes = 0;
+
+        if ($this->taxRate->is_compound) {
+            $nonCompoundTaxes = TaxRate::where('team_id', $this->team_id)
+                ->where('is_active', true)
+                ->where('is_compound', false)
+                ->get();
+
+            foreach ($nonCompoundTaxes as $tax) {
+                $previousTaxes += $tax->calculateTax($baseAmount);
+            }
+        }
+
+        $taxAmount = $this->taxRate->calculateTax($baseAmount, $previousTaxes);
+        $this->tax_amount = $taxAmount;
+        $this->total_amount = $this->subtotal_amount + $taxAmount;
+
+        return $taxAmount;
+    }
+
+    public function calculateTotals(): void
+    {
+        $this->subtotal_amount = $this->items->sum('amount');
+        $this->calculateTax();
+        $this->save();
+    }
+
+    public function recordPayment(array $paymentData)
+    {
+        $payment = $this->payments()->create($paymentData);
+
+        // Update amount paid
+        $this->amount_paid = $this->payments()->sum('amount');
+
+        // Update payment status
+        if ($this->amount_paid >= $this->total_amount) {
+            $this->payment_status = 'paid';
+            $this->status = 'paid';
+        } elseif ($this->amount_paid > 0) {
+            $this->payment_status = 'partial';
+        }
+
+        $this->save();
+
+        return $payment;
+    }
+
+    public function approvalAmount(): float
+    {
+        return (float) $this->total_amount;
+    }
+
+    public function approve(): void
+    {
+        // Bill-specific side effect (existing behavior): approving reopens the bill.
+        $this->status = 'open';
+        $this->markApproved();
+    }
+
+    public function reject(?string $reason): void
+    {
+        $this->markRejected($reason);
+    }
+
+    public function markAsVoid(): void
+    {
+        $this->update([
+            'status' => 'void',
+        ]);
+    }
+
+    // Scopes
+    public function scopeOverdue($query)
+    {
+        return $query->where('payment_status', '!=', 'paid')
+            ->where('due_date', '<', now());
+    }
+
+    public function scopeUnpaid($query)
+    {
+        return $query->where('payment_status', '!=', 'paid');
+    }
+
+    public function scopeByVendor($query, $vendorId)
+    {
+        return $query->where('vendor_id', $vendorId);
+    }
+
+    // Auto-generate bill number on creation
+    #[\Override]
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($bill): void {
+            if (empty($bill->bill_number)) {
+                $bill->bill_number = static::generateBillNumber();
+            }
+            if (empty($bill->approval_status)) {
+                $bill->approval_status = 'pending';
+            }
+            if (empty($bill->status)) {
+                $bill->status = 'draft';
+            }
+            if (empty($bill->payment_status)) {
+                $bill->payment_status = 'unpaid';
+            }
+        });
+
+        // Update status when due date passes
+        static::saving(function ($bill): void {
+            if (($bill->isDirty('due_date') || $bill->isDirty('payment_status')) && ($bill->payment_status !== 'paid' && $bill->due_date < now())) {
+                $bill->status = 'overdue';
+            }
+        });
+    }
+
+    public static function generateBillNumber(): string
+    {
+        $prefix = 'BILL';
+        $year = date('Y');
+        $lastBill = static::whereYear('created_at', $year)
+            ->orderBy('bill_number', 'desc')
+            ->first();
+
+        if (! $lastBill) {
+            $number = 1;
+        } else {
+            // Extract number from bill_number (e.g., BILL2026-0001)
+            $parts = explode('-', (string) $lastBill->bill_number);
+            $number = isset($parts[1]) ? ((int) $parts[1]) + 1 : 1;
+        }
+
+        return $prefix.$year.'-'.str_pad((string) $number, 4, '0', STR_PAD_LEFT);
+    }
+}

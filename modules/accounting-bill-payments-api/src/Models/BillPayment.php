@@ -1,0 +1,87 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Liberu\Accounting\BillPaymentsApi\BillPaymentsApiServiceProvider\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class BillPayment extends Model
+{
+    use HasFactory;
+
+    #[\Override]
+    protected $primaryKey = 'payment_id';
+
+    #[\Override]
+    protected $fillable = [
+        'bill_id',
+        'payment_date',
+        'amount',
+        'payment_method',
+        'reference_number',
+        'bank_account_id',
+        'notes',
+    ];
+
+    #[\Override]
+    protected $casts = [
+        'payment_date' => 'date',
+        'amount' => 'decimal:2',
+    ];
+
+    // Relationships
+    public function bill()
+    {
+        return $this->belongsTo(Bill::class, 'bill_id', 'bill_id');
+    }
+
+    public function bankAccount()
+    {
+        return $this->belongsTo(BankConnection::class, 'bank_account_id');
+    }
+
+    // Business Logic
+    #[\Override]
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::created(function ($payment): void {
+            // Recalculate bill's payment status
+            if ($payment->bill) {
+                $bill = $payment->bill;
+                $bill->amount_paid = $bill->payments()->sum('amount');
+
+                if ($bill->amount_paid >= $bill->total_amount) {
+                    $bill->payment_status = 'paid';
+                    $bill->status = 'paid';
+                } elseif ($bill->amount_paid > 0) {
+                    $bill->payment_status = 'partial';
+                }
+
+                $bill->save();
+            }
+        });
+
+        static::deleted(function ($payment): void {
+            // Recalculate bill's amount paid
+            if ($payment->bill) {
+                $bill = $payment->bill;
+                $bill->amount_paid = $bill->payments()->sum('amount');
+
+                if ($bill->amount_paid >= $bill->total_amount) {
+                    $bill->payment_status = 'paid';
+                    $bill->status = 'paid';
+                } elseif ($bill->amount_paid > 0) {
+                    $bill->payment_status = 'partial';
+                } else {
+                    $bill->payment_status = 'unpaid';
+                }
+
+                $bill->save();
+            }
+        });
+    }
+}
