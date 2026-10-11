@@ -175,6 +175,7 @@ API failures without printing the configured token.
 
 ## Documentation
 
+- [Accounting architecture](docs/ACCOUNTING_ARCHITECTURE.md)
 - [Module development](docs/MODULE_DEVELOPMENT.md)
 - [Foundation compliance](docs/FOUNDATION_COMPLIANCE.md)
 - [Foundation module matrix](docs/FOUNDATION_MODULE_MATRIX.md)
